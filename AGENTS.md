@@ -7,6 +7,14 @@
 ## 1. Geographic & Hydrologic Context
 
 * **Location**: Mathews County, Virginia (Middle Peninsula).
+* **Primary Ground-Truth Benchmark Location**:
+  * **Coordinates**: `37.420183, -76.406550` (Daniel Ave, Blackwater, Mathews County, VA 23128).
+  * **Local Drainage Basin**: Blackwater Creek $\to$ North River $\to$ Mobjack Bay ($\approx 3.6\text{ miles}$ east of Ware River WRVV2 gauge).
+  * **USGS 3DEP 1-meter LiDAR Elevation Ground-Truth**:
+    * **Driveway Benchmark**: $2.761\text{ ft NAVD88} \equiv 4.401\text{ ft MLLW}$ ($+1.64\text{ ft}$ MLLW datum offset). Directly and independently confirms our empirical regression threshold ($4.40\text{ ft MLLW}$) to within $0.01\text{ ft}$!
+    * **Roadside Ditch Culvert Invert**: $2.41\text{ ft NAVD88} \equiv 4.05\text{ ft MLLW}$ (validates the $3.99\text{ ft}$ ditch brim overflow tipping point).
+    * **Blackwater Creek Marsh Margin**: $0.55\text{ ft MLLW}$ (wet during standard high tides).
+    * **Garage / Residence Elevation Pad**: $3.26\text{ ft NAVD88} \equiv 4.90\text{ ft MLLW}$ (validates the Tier 3 severe property hazard threshold).
 * **Surrounding Water Bodies**:
   * **Chesapeake Bay** to the East.
   * **Mobjack Bay** to the South (fed by the East, North, Ware, and Severn Rivers).

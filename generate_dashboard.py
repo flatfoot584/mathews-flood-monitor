@@ -427,25 +427,38 @@ def build_index_html(status, obs_rows, fcst_rows):
 
     <!-- 3. INTERACTIVE LEAFLET FLOOD MAP SECTION -->
     <section id="map-section" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-      <div class="p-5 sm:p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50">
+      <div class="p-5 sm:p-6 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-slate-50/50">
         <div>
           <div class="flex items-center gap-2">
             <h2 class="text-lg sm:text-xl font-bold text-slate-900">Mathews County Real-Time Flood Map</h2>
-            <span class="px-2.5 py-0.5 text-xs font-semibold bg-sky-100 text-sky-800 rounded-full">Interactive GIS</span>
+            <span class="px-2.5 py-0.5 text-xs font-semibold bg-amber-100 text-amber-900 rounded-full font-mono">37.420183, -76.406550</span>
           </div>
           <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
-            Visualizing tidal gauge networks, wind vectors, and property elevation flood zones (Green = Safe, Yellow = Swales Full, Orange = Driveway Inundated, Red = Severe).
+            Centered on <strong>Daniel Ave &amp; Blackwater Creek</strong> (Primary Observation Benchmark &bull; 2.76' NAVD88 LiDAR) with regional NOAA/USGS sensors.
           </p>
         </div>
 
-        <!-- Map Layer Toggle Buttons -->
-        <div class="flex items-center gap-2 bg-slate-200/80 p-1 rounded-xl self-start sm:self-auto text-xs font-medium">
-          <button id="btn-map-current" class="px-3 py-1.5 rounded-lg bg-white shadow-sm text-slate-900 font-semibold transition">
-            <i class="fa-solid fa-location-dot text-emerald-600 mr-1"></i> Current ({stage} ft)
-          </button>
-          <button id="btn-map-peak" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">
-            <i class="fa-solid fa-bolt text-amber-500 mr-1"></i> Peak 48h ({peak_stage} ft)
-          </button>
+        <!-- Controls: Quick Zoom & Forecast Toggle -->
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Quick Zoom Buttons -->
+          <div class="flex items-center bg-slate-200/80 p-1 rounded-xl text-xs font-medium">
+            <button id="btn-zoom-property" class="px-2.5 py-1.5 rounded-lg bg-white shadow-sm text-slate-900 font-semibold transition" title="Zoom to Daniel Ave property">
+              <i class="fa-solid fa-crosshairs text-sky-600 mr-1"></i> Focus Property
+            </button>
+            <button id="btn-zoom-county" class="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition" title="Zoom out to county sensor network">
+              <i class="fa-solid fa-earth-americas text-slate-500 mr-1"></i> County View
+            </button>
+          </div>
+
+          <!-- Forecast Mode Toggle -->
+          <div class="flex items-center bg-slate-200/80 p-1 rounded-xl text-xs font-medium">
+            <button id="btn-map-current" class="px-3 py-1.5 rounded-lg bg-white shadow-sm text-slate-900 font-semibold transition">
+              <i class="fa-solid fa-location-dot text-emerald-600 mr-1"></i> Current ({stage} ft)
+            </button>
+            <button id="btn-map-peak" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">
+              <i class="fa-solid fa-bolt text-amber-500 mr-1"></i> Peak 48h ({peak_stage} ft)
+            </button>
+          </div>
         </div>
       </div>
 
@@ -671,10 +684,10 @@ def build_index_html(status, obs_rows, fcst_rows):
     const outl = floodData.status.forecast_48h_outlook || {{}};
     const fcst = floodData.forecast || [];
 
-    // 1. LEAFLET INTERACTIVE MAP
+    // 1. LEAFLET INTERACTIVE MAP — Centered on Daniel Ave Benchmark (37.420183, -76.406550)
     const map = L.map('flood-map', {{
-      center: [37.385, -76.435],
-      zoom: 11,
+      center: [37.420183, -76.406550],
+      zoom: 14,
       scrollWheelZoom: false
     }});
 
@@ -752,46 +765,74 @@ def build_index_html(status, obs_rows, fcst_rows):
       </div>
     `);
 
-    // Property Micro-Topography Zones (Near Ware River / Mobjack corridor)
+    // Primary Ground-Truth Benchmark Marker (Daniel Ave & Blackwater Creek)
+    const benchmarkMarker = L.circleMarker([37.420183, -76.406550], {{
+      radius: 11,
+      fillColor: '#f59e0b',
+      color: '#ffffff',
+      weight: 3,
+      opacity: 1,
+      fillOpacity: 0.95
+    }}).addTo(map);
+
+    benchmarkMarker.bindPopup(`
+      <div class="p-1.5 space-y-1.5 min-w-[220px]">
+        <div class="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+          <span class="text-amber-500 font-bold">&#9733;</span> Primary Observation Benchmark
+        </div>
+        <div class="text-xs text-slate-600 font-medium">Daniel Ave &bull; Blackwater, Mathews County</div>
+        <div class="text-[11px] font-mono text-slate-500">Coords: 37.420183, -76.406550</div>
+        <div class="text-xs font-mono text-slate-700 bg-slate-100 p-1 rounded">LiDAR Elevation: 2.76' NAVD88 (4.40' MLLW)</div>
+        <div class="pt-1 border-t border-slate-100 flex items-baseline justify-between">
+          <span class="text-xs text-slate-500">Current Depth:</span>
+          <span class="text-base font-black text-sky-900 font-mono">${{curr.estimated_local_flood_depth_in || '0.0'}}"</span>
+        </div>
+        <div class="text-[11px] font-semibold ${{curr.estimated_local_flood_depth_in > 0 ? 'text-amber-600' : 'text-emerald-600'}}">
+          Passability: ${{curr.vehicle_passability || 'ALL VEHICLES PASSABLE'}}
+        </div>
+      </div>
+    `);
+
+    // Property Micro-Topography Zones (Anchored directly to Daniel Ave & Blackwater Creek)
     const propertyZones = [
       {{
-        name: "Tidal Ditches & Marsh Inlets",
+        name: "Tidal Ditches & Marsh Inlets (Blackwater Creek Tributary)",
         elev: 2.50,
         coords: [
-          [37.4010, -76.4420], [37.4035, -76.4405],
-          [37.4045, -76.4430], [37.4020, -76.4450]
+          [37.4208, -76.4055], [37.4216, -76.4045],
+          [37.4212, -76.4038], [37.4203, -76.4048]
         ]
       }},
       {{
-        name: "Road Shoulder & Culvert Swale",
+        name: "Road Shoulder & Culvert Swale (Daniel Ave Low Point)",
         elev: 4.00,
         coords: [
-          [37.4035, -76.4405], [37.4060, -76.4385],
-          [37.4070, -76.4415], [37.4045, -76.4430]
+          [37.4204, -76.4062], [37.4208, -76.4055],
+          [37.4203, -76.4048], [37.4199, -76.4056]
         ]
       }},
       {{
-        name: "Main Driveway Access Route",
+        name: "Main Driveway Access Route (Vehicle Travel Path)",
         elev: 4.40,
         coords: [
-          [37.4060, -76.4385], [37.4085, -76.4365],
-          [37.4095, -76.4395], [37.4070, -76.4415]
+          [37.420183, -76.406550], [37.4204, -76.4062],
+          [37.4199, -76.4056], [37.4197, -76.4060]
         ]
       }},
       {{
         name: "Residential Lawn & Grounds",
         elev: 4.60,
         coords: [
-          [37.4085, -76.4365], [37.4110, -76.4345],
-          [37.4120, -76.4375], [37.4095, -76.4395]
+          [37.4199, -76.4068], [37.420183, -76.406550],
+          [37.4197, -76.4060], [37.4194, -76.4064]
         ]
       }},
       {{
         name: "Garage Apron & Residence High Ground",
         elev: 4.90,
         coords: [
-          [37.4110, -76.4345], [37.4130, -76.4330],
-          [37.4140, -76.4360], [37.4120, -76.4375]
+          [37.4197, -76.4071], [37.4199, -76.4068],
+          [37.4194, -76.4064], [37.4192, -76.4068]
         ]
       }}
     ];
@@ -865,6 +906,35 @@ def build_index_html(status, obs_rows, fcst_rows):
       btnCurrent.classList.add('text-slate-600');
       renderPropertyZones(parseFloat(outl.peak_forecast_stage_mllw_ft || 3.5));
     }});
+
+    // Quick Zoom Button Handlers
+    const btnZoomProp = document.getElementById('btn-zoom-property');
+    const btnZoomCounty = document.getElementById('btn-zoom-county');
+
+    if (btnZoomProp) {{
+      btnZoomProp.addEventListener('click', () => {{
+        btnZoomProp.classList.add('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
+        btnZoomProp.classList.remove('text-slate-600');
+        if (btnZoomCounty) {{
+          btnZoomCounty.classList.remove('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
+          btnZoomCounty.classList.add('text-slate-600');
+        }}
+        map.flyTo([37.420183, -76.406550], 16, {{ duration: 1.2 }});
+        benchmarkMarker.openPopup();
+      }});
+    }}
+
+    if (btnZoomCounty) {{
+      btnZoomCounty.addEventListener('click', () => {{
+        btnZoomCounty.classList.add('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
+        btnZoomCounty.classList.remove('text-slate-600');
+        if (btnZoomProp) {{
+          btnZoomProp.classList.remove('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
+          btnZoomProp.classList.add('text-slate-600');
+        }}
+        map.flyTo([37.385, -76.435], 11, {{ duration: 1.2 }});
+      }});
+    }}
 
     // 2. CHART.JS 48-HOUR HYDROGRAPH
     const ctx = document.getElementById('hydrographChart').getContext('2d');

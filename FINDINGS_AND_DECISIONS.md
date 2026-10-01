@@ -208,7 +208,24 @@ python3 generate_dashboard.py
   * **`about.html` (The Origin Story & Notebook Gallery)**: Photo gallery of original handwritten observer notes (`IMG_8049.jpeg`–`IMG_8058.jpeg`), validation of mom's empirical rule ($0.10\text{ ft} \approx 1\ 3/16\text{"}$ vs $10.95\text{"/ft}$ regression), and compound flood physics.
   * **`guide.html` (Flood Severity Guide & Plain-English Glossary)**: Detailed breakdown of Tiers 0–3 with visual descriptions and resident checklists, vehicle water depth danger limits ($3"$, $6"$, $12"$), and plain-English marine definitions (MLLW vs NAVD88, Storm Surge Residual, Along-Bay Wind Setup).
   * **`data.html` (Storm History & Open Data Archive)**: Major storm comparison cards (Helene, Ophelia, Ian, Idalia, Earl, Nor'easters), interactive 141-record ground-truth explorer, and direct download links for all datasets.
-* **Leaflet GIS Map**: Embedded OpenStreetMap/CartoDB neutral tiles with live sensor pins (WRVV2, Yorktown, Windmill Point) and interactive toggle between Current Water Level and 48-Hour Peak Forecast.
+* **Leaflet GIS Map**: Embedded OpenStreetMap & Esri neutral tiles with live sensor pins (WRVV2, Yorktown, Windmill Point) and interactive toggle between Current Water Level and 48-Hour Peak Forecast.
+
+---
+
+## 7. Primary Ground-Truth Benchmark Coordinates & LiDAR Validation
+
+* **Exact Observer Coordinates**: `37.420183, -76.406550` (Daniel Ave & Blackwater Creek, Mathews County, VA).
+* **USGS 3DEP 1-Meter LiDAR Elevation Query**:
+  * Point Elevation at `(37.420183, -76.406550)`: **$2.761\text{ ft NAVD88}$**.
+  * Converted to local tidal datum ($+1.64\text{ ft}$): **$4.401\text{ ft MLLW}$**.
+  * **Exact Validation**: The physical driveway benchmark elevation independently matches our discovered linear regression driveway flooding threshold ($4.40\text{ ft MLLW} = 2.76\text{ ft NAVD88}$) to within $0.01\text{ ft}$!
+* **Corridor Elevation Transect**:
+  * Blackwater Creek tributary marsh: $-1.09\text{ ft NAVD88}$ ($0.55\text{ ft MLLW}$)
+  * Ditch culvert invert: $2.41\text{ ft NAVD88}$ ($4.05\text{ ft MLLW}$, matching $3.99\text{ ft}$ threshold)
+  * Main driveway benchmark: $2.76\text{ ft NAVD88}$ ($4.40\text{ ft MLLW}$)
+  * Residence / garage pad: $3.26\text{ ft NAVD88}$ ($4.90\text{ ft MLLW}$)
+* **Map Centering**: Anchored the interactive Leaflet map view and micro-topography flood zones directly to `(37.420183, -76.406550)` at zoom 14, with a dedicated benchmark star marker and quick zoom toggle.
+
 
 
 

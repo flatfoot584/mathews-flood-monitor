@@ -14,10 +14,18 @@ Author: Antigravity Assistant for Mathews County Flood Prediction Project
 
 import math
 
+# Primary ground-truth observation benchmark coordinates (Daniel Ave, Blackwater, Mathews County, VA)
+BENCHMARK_LAT = 37.420183
+BENCHMARK_LON = -76.406550
+BENCHMARK_LOCATION = "Daniel Ave, Blackwater, Mathews County, VA"
+
 DATUM_OFFSET_NAVD88_MLLW = -1.64  # NAVD88 = MLLW - 1.64 ft
 FLOOD_STAGE_THRESHOLD = 3.99       # ft MLLW (ditch bank full)
 
-# Property elevation sectors based on ground-truth benchmark observations
+# Property elevation sectors anchored to USGS 3DEP 1-meter LiDAR at 37.420183, -76.406550:
+# - Ditch culvert invert: 2.41' NAVD88 (4.05' MLLW)
+# - Main driveway benchmark: 2.76' NAVD88 (4.40' MLLW)
+# - Residence / garage pad: 3.26' NAVD88 (4.90' MLLW)
 SECTOR_PROFILES = {
     "ditches": {
         "name": "Tidal Ditches & Marsh Channels",

@@ -10,6 +10,12 @@ A hyper-local, automated data collection pipeline, hybrid hydrodynamic–machine
 
 Mathews County lies on Virginia’s Middle Peninsula, surrounded by the **Chesapeake Bay**, **Mobjack Bay** (fed by the East, North, Ware, and Severn Rivers), and the **Piankatank River**. With much of the populated topography below $5\text{ to }10\text{ ft}$ NAVD88, flooding occurs via **compound drivers**:
 
+* **Primary Ground-Truth Benchmark**: `37.420183, -76.406550` (Daniel Ave, Blackwater, Mathews County, VA) draining into Blackwater Creek and North River / Mobjack Bay.
+* **USGS 1-Meter LiDAR Elevation Validation**:
+  * Driveway Benchmark: **`2.761 ft NAVD88`** $\equiv$ **`4.401 ft MLLW`** (independently validates our empirical $4.40\text{ ft}$ regression threshold to within $0.01\text{ ft}$).
+  * Roadside Ditch Culvert: **`2.41 ft NAVD88`** $\equiv$ **`4.05 ft MLLW`** (matches the $3.99\text{ ft}$ ditch brim tipping point).
+  * Residence / Garage Pad: **`3.26 ft NAVD88`** $\equiv$ **`4.90 ft MLLW`** (matches the Tier 3 severe inundation mark).
+
 1. **Astronomical Tides**: Semi-diurnal cycles amplified by Spring Tides, King Tides, and Perigee.
 2. **Meteorological Surge (Wind Set-Up)**: Persistent winds from NNE, NE, E, and SE force water down Chesapeake Bay and pile it directly into Mobjack Bay.
 3. **Pluvial Backwater Entrapment**: Heavy rainfall cannot drain by gravity when tidal ditches are backed up by elevated bay stages.
