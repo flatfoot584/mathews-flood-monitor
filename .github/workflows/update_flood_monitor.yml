@@ -12,6 +12,7 @@ on:
       - 'latest_status.json'
       - 'forecast_48h.csv'
       - 'realtime_recent_observations.csv'
+      - 'archive_hourly_observations.csv'
       - 'flood_dashboard.html'
       - 'index.html'
 
@@ -53,7 +54,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add latest_status.json forecast_48h.csv realtime_recent_observations.csv flood_dashboard.html index.html
+          git add latest_status.json forecast_48h.csv realtime_recent_observations.csv archive_hourly_observations.csv flood_dashboard.html index.html
           if git diff --staged --quiet; then
             echo "No changes detected. Skipping git commit."
           else
@@ -69,6 +70,7 @@ jobs:
           cp latest_status.json _site/
           cp forecast_48h.csv _site/
           cp realtime_recent_observations.csv _site/
+          cp archive_hourly_observations.csv _site/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5

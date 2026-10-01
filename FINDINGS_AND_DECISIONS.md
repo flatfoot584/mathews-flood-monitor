@@ -194,5 +194,10 @@ python3 generate_dashboard.py
 * **Live Website**:
   * Public Dashboard: `https://flatfoot584.github.io/mathews-flood-monitor/`
   * Execution: Runs every 30 minutes in ~50 seconds with automated data commits and Pages deployments.
+* **Continuous Automated Archiving**:
+  * `archive_hourly_observations.csv`: Accumulates every newly completed hour of verified stage, wind, barometric pressure, water level, and surge.
+  * Automatic deduplication ensures idempotency (0 duplicates on re-runs).
+  * Automatically committed and pushed to git on every 30-minute cloud run.
+
 
 

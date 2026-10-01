@@ -564,6 +564,56 @@ def generate_latest_status(ware_obs, yt_winds, yt_press, yt_temps, yt_water, yt_
     }
     return status
 
+def update_archive_observations(archive_path, hourly_obs):
+    """
+    Appends new completed hourly observations to a permanent cumulative archive CSV.
+    Deduplicates by timestamp_utc so reruns never duplicate data.
+    """
+    now_utc = datetime.now(timezone.utc)
+    current_hour_utc = now_utc.replace(minute=0, second=0, microsecond=0)
+    
+    existing_timestamps = set()
+    existing_rows = []
+    headers = None
+    
+    if os.path.exists(archive_path):
+        with open(archive_path, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            headers = reader.fieldnames
+            for row in reader:
+                existing_timestamps.add(row["timestamp_utc"])
+                existing_rows.append(row)
+                
+    if not headers and hourly_obs:
+        headers = list(hourly_obs[0].keys())
+        
+    added = 0
+    for obs in hourly_obs:
+        ts_str = obs.get("timestamp_utc", "")
+        if not ts_str:
+            continue
+        try:
+            ts_dt = datetime.strptime(ts_str, "%Y-%m-%d %H:%M:%S UTC").replace(tzinfo=timezone.utc)
+            # Only archive completed past hours so readings are final
+            if ts_dt >= current_hour_utc:
+                continue
+        except Exception:
+            pass
+            
+        if ts_str not in existing_timestamps:
+            existing_rows.append(obs)
+            existing_timestamps.add(ts_str)
+            added += 1
+            
+    if added > 0 or not os.path.exists(archive_path):
+        existing_rows.sort(key=lambda r: r.get("timestamp_utc", ""))
+        with open(archive_path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=headers)
+            writer.writeheader()
+            writer.writerows(existing_rows)
+            
+    return added, len(existing_rows)
+
 def write_csv(filepath, rows, fieldnames):
     """Write list of dictionaries to CSV."""
     with open(filepath, "w", newline="", encoding="utf-8") as f:
@@ -576,6 +626,7 @@ def main():
     parser.add_argument("--hours", type=int, default=48, help="Number of past observation hours to aggregate (default: 48)")
     parser.add_argument("--json-out", type=str, default="latest_status.json", help="Path to write latest status JSON")
     parser.add_argument("--obs-csv-out", type=str, default="realtime_recent_observations.csv", help="Path to write hourly recent observations CSV")
+    parser.add_argument("--archive-csv-out", type=str, default="archive_hourly_observations.csv", help="Path to cumulative continuous archive CSV")
     parser.add_argument("--fcst-csv-out", type=str, default="forecast_48h.csv", help="Path to write 48h forecast CSV")
     parser.add_argument("--quiet", action="store_true", help="Suppress verbose stdout output")
     args = parser.parse_args()
@@ -657,7 +708,11 @@ def main():
 
     if hourly_obs:
         write_csv(args.obs_csv_out, hourly_obs, list(hourly_obs[0].keys()))
-        log(f"    -> Observations CSV: {args.obs_csv_out} ({len(hourly_obs)} rows)")
+        log(f"    -> Recent Observations CSV: {args.obs_csv_out} ({len(hourly_obs)} rows)")
+        
+        if args.archive_csv_out:
+            added_cnt, total_archived = update_archive_observations(args.archive_csv_out, hourly_obs)
+            log(f"    -> Cumulative Archive CSV  : {args.archive_csv_out} (+{added_cnt} new hours, total: {total_archived} rows)")
 
     if fcst_timeline:
         write_csv(args.fcst_csv_out, fcst_timeline, list(fcst_timeline[0].keys()))
