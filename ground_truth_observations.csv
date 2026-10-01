@@ -1,0 +1,142 @@
+observation_id,date,time_local,time_qualifier,page_source,ware_river_stage_ft,flood_depth_in,is_flooded,wind_direction,wind_speed_mph,wind_gust_mph,weather_system,astronomical_event,raw_notes
+1,2021-05-29,,,notebook_page_1,5.10,14.00,TRUE,,,,,,
+2,2021-07-08,,,notebook_page_1,4.45,8.00,TRUE,NNE,20,,,,20 NNE
+3,2021-10-06,,,notebook_page_1,4.44,6.00,TRUE,,,,,,
+4,2021-10-07,,,notebook_page_1,4.58,7.00,TRUE,,,,,,
+5,2021-10-08,,,notebook_page_1,4.10,3.00,TRUE,,,,,,
+6,2021-10-09,,,notebook_page_1,4.30,6.00,TRUE,NNE,4.6,,,,4.6 NNE
+7,2021-10-10,,,notebook_page_1,4.75,10.00,TRUE,NNE,10-20,,,,10-20 NNE
+8,2021-10-11,,,notebook_page_1,4.80,9.00,TRUE,NNW,16,,,,16 NNW
+9,2021-10-12,,,notebook_page_1,4.20,2.00,TRUE,N,25,,,,25 N
+10,2021-10-16,,,notebook_page_1,4.22,4.00,TRUE,NNW,20,,,,20 NNW
+11,2021-10-28,,,notebook_page_1,4.58,7.00,TRUE,E,,,,,E
+12,2021-10-28,,,notebook_page_1,4.77,10.00,TRUE,E,,,,,E
+13,2021-10-28,,,notebook_page_1,4.87,5.00,TRUE,ESE,,,,,ESE
+14,2021-10-30,,,notebook_page_1,3.80,0.50,TRUE,ESE-SE,,,,,ESE to SE
+15,2021-10-30,,,notebook_page_1,4.20,2.00,TRUE,SE,24,,,,SE 24
+16,2021-12-31,,,notebook_page_1,3.87,0.00,FALSE,,,,,,
+17,2022-01-03,,,notebook_page_1,5.22,11.00,TRUE,N,,,Snow,,11 SNOW N
+18,2022-01-04,,,notebook_page_1,4.10,1.50,TRUE,N,9.2,,,,N 9.2
+19,2022-01-16,,,notebook_page_1,4.80,8.00,TRUE,ESE,19-25,,,,ESE 19-25
+20,2022-05-08,,,notebook_page_2,4.72,8.00,TRUE,,,,,,
+21,2022-05-09,,,notebook_page_2,4.50,6.00,TRUE,,,,,,
+22,2022-05-10,,,notebook_page_2,5.02,12.00,TRUE,NNE,10-21,,,,NNE 10-21
+23,2022-05-11,,,notebook_page_2,4.10,6.00,TRUE,NNE,16,,,,NNE 16
+24,2022-06-14,,,notebook_page_2,4.13,0.50,TRUE,,,,,,
+25,2022-09-07,,,notebook_page_2,4.33,1.50,TRUE,NE,17,,Hurricane Earl,,Hurricane Earl; NE 17
+26,2022-09-08,,,notebook_page_2,4.82,10.00,TRUE,,,,Hurricane Earl,,Hurricane Earl
+27,2022-09-08,,,notebook_page_2,4.39,3.25,TRUE,NNE,8,,Hurricane Earl,,Hurricane Earl; NNE 8
+28,2022-09-09,,,notebook_page_2,4.30,2.50,TRUE,,,,Hurricane Earl,,Hurricane Earl
+29,2022-09-09,,,notebook_page_2,4.60,8.00,TRUE,NNE,5.7,,Hurricane Earl,,Hurricane Earl; NNE 5.7
+30,2022-09-10,,,notebook_page_2,4.20,0.50,TRUE,NNE,8.1,,Hurricane Earl,,Hurricane Earl; NNE 8.1
+31,2022-09-10,,,notebook_page_2,4.20,0.50,TRUE,SSE,6.9,,Hurricane Earl,,Hurricane Earl; SSE 6.9
+32,2022-09-30,,,notebook_page_2,4.66,7.00,TRUE,N,12-24,,Hurricane Ian,,Hurricane Ian; N 12-24
+33,2022-10-01,,,notebook_page_2,4.50,5.00,TRUE,NNW,17-25,,Hurricane Ian,,Hurricane Ian; NNW 17-25
+34,2022-10-03,,,notebook_page_2,4.25,1.00,TRUE,NW,12-18,,Hurricane Ian,,Hurricane Ian; NW 12-18
+35,2022-11-07,,,notebook_page_2,4.25,2.00,TRUE,SSW,20,,,,SSW 20
+36,2023-03-12,,,notebook_page_2,4.30,4.00,TRUE,NNE,4.3,,SC Low,,NNE 4.3; SC Low
+37,2023-03-14,,,notebook_page_2,4.30,4.00,TRUE,NW,17,,SC Low,,NW 17; SC Low
+38,2023-03-13,,,notebook_page_3,4.30,4.00,TRUE,,,,NC/VA Low,,NC/va Low
+39,2023-03-13,,,notebook_page_3,4.33,4.00,TRUE,,,,,,
+40,2023-04-30,,,notebook_page_3,3.94,0.00,FALSE,,,,,,No flood recorded
+41,2023-06-02,,,notebook_page_4,4.38,3.00,TRUE,ENE,12.8,,,,ENE 12.8
+42,2023-06-03,,,notebook_page_4,4.61,7.50,TRUE,,,,,Full moon,Full moon
+43,2023-06-05,,,notebook_page_4,4.20,0.00,FALSE,,,,,,0 inches
+44,2023-06-20,,,notebook_page_4,4.20,1.50,TRUE,,,,Rain,,Rain Rain
+45,2023-06-21,,,notebook_page_4,4.62,7.00,TRUE,NE,16-25,,Rain,,Rain; NE 16/25
+46,2023-06-21,,,notebook_page_4,4.50,5.00,TRUE,,0,,,,calm
+47,2023-08-28,,,notebook_page_4,4.07,,,,,,Hurricane Idalia,Full moon,Hurricane Idalia + full moon
+48,2023-08-29,,,notebook_page_4,4.15,,,,,,Hurricane Franklin,Full moon,Hurricane franklin + full m
+49,2023-08-30,,,notebook_page_4,4.10,,,,5,,,,wind 5 mph
+50,2023-08-31,09:49,AM,notebook_page_4,4.49,4.00,TRUE,NNE,15-25,,,,NNE 15-25; 9:49 AM
+51,2023-08-31,,,notebook_page_4,4.30,2.00,TRUE,,0,,,,wind 0
+52,2023-09-01,,,notebook_page_4,4.30,,,NE,light,,,,NE light
+53,2023-09-01,,,notebook_page_4,4.20,,,,,,,,
+54,2023-09-02,,,notebook_page_4,4.00,,,,,,,,
+55,2023-09-22,,,notebook_page_4,4.70,10.00,TRUE,,,,Ophelia,Lunar perigee,Ophelia; Lunar perigee
+56,2023-09-23,,,notebook_page_4,4.68,10.00,TRUE,,,,Ophelia,,Ophelia
+57,2023-09-23,,,notebook_page_4,5.00,12.00,TRUE,,,,Ophelia,,Ophelia
+58,2023-09-24,,,notebook_page_4,4.00,,,,,,Ophelia,,Ophelia
+59,2023-09-24,,,notebook_page_4,4.17,,,,,,Ophelia,,Ophelia
+60,2023-09-26,,PM,notebook_page_5,4.60,8.00,TRUE,,,,,,4.6 PM
+61,2023-09-27,,,notebook_page_5,4.68,8.00,TRUE,,,,,,
+62,2023-09-27,,,notebook_page_5,4.93,11.00,TRUE,,,,,,
+63,2023-09-28,,,notebook_page_5,4.70,10.00,TRUE,,,,,,
+64,2023-09-28,,,notebook_page_5,4.80,9.00,TRUE,,,,,,
+65,2023-09-29,,,notebook_page_5,4.38,6.00,TRUE,,,,,,
+66,2023-09-29,,,notebook_page_5,4.20,,,,,,,,
+67,2023-09-30,,,notebook_page_5,4.50,3.00,TRUE,,,,,,
+68,2023-09-30,,,notebook_page_5,4.00,,,,,,,,
+69,2023-10-01,,,notebook_page_5,4.45,4.00,TRUE,,,,,,
+70,2023-10-01,,,notebook_page_5,4.00,,,,,,,,
+71,2023-10-02,,,notebook_page_5,4.50,4.00,TRUE,,,,,,
+72,2023-10-02,,,notebook_page_5,3.80,0.00,FALSE,,,,,,(3.8) 0
+73,2023-10-03,,,notebook_page_5,4.20,,,,,,,,
+74,2023-10-15,,,notebook_page_5,4.50,,,N,16,,,,N 16 mph
+75,2023-10-16,,,notebook_page_5,4.00,,,"N, SSE","5, 16.1",19,,,N 5mph; SSE 16.1 19 gusts
+76,2023-12-18,,,notebook_page_5,4.22,,,,,,,,?
+77,2023-12-18,,,notebook_page_5,4.64,8.00,TRUE,W,8,,,,W 8
+78,2024-01-09,,,notebook_page_6,4.00,0.00,FALSE,"ESE, SSE, S","21, 24, 23, 15","39, 34, 40.3, 27",,,"21 ESE 39, 24 SSE 34, 23 SSE 40.3, 15 S 27"
+79,2024-01-13,,,notebook_page_6,4.09,0.50,TRUE,W,16.1,30,,,16.1 W 30
+80,2024-02-06,,,notebook_page_6,4.46,5.00,TRUE,,,,,,
+81,2024-02-07,,,notebook_page_6,4.51,6.00,TRUE,N,,,,,N
+82,2024-02-08,,,notebook_page_6,4.30,1.00,TRUE,N,,,,,N
+83,2024-02-11,,,notebook_page_6,4.08,0.00,FALSE,S,,34-39,,,S gusts 34-39
+84,2024-02-14,,,notebook_page_6,4.40,2.00,TRUE,,,,,,
+85,2024-03-09,,AM,notebook_page_6,4.61,7.00,TRUE,ESE,19.5,,,,4.61 A; ESE 19.5
+86,2024-03-09,,,notebook_page_6,4.20,3.00,TRUE,SSE,19.5,,,,4.20 ?; SSE 19.5
+87,2024-03-10,,,notebook_page_6,4.74,9.00,TRUE,WNW,10,,,,WNW 10
+88,2024-03-25,,,notebook_page_6,4.22,1.50,TRUE,,,,,,
+89,2024-03-26,,,notebook_page_6,4.15,5.00,TRUE,NE,6.9,,,,NE 6.9
+90,2024-03-26,,,notebook_page_6,4.60,6.00,TRUE,E,6,,,,E 6
+91,2024-03-27,,,notebook_page_6,4.19,1.00,TRUE,,,,,,
+92,2024-03-27,,,notebook_page_6,4.00,,,,,,,,
+93,2024-04-04,,,notebook_page_6,4.54,5.00,TRUE,,0,,,,calm
+94,2024-04-08,,,notebook_page_6,4.00,,,,,,,Solar Eclipse,"* Eclipse (2:04 Begin, 3:20 Max, 4:32 Ends)"
+95,2024-04-09,,AM,notebook_page_6,4.00,,,,,,,,4.0 AM
+96,2024-04-09,,PM,notebook_page_7,4.10,0.00,FALSE,,,,,,4.1 PM
+97,2024-04-10,,,notebook_page_7,4.10,0.00,FALSE,,,,,,
+98,2024-04-10,,,notebook_page_7,4.10,0.00,FALSE,,,,,,
+99,2024-04-11,,,notebook_page_7,4.10,0.00,FALSE,,,,,,
+100,2024-04-11,,,notebook_page_7,4.10,0.00,FALSE,,,,,,
+101,2024-04-11,,,notebook_page_7,4.10,0.00,FALSE,S,,,,,4.1 11th S
+102,2024-04-12,00:16,AM,notebook_page_7,4.62,,,S,,34-39,,,4.62 12th 12:16AM; S gusts 34-39
+103,2024-05-03,,,notebook_page_7,4.00,0.00,FALSE,,,,,,
+104,2024-05-04,,AM,notebook_page_7,4.09,0.00,FALSE,,,,,,4.09 A
+105,2024-05-04,,PM,notebook_page_7,4.02,0.00,FALSE,,,,,,4.02 P
+106,2024-05-05,,PM,notebook_page_7,4.06,0.00,FALSE,,,,,,4.06 P
+107,2024-05-06,,PM,notebook_page_7,4.02,0.00,FALSE,,,,,,4.02 P
+108,2024-05-08,,PM,notebook_page_7,4.06,0.00,FALSE,,,,,,4.06 P
+109,2024-05-09,,PM,notebook_page_7,4.13,0.00,FALSE,,,,,,4.13 P
+110,2024-05-11,,AM,notebook_page_7,4.92,0.00,FALSE,,,,,,4.92 A 0
+111,2024-05-11,,PM,notebook_page_7,4.05,0.00,FALSE,,,,,,4.05 P
+112,2024-05-12,,,notebook_page_7,4.30,0.00,FALSE,,,,,,
+113,2024-05-15,,,notebook_page_7,4.20,0.00,FALSE,,,,,,
+114,2024-05-20,,PM,notebook_page_7,3.93,,,"ESE, N",3.4,,,,3.93 P; ESE N 3.4mph
+115,2024-09-15,19:39,PM,notebook_page_8,4.08,0.00,FALSE,NNE-NE,10-15,,,,7:39p; NNE NE 10-15
+116,2024-09-16,08:00,AM,notebook_page_8,4.12,0.00,FALSE,NNE-NE,10-15,,,,8A; NNE NE 10-15
+117,2024-09-16,20:31,PM,notebook_page_8,4.52,5.00,TRUE,SE,5-10,,,,"8:31p; 5"""
+118,2024-09-17,08:52,AM,notebook_page_8,4.31,3.00,TRUE,SE,5-10,,,"Full moon, King tide",8:52A; Full moon / King tide
+119,2024-09-17,21:20,PM,notebook_page_8,4.57,5.50,TRUE,SE,5-10,,,King tide,"9:20p; 5 1/2""; King tide"
+120,2024-09-18,09:41,AM,notebook_page_8,4.52,5.00,TRUE,SE,5-10,,,,"9:41A; 5"""
+121,2024-09-18,22:08,PM,notebook_page_8,4.50,5.00,TRUE,SE,5-10,,,,"10:08p; 5"""
+122,2024-09-19,10:30,AM,notebook_page_8,4.64,8.00,TRUE,SE,5-10,,,,"10:30A; 8"""
+123,2024-09-19,22:56,PM,notebook_page_8,4.38,3.00,TRUE,SE,5-10,,,,"10:56p; 3"""
+124,2024-09-20,10:20,AM,notebook_page_8,4.78,9.50,TRUE,SE,5-10,,,,"10:20A; 9.5"""
+125,2024-09-20,22:45,PM,notebook_page_8,4.48,4.00,TRUE,SE,5-10,,,,"10:45p; 4"""
+126,2024-09-21,12:12,PM,notebook_page_8,4.96,11.75,TRUE,SE,5-10,,,,"12:12p; 11 3/4"""
+127,2024-09-22,00:36,AM,notebook_page_8,4.36,6.00,TRUE,SE,5-10,,,,"12:36A; 6"""
+128,2024-09-22,13:06,PM,notebook_page_8,5.20,14.50,TRUE,SE,5-10,,,,"1:06P; 14.5"""
+129,2024-09-23,01:31,AM,notebook_page_8,4.51,5.00,TRUE,SE,5-10,,,,"1:31A; 5"""
+130,2024-09-23,14:05,PM,notebook_page_8,4.83,10.75,TRUE,SE,5-10,,,,"2:05p; 10 3/4"""
+131,2024-09-24,02:31,AM,notebook_page_8,4.28,3.00,TRUE,SE,5-10,,,,"2:31A; 3"""
+132,2024-09-24,15:11,PM,notebook_page_8,4.57,7.00,TRUE,SE,5-10,,,,"3:11p; 7"""
+133,2024-09-25,03:38,AM,notebook_page_8,4.23,2.00,TRUE,SE,5-10,,,,"3:38A; 2"""
+134,2024-09-25,16:20,PM,notebook_page_8,4.38,2.25,TRUE,SE,5-10,,,,"4:20p; 2.25"""
+135,2024-09-26,04:47,AM,notebook_page_8,3.79,0.00,FALSE,,,,,,"4:47A; 0"""
+136,2024-09-26,17:27,PM,notebook_page_8,4.09,0.00,FALSE,,,,,,"5:27p; 0 (2-3"" in rd + ditches)"
+137,2024-09-27,05:52,AM,notebook_page_8,3.55,0.00,FALSE,,,,,,"5:52A; 0"""
+138,2024-09-27,18:26,PM,notebook_page_8,4.70,9.75,TRUE,SE,25.3,,Hurricane Helene,,"6:26p; 9 3/4""; SE 25.3 mph; Hurricane Helene"
+139,2024-09-27,18:20,PM,sticky_helene,,3.00,TRUE,SE,25.3,,Hurricane Helene,,"Helene: 6:20pm 3"""
+140,2024-09-27,19:30,PM,sticky_helene,4.70,9.75,TRUE,SE,25.3,,Hurricane Helene,,"Helene: 7:30pm 9 3/4"" (peak); Ware River 4.7; winds 25.3 mph SE"
+141,2024-09-27,20:20,PM,sticky_helene,,2.50,TRUE,SE,25.3,,Hurricane Helene,,"Helene: @ 8:20pm tide down 7 1/4"" to 2.5"""

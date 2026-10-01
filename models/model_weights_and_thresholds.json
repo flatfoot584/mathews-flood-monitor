@@ -1,0 +1,164 @@
+{
+  "model_metadata": {
+    "trained_at_utc": "2026-10-01 04:12:26 UTC",
+    "training_period": "2021-01-01 to 2023-12-31",
+    "test_period": "2024-01-01 to 2024-09-30 (holdout)",
+    "training_samples": 24803,
+    "test_samples": 6127
+  },
+  "stage1_nowcast_linear": {
+    "intercept": 5.189862531590273,
+    "coefficients": {
+      "yorktown_pred_tide_ft": 0.8112476112607183,
+      "yt_tide_diff_1h": 0.4670849080894001,
+      "yt_tide_diff_2h": 0.1820616716767841,
+      "windmill_surge_ft": 0.9799682863923999,
+      "surge_lag_1h": -0.5682310509618917,
+      "surge_lag_3h": 0.5227373576211337,
+      "surge_diff_3h": 0.45723092877119503,
+      "along_bay_wind_mph": -0.005372736094972977,
+      "along_bay_3h": 0.009582438326922217,
+      "along_bay_6h": -0.01108757072881664,
+      "along_bay_12h": 0.016744900788987258,
+      "along_bay_24h": 0.00010359855020666353,
+      "along_bay_stress": -8.47121338346151e-05,
+      "along_bay_stress_6h": 0.0009956734617484078,
+      "along_bay_stress_12h": -0.000519577288290618,
+      "cross_bay_wind_mph": 0.0078177254384247,
+      "cross_bay_6h": -0.004587270910911555,
+      "yorktown_wind_speed_mph": -0.0012090551145627353,
+      "yorktown_baro_mb": -0.004972816409063571,
+      "baro_diff_6h": -0.014068911414937942,
+      "baro_diff_12h": 0.00988881466671055,
+      "hour_sin": 0.01674448730859511,
+      "hour_cos": 0.007186634156636608,
+      "month_sin": -0.06099970542873129,
+      "month_cos": -0.034626071779146665
+    },
+    "test_r2": 0.9731,
+    "test_mae_ft": 0.1215,
+    "test_mae_in": 1.46
+  },
+  "stage1_forecast_linear": {
+    "intercept": 46.87058050142912,
+    "coefficients": {
+      "yorktown_pred_tide_ft": 0.7351491986865932,
+      "yt_tide_diff_1h": 0.7915807798028838,
+      "yt_tide_diff_2h": -0.18078422982935305,
+      "windmill_pred_tide_ft": -0.10927464302588231,
+      "wm_tide_diff_1h": 1.012637264092546,
+      "along_bay_wind_mph": -0.0009977216344874086,
+      "along_bay_3h": 0.016670691263799216,
+      "along_bay_6h": -0.006916009387797842,
+      "along_bay_12h": -0.030191997158551,
+      "along_bay_24h": 0.049285541187314236,
+      "along_bay_stress": 3.2999584745143135e-05,
+      "along_bay_stress_6h": 0.0009228024001482858,
+      "along_bay_stress_12h": 0.0008702588234581372,
+      "cross_bay_wind_mph": 0.0046903587795566306,
+      "cross_bay_6h": 0.017484904974832433,
+      "yorktown_wind_speed_mph": -0.0028950361075277004,
+      "yorktown_baro_mb": -0.04517694232195926,
+      "baro_diff_6h": 0.017217769604677743,
+      "baro_diff_12h": 0.002457038353396529,
+      "hour_sin": 0.021414521985691867,
+      "hour_cos": -0.031976058013137874,
+      "month_sin": -0.05954359533494349,
+      "month_cos": 0.11757960743446895
+    },
+    "test_r2": 0.7209,
+    "test_mae_ft": 0.3954
+  },
+  "stage2_inundation_model": {
+    "flood_stage_threshold_ft": 3.99,
+    "slope_in_per_ft": 10.95,
+    "intercept_in": -43.69,
+    "formula": "flood_depth_in = max(0.0, 10.95 * stage_ft - 43.69)",
+    "ground_truth_r2": 0.8001,
+    "ground_truth_mae_in": 1.22
+  },
+  "risk_severity_tiers": {
+    "Tier 0": {
+      "range_ft": "< 4.0 ft",
+      "depth_range_in": "0\"",
+      "desc": "Normal / Safe"
+    },
+    "Tier 1": {
+      "range_ft": "4.0 - 4.3 ft",
+      "depth_range_in": "1\" - 4\"",
+      "desc": "Nuisance / Ditch Full"
+    },
+    "Tier 2": {
+      "range_ft": "4.4 - 4.7 ft",
+      "depth_range_in": "5\" - 8\"",
+      "desc": "Moderate Inundation (Driveway / Road blocked)"
+    },
+    "Tier 3": {
+      "range_ft": ">= 4.8 ft",
+      "depth_range_in": "9\" - 15\"+",
+      "desc": "Severe Inundation (Impassable)"
+    }
+  },
+  "compound_pluvial_model": {
+    "backwater_onset_stage_ft": 3.80,
+    "backwater_full_blockage_stage_ft": 4.20,
+    "concentration_factor": 1.4,
+    "formula": "trapped_rain_in = rain_6h_in * clip((stage - 3.8) / 0.4, 0.0, 1.0) * 1.4",
+    "total_depth_formula": "total_depth_in = tidal_depth_in + trapped_rain_in"
+  },
+  "micro_topography_sectors": {
+    "ditches": {
+      "name": "Tidal Ditches & Marsh Channels",
+      "invert_mllw_ft": 2.50,
+      "bank_mllw_ft": 3.99,
+      "invert_navd88_ft": 0.86
+    },
+    "road_apron": {
+      "name": "Road Shoulder & Culvert Invert",
+      "invert_mllw_ft": 4.00,
+      "bank_mllw_ft": 4.39,
+      "invert_navd88_ft": 2.36
+    },
+    "main_driveway": {
+      "name": "Main Driveway (Vehicle Route)",
+      "invert_mllw_ft": 4.40,
+      "bank_mllw_ft": 4.79,
+      "invert_navd88_ft": 2.76
+    },
+    "yard_lawn": {
+      "name": "Residential Lawn & Grounds",
+      "invert_mllw_ft": 4.60,
+      "bank_mllw_ft": 4.89,
+      "invert_navd88_ft": 2.96
+    },
+    "garage_foundation": {
+      "name": "Garage Apron & Residence High Ground",
+      "invert_mllw_ft": 4.90,
+      "bank_mllw_ft": 99.0,
+      "invert_navd88_ft": 3.26
+    }
+  },
+  "vehicle_passability_matrix": {
+    "ALL_VEHICLES_PASSABLE": {
+      "driveway_depth_max_in": 0.0,
+      "road_depth_max_in": 1.0,
+      "code": "GREEN",
+      "desc": "Driveway and road dry. Normal conditions for all passenger vehicles."
+    },
+    "CAUTION_LOW_CLEARANCE_HAZARDOUS": {
+      "driveway_depth_max_in": 3.5,
+      "code": "YELLOW",
+      "desc": "1 to 3 inches on driveway apron. Sedans can pass with caution."
+    },
+    "SEDANS_BLOCKED_SUVS_ONLY": {
+      "driveway_depth_max_in": 7.5,
+      "code": "ORANGE",
+      "desc": "4 to 7 inches on main driveway. Passenger cars will stall or float. Trucks/SUVs only."
+    },
+    "CRITICAL_IMPASSABLE": {
+      "driveway_depth_min_in": 8.0,
+      "code": "RED",
+      "desc": "8 to 15+ inches of deep saltwater. Road and driveway impassable to all civilian vehicles."
+    }
+  }
+}

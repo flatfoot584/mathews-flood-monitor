@@ -1,0 +1,80 @@
+name: Update Mathews County Flood Monitor
+
+on:
+  schedule:
+    # Run every 30 minutes
+    - cron: '*/30 * * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'latest_status.json'
+      - 'forecast_48h.csv'
+      - 'realtime_recent_observations.csv'
+      - 'flood_dashboard.html'
+      - 'index.html'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+jobs:
+  update-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Real-Time Ingestion Pipeline
+        run: |
+          python3 ingest_realtime.py
+
+      - name: Generate Interactive HTML Dashboard
+        run: |
+          python3 generate_dashboard.py
+
+      - name: Commit and push updated observations & forecast
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add latest_status.json forecast_48h.csv realtime_recent_observations.csv flood_dashboard.html index.html
+          if git diff --staged --quiet; then
+            echo "No changes detected. Skipping git commit."
+          else
+            git commit -m "Automated flood data & dashboard update [skip ci]"
+            git push
+          fi
+
+      - name: Prepare GitHub Pages site directory
+        run: |
+          mkdir -p _site
+          cp index.html _site/
+          cp flood_dashboard.html _site/
+          cp latest_status.json _site/
+          cp forecast_48h.csv _site/
+          cp realtime_recent_observations.csv _site/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '_site'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

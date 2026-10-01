@@ -1,0 +1,79 @@
+{
+  "evaluation_timestamp": "2026-10-01 04:12:26 UTC",
+  "metrics": {
+    "nowcast_linear": {
+      "label": "Nowcast Linear Baseline",
+      "n_samples": 6127,
+      "r2": 0.9731,
+      "rmse_ft": 0.1599,
+      "mae_ft": 0.1215,
+      "rmse_in": 1.92,
+      "mae_in": 1.46,
+      "high_water_n": 126,
+      "high_water_rmse_ft": 0.1995,
+      "high_water_mae_ft": 0.1453,
+      "high_water_mae_in": 1.74
+    },
+    "nowcast_lgbm": {
+      "label": "Nowcast LightGBM",
+      "n_samples": 6127,
+      "r2": 0.9722,
+      "rmse_ft": 0.1625,
+      "mae_ft": 0.1214,
+      "rmse_in": 1.95,
+      "mae_in": 1.46,
+      "high_water_n": 126,
+      "high_water_rmse_ft": 0.2737,
+      "high_water_mae_ft": 0.2161,
+      "high_water_mae_in": 2.59
+    },
+    "forecast_linear": {
+      "label": "Forecast Linear Baseline",
+      "n_samples": 6135,
+      "r2": 0.7209,
+      "rmse_ft": 0.5148,
+      "mae_ft": 0.3954,
+      "rmse_in": 6.18,
+      "mae_in": 4.75,
+      "high_water_n": 126,
+      "high_water_rmse_ft": 0.906,
+      "high_water_mae_ft": 0.7984,
+      "high_water_mae_in": 9.58
+    },
+    "forecast_lgbm": {
+      "label": "Forecast LightGBM",
+      "n_samples": 6135,
+      "r2": 0.7067,
+      "rmse_ft": 0.5276,
+      "mae_ft": 0.4022,
+      "rmse_in": 6.33,
+      "mae_in": 4.83,
+      "high_water_n": 126,
+      "high_water_rmse_ft": 1.0184,
+      "high_water_mae_ft": 0.9075,
+      "high_water_mae_in": 10.89
+    },
+    "stage2_ground_truth": {
+      "n_observations": 119,
+      "r2": 0.8001,
+      "mae_inches": 1.22,
+      "rmse_inches": 1.72
+    }
+  },
+  "storm_case_studies": {
+    "hurricane_helene": {
+      "observed_peak_stage_ft": 4.56,
+      "observed_flood_depth_in": 9.75,
+      "nowcast_lgbm_predicted_stage_ft": 4.18,
+      "nowcast_linear_predicted_stage_ft": 4.27,
+      "predicted_flood_depth_in": 2.11
+    },
+    "september_king_tide": {
+      "observed_peak_stage_ft": 5.15,
+      "observed_flood_depth_in": 14.5,
+      "nowcast_lgbm_predicted_stage_ft": 4.51,
+      "nowcast_linear_predicted_stage_ft": 5.07,
+      "predicted_flood_depth_in": 5.72
+    }
+  }
+}

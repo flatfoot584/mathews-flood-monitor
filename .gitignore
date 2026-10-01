@@ -1,0 +1,28 @@
+# Python virtual environments & bytecode
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# macOS system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Editor & IDE directories
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Google Drive web shortcuts (pointer files with no local content)
+*.gsheet
+*.gdoc
+
+# Temporary intermediate cache chunks
+ware_river_historical_cache/
