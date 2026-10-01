@@ -190,4 +190,9 @@ python3 generate_dashboard.py
   * Initialized Git repository on `main` branch.
   * Staged and committed 50 project files (`60e4bbb`), ignoring `.venv/` and intermediate caches.
   * Configured `README.md` with full project background, formulas, and usage.
+  * Upgraded GitHub Actions to native Node.js 24 releases (`checkout@v7`, `setup-python@v7`, `upload-pages-artifact@v5`, `deploy-pages@v5`), eliminating all deprecation warnings.
+* **Live Website**:
+  * Public Dashboard: `https://flatfoot584.github.io/mathews-flood-monitor/`
+  * Execution: Runs every 30 minutes in ~50 seconds with automated data commits and Pages deployments.
+
 
