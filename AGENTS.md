@@ -7,14 +7,17 @@
 ## 1. Geographic & Hydrologic Context
 
 * **Location**: Mathews County, Virginia (Middle Peninsula).
-* **Primary Ground-Truth Benchmark Location**:
-  * **Coordinates**: `37.420183, -76.406550` (Daniel Ave, Blackwater, Mathews County, VA 23128).
+* **Community Monitored Area**:
+  * **Neighborhood**: **Mobjack Bay Estates & Blackwater Community** (enclosing Daniel Ave, Bayshore Ave, River Rd, Julian St, Hobday St, Little Ave, Allview St, Bunny Rabbit Ln).
+  * **Primary Benchmark Coordinates**: `37.420183, -76.406550` (Daniel Ave & Julian St, Blackwater, Mathews County, VA 23128).
   * **Local Drainage Basin**: Blackwater Creek $\to$ North River $\to$ Mobjack Bay ($\approx 3.6\text{ miles}$ east of Ware River WRVV2 gauge).
   * **USGS 3DEP 1-meter LiDAR Elevation Ground-Truth**:
     * **Driveway Benchmark**: $2.761\text{ ft NAVD88} \equiv 4.401\text{ ft MLLW}$ ($+1.64\text{ ft}$ MLLW datum offset). Directly and independently confirms our empirical regression threshold ($4.40\text{ ft MLLW}$) to within $0.01\text{ ft}$!
     * **Roadside Ditch Culvert Invert**: $2.41\text{ ft NAVD88} \equiv 4.05\text{ ft MLLW}$ (validates the $3.99\text{ ft}$ ditch brim overflow tipping point).
     * **Blackwater Creek Marsh Margin**: $0.55\text{ ft MLLW}$ (wet during standard high tides).
     * **Garage / Residence Elevation Pad**: $3.26\text{ ft NAVD88} \equiv 4.90\text{ ft MLLW}$ (validates the Tier 3 severe property hazard threshold).
+  * **Community Street Network LiDAR Inverts**:
+    * Bayshore Ave ($3.75'\text{ MLLW}$), Julian St ($3.78'\text{ MLLW}$), Daniel Ave ($3.88'\text{ MLLW}$), Allview St ($4.13'\text{ MLLW}$), River Rd ($4.14'\text{ MLLW}$), Hobday St ($4.22'\text{ MLLW}$), Little Ave ($4.23'\text{ MLLW}$), Bunny Rabbit Ln ($4.45'\text{ MLLW}$). All warning zones adhere strictly to dry land (zero in open water).
 * **Surrounding Water Bodies**:
   * **Chesapeake Bay** to the East.
   * **Mobjack Bay** to the South (fed by the East, North, Ware, and Severn Rivers).

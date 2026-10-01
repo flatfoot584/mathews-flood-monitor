@@ -262,8 +262,48 @@ def build_index_html(status, obs_rows, fcst_rows):
     tier = curr.get("flood_risk_tier", 0)
     tier_info = TIER_STYLES.get(tier, TIER_STYLES[0])
     passability = curr.get("vehicle_passability", "ALL VEHICLES PASSABLE")
-    passability_desc = curr.get("vehicle_passability_desc", "Normal conditions for all passenger vehicles.")
     sectors = curr.get("site_sectors", {})
+    streets = curr.get("community_streets", {})
+    if not streets or not sectors:
+        import micro_topography
+        stg_val = float(stage) if isinstance(stage, (int, float)) else 3.34
+        st_eval = micro_topography.evaluate_compound_inundation(stg_val)
+        if not streets:
+            streets = st_eval.get("streets", {})
+        if not sectors:
+            sectors = st_eval.get("sectors", {})
+
+    street_cards_html = ""
+    for st_name, st_info in (streets or {}).items():
+        st_depth = st_info.get("depth_in", 0.0)
+        st_code = st_info.get("code", "GREEN")
+        st_inv_mllw = st_info.get("invert_mllw_ft", 4.0)
+        st_inv_navd = st_info.get("invert_navd88_ft", round(st_inv_mllw - 1.64, 2))
+        
+        badge_cls = "bg-emerald-50 text-emerald-800 border-emerald-200" if st_code == "GREEN" else \
+                    "bg-amber-50 text-amber-800 border-amber-200" if st_code == "YELLOW" else \
+                    "bg-orange-50 text-orange-800 border-orange-200" if st_code == "ORANGE" else \
+                    "bg-red-50 text-red-800 border-red-200"
+                    
+        dot_cls = "bg-emerald-500" if st_code == "GREEN" else \
+                  "bg-amber-500" if st_code == "YELLOW" else \
+                  "bg-orange-500" if st_code == "ORANGE" else "bg-red-600"
+                  
+        street_cards_html += f"""
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 transition">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-xs text-slate-900">{st_name}</span>
+              <span class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border {badge_cls}">
+                <span class="w-1.5 h-1.5 rounded-full {dot_cls}"></span>
+                {st_info.get("status", "Dry")}
+              </span>
+            </div>
+            <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
+              <span class="text-[11px]">Invert: {st_inv_mllw}' MLLW ({st_inv_navd}' NAVD)</span>
+              <span class="font-bold text-slate-800 font-mono">{st_depth}" Water</span>
+            </div>
+          </div>
+        """
 
     wind_spd = curr.get("yorktown_wind_speed_mph", "N/A")
     wind_dir = curr.get("yorktown_wind_dir_cardinal", "N/A")
@@ -430,11 +470,11 @@ def build_index_html(status, obs_rows, fcst_rows):
       <div class="p-5 sm:p-6 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-slate-50/50">
         <div>
           <div class="flex items-center gap-2">
-            <h2 class="text-lg sm:text-xl font-bold text-slate-900">Mathews County Real-Time Flood Map</h2>
-            <span class="px-2.5 py-0.5 text-xs font-semibold bg-amber-100 text-amber-900 rounded-full font-mono">37.420183, -76.406550</span>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-900">Blackwater &amp; Mobjack Bay Estates Real-Time Flood Map</h2>
+            <span class="px-2.5 py-0.5 text-xs font-semibold bg-amber-100 text-amber-900 rounded-full font-mono">Community Monitoring Zone</span>
           </div>
           <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
-            Centered on <strong>Daniel Ave &amp; Blackwater Creek</strong> (Primary Observation Benchmark &bull; 2.76' NAVD88 LiDAR) with regional NOAA/USGS sensors.
+            Hyper-local elevation monitoring enclosing <strong>Daniel Ave, Bayshore Ave, River Rd, and connecting neighborhood streets</strong>, calibrated to USGS 1-meter LiDAR on dry land.
           </p>
         </div>
 
@@ -442,8 +482,11 @@ def build_index_html(status, obs_rows, fcst_rows):
         <div class="flex flex-wrap items-center gap-2">
           <!-- Quick Zoom Buttons -->
           <div class="flex items-center bg-slate-200/80 p-1 rounded-xl text-xs font-medium">
-            <button id="btn-zoom-property" class="px-2.5 py-1.5 rounded-lg bg-white shadow-sm text-slate-900 font-semibold transition" title="Zoom to Daniel Ave property">
-              <i class="fa-solid fa-crosshairs text-sky-600 mr-1"></i> Focus Property
+            <button id="btn-zoom-community" class="px-2.5 py-1.5 rounded-lg bg-white shadow-sm text-slate-900 font-semibold transition" title="Fit full community monitoring area">
+              <i class="fa-solid fa-draw-polygon text-amber-600 mr-1"></i> Community Area
+            </button>
+            <button id="btn-zoom-property" class="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition" title="Zoom to Daniel Ave Primary Benchmark">
+              <i class="fa-solid fa-crosshairs text-sky-600 mr-1"></i> Focus Benchmark
             </button>
             <button id="btn-zoom-county" class="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition" title="Zoom out to county sensor network">
               <i class="fa-solid fa-earth-americas text-slate-500 mr-1"></i> County View
@@ -467,10 +510,14 @@ def build_index_html(status, obs_rows, fcst_rows):
         <div id="flood-map"></div>
 
         <!-- Floating Map Legend -->
-        <div class="absolute bottom-5 right-5 z-[400] bg-white/95 backdrop-blur-md p-3.5 rounded-xl border border-slate-200 shadow-lg text-xs space-y-1.5 pointer-events-auto max-w-[210px]">
+        <div class="absolute bottom-5 right-5 z-[400] bg-white/95 backdrop-blur-md p-3.5 rounded-xl border border-slate-200 shadow-lg text-xs space-y-1.5 pointer-events-auto max-w-[220px]">
           <div class="font-bold text-slate-900 text-[11px] uppercase tracking-wider mb-1 flex items-center justify-between">
             <span>Risk Severity Legend</span>
             <i class="fa-solid fa-layer-group text-slate-400"></i>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-4 h-0.5 border-t-2 border-dashed border-amber-500 shrink-0"></span>
+            <span class="text-slate-700 font-medium text-[11px]">Community Boundary</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="w-3.5 h-3.5 rounded bg-emerald-500 shrink-0"></span>
@@ -478,15 +525,15 @@ def build_index_html(status, obs_rows, fcst_rows):
           </div>
           <div class="flex items-center gap-2">
             <span class="w-3.5 h-3.5 rounded bg-amber-500 shrink-0"></span>
-            <span class="text-slate-700 font-medium">Nuisance / Ditch Full (4.0-4.3')</span>
+            <span class="text-slate-700 font-medium">Nuisance / Puddles (4.0-4.3')</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="w-3.5 h-3.5 rounded bg-orange-500 shrink-0"></span>
-            <span class="text-slate-700 font-medium">Driveway Inundated (4.4-4.7')</span>
+            <span class="text-slate-700 font-medium">Roads Flooded (4.4-4.7')</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="w-3.5 h-3.5 rounded bg-red-600 shrink-0"></span>
-            <span class="text-slate-700 font-medium">Property Submerged (&ge; 4.8')</span>
+            <span class="text-slate-700 font-medium">Severe / Impassable (&ge; 4.8')</span>
           </div>
         </div>
       </div>
@@ -499,16 +546,16 @@ def build_index_html(status, obs_rows, fcst_rows):
       </div>
     </section>
 
-    <!-- 4. PROPERTY ELEVATION CROSS-SECTION (MICRO-TOPOGRAPHY PROFILE) -->
-    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+    <!-- 4. COMMUNITY ELEVATION PROFILE & STREET PASSABILITY -->
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
             <i class="fa-solid fa-stairs text-sky-600"></i>
-            Property Elevation Cross-Section Profile
+            Community Elevation Profile &amp; Street Passability
           </h2>
           <p class="text-xs sm:text-sm text-slate-500">
-            How water breaches our site as Ware River stage climbs (Threshold: 3.99 ft MLLW = 2.35 ft NAVD88).
+            Micro-topographical water encroachment across Mobjack Bay Estates &amp; Blackwater Peninsula (Threshold: 3.99 ft MLLW = 2.35 ft NAVD88).
           </p>
         </div>
         <div class="text-xs font-mono bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg self-start sm:self-auto font-medium">
@@ -517,24 +564,24 @@ def build_index_html(status, obs_rows, fcst_rows):
       </div>
 
       <!-- Sector Progress Bars -->
-      <div class="space-y-3.5 pt-2">
+      <div class="space-y-3.5 pt-1">
         <!-- Sector 1: Ditches -->
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-water text-sky-500 mr-1.5"></i> 1. Tidal Ditches & Marsh Invert (Elev: 2.50' MLLW / 0.86' NAVD88)</span>
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-water text-sky-500 mr-1.5"></i> 1. Bayshore Waterfront Ditches &amp; Swales (Elev: 3.99' MLLW / 2.35' NAVD88)</span>
             <span class="font-mono font-semibold {'text-sky-700' if sectors.get('ditches', {}).get('depth_in', 0) > 0 else 'text-slate-400'}">
-              {sectors.get('ditches', {}).get('depth_in', 0)}" Water ({sectors.get('ditches', {}).get('status', 'NORMAL')})
+              {sectors.get('ditches', {}).get('depth_in', 0)}" Water ({sectors.get('ditches', {}).get('status', 'DRY')})
             </span>
           </div>
           <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-            <div class="bg-sky-500 h-full rounded-full transition-all" style="width: {min(100, max(5, int(sectors.get('ditches', {}).get('depth_in', 0) * 10)))}%"></div>
+            <div class="bg-sky-500 h-full rounded-full transition-all" style="width: {min(100, max(2, int(sectors.get('ditches', {}).get('depth_in', 0) * 15)))}%"></div>
           </div>
         </div>
 
         <!-- Sector 2: Road Apron / Culvert -->
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-road text-amber-500 mr-1.5"></i> 2. Road Shoulder & Culvert Invert (Elev: 4.00' MLLW / 2.36' NAVD88)</span>
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-road text-amber-500 mr-1.5"></i> 2. Lower Residential Blocks — Allview / Hobday / Little Ave South (Elev: 4.15' MLLW / 2.51' NAVD88)</span>
             <span class="font-mono font-semibold {'text-amber-700' if sectors.get('road_apron', {}).get('depth_in', 0) > 0 else 'text-emerald-700'}">
               {sectors.get('road_apron', {}).get('depth_in', 0)}" Water ({sectors.get('road_apron', {}).get('status', 'DRY')})
             </span>
@@ -547,7 +594,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         <!-- Sector 3: Main Driveway -->
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-car text-orange-500 mr-1.5"></i> 3. Main Driveway — Vehicle Access Route (Elev: 4.40' MLLW / 2.76' NAVD88)</span>
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-car text-orange-500 mr-1.5"></i> 3. Daniel Ave Central Spine &amp; Julian St — Primary Route (Elev: 4.40' MLLW / 2.76' NAVD88)</span>
             <span class="font-mono font-semibold {'text-orange-700 font-bold' if sectors.get('main_driveway', {}).get('depth_in', 0) > 0 else 'text-emerald-700 font-bold'}">
               {sectors.get('main_driveway', {}).get('depth_in', 0)}" Water ({sectors.get('main_driveway', {}).get('status', 'DRY')})
             </span>
@@ -560,27 +607,41 @@ def build_index_html(status, obs_rows, fcst_rows):
         <!-- Sector 4: Residential Lawn -->
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-tree text-emerald-600 mr-1.5"></i> 4. Residential Lawn & Grounds (Elev: 4.60' MLLW / 2.96' NAVD88)</span>
-            <span class="font-mono font-semibold {'text-red-700 font-bold' if sectors.get('lawn_grounds', {}).get('depth_in', 0) > 0 else 'text-emerald-700'}">
-              {sectors.get('lawn_grounds', {}).get('depth_in', 0)}" Water ({sectors.get('lawn_grounds', {}).get('status', 'DRY')})
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-tree text-emerald-600 mr-1.5"></i> 4. Upper Residential Grounds &amp; Northern Lots (Elev: 4.60' MLLW / 2.96' NAVD88)</span>
+            <span class="font-mono font-semibold {'text-red-700 font-bold' if sectors.get('yard_lawn', {}).get('depth_in', 0) > 0 else 'text-emerald-700'}">
+              {sectors.get('yard_lawn', {}).get('depth_in', 0)}" Water ({sectors.get('yard_lawn', {}).get('status', 'DRY')})
             </span>
           </div>
           <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-            <div class="{'bg-red-500' if sectors.get('lawn_grounds', {}).get('depth_in', 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {min(100, max(2, int(sectors.get('lawn_grounds', {}).get('depth_in', 0) * 15)))}%"></div>
+            <div class="{'bg-red-500' if sectors.get('yard_lawn', {}).get('depth_in', 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {min(100, max(2, int(sectors.get('yard_lawn', {}).get('depth_in', 0) * 15)))}%"></div>
           </div>
         </div>
 
         <!-- Sector 5: Garage High Ground -->
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-house text-blue-600 mr-1.5"></i> 5. Garage Apron & Residence High Ground (Elev: 4.90' MLLW / 3.26' NAVD88)</span>
-            <span class="font-mono font-semibold {'text-red-700 font-bold' if sectors.get('garage_high_ground', {}).get('depth_in', 0) > 0 else 'text-emerald-700'}">
-              {sectors.get('garage_high_ground', {}).get('depth_in', 0)}" Water ({sectors.get('garage_high_ground', {}).get('status', 'SAFE')})
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-house text-blue-600 mr-1.5"></i> 5. River Road North &amp; Ridge High Ground Pads (Elev: 4.90' MLLW / 3.26' NAVD88)</span>
+            <span class="font-mono font-semibold {'text-red-700 font-bold' if sectors.get('garage_foundation', {}).get('depth_in', 0) > 0 else 'text-emerald-700'}">
+              {sectors.get('garage_foundation', {}).get('depth_in', 0)}" Water ({sectors.get('garage_foundation', {}).get('status', 'SAFE')})
             </span>
           </div>
           <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-            <div class="{'bg-red-600' if sectors.get('garage_high_ground', {}).get('depth_in', 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {min(100, max(2, int(sectors.get('garage_high_ground', {}).get('depth_in', 0) * 15)))}%"></div>
+            <div class="{'bg-red-600' if sectors.get('garage_foundation', {}).get('depth_in', 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {min(100, max(2, int(sectors.get('garage_foundation', {}).get('depth_in', 0) * 15)))}%"></div>
           </div>
+        </div>
+      </div>
+
+      <!-- Community Street Passability Board -->
+      <div class="pt-5 border-t border-slate-200">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+            <i class="fa-solid fa-route text-sky-600"></i>
+            Community Street Passability &amp; LiDAR Invert Elevations
+          </h3>
+          <span class="text-xs text-slate-500">Mobjack Bay Estates &amp; Blackwater Road Network</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {street_cards_html}
         </div>
       </div>
     </section>
@@ -793,57 +854,177 @@ def build_index_html(status, obs_rows, fcst_rows):
       </div>
     `);
 
-    // Property Micro-Topography Zones (Anchored directly to Daniel Ave & Blackwater Creek)
-    const propertyZones = [
+    // 1. Mobjack Bay Estates & Blackwater Community Monitored Perimeter (Yellow Boundary)
+    const communityPerimeterCoords = [
+      [37.4223, -76.4116], [37.4223, -76.4095], [37.4222, -76.4070],
+      [37.422202, -76.407005], [37.422168, -76.406812], [37.422058, -76.406547],
+      [37.421872, -76.406392], [37.421717, -76.406211], [37.421448, -76.406030],
+      [37.421186, -76.406132], [37.420658, -76.405830], [37.420328, -76.405371],
+      [37.419700, -76.404220], [37.419409, -76.404346], [37.418845, -76.404211],
+      [37.418608, -76.403204], [37.418547, -76.404976], [37.418421, -76.405516],
+      [37.418280, -76.406629], [37.418290, -76.407025], [37.418132, -76.408074],
+      [37.418147, -76.409089], [37.418186, -76.409639], [37.417983, -76.410625],
+      [37.418111, -76.411128], [37.4181, -76.4116], [37.4223, -76.4116]
+    ];
+
+    const perimeterPoly = L.polygon(communityPerimeterCoords, {{
+      color: '#eab308', // Amber/Yellow matching user highlight
+      weight: 3.5,
+      dashArray: '8, 6',
+      fillColor: '#fef08a',
+      fillOpacity: 0.08
+    }}).addTo(map);
+
+    perimeterPoly.bindPopup(`
+      <div class="p-1.5 space-y-1">
+        <div class="font-bold text-sm text-amber-900 flex items-center gap-1.5">
+          <i class="fa-solid fa-shield-halved text-amber-600"></i>
+          Community Flood Monitoring Zone
+        </div>
+        <div class="text-xs text-slate-700 font-medium">Mobjack Bay Estates &amp; Blackwater Peninsula</div>
+        <div class="text-[11px] text-slate-500">Enclosing Daniel Ave, Bayshore Ave, River Rd, and interior connecting cross streets.</div>
+        <div class="text-[11px] font-mono text-slate-600 bg-amber-50 p-1 rounded border border-amber-200">Calibrated to USGS 1-meter LiDAR on dry land.</div>
+      </div>
+    `);
+
+    // 2. Community Micro-Topography Land Elevation Zones (100% on Dry Land — Zero in Water)
+    const communityZones = [
       {{
-        name: "Tidal Ditches & Marsh Inlets (Blackwater Creek Tributary)",
-        elev: 2.50,
+        name: "Bayshore Waterfront Ditches & Shoreline Swales",
+        elev: 3.99,
+        desc: "Lowest swales and roadside ditch culverts along Bayshore Ave. First to overflow at 3.99 ft.",
         coords: [
-          [37.4208, -76.4055], [37.4216, -76.4045],
-          [37.4212, -76.4038], [37.4203, -76.4048]
+          [37.4184, -76.4111], [37.4184, -76.4092], [37.4185, -76.4073],
+          [37.4186, -76.4054], [37.4186, -76.4047], [37.4187, -76.4038],
+          [37.418608, -76.403204], [37.418547, -76.404976], [37.418421, -76.405516],
+          [37.418280, -76.406629], [37.418290, -76.407025], [37.418132, -76.408074],
+          [37.418147, -76.409089], [37.418186, -76.409639], [37.417983, -76.410625],
+          [37.418111, -76.411128]
         ]
       }},
       {{
-        name: "Road Shoulder & Culvert Swale (Daniel Ave Low Point)",
-        elev: 4.00,
+        name: "Lower Residential Blocks (Allview / Hobday / Little Ave South)",
+        elev: 4.15,
+        desc: "Southern residential parcels and lower cross street dips (1 to 4 inches standing water).",
         coords: [
-          [37.4204, -76.4062], [37.4208, -76.4055],
-          [37.4203, -76.4048], [37.4199, -76.4056]
+          [37.4194, -76.4111], [37.4194, -76.4068], [37.4186, -76.4054],
+          [37.4185, -76.4073], [37.4184, -76.4092], [37.4184, -76.4111]
         ]
       }},
       {{
-        name: "Main Driveway Access Route (Vehicle Travel Path)",
+        name: "Daniel Ave Central Spine & Julian St (Benchmark Corridor)",
         elev: 4.40,
+        desc: "Primary community artery & Observation Benchmark. Sedans blocked when water exceeds 4 inches.",
         coords: [
-          [37.420183, -76.406550], [37.4204, -76.4062],
-          [37.4199, -76.4056], [37.4197, -76.4060]
+          [37.4206, -76.4116], [37.4206, -76.4068], [37.4201, -76.4050],
+          [37.4194, -76.4045], [37.4194, -76.4068], [37.4194, -76.4116]
         ]
       }},
       {{
-        name: "Residential Lawn & Grounds",
+        name: "Upper Residential Grounds & Northern Lots",
         elev: 4.60,
+        desc: "Elevated residential lawns and northern lots along Daniel Ave. Trucks and SUVs required.",
         coords: [
-          [37.4199, -76.4068], [37.420183, -76.406550],
-          [37.4197, -76.4060], [37.4194, -76.4064]
+          [37.4223, -76.4116], [37.4223, -76.4075], [37.4206, -76.4075],
+          [37.4206, -76.4116]
         ]
       }},
       {{
-        name: "Garage Apron & Residence High Ground",
+        name: "River Road North & Ridge High Ground Pads",
         elev: 4.90,
+        desc: "Elevated building footprint and highest ground along River Road. Impassable only in severe storms.",
         coords: [
-          [37.4197, -76.4071], [37.4199, -76.4068],
-          [37.4194, -76.4064], [37.4192, -76.4068]
+          [37.4222, -76.4075], [37.4222, -76.4070], [37.422058, -76.406547],
+          [37.421872, -76.406392], [37.421717, -76.406211], [37.421448, -76.406030],
+          [37.421186, -76.406132], [37.420658, -76.405830], [37.4206, -76.4068],
+          [37.4206, -76.4075]
         ]
       }}
     ];
 
-    let zonePolygons = [];
+    // 3. Community Street Network Centerlines (Loaded directly from OSM)
+    const communityStreetData = {{
+      "Bayshore Avenue": {{
+        elev: 3.75,
+        desc: "Waterfront road. West & east dips flood first.",
+        coords: [
+          [37.418612, -76.405419], [37.41858, -76.405771], [37.418556, -76.406277],
+          [37.418525, -76.406948], [37.41852, -76.406995], [37.418469, -76.407802],
+          [37.418451, -76.408076], [37.418417, -76.408605], [37.418403, -76.409227]
+        ]
+      }},
+      "Daniel Avenue": {{
+        elev: 4.40,
+        desc: "Main community spine. Primary Observation Benchmark at 4.40 ft.",
+        coords: [
+          [37.418612, -76.405419], [37.418614, -76.405388], [37.418638, -76.405025],
+          [37.41864, -76.404743], [37.418698, -76.404708], [37.419085, -76.404812],
+          [37.41964, -76.405232], [37.420138, -76.40569], [37.420183, -76.406550],
+          [37.420307, -76.407368], [37.42026, -76.408129], [37.420215, -76.408918],
+          [37.420186, -76.409627], [37.420128, -76.410866], [37.42012, -76.411600]
+        ]
+      }},
+      "Julian Street": {{
+        elev: 3.78,
+        desc: "Connecting street between Daniel Ave and Bayshore Ave.",
+        coords: [
+          [37.420307, -76.407368], [37.419501, -76.407203], [37.419026, -76.407095],
+          [37.41852, -76.406995]
+        ]
+      }},
+      "Allview Street": {{
+        elev: 4.13,
+        desc: "Western interior cross street.",
+        coords: [
+          [37.418403, -76.409227], [37.418605, -76.409328], [37.419033, -76.409405],
+          [37.419515, -76.409495], [37.420186, -76.409627]
+        ]
+      }},
+      "River Road": {{
+        elev: 4.14,
+        desc: "Northern shoreline access road.",
+        coords: [
+          [37.420375, -76.406297], [37.420803, -76.406602], [37.421278, -76.406765],
+          [37.421438, -76.406817], [37.421918, -76.407001], [37.421975, -76.407028]
+        ]
+      }},
+      "Hobday Street": {{
+        elev: 4.22,
+        desc: "Interior cross street between Daniel Ave & Bayshore Ave.",
+        coords: [
+          [37.42026, -76.408129], [37.419952, -76.408083], [37.4194, -76.407984],
+          [37.418841, -76.407868], [37.418469, -76.407802]
+        ]
+      }},
+      "Little Avenue": {{
+        elev: 4.23,
+        desc: "Interior cross street rising towards Daniel Ave.",
+        coords: [
+          [37.420215, -76.408918], [37.419698, -76.408835], [37.419093, -76.408721],
+          [37.418767, -76.40865], [37.418417, -76.408605]
+        ]
+      }},
+      "Bunny Rabbit Lane": {{
+        elev: 4.45,
+        desc: "Western community boundary road on elevated ridge.",
+        coords: [
+          [37.420128, -76.410866], [37.419844, -76.410825], [37.41937, -76.410734],
+          [37.418645, -76.410585], [37.418322, -76.410533]
+        ]
+      }}
+    }};
 
-    function renderPropertyZones(stageVal) {{
-      zonePolygons.forEach(p => map.removeLayer(p));
-      zonePolygons = [];
+    let zoneLayers = [];
+    let streetLayers = [];
 
-      propertyZones.forEach(z => {{
+    function renderCommunityMap(stageVal) {{
+      zoneLayers.forEach(l => map.removeLayer(l));
+      zoneLayers = [];
+      streetLayers.forEach(l => map.removeLayer(l));
+      streetLayers = [];
+
+      // 1. Render Elevation Zones (Dry land)
+      communityZones.forEach(z => {{
         let color = '#10b981'; // Green
         let depthIn = 0;
         let statusTxt = 'Dry & Clear';
@@ -862,30 +1043,70 @@ def build_index_html(status, obs_rows, fcst_rows):
           }}
         }} else if (z.elev - stageVal < 0.25) {{
           color = '#f59e0b';
-          statusTxt = 'Caution: Water within 3 inches of brim';
+          statusTxt = 'Caution: Water within 3 inches of bank';
         }}
 
         const poly = L.polygon(z.coords, {{
           color: color,
-          weight: 2,
+          weight: 1.5,
           fillColor: color,
-          fillOpacity: 0.55
+          fillOpacity: 0.45
         }}).addTo(map);
 
         poly.bindPopup(`
-          <div class="p-1 space-y-1">
+          <div class="p-1.5 space-y-1">
             <div class="font-bold text-sm text-slate-900">${{z.name}}</div>
-            <div class="text-xs text-slate-500">Elevation: ${{z.elev}}' MLLW</div>
-            <div class="text-xs font-semibold" style="color: ${{color}}">${{statusTxt}}</div>
+            <div class="text-xs text-slate-600 font-medium">${{z.desc}}</div>
+            <div class="text-xs font-mono text-slate-500">LiDAR Ground Invert: ${{z.elev}}' MLLW (${{(z.elev - 1.64).toFixed(2)}}' NAVD88)</div>
+            <div class="text-xs font-bold pt-1 border-t border-slate-100" style="color: ${{color}}">Status: ${{statusTxt}}</div>
           </div>
         `);
-
-        zonePolygons.push(poly);
+        zoneLayers.push(poly);
       }});
+
+      // 2. Render Street Corridors
+      for (const [stName, stData] of Object.entries(communityStreetData)) {{
+        let stColor = '#059669'; // Emerald
+        let stDepth = 0;
+        let stStatus = 'All Vehicles Passable (Dry)';
+
+        if (stageVal >= stData.elev) {{
+          stDepth = Math.round((stageVal - stData.elev) * 12 * 10) / 10;
+          if (stDepth < 3.5) {{
+            stColor = '#d97706'; // Amber
+            stStatus = `Caution: Puddles / Ditch Full (${{stDepth}}")`;
+          }} else if (stDepth < 7.5) {{
+            stColor = '#ea580c'; // Orange
+            stStatus = `Sedans Blocked — Trucks/SUVs Only (${{stDepth}}")`;
+          }} else {{
+            stColor = '#dc2626'; // Red
+            stStatus = `Critical — Impassable Deep Water (${{stDepth}}")`;
+          }}
+        }}
+
+        const line = L.polyline(stData.coords, {{
+          color: stColor,
+          weight: 5,
+          opacity: 0.9,
+          lineJoin: 'round'
+        }}).addTo(map);
+
+        line.bindPopup(`
+          <div class="p-1.5 space-y-1">
+            <div class="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+              <i class="fa-solid fa-road text-slate-500"></i> ${{stName}}
+            </div>
+            <div class="text-xs text-slate-600">${{stData.desc}}</div>
+            <div class="text-xs font-mono text-slate-500">Street Invert: ${{stData.elev}}' MLLW (${{(stData.elev - 1.64).toFixed(2)}}' NAVD88)</div>
+            <div class="text-xs font-bold pt-1 border-t border-slate-100" style="color: ${{stColor}}">Live Passability: ${{stStatus}}</div>
+          </div>
+        `);
+        streetLayers.push(line);
+      }}
     }}
 
     // Initial render with current conditions
-    renderPropertyZones(parseFloat(curr.ware_river_stage_mllw_ft || 3.1));
+    renderCommunityMap(parseFloat(curr.ware_river_stage_mllw_ft || 3.1));
 
     // Toggle button handlers
     const btnCurrent = document.getElementById('btn-map-current');
@@ -896,7 +1117,7 @@ def build_index_html(status, obs_rows, fcst_rows):
       btnCurrent.classList.remove('text-slate-600');
       btnPeak.classList.remove('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
       btnPeak.classList.add('text-slate-600');
-      renderPropertyZones(parseFloat(curr.ware_river_stage_mllw_ft || 3.1));
+      renderCommunityMap(parseFloat(curr.ware_river_stage_mllw_ft || 3.1));
     }});
 
     btnPeak.addEventListener('click', () => {{
@@ -904,17 +1125,39 @@ def build_index_html(status, obs_rows, fcst_rows):
       btnPeak.classList.remove('text-slate-600');
       btnCurrent.classList.remove('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
       btnCurrent.classList.add('text-slate-600');
-      renderPropertyZones(parseFloat(outl.peak_forecast_stage_mllw_ft || 3.5));
+      renderCommunityMap(parseFloat(outl.peak_forecast_stage_mllw_ft || 3.5));
     }});
 
     // Quick Zoom Button Handlers
+    const btnZoomComm = document.getElementById('btn-zoom-community');
     const btnZoomProp = document.getElementById('btn-zoom-property');
     const btnZoomCounty = document.getElementById('btn-zoom-county');
+
+    if (btnZoomComm) {{
+      btnZoomComm.addEventListener('click', () => {{
+        btnZoomComm.classList.add('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
+        btnZoomComm.classList.remove('text-slate-600');
+        if (btnZoomProp) {{
+          btnZoomProp.classList.remove('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
+          btnZoomProp.classList.add('text-slate-600');
+        }}
+        if (btnZoomCounty) {{
+          btnZoomCounty.classList.remove('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
+          btnZoomCounty.classList.add('text-slate-600');
+        }}
+        map.fitBounds(perimeterPoly.getBounds().pad(0.06), {{ duration: 1.2 }});
+        perimeterPoly.openPopup();
+      }});
+    }}
 
     if (btnZoomProp) {{
       btnZoomProp.addEventListener('click', () => {{
         btnZoomProp.classList.add('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
         btnZoomProp.classList.remove('text-slate-600');
+        if (btnZoomComm) {{
+          btnZoomComm.classList.remove('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
+          btnZoomComm.classList.add('text-slate-600');
+        }}
         if (btnZoomCounty) {{
           btnZoomCounty.classList.remove('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
           btnZoomCounty.classList.add('text-slate-600');
@@ -928,6 +1171,10 @@ def build_index_html(status, obs_rows, fcst_rows):
       btnZoomCounty.addEventListener('click', () => {{
         btnZoomCounty.classList.add('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
         btnZoomCounty.classList.remove('text-slate-600');
+        if (btnZoomComm) {{
+          btnZoomComm.classList.remove('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
+          btnZoomComm.classList.add('text-slate-600');
+        }}
         if (btnZoomProp) {{
           btnZoomProp.classList.remove('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
           btnZoomProp.classList.add('text-slate-600');

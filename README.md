@@ -56,7 +56,8 @@ Stage 2: Hyper-Local Ground Inundation Model
 
 Compound Pluvial & Micro-Topography Engine (micro_topography.py)
   ├── Models ditch backwater restriction: β = clip((Stage - 3.8) / 0.4, 0, 1)
-  ├── 5 Micro-elevation sectors: Ditches (2.5'), Apron (4.0'), Driveway (4.4'), Yard (4.6'), Garage (4.9')
+  ├── 5 Community dry-land sectors: Bayshore Swale (3.99'), Lower Blocks (4.15'), Daniel Spine (4.40'), Yards (4.60'), High Ridge (4.90')
+  ├── 8-Street LiDAR network: Bayshore, Daniel, Julian, Allview, River Rd, Hobday, Little, Bunny Rabbit
   └── Vehicle Passability Matrix: Evaluates passenger cars vs. high-clearance trucks
 ```
 

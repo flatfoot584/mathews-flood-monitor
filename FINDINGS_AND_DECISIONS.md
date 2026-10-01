@@ -226,6 +226,33 @@ python3 generate_dashboard.py
   * Residence / garage pad: $3.26\text{ ft NAVD88}$ ($4.90\text{ ft MLLW}$)
 * **Map Centering**: Anchored the interactive Leaflet map view and micro-topography flood zones directly to `(37.420183, -76.406550)` at zoom 14, with a dedicated benchmark star marker and quick zoom toggle.
 
+---
+
+## 8. Community-Wide Monitoring Boundary & Dry-Land Elevation Sectors
+
+* **Problem Identified**: The initial benchmark zones were represented as abstract rectangular corridors that extended diagonally northeast into the open waters of Blackwater Creek / North River, while failing to monitor the surrounding residential community where residents live and drive.
+* **Expanded Community Monitoring Perimeter**:
+  * Adopted the full community boundary for **Mobjack Bay Estates & Blackwater Peninsula** matching the user-defined perimeter:
+    * **North**: Northern residential property line from River Road west to Bunny Rabbit Lane (`lat ~37.4223`).
+    * **South**: Southern shoreline along Bayshore Avenue facing Mobjack Bay (`lat ~37.4181`).
+    * **East**: Water-facing shoreline from the eastern point north along River Road.
+    * **West**: Western neighborhood line west of Bunny Rabbit Lane (`lon -76.4116`).
+* **Strict Shoreline Adherence (Zero Polygons in Water)**:
+  * Extracted 152 nodes from the official OpenStreetMap coastline (Way 472426793).
+  * Traced all perimeter boundaries and micro-topography zones strictly on the landward side of the coastline. No warnings or polygons extend into the water.
+* **8-Street LiDAR Network & Passability Matrix**:
+  * Queried USGS 1-meter LiDAR across the entire neighborhood road network:
+    1. **Bayshore Avenue**: Invert $3.75\text{ ft MLLW}$ ($2.11\text{ ft NAVD88}$) — waterfront dips flood first.
+    2. **Julian Street**: Invert $3.78\text{ ft MLLW}$ ($2.14\text{ ft NAVD88}$) — south culvert dip.
+    3. **Daniel Avenue**: Invert $3.88\text{ ft MLLW}$ ($2.24\text{ ft NAVD88}$); Benchmark $4.40\text{ ft MLLW}$ ($2.76\text{ ft NAVD88}$).
+    4. **Allview Street**: Invert $4.13\text{ ft MLLW}$ ($2.49\text{ ft NAVD88}$) — shallow puddles above $4.13\text{ ft}$.
+    5. **River Road**: Invert $4.14\text{ ft MLLW}$ ($2.50\text{ ft NAVD88}$) — mid-section dips to $4.14\text{ ft}$.
+    6. **Hobday Street**: Invert $4.22\text{ ft MLLW}$ ($2.58\text{ ft NAVD88}$).
+    7. **Little Avenue**: Invert $4.23\text{ ft MLLW}$ ($2.59\text{ ft NAVD88}$).
+    8. **Bunny Rabbit Lane**: Invert $4.45\text{ ft MLLW}$ ($2.81\text{ ft NAVD88}$) — elevated western ridge.
+  * Added live interactive street passability overlays on the map and a community street status board on the dashboard.
+* **Quick-Zoom Controls**: Added `[Community Area]` (fits the full yellow neighborhood perimeter), `[Focus Benchmark]` (centers on Daniel Ave at zoom 16), and `[County View]` (zooms to regional sensor network).
+
 
 
 

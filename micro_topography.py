@@ -22,40 +22,96 @@ BENCHMARK_LOCATION = "Daniel Ave, Blackwater, Mathews County, VA"
 DATUM_OFFSET_NAVD88_MLLW = -1.64  # NAVD88 = MLLW - 1.64 ft
 FLOOD_STAGE_THRESHOLD = 3.99       # ft MLLW (ditch bank full)
 
+COMMUNITY_NAME = "Mobjack Bay Estates & Blackwater Community"
+
+# Community street network profiles anchored to USGS 3DEP 1-meter LiDAR:
+# Invert elevations indicate the lowest dip where tidal backwater begins accumulating.
+COMMUNITY_STREET_PROFILES = {
+    "Bayshore Avenue": {
+        "invert_mllw_ft": 3.75,
+        "invert_navd88_ft": 2.11,
+        "high_mllw_ft": 4.36,
+        "description": "Southern waterfront roadway. West and east dips flood first."
+    },
+    "Julian Street": {
+        "invert_mllw_ft": 3.78,
+        "invert_navd88_ft": 2.14,
+        "high_mllw_ft": 4.36,
+        "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
+    },
+    "Daniel Avenue": {
+        "invert_mllw_ft": 3.88,
+        "invert_navd88_ft": 2.24,
+        "high_mllw_ft": 4.61,
+        "benchmark_mllw_ft": 4.40,
+        "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+    },
+    "Allview Street": {
+        "invert_mllw_ft": 4.13,
+        "invert_navd88_ft": 2.49,
+        "high_mllw_ft": 4.25,
+        "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
+    },
+    "River Road": {
+        "invert_mllw_ft": 4.14,
+        "invert_navd88_ft": 2.50,
+        "high_mllw_ft": 4.53,
+        "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+    },
+    "Hobday Street": {
+        "invert_mllw_ft": 4.22,
+        "invert_navd88_ft": 2.58,
+        "high_mllw_ft": 4.30,
+        "description": "Interior cross street between Daniel Ave and Bayshore Ave."
+    },
+    "Little Avenue": {
+        "invert_mllw_ft": 4.23,
+        "invert_navd88_ft": 2.59,
+        "high_mllw_ft": 4.61,
+        "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+    },
+    "Bunny Rabbit Lane": {
+        "invert_mllw_ft": 4.45,
+        "invert_navd88_ft": 2.81,
+        "high_mllw_ft": 4.55,
+        "description": "Western community boundary lane. Elevated ridge terrain."
+    }
+}
+
 # Property elevation sectors anchored to USGS 3DEP 1-meter LiDAR at 37.420183, -76.406550:
 # - Ditch culvert invert: 2.41' NAVD88 (4.05' MLLW)
 # - Main driveway benchmark: 2.76' NAVD88 (4.40' MLLW)
 # - Residence / garage pad: 3.26' NAVD88 (4.90' MLLW)
 SECTOR_PROFILES = {
     "ditches": {
-        "name": "Tidal Ditches & Marsh Channels",
-        "invert_mllw_ft": 2.50,
-        "bank_mllw_ft": 3.99,
-        "description": "Intertidal marsh creeks and drainage swales. Gravity drainage to Ware River."
+        "name": "Bayshore Waterfront Ditch & Shoreline Swales",
+        "invert_mllw_ft": 3.99,
+        "bank_mllw_ft": 4.14,
+        "description": "Low drainage swales and ditch culvert inverts. Floods first at 3.99 ft."
     },
     "road_apron": {
-        "name": "Road Shoulder & Culvert Invert",
-        "invert_mllw_ft": 4.00,
+        "name": "Lower Residential Blocks (Allview / Hobday / Little Ave South)",
+        "invert_mllw_ft": 4.15,
         "bank_mllw_ft": 4.39,
-        "description": "Lowest driveway entrance dip and road culvert apron."
+        "description": "Southern residential blocks and lower cross streets (1 to 4 inches puddling)."
     },
     "main_driveway": {
-        "name": "Main Driveway (Vehicle Route)",
+        "name": "Daniel Ave Central Spine & Julian St (Benchmark Route)",
         "invert_mllw_ft": 4.40,
         "bank_mllw_ft": 4.79,
-        "description": "Critical travel route. Passenger cars blocked when water exceeds 4 inches."
+        "description": "Primary community travel route. Passenger cars blocked above 4 inches."
     },
     "yard_lawn": {
-        "name": "Residential Lawn & Grounds",
+        "name": "Upper Residential Grounds & Northern Lots",
         "invert_mllw_ft": 4.60,
         "bank_mllw_ft": 4.89,
-        "description": "Open yard and property interior. Trucks and SUVs required."
+        "description": "Open yards and north property interiors. Trucks and SUVs required."
     },
     "garage_foundation": {
-        "name": "Garage Apron & Residence High Ground",
+        "name": "River Road North & Ridge High Ground Pads",
         "invert_mllw_ft": 4.90,
         "bank_mllw_ft": 99.0,
-        "description": "Elevated building footprint and high ground foundation."
+        "description": "Elevated building footprint and highest community ground."
     }
 }
 
@@ -130,7 +186,37 @@ def evaluate_compound_inundation(stage_mllw_ft, rain_rolling_6h_in=0.0):
             "is_submerged": sec_depth > 0.0
         }
 
-    # 4. Vehicle passability assessment
+    # 4. Community street network assessment
+    street_results = {}
+    for st_name, st_info in COMMUNITY_STREET_PROFILES.items():
+        st_inv = st_info["invert_mllw_ft"]
+        if stage_mllw_ft < st_inv:
+            st_depth = 0.0
+            st_status = "Dry & Passable"
+            st_code = "GREEN"
+        else:
+            st_rise = stage_mllw_ft - st_inv
+            st_depth = round(st_rise * 11.2 + pluvial_trapped_in, 1)
+            if st_depth < 3.5:
+                st_status = f"Puddles & Ditch Full ({st_depth}\")"
+                st_code = "YELLOW"
+            elif st_depth < 7.5:
+                st_status = f"Submerged — Sedans Blocked ({st_depth}\")"
+                st_code = "ORANGE"
+            else:
+                st_status = f"Impassable Deep Water ({st_depth}\")"
+                st_code = "RED"
+        street_results[st_name] = {
+            "name": st_name,
+            "invert_mllw_ft": st_inv,
+            "invert_navd88_ft": st_info["invert_navd88_ft"],
+            "depth_in": st_depth,
+            "status": st_status,
+            "code": st_code,
+            "description": st_info["description"]
+        }
+
+    # 5. Vehicle passability assessment
     driveway_depth = sector_results["main_driveway"]["depth_in"]
     road_depth = sector_results["road_apron"]["depth_in"]
     
@@ -152,6 +238,7 @@ def evaluate_compound_inundation(stage_mllw_ft, rain_rolling_6h_in=0.0):
         passability_desc = "8 to 15+ inches of deep saltwater. Road & driveway impassable. High-clearance emergency only."
 
     return {
+        "community_name": COMMUNITY_NAME,
         "stage_mllw_ft": round(stage_mllw_ft, 2),
         "stage_navd88_ft": round(stage_mllw_ft + DATUM_OFFSET_NAVD88_MLLW, 2),
         "rainfall_6h_in": round(float(rain_rolling_6h_in or 0.0), 2),
@@ -162,7 +249,8 @@ def evaluate_compound_inundation(stage_mllw_ft, rain_rolling_6h_in=0.0):
         "vehicle_passability_code": passability_code,
         "vehicle_passability_label": passability_label,
         "vehicle_passability_desc": passability_desc,
-        "sectors": sector_results
+        "sectors": sector_results,
+        "streets": street_results
     }
 
 if __name__ == "__main__":
