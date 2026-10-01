@@ -482,7 +482,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         <div class="flex items-center gap-4">
           <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle text-[8px] text-sky-600"></i> Click any sensor pin or property polygon on the map to view detailed depths and sensor readings.</span>
         </div>
-        <div class="text-slate-400 text-[11px]">Basemap &copy; OpenStreetMap & CartoDB Positron</div>
+        <div class="text-slate-400 text-[11px]">Basemap &copy; OpenStreetMap &amp; Esri (Zero API Key &bull; Open GIS)</div>
       </div>
     </section>
 
@@ -678,11 +678,28 @@ def build_index_html(status, obs_rows, fcst_rows):
       scrollWheelZoom: false
     }});
 
-    // Add CartoDB Positron / Voyager Neutral Basemap
-    L.tileLayer('https://{{s}}.basemaps.cartocdn.com/rastertiles/voyager/{{z}}/{{x}}/{{y}}{{r}}.png', {{
-      attribution: '&copy; OpenStreetMap contributors & CartoDB',
-      maxZoom: 18
+    // Base tile layers (100% free, zero API key required, zero watermarks)
+    const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
     }}).addTo(map);
+
+    const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{{z}}/{{y}}/{{x}}', {{
+      maxZoom: 19,
+      attribution: 'Tiles &copy; Esri &mdash; USGS, NOAA'
+    }});
+
+    const esriOcean = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{{z}}/{{y}}/{{x}}', {{
+      maxZoom: 13,
+      attribution: 'Tiles &copy; Esri &mdash; NOAA, GEBCO'
+    }});
+
+    // Add basemap layer control
+    L.control.layers({{
+      "OpenStreetMap (Streets & Water)": osmLayer,
+      "Esri Topographic": esriTopo,
+      "Esri Marine / Ocean": esriOcean
+    }}, null, {{ position: 'topright' }}).addTo(map);
 
     // Sensor Station Markers
     const wrvv2Marker = L.circleMarker([37.4082, -76.4714], {{
