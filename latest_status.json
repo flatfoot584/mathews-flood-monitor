@@ -1,11 +1,11 @@
 {
-  "status_generated_at_local": "2026-10-01 11:29:47 EDT",
-  "status_generated_at_utc": "2026-10-01 15:29:47 UTC",
+  "status_generated_at_local": "2026-10-01 11:56:56 EDT",
+  "status_generated_at_utc": "2026-10-01 15:56:56 UTC",
   "system_location": "Mathews County, Virginia (Ware River / Mobjack Bay Basin)",
   "current_conditions": {
-    "observation_timestamp_local": "2026-10-01 11:00:00 EDT",
-    "ware_river_stage_mllw_ft": 2.97,
-    "ware_river_stage_navd88_ft": 1.33,
+    "observation_timestamp_local": "2026-10-01 11:30:00 EDT",
+    "ware_river_stage_mllw_ft": 3.34,
+    "ware_river_stage_navd88_ft": 1.7,
     "action_stage_threshold_ft": 4.0,
     "flood_inundation_threshold_ft": 3.99,
     "estimated_local_flood_depth_in": 0.0,
@@ -20,7 +20,7 @@
         "name": "Tidal Ditches & Marsh Channels",
         "invert_mllw_ft": 2.5,
         "invert_navd88_ft": 0.86,
-        "depth_in": 5.3,
+        "depth_in": 9.4,
         "status": "SUBMERGED",
         "is_submerged": true
       },
@@ -57,18 +57,18 @@
         "is_submerged": false
       }
     },
-    "yorktown_wind_speed_mph": 6.49,
-    "yorktown_wind_dir_deg": 266.0,
-    "yorktown_wind_dir_cardinal": "W",
-    "yorktown_wind_gust_mph": 10.52,
-    "along_bay_wind_vector_mph": -2.64,
-    "cross_bay_wind_vector_mph": -5.93,
-    "yorktown_baro_pressure_mb": 1020.8,
-    "yorktown_air_temp_f": 78.4,
-    "yorktown_water_level_mllw_ft": 3.028,
-    "yorktown_storm_surge_residual_ft": 0.56,
-    "windmill_point_water_level_mllw_ft": 1.745,
-    "windmill_point_storm_surge_residual_ft": 0.79
+    "yorktown_wind_speed_mph": 6.26,
+    "yorktown_wind_dir_deg": 231.0,
+    "yorktown_wind_dir_cardinal": "SW",
+    "yorktown_wind_gust_mph": 9.39,
+    "along_bay_wind_vector_mph": -5.37,
+    "cross_bay_wind_vector_mph": -3.22,
+    "yorktown_baro_pressure_mb": 1020.7,
+    "yorktown_air_temp_f": 78.8,
+    "yorktown_water_level_mllw_ft": 3.251,
+    "yorktown_storm_surge_residual_ft": 0.52,
+    "windmill_point_water_level_mllw_ft": 1.886,
+    "windmill_point_storm_surge_residual_ft": 0.74
   },
   "forecast_48h_outlook": {
     "peak_forecast_stage_mllw_ft": 3.6,
