@@ -175,3 +175,19 @@ python3 generate_dashboard.py
 .venv/bin/python train_predictive_models.py
 ```
 * Re-trains models when new ground-truth observations or storm seasons are added.
+
+---
+
+## 5. Cloud Deployment & Automation (GitHub Actions + GitHub Pages)
+
+* **Architecture**: Free serverless execution and public static hosting.
+  * `.github/workflows/update_flood_monitor.yml`: Runs on a 30-minute cron schedule (`*/30 * * * *`) and on demand (`workflow_dispatch`).
+  * Executes `ingest_realtime.py` (NOAA NWPS, CO-OPS, NWS Wakefield QPF) and `generate_dashboard.py`.
+  * Preserves data history by committing updated JSON/CSV files back to the repository.
+  * Deploys `index.html` (and `latest_status.json`, `forecast_48h.csv`) to GitHub Pages artifact directory `_site`.
+* **Zero Dependency Runner**: All operational scripts (`ingest_realtime.py`, `micro_topography.py`, `generate_dashboard.py`, `check_alerts.py`) use the Python Standard Library (`urllib`, `json`, `csv`, `zoneinfo`), requiring 0 seconds of pip package installs on GitHub runners.
+* **Repository State**:
+  * Initialized Git repository on `main` branch.
+  * Staged and committed 50 project files (`60e4bbb`), ignoring `.venv/` and intermediate caches.
+  * Configured `README.md` with full project background, formulas, and usage.
+
