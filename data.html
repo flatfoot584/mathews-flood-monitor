@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Storm History & Data Archive — Mathews County Flood Monitor</title>
+  <meta name="description" content="Historical storm comparisons (Helene, Ian, Idalia, Ophelia) and open data downloads for Mathews County, VA.">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased">
+
+  
+    <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50 shadow-md">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <!-- Logo & Brand -->
+          <div class="flex items-center gap-3">
+            <a href="index.html" class="flex items-center gap-3 group">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-blue-700 flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform">
+                <i class="fa-solid fa-water text-lg text-white"></i>
+              </div>
+              <div>
+                <div class="font-bold text-base sm:text-lg tracking-tight flex items-center gap-2 text-white">
+                  Mathews County Flood Monitor
+                </div>
+                <div class="text-[11px] text-slate-400 font-medium">Middle Peninsula &bull; Mobjack Bay, VA</div>
+              </div>
+            </a>
+          </div>
+
+          <!-- Desktop Navigation -->
+          <nav class="hidden lg:flex items-center gap-1">
+            
+        <a href="index.html" class="px-3.5 py-2 text-sm rounded-lg transition-all flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-water text-xs"></i>
+          <span>Live Monitor</span>
+        </a>
+        
+        <a href="index.html#map-section" class="px-3.5 py-2 text-sm rounded-lg transition-all flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-map-location-dot text-xs"></i>
+          <span>Flood Map</span>
+        </a>
+        
+        <a href="about.html" class="px-3.5 py-2 text-sm rounded-lg transition-all flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-book-open text-xs"></i>
+          <span>About & History</span>
+        </a>
+        
+        <a href="guide.html" class="px-3.5 py-2 text-sm rounded-lg transition-all flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-ruler-vertical text-xs"></i>
+          <span>Flood Guide & Tiers</span>
+        </a>
+        
+        <a href="data.html" class="px-3.5 py-2 text-sm rounded-lg transition-all flex items-center gap-2 bg-sky-900/60 text-sky-200 border-b-2 border-sky-400 font-semibold">
+          <i class="fa-solid fa-database text-xs"></i>
+          <span>Storm Archive & Data</span>
+        </a>
+        
+          </nav>
+
+          <!-- Status Pill & Mobile Menu Button -->
+          <div class="flex items-center gap-3">
+            <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 border-emerald-300 border text-xs font-semibold text-emerald-800">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>LIVE: Normal / Safe</span>
+            </div>
+
+            <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 focus:outline-none" aria-label="Toggle Navigation">
+              <i class="fa-solid fa-bars text-lg"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-800 py-3 space-y-1">
+          <div class="px-4 py-2 sm:hidden mb-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 border-emerald-300 border text-xs font-semibold text-emerald-800">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>LIVE STATUS: Normal / Safe</span>
+            </div>
+          </div>
+          
+        <a href="index.html" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-water w-5 text-center mr-2"></i> Live Monitor
+        </a>
+        
+        <a href="index.html#map-section" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-map-location-dot w-5 text-center mr-2"></i> Flood Map
+        </a>
+        
+        <a href="about.html" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-book-open w-5 text-center mr-2"></i> About & History
+        </a>
+        
+        <a href="guide.html" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-ruler-vertical w-5 text-center mr-2"></i> Flood Guide & Tiers
+        </a>
+        
+        <a href="data.html" class="block px-4 py-2.5 rounded-lg text-sm transition bg-sky-900/50 text-sky-200 font-semibold">
+          <i class="fa-solid fa-database w-5 text-center mr-2"></i> Storm Archive & Data
+        </a>
+        
+        </div>
+      </div>
+    </header>
+    
+
+  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 w-full">
+
+    <!-- Hero Header -->
+    <section class="space-y-3">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-100 text-sky-800 text-xs font-bold uppercase tracking-wider">
+        <i class="fa-solid fa-database"></i> Storm History & Open Data
+      </div>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+        Historical Storm Archive & Data Center
+      </h1>
+      <p class="text-lg text-slate-600 leading-relaxed max-w-3xl">
+        Transparent open data access: browse 141 ground-truth observer measurements from 2021 to 2024 and download our live automated datasets.
+      </p>
+    </section>
+
+    <!-- 1. NOTABLE STORMS COMPARISON -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-hurricane text-sky-600"></i>
+          Major Storm Benchmark Events
+        </h2>
+        <span class="text-xs text-slate-500">2021–2024 Observed</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-sky-700 uppercase tracking-wider">Hurricane Helene</span>
+            <span class="text-xs text-slate-500 font-mono">Sep 27, 2024</span>
+          </div>
+          <div class="flex items-baseline justify-between pt-1">
+            <div class="text-xl font-black text-slate-900 font-mono">4.70 ft</div>
+            <div class="text-sm font-bold text-orange-600 font-mono">Depth: 9.75"</div>
+          </div>
+          <div class="text-xs text-slate-600 flex items-center justify-between border-t border-slate-100 pt-2">
+            <span>Wind: SE 25.3 mph</span>
+            <span class="text-[11px] text-slate-500 italic">Rapid tropical surge backing up ditches</span>
+          </div>
+        </div>
+        
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-sky-700 uppercase tracking-wider">Hurricane Ophelia</span>
+            <span class="text-xs text-slate-500 font-mono">Sep 23, 2023</span>
+          </div>
+          <div class="flex items-baseline justify-between pt-1">
+            <div class="text-xl font-black text-slate-900 font-mono">4.87 ft</div>
+            <div class="text-sm font-bold text-orange-600 font-mono">Depth: 14.50"</div>
+          </div>
+          <div class="text-xs text-slate-600 flex items-center justify-between border-t border-slate-100 pt-2">
+            <span>Wind: SE 30+ mph</span>
+            <span class="text-[11px] text-slate-500 italic">Highest flood depth in recent observer records</span>
+          </div>
+        </div>
+        
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-sky-700 uppercase tracking-wider">Hurricane Ian</span>
+            <span class="text-xs text-slate-500 font-mono">Sep 30 – Oct 3, 2022</span>
+          </div>
+          <div class="flex items-baseline justify-between pt-1">
+            <div class="text-xl font-black text-slate-900 font-mono">4.66 ft</div>
+            <div class="text-sm font-bold text-orange-600 font-mono">Depth: 7.00"</div>
+          </div>
+          <div class="text-xs text-slate-600 flex items-center justify-between border-t border-slate-100 pt-2">
+            <span>Wind: N 12–24 mph</span>
+            <span class="text-[11px] text-slate-500 italic">Multi-day prolonged northerly wind set-up</span>
+          </div>
+        </div>
+        
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-sky-700 uppercase tracking-wider">Hurricane Idalia</span>
+            <span class="text-xs text-slate-500 font-mono">Aug 28–29, 2023</span>
+          </div>
+          <div class="flex items-baseline justify-between pt-1">
+            <div class="text-xl font-black text-slate-900 font-mono">4.61 ft</div>
+            <div class="text-sm font-bold text-orange-600 font-mono">Depth: 7.50"</div>
+          </div>
+          <div class="text-xs text-slate-600 flex items-center justify-between border-t border-slate-100 pt-2">
+            <span>Wind: E 15–20 mph</span>
+            <span class="text-[11px] text-slate-500 italic">King Tide alignment plus tropical swell</span>
+          </div>
+        </div>
+        
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-sky-700 uppercase tracking-wider">Hurricane Earl</span>
+            <span class="text-xs text-slate-500 font-mono">Sep 7–10, 2022</span>
+          </div>
+          <div class="flex items-baseline justify-between pt-1">
+            <div class="text-xl font-black text-slate-900 font-mono">4.82 ft</div>
+            <div class="text-sm font-bold text-orange-600 font-mono">Depth: 10.00"</div>
+          </div>
+          <div class="text-xs text-slate-600 flex items-center justify-between border-t border-slate-100 pt-2">
+            <span>Wind: NNE 17 mph</span>
+            <span class="text-[11px] text-slate-500 italic">Driveway submerged for multiple tidal cycles</span>
+          </div>
+        </div>
+        
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-sky-700 uppercase tracking-wider">Winter Storm (Snow/Nor'easter)</span>
+            <span class="text-xs text-slate-500 font-mono">Jan 3, 2022</span>
+          </div>
+          <div class="flex items-baseline justify-between pt-1">
+            <div class="text-xl font-black text-slate-900 font-mono">5.22 ft</div>
+            <div class="text-sm font-bold text-orange-600 font-mono">Depth: 11.00"</div>
+          </div>
+          <div class="text-xs text-slate-600 flex items-center justify-between border-t border-slate-100 pt-2">
+            <span>Wind: N gale</span>
+            <span class="text-[11px] text-slate-500 italic">Highest Ware River stage recorded (5.22 ft)</span>
+          </div>
+        </div>
+        
+      </div>
+    </section>
+
+    <!-- 2. DATA DOWNLOAD CENTER -->
+    <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-file-arrow-down text-sky-600"></i>
+          Download Raw Datasets
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-500 mt-1">
+          All data generated by this project is public and freely accessible for researchers, neighbors, and planners.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+        <!-- Download 1 -->
+        <a href="archive_hourly_observations.csv" class="p-5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50/50 hover:border-sky-300 transition group flex flex-col justify-between">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-sky-700 uppercase">Hourly Archive</span>
+              <i class="fa-solid fa-download text-slate-400 group-hover:text-sky-600 transition"></i>
+            </div>
+            <div class="font-bold text-slate-900 text-sm">archive_hourly_observations.csv</div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Permanent cumulative hourly dataset appended every 30 minutes in the cloud.
+            </p>
+          </div>
+          <div class="text-[11px] text-slate-400 font-mono pt-4">Updated every 30 mins</div>
+        </a>
+
+        <!-- Download 2 -->
+        <a href="ground_truth_observations.csv" class="p-5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50/50 hover:border-sky-300 transition group flex flex-col justify-between">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-sky-700 uppercase">Ground Truth</span>
+              <i class="fa-solid fa-download text-slate-400 group-hover:text-sky-600 transition"></i>
+            </div>
+            <div class="font-bold text-slate-900 text-sm">ground_truth_observations.csv</div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              The original 141 observer measurements transcribed from handwritten notes (2021–2024).
+            </p>
+          </div>
+          <div class="text-[11px] text-slate-400 font-mono pt-4">141 records &bull; Verified</div>
+        </a>
+
+        <!-- Download 3 -->
+        <a href="latest_status.json" class="p-5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50/50 hover:border-sky-300 transition group flex flex-col justify-between">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-sky-700 uppercase">JSON API</span>
+              <i class="fa-solid fa-download text-slate-400 group-hover:text-sky-600 transition"></i>
+            </div>
+            <div class="font-bold text-slate-900 text-sm">latest_status.json</div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Real-time API JSON endpoint with current stage, sector elevations, passability, and 48h outlook.
+            </p>
+          </div>
+          <div class="text-[11px] text-slate-400 font-mono pt-4">REST API &bull; Live</div>
+        </a>
+      </div>
+    </section>
+
+    <!-- 3. GROUND TRUTH OBSERVATION EXPLORER TABLE -->
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden space-y-4 p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Ground-Truth Observation Explorer</h2>
+          <p class="text-xs sm:text-sm text-slate-500">Showing 141 human verification records across 4 years of storm seasons.</p>
+        </div>
+        <div class="text-xs text-slate-500">
+          Showing 60 most recent events
+        </div>
+      </div>
+
+      <div class="overflow-x-auto border border-slate-200 rounded-xl">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+              <th class="px-3 py-2.5">Date</th>
+              <th class="px-3 py-2.5">Ware River Stage</th>
+              <th class="px-3 py-2.5">Flood Depth</th>
+              <th class="px-3 py-2.5">Winds</th>
+              <th class="px-3 py-2.5">System / Event</th>
+              <th class="px-3 py-2.5">Observer Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2021-05-29</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">5.10 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">14.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs"></td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2021-07-08</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.45 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">8.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">NNE 20</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">20 NNE</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2021-10-06</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.44 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">6.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs"></td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2021-10-07</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.58 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">7.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs"></td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2021-10-08</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.10 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">3.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs"></td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2021-10-09</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.30 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">6.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">NNE 4.6</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">4.6 NNE</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2021-10-10</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.75 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">10.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">NNE 10-20</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">10-20 NNE</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2021-10-11</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.80 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">9.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">NNW 16</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">16 NNW</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2021-10-12</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.20 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">2.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">N 25</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">25 N</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2021-10-16</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.22 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">4.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">NNW 20</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">20 NNW</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2021-10-28</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.58 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">7.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">E </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">E</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2021-10-28</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.77 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">10.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">E </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">E</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2021-10-28</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.87 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">5.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">ESE </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">ESE</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2021-10-30</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">3.80 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">0.50"</td>
+          <td class="px-3 py-2.5 text-slate-600">ESE-SE </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">ESE to SE</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2021-10-30</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.20 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">2.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">SE 24</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">SE 24</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2021-12-31</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">3.87 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">0.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs"></td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-01-03</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">5.22 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">11.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">N </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Snow</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">11 SNOW N</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-01-04</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.10 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">1.50"</td>
+          <td class="px-3 py-2.5 text-slate-600">N 9.2</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">N 9.2</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-01-16</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.80 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">8.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">ESE 19-25</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">ESE 19-25</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-05-08</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.72 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">8.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs"></td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-05-09</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.50 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">6.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs"></td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-05-10</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">5.02 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">12.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">NNE 10-21</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">NNE 10-21</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-05-11</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.10 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">6.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">NNE 16</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">NNE 16</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-06-14</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.13 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">0.50"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs"></td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-09-07</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.33 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">1.50"</td>
+          <td class="px-3 py-2.5 text-slate-600">NE 17</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Hurricane Earl</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Hurricane Earl; NE 17</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-09-08</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.82 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">10.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Hurricane Earl</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Hurricane Earl</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-09-08</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.39 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">3.25"</td>
+          <td class="px-3 py-2.5 text-slate-600">NNE 8</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Hurricane Earl</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Hurricane Earl; NNE 8</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-09-09</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.30 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">2.50"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Hurricane Earl</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Hurricane Earl</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-09-09</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.60 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">8.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">NNE 5.7</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Hurricane Earl</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Hurricane Earl; NNE 5.7</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-09-10</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.20 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">0.50"</td>
+          <td class="px-3 py-2.5 text-slate-600">NNE 8.1</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Hurricane Earl</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Hurricane Earl; NNE 8.1</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-09-10</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.20 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">0.50"</td>
+          <td class="px-3 py-2.5 text-slate-600">SSE 6.9</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Hurricane Earl</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Hurricane Earl; SSE 6.9</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-09-30</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.66 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">7.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">N 12-24</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Hurricane Ian</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Hurricane Ian; N 12-24</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-10-01</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.50 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">5.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">NNW 17-25</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Hurricane Ian</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Hurricane Ian; NNW 17-25</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-10-03</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.25 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">1.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">NW 12-18</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Hurricane Ian</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Hurricane Ian; NW 12-18</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2022-11-07</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.25 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">2.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">SSW 20</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">SSW 20</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-03-12</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.30 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">4.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">NNE 4.3</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">SC Low</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">NNE 4.3; SC Low</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-03-14</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.30 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">4.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">NW 17</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">SC Low</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">NW 17; SC Low</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-03-13</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.30 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">4.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">NC/VA Low</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">NC/va Low</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-03-13</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.33 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">4.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs"></td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-04-30</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">3.94 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">0.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">No flood recorded</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-06-02</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.38 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">3.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">ENE 12.8</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">ENE 12.8</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-06-03</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.61 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">7.50"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Full moon</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Full moon</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-06-05</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.20 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">0.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">0 inches</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-06-20</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.20 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">1.50"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Rain</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Rain Rain</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-06-21</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.62 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">7.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">NE 16-25</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Rain</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Rain; NE 16/25</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-06-21</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.50 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">5.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> 0</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">calm</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-08-28</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.07 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Hurricane Idalia</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Hurricane Idalia + full moon</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-08-29</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.15 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Hurricane Franklin</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Hurricane franklin + full m</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-08-30</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.10 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">"</td>
+          <td class="px-3 py-2.5 text-slate-600"> 5</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">wind 5 mph</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-08-31</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.49 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">4.00"</td>
+          <td class="px-3 py-2.5 text-slate-600">NNE 15-25</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">NNE 15-25; 9:49 AM</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-08-31</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.30 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">2.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> 0</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">wind 0</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-09-01</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.30 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">"</td>
+          <td class="px-3 py-2.5 text-slate-600">NE light</td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">NE light</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-09-01</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.20 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs"></td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-09-02</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.00 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs"></td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-09-22</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.70 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">10.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Ophelia</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Ophelia; Lunar perigee</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-09-23</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.68 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">10.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Ophelia</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Ophelia</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-09-23</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">5.00 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">12.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Ophelia</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Ophelia</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-09-24</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.00 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Ophelia</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Ophelia</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-09-24</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.17 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-slate-700">"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium">Ophelia</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">Ophelia</td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+          <td class="px-3 py-2.5 font-mono text-slate-700">2023-09-26</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">4.60 ft</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-orange-600">8.00"</td>
+          <td class="px-3 py-2.5 text-slate-600"> </td>
+          <td class="px-3 py-2.5 text-slate-600 font-medium"></td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">4.6 PM</td>
+        </tr>
+        
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  
+    <footer class="bg-slate-900 text-slate-400 text-sm border-t border-slate-800 mt-16 py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <!-- Col 1: Project Info -->
+        <div class="md:col-span-2 space-y-3">
+          <div class="flex items-center gap-2 text-white font-bold text-base">
+            <i class="fa-solid fa-water text-sky-400"></i>
+            <span>Mathews County Coastal Flood Prediction System</span>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed max-w-lg">
+            An open science, hyper-local flood prediction pipeline and machine learning model built from 141 ground-truth storm observations (2021–2024), NOAA NWPS hydrodynamic water level guidance, and NOAA CO-OPS sensor networks across the Middle Peninsula of Virginia.
+          </p>
+          <div class="text-xs text-slate-500 pt-1">
+            Last Automated Cloud Sync: <span class="text-slate-300 font-mono font-medium">2026-09-30 23:50:00 EDT</span> (Runs every 30 mins)
+          </div>
+        </div>
+
+        <!-- Col 2: Navigation Links -->
+        <div>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-200 mb-3">Portal Navigation</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="index.html" class="hover:text-sky-400 transition">Live Dashboard & Forecast</a></li>
+            <li><a href="index.html#map-section" class="hover:text-sky-400 transition">Interactive Coastal Map</a></li>
+            <li><a href="about.html" class="hover:text-sky-400 transition">The Story & Handwritten Notes</a></li>
+            <li><a href="guide.html" class="hover:text-sky-400 transition">Flood Tiers & Plain-English Guide</a></li>
+            <li><a href="data.html" class="hover:text-sky-400 transition">Storm History & Data Archive</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Sensor Networks & Code -->
+        <div>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-200 mb-3">Data & Source Code</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="https://water.noaa.gov/gauges/WRVV2" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA NWPS Ware River (WRVV2)</a></li>
+            <li><a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8637689" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA Yorktown USCG (8637689)</a></li>
+            <li><a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8636580" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA Windmill Point (8636580)</a></li>
+            <li><a href="archive_hourly_observations.csv" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-download text-[10px]"></i> Download Hourly Archive (CSV)</a></li>
+            <li><a href="https://github.com/flatfoot584/mathews-flood-monitor" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-brands fa-github text-[11px]"></i> GitHub Repository</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+        <div>&copy; 2021–2026 Mathews County Flood Prediction Project &bull; Public Community Resource</div>
+        <div class="italic text-[11px]">Empirical model calibrated to 3.99 ft MLLW flood tipping point. Not an official NWS evacuation order.</div>
+      </div>
+    </footer>
+
+    <script>
+      // Mobile menu toggle
+      const menuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (menuBtn && mobileMenu) {
+        menuBtn.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
+    </script>
+    
+</body>
+</html>

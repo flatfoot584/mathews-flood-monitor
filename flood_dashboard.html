@@ -1,422 +1,762 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mathews County, VA — Coastal Flood Prediction Dashboard</title>
+  <title>Mathews County, VA Coastal Flood Monitor & Forecast</title>
+  <meta name="description" content="Hyper-local real-time coastal flood prediction, interactive map, and 48-hour hydrograph for Mathews County, VA.">
+  
+  <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
-    body { font-family: 'Inter', sans-serif; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
     .font-mono { font-family: 'JetBrains Mono', monospace; }
-    .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    .glass-card { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(51, 65, 85, 0.6); }
+    #flood-map { height: 500px; z-index: 10; }
+    .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15); }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen p-4 sm:p-6 lg:p-8 antialiased selection:bg-cyan-500 selection:text-white">
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased">
 
-  <!-- Top Container -->
-  <div class="max-w-7xl mx-auto space-y-6">
+  
+    <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50 shadow-md">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <!-- Logo & Brand -->
+          <div class="flex items-center gap-3">
+            <a href="index.html" class="flex items-center gap-3 group">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-blue-700 flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform">
+                <i class="fa-solid fa-water text-lg text-white"></i>
+              </div>
+              <div>
+                <div class="font-bold text-base sm:text-lg tracking-tight flex items-center gap-2 text-white">
+                  Mathews County Flood Monitor
+                </div>
+                <div class="text-[11px] text-slate-400 font-medium">Middle Peninsula &bull; Mobjack Bay, VA</div>
+              </div>
+            </a>
+          </div>
 
-    <!-- Header Section -->
-    <header class="glass rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xl">
-      <div>
-        <div class="flex items-center gap-2">
-          <span class="inline-block w-3 h-3 rounded-full animate-ping bg-emerald-400"></span>
-          <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">Hybrid Hydrodynamic–ML Pipeline</span>
+          <!-- Desktop Navigation -->
+          <nav class="hidden lg:flex items-center gap-1">
+            
+        <a href="index.html" class="px-3.5 py-2 text-sm rounded-lg transition-all flex items-center gap-2 bg-sky-900/60 text-sky-200 border-b-2 border-sky-400 font-semibold">
+          <i class="fa-solid fa-water text-xs"></i>
+          <span>Live Monitor</span>
+        </a>
+        
+        <a href="index.html#map-section" class="px-3.5 py-2 text-sm rounded-lg transition-all flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-map-location-dot text-xs"></i>
+          <span>Flood Map</span>
+        </a>
+        
+        <a href="about.html" class="px-3.5 py-2 text-sm rounded-lg transition-all flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-book-open text-xs"></i>
+          <span>About & History</span>
+        </a>
+        
+        <a href="guide.html" class="px-3.5 py-2 text-sm rounded-lg transition-all flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-ruler-vertical text-xs"></i>
+          <span>Flood Guide & Tiers</span>
+        </a>
+        
+        <a href="data.html" class="px-3.5 py-2 text-sm rounded-lg transition-all flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-database text-xs"></i>
+          <span>Storm Archive & Data</span>
+        </a>
+        
+          </nav>
+
+          <!-- Status Pill & Mobile Menu Button -->
+          <div class="flex items-center gap-3">
+            <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 border-emerald-300 border text-xs font-semibold text-emerald-800">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>LIVE: Normal / Safe</span>
+            </div>
+
+            <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 focus:outline-none" aria-label="Toggle Navigation">
+              <i class="fa-solid fa-bars text-lg"></i>
+            </button>
+          </div>
         </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mt-1 bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-300 bg-clip-text text-transparent">
-          Mathews County Coastal Flood Monitor
-        </h1>
-        <p class="text-xs sm:text-sm text-slate-400 mt-1">
-          Ware River Basin & Mobjack Bay • Compound Tidal & Pluvial Prediction System
-        </p>
-      </div>
 
-      <!-- Live Advisory Badge -->
-      <div class="flex flex-col sm:items-end">
-        <div class="px-4 py-2 rounded-xl border font-bold text-sm tracking-wide shadow-lg flex items-center gap-2"
-             style="background-color: rgba(16, 185, 129, 0.15); border-color: #10B981; color: #10B981;">
-          <span class="w-2.5 h-2.5 rounded-full" style="background-color: #10B981;"></span>
-          NORMAL / SAFE
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-800 py-3 space-y-1">
+          <div class="px-4 py-2 sm:hidden mb-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 border-emerald-300 border text-xs font-semibold text-emerald-800">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>LIVE STATUS: Normal / Safe</span>
+            </div>
+          </div>
+          
+        <a href="index.html" class="block px-4 py-2.5 rounded-lg text-sm transition bg-sky-900/50 text-sky-200 font-semibold">
+          <i class="fa-solid fa-water w-5 text-center mr-2"></i> Live Monitor
+        </a>
+        
+        <a href="index.html#map-section" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-map-location-dot w-5 text-center mr-2"></i> Flood Map
+        </a>
+        
+        <a href="about.html" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-book-open w-5 text-center mr-2"></i> About & History
+        </a>
+        
+        <a href="guide.html" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-ruler-vertical w-5 text-center mr-2"></i> Flood Guide & Tiers
+        </a>
+        
+        <a href="data.html" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-database w-5 text-center mr-2"></i> Storm Archive & Data
+        </a>
+        
         </div>
-        <span class="text-xs text-slate-400 mt-2">
-          Observation: <span class="text-slate-200 font-mono">2026-10-01 06:45:00 EDT</span>
-        </span>
       </div>
     </header>
+    
 
-    <!-- Advisory Banner if warning -->
-    <div class="rounded-xl p-4 border flex items-start gap-3 shadow-lg"
-         style="background-color: rgba(16, 185, 129, 0.15); border-color: #10B981;">
-      <svg class="w-6 h-6 shrink-0 mt-0.5" fill="none" stroke="#10B981" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-      </svg>
-      <div>
-        <div class="flex items-center gap-3">
-          <h4 class="font-bold text-sm" style="color: #10B981;">48-Hour Coastal Flood Advisory:</h4>
-          <span class="text-xs px-2 py-0.5 rounded bg-slate-900 font-semibold text-slate-300 border border-slate-700">ALL VEHICLES PASSABLE</span>
-        </div>
-        <p class="text-sm text-slate-200 mt-1 leading-relaxed">NO FLOODING EXPECTED: Water levels will remain inside normal tidal ditches and marsh channels.</p>
-        <p class="text-xs text-slate-400 mt-1 italic">Vehicle Guidance: Driveway and road dry. Normal conditions for all passenger vehicles.</p>
-      </div>
-    </div>
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8 w-full">
 
-    <!-- 4 Key Metric Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      
-      <!-- Card 1: Ware River Stage -->
-      <div class="glass-card rounded-2xl p-5 hover:border-cyan-500/40 transition">
-        <div class="flex justify-between items-center text-xs font-semibold text-slate-400 uppercase tracking-wider">
-          <span>Ware River Stage</span>
-          <span class="text-cyan-400 font-mono">WRVV2</span>
-        </div>
-        <div class="mt-3 flex items-baseline gap-2">
-          <span class="text-4xl font-black font-mono tracking-tight text-white">1.02</span>
-          <span class="text-lg font-medium text-slate-400">ft MLLW</span>
-        </div>
-        <div class="mt-2 text-xs text-slate-400 flex justify-between border-t border-slate-800 pt-2">
-          <span>NAVD88: <strong class="text-slate-200 font-mono">-0.62 ft</strong></span>
-          <span>Action: <strong class="text-amber-400 font-mono">4.0 ft</strong></span>
-        </div>
-      </div>
-
-      <!-- Card 2: Property Flood Depth -->
-      <div class="glass-card rounded-2xl p-5 hover:border-cyan-500/40 transition">
-        <div class="flex justify-between items-center text-xs font-semibold text-slate-400 uppercase tracking-wider">
-          <span>Compound Depth</span>
-          <span class="text-emerald-400 font-mono">Tide + Rain</span>
-        </div>
-        <div class="mt-3 flex items-baseline gap-2">
-          <span class="text-4xl font-black font-mono tracking-tight" style="color: #10B981;">0.0</span>
-          <span class="text-lg font-medium text-slate-400">inches</span>
-        </div>
-        <div class="mt-2 text-xs text-slate-400 flex justify-between border-t border-slate-800 pt-2">
-          <span>Access: <strong class="text-slate-200">ALL VEHICLES PASSABLE</strong></span>
-          <span>Zero Mark: <strong class="text-slate-300 font-mono">3.99 ft</strong></span>
-        </div>
-      </div>
-
-      <!-- Card 3: Wind Conditions -->
-      <div class="glass-card rounded-2xl p-5 hover:border-cyan-500/40 transition">
-        <div class="flex justify-between items-center text-xs font-semibold text-slate-400 uppercase tracking-wider">
-          <span>Wind Forcing</span>
-          <span class="text-sky-400 font-mono">Yorktown USCG</span>
-        </div>
-        <div class="mt-3 flex items-baseline gap-2">
-          <span class="text-4xl font-black font-mono tracking-tight text-white">5.37</span>
-          <span class="text-lg font-medium text-slate-400">mph</span>
-          <span class="text-sm font-bold text-sky-400 font-mono ml-auto">SSW (207.0°)</span>
-        </div>
-        <div class="mt-2 text-xs text-slate-400 flex justify-between border-t border-slate-800 pt-2">
-          <span>Along-Bay Push: <strong class="text-cyan-300 font-mono">-5.33 mph</strong></span>
-          <span>Gusts: <strong class="text-amber-300 font-mono">7.83 mph</strong></span>
-        </div>
-      </div>
-
-      <!-- Card 4: Storm Surge & Pressure -->
-      <div class="glass-card rounded-2xl p-5 hover:border-cyan-500/40 transition">
-        <div class="flex justify-between items-center text-xs font-semibold text-slate-400 uppercase tracking-wider">
-          <span>Bay Storm Surge</span>
-          <span class="text-indigo-400 font-mono">Windmill Pt</span>
-        </div>
-        <div class="mt-3 flex items-baseline gap-2">
-          <span class="text-4xl font-black font-mono tracking-tight text-white">+0.81</span>
-          <span class="text-lg font-medium text-slate-400">ft residual</span>
-        </div>
-        <div class="mt-2 text-xs text-slate-400 flex justify-between border-t border-slate-800 pt-2">
-          <span>Barometer: <strong class="text-slate-200 font-mono">1020.2 mb</strong></span>
-          <span>Peak 48h: <strong class="text-cyan-400 font-mono">3.6 ft</strong></span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Main Hydrograph Chart Section -->
-    <div class="glass-card rounded-2xl p-6 shadow-2xl">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div>
-          <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-            <span>Continuous 96-Hour Hydrograph</span>
-            <span class="text-xs px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800 font-normal">Past 48h Observed + Next 48h Hybrid Forecast</span>
-          </h2>
-          <p class="text-xs text-slate-400 mt-1">
-            Solid line shows continuous observations. Dashed cyan shows Hybrid Hydrodynamic–ML stage (NOAA NWPS CBOFS + local wind stress set-up).
+    <!-- 1. HUMAN-FIRST ADVISORY HERO BANNER -->
+    <section class="rounded-2xl bg-emerald-50 border-2 border-emerald-300 p-6 sm:p-8 shadow-sm transition-all">
+      <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+        <div class="space-y-2 max-w-3xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-xs font-bold text-emerald-800 uppercase tracking-wider">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Current Status &bull; Tier 0 (Normal / Safe)</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-emerald-950 tracking-tight leading-tight">
+            Normal Conditions — Driveways & Roads Clear
+          </h1>
+          <p class="text-base text-emerald-800 leading-relaxed">
+            Ware River stage is currently 3.1 ft MLLW. Water will remain safely contained in marsh ditches over the next 48 hours.
           </p>
         </div>
-        <div class="flex items-center gap-4 text-xs font-semibold">
-          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-cyan-500"></span> Observed</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-sky-300"></span> Hybrid Forecast</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-amber-500"></span> 4.0 ft Action</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-rose-500"></span> 4.8 ft Severe</span>
+
+        <!-- Quick Metrics Box -->
+        <div class="flex flex-wrap lg:flex-col gap-3 bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-slate-200/80 shadow-sm min-w-[240px]">
+          <div>
+            <div class="text-[11px] font-semibold text-slate-500 uppercase">Current Ware River Stage</div>
+            <div class="text-2xl font-black text-slate-900 font-mono">3.1 <span class="text-sm font-semibold text-slate-500">ft MLLW</span></div>
+            <div class="text-[11px] text-slate-500 font-medium">(1.46 ft NAVD88)</div>
+          </div>
+          <div class="pt-2 border-t border-slate-200">
+            <div class="text-[11px] font-semibold text-slate-500 uppercase">48-Hour Peak Forecast</div>
+            <div class="text-lg font-extrabold text-sky-900 font-mono">3.58 ft <span class="text-xs font-normal text-slate-500">at 13:00:00</span></div>
+            <div class="text-xs font-semibold text-emerald-800">Inundation: 0.0" (ALL VEHICLES PASSABLE)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. VEHICLE PASSABILITY & HUMAN ACTION STRIP -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Card 1: Sedans -->
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-start gap-4">
+        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl shrink-0">
+          <i class="fa-solid fa-car-side"></i>
+        </div>
+        <div>
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Passenger Cars / Sedans</div>
+          <div class="text-base font-bold text-slate-900 mt-0.5">
+            PASSABLE & SAFE
+          </div>
+          <p class="text-xs text-slate-600 mt-1">
+            All access routes dry. Safe for low clearance sedans.
+          </p>
         </div>
       </div>
 
-      <!-- Chart Container -->
-      <div class="relative w-full h-80 sm:h-96">
+      <!-- Card 2: SUVs & Trucks -->
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-start gap-4">
+        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl shrink-0">
+          <i class="fa-solid fa-truck-pickup"></i>
+        </div>
+        <div>
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">SUVs & High-Clearance Trucks</div>
+          <div class="text-base font-bold text-slate-900 mt-0.5">
+            PASSABLE
+          </div>
+          <p class="text-xs text-slate-600 mt-1">
+            Ground clearance adequate for current and peak tides.
+          </p>
+        </div>
+      </div>
+
+      <!-- Card 3: Action Checklist -->
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-start gap-4">
+        <div class="w-12 h-12 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center text-xl shrink-0">
+          <i class="fa-solid fa-clipboard-check"></i>
+        </div>
+        <div>
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Recommended Action</div>
+          <div class="text-base font-bold text-slate-900 mt-0.5">
+            No Action Required
+          </div>
+          <p class="text-xs text-slate-600 mt-1">
+            Normal routines. Ditches flowing freely.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. INTERACTIVE LEAFLET FLOOD MAP SECTION -->
+    <section id="map-section" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="p-5 sm:p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-lg sm:text-xl font-bold text-slate-900">Mathews County Real-Time Flood Map</h2>
+            <span class="px-2.5 py-0.5 text-xs font-semibold bg-sky-100 text-sky-800 rounded-full">Interactive GIS</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+            Visualizing tidal gauge networks, wind vectors, and property elevation flood zones (Green = Safe, Yellow = Swales Full, Orange = Driveway Inundated, Red = Severe).
+          </p>
+        </div>
+
+        <!-- Map Layer Toggle Buttons -->
+        <div class="flex items-center gap-2 bg-slate-200/80 p-1 rounded-xl self-start sm:self-auto text-xs font-medium">
+          <button id="btn-map-current" class="px-3 py-1.5 rounded-lg bg-white shadow-sm text-slate-900 font-semibold transition">
+            <i class="fa-solid fa-location-dot text-emerald-600 mr-1"></i> Current (3.1 ft)
+          </button>
+          <button id="btn-map-peak" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">
+            <i class="fa-solid fa-bolt text-amber-500 mr-1"></i> Peak 48h (3.58 ft)
+          </button>
+        </div>
+      </div>
+
+      <!-- The Leaflet Map Canvas -->
+      <div class="relative">
+        <div id="flood-map"></div>
+
+        <!-- Floating Map Legend -->
+        <div class="absolute bottom-5 right-5 z-[400] bg-white/95 backdrop-blur-md p-3.5 rounded-xl border border-slate-200 shadow-lg text-xs space-y-1.5 pointer-events-auto max-w-[210px]">
+          <div class="font-bold text-slate-900 text-[11px] uppercase tracking-wider mb-1 flex items-center justify-between">
+            <span>Risk Severity Legend</span>
+            <i class="fa-solid fa-layer-group text-slate-400"></i>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-3.5 h-3.5 rounded bg-emerald-500 shrink-0"></span>
+            <span class="text-slate-700 font-medium">Safe / Dry (&lt; 4.0')</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-3.5 h-3.5 rounded bg-amber-500 shrink-0"></span>
+            <span class="text-slate-700 font-medium">Nuisance / Ditch Full (4.0-4.3')</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-3.5 h-3.5 rounded bg-orange-500 shrink-0"></span>
+            <span class="text-slate-700 font-medium">Driveway Inundated (4.4-4.7')</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-3.5 h-3.5 rounded bg-red-600 shrink-0"></span>
+            <span class="text-slate-700 font-medium">Property Submerged (&ge; 4.8')</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 bg-slate-50 border-t border-slate-200 text-xs text-slate-600 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-4">
+          <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle text-[8px] text-sky-600"></i> Click any sensor pin or property polygon on the map to view detailed depths and sensor readings.</span>
+        </div>
+        <div class="text-slate-400 text-[11px]">Basemap &copy; OpenStreetMap & CartoDB Positron</div>
+      </div>
+    </section>
+
+    <!-- 4. PROPERTY ELEVATION CROSS-SECTION (MICRO-TOPOGRAPHY PROFILE) -->
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-stairs text-sky-600"></i>
+            Property Elevation Cross-Section Profile
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500">
+            How water breaches our site as Ware River stage climbs (Threshold: 3.99 ft MLLW = 2.35 ft NAVD88).
+          </p>
+        </div>
+        <div class="text-xs font-mono bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg self-start sm:self-auto font-medium">
+          Ditch Tipping Point: 3.99' MLLW
+        </div>
+      </div>
+
+      <!-- Sector Progress Bars -->
+      <div class="space-y-3.5 pt-2">
+        <!-- Sector 1: Ditches -->
+        <div>
+          <div class="flex justify-between text-xs font-medium mb-1">
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-water text-sky-500 mr-1.5"></i> 1. Tidal Ditches & Marsh Invert (Elev: 2.50' MLLW / 0.86' NAVD88)</span>
+            <span class="font-mono font-semibold text-sky-700">
+              6.7" Water (SUBMERGED)
+            </span>
+          </div>
+          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+            <div class="bg-sky-500 h-full rounded-full transition-all" style="width: 67%"></div>
+          </div>
+        </div>
+
+        <!-- Sector 2: Road Apron / Culvert -->
+        <div>
+          <div class="flex justify-between text-xs font-medium mb-1">
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-road text-amber-500 mr-1.5"></i> 2. Road Shoulder & Culvert Invert (Elev: 4.00' MLLW / 2.36' NAVD88)</span>
+            <span class="font-mono font-semibold text-emerald-700">
+              0.0" Water (DRY)
+            </span>
+          </div>
+          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+            <div class="bg-emerald-500 h-full rounded-full transition-all" style="width: 2%"></div>
+          </div>
+        </div>
+
+        <!-- Sector 3: Main Driveway -->
+        <div>
+          <div class="flex justify-between text-xs font-medium mb-1">
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-car text-orange-500 mr-1.5"></i> 3. Main Driveway — Vehicle Access Route (Elev: 4.40' MLLW / 2.76' NAVD88)</span>
+            <span class="font-mono font-semibold text-emerald-700 font-bold">
+              0.0" Water (DRY)
+            </span>
+          </div>
+          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+            <div class="bg-emerald-500 h-full rounded-full transition-all" style="width: 2%"></div>
+          </div>
+        </div>
+
+        <!-- Sector 4: Residential Lawn -->
+        <div>
+          <div class="flex justify-between text-xs font-medium mb-1">
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-tree text-emerald-600 mr-1.5"></i> 4. Residential Lawn & Grounds (Elev: 4.60' MLLW / 2.96' NAVD88)</span>
+            <span class="font-mono font-semibold text-emerald-700">
+              0" Water (DRY)
+            </span>
+          </div>
+          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+            <div class="bg-emerald-500 h-full rounded-full transition-all" style="width: 2%"></div>
+          </div>
+        </div>
+
+        <!-- Sector 5: Garage High Ground -->
+        <div>
+          <div class="flex justify-between text-xs font-medium mb-1">
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-house text-blue-600 mr-1.5"></i> 5. Garage Apron & Residence High Ground (Elev: 4.90' MLLW / 3.26' NAVD88)</span>
+            <span class="font-mono font-semibold text-emerald-700">
+              0" Water (SAFE)
+            </span>
+          </div>
+          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+            <div class="bg-emerald-500 h-full rounded-full transition-all" style="width: 2%"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 48-HOUR HYDROGRAPH & ENVIRONMENTAL DRIVERS -->
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-chart-line text-sky-600"></i>
+            48-Hour Hybrid Forecast Hydrograph
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500">
+            NOAA NWPS CBOFS hydrodynamic water model blended with local wind stress ML bias correction and NWS rainfall.
+          </p>
+        </div>
+        <div class="flex items-center gap-3 text-xs">
+          <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-sky-600"></span> Predicted Stage</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-red-500 border-t border-dashed"></span> 3.99' Flood Threshold</span>
+        </div>
+      </div>
+
+      <div class="h-80 w-full relative">
         <canvas id="hydrographChart"></canvas>
       </div>
-    </div>
+    </section>
 
-    <!-- Upcoming High Tides Table & Micro-Topography -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-      <!-- High Tides Table (2 Cols) -->
-      <div class="lg:col-span-2 glass-card rounded-2xl p-6 shadow-xl">
-        <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2">
-          <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          Upcoming High Tide Peaks (Next 48 Hours)
-        </h3>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm">
-            <thead>
-              <tr class="text-xs text-slate-400 uppercase tracking-wider border-b border-slate-700">
-                <th class="py-3 px-4">Local Peak Time</th>
-                <th class="py-3 px-4">Hybrid Stage</th>
-                <th class="py-3 px-4">Compound Depth</th>
-                <th class="py-3 px-4">Impact Tier</th>
-                <th class="py-3 px-4">Vehicle Access</th>
-                <th class="py-3 px-4">NWS Winds</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-800">
-              
-        <tr class="border-b border-slate-700/50 hover:bg-slate-800/40 transition">
-          <td class="py-3 px-4 font-medium text-slate-200">2026-10-01 13:00:00 EDT</td>
-          <td class="py-3 px-4 font-mono font-semibold text-cyan-400">3.60 ft</td>
-          <td class="py-3 px-4 font-mono font-bold" style="color: #EF4444;">0.0"</td>
-          <td class="py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color: #EF4444;">Tier 0 (Normal / Safe)</td>
-          <td class="py-3 px-4 text-xs text-slate-300 font-medium">ALL VEHICLES PASSABLE</td>
-          <td class="py-3 px-4 text-slate-400">7.0 mph SW</td>
-        </tr>
-        
-        <tr class="border-b border-slate-700/50 hover:bg-slate-800/40 transition">
-          <td class="py-3 px-4 font-medium text-slate-200">2026-10-02 01:00:00 EDT</td>
-          <td class="py-3 px-4 font-mono font-semibold text-cyan-400">2.73 ft</td>
-          <td class="py-3 px-4 font-mono font-bold" style="color: #EF4444;">0.0"</td>
-          <td class="py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color: #EF4444;">Tier 0 (Normal / Safe)</td>
-          <td class="py-3 px-4 text-xs text-slate-300 font-medium">ALL VEHICLES PASSABLE</td>
-          <td class="py-3 px-4 text-slate-400">5.0 mph SW</td>
-        </tr>
-        
-        <tr class="border-b border-slate-700/50 hover:bg-slate-800/40 transition">
-          <td class="py-3 px-4 font-medium text-slate-200">2026-10-02 14:00:00 EDT</td>
-          <td class="py-3 px-4 font-mono font-semibold text-cyan-400">3.26 ft</td>
-          <td class="py-3 px-4 font-mono font-bold" style="color: #EF4444;">0.0"</td>
-          <td class="py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color: #EF4444;">Tier 0 (Normal / Safe)</td>
-          <td class="py-3 px-4 text-xs text-slate-300 font-medium">ALL VEHICLES PASSABLE</td>
-          <td class="py-3 px-4 text-slate-400">9.0 mph SW</td>
-        </tr>
-        
-        <tr class="border-b border-slate-700/50 hover:bg-slate-800/40 transition">
-          <td class="py-3 px-4 font-medium text-slate-200">2026-10-03 03:00:00 EDT</td>
-          <td class="py-3 px-4 font-mono font-semibold text-cyan-400">2.57 ft</td>
-          <td class="py-3 px-4 font-mono font-bold" style="color: #EF4444;">0.0"</td>
-          <td class="py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color: #EF4444;">Tier 0 (Normal / Safe)</td>
-          <td class="py-3 px-4 text-xs text-slate-300 font-medium">ALL VEHICLES PASSABLE</td>
-          <td class="py-3 px-4 text-slate-400">5.0 mph N</td>
-        </tr>
-        
-            </tbody>
-          </table>
+    <!-- 6. REAL-TIME SENSOR NETWORK CARDS -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Card: Yorktown Winds -->
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
+        <div class="flex items-center justify-between text-xs font-semibold text-slate-500 uppercase">
+          <span>Yorktown Winds</span>
+          <i class="fa-solid fa-wind text-sky-500"></i>
+        </div>
+        <div class="text-2xl font-black text-slate-900 font-mono">
+          6.26 <span class="text-sm font-semibold text-slate-500">mph</span>
+        </div>
+        <div class="text-xs text-slate-600 flex items-center justify-between">
+          <span>From S (176.0&deg;)</span>
+          <span>Gusts: 8.5 mph</span>
         </div>
       </div>
 
-      <!-- Live Micro-Topography Elevation Profile (1 Col) -->
-      <div class="glass-card rounded-2xl p-6 shadow-xl space-y-4">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
-          Property Sector Elevation Profile
-        </h3>
-        <p class="text-xs text-slate-400">Current inundation status across benchmark sectors:</p>
-        
-        <div class="space-y-2.5">
-          
-        <div class="p-3.5 rounded-xl border flex items-center justify-between transition hover:border-slate-600"
-             style="background-color: rgba(16, 185, 129, 0.1); border-color: #10B98140;">
-          <div>
-            <div class="text-xs font-bold text-white flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full" style="background-color: #10B981;"></span>
-              Tidal Ditches & Marsh Channels
-            </div>
-            <div class="text-[11px] text-slate-400 mt-0.5">
-              Invert: <span class="font-mono text-slate-300">2.5 ft MLLW</span> (0.86 ft NAVD88)
-            </div>
-          </div>
-          <div class="text-right">
-            <span class="text-lg font-black font-mono tracking-tight" style="color: #10B981;">0.0"</span>
-            <div class="text-[10px] font-bold uppercase tracking-wider" style="color: #10B981;">DRY</div>
-          </div>
+      <!-- Card: Along-Bay Wind Vector -->
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
+        <div class="flex items-center justify-between text-xs font-semibold text-slate-500 uppercase">
+          <span>Along-Bay Vector</span>
+          <i class="fa-solid fa-compass text-blue-500"></i>
         </div>
-        
-        <div class="p-3.5 rounded-xl border flex items-center justify-between transition hover:border-slate-600"
-             style="background-color: rgba(16, 185, 129, 0.1); border-color: #10B98140;">
-          <div>
-            <div class="text-xs font-bold text-white flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full" style="background-color: #10B981;"></span>
-              Road Shoulder & Culvert Invert
-            </div>
-            <div class="text-[11px] text-slate-400 mt-0.5">
-              Invert: <span class="font-mono text-slate-300">4.0 ft MLLW</span> (2.36 ft NAVD88)
-            </div>
-          </div>
-          <div class="text-right">
-            <span class="text-lg font-black font-mono tracking-tight" style="color: #10B981;">0.0"</span>
-            <div class="text-[10px] font-bold uppercase tracking-wider" style="color: #10B981;">DRY</div>
-          </div>
+        <div class="text-2xl font-black font-mono text-slate-900">
+          -5.72 <span class="text-sm font-semibold text-slate-500">mph</span>
         </div>
-        
-        <div class="p-3.5 rounded-xl border flex items-center justify-between transition hover:border-slate-600"
-             style="background-color: rgba(16, 185, 129, 0.1); border-color: #10B98140;">
-          <div>
-            <div class="text-xs font-bold text-white flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full" style="background-color: #10B981;"></span>
-              Main Driveway (Vehicle Route)
-            </div>
-            <div class="text-[11px] text-slate-400 mt-0.5">
-              Invert: <span class="font-mono text-slate-300">4.4 ft MLLW</span> (2.76 ft NAVD88)
-            </div>
-          </div>
-          <div class="text-right">
-            <span class="text-lg font-black font-mono tracking-tight" style="color: #10B981;">0.0"</span>
-            <div class="text-[10px] font-bold uppercase tracking-wider" style="color: #10B981;">DRY</div>
-          </div>
-        </div>
-        
-        <div class="p-3.5 rounded-xl border flex items-center justify-between transition hover:border-slate-600"
-             style="background-color: rgba(16, 185, 129, 0.1); border-color: #10B98140;">
-          <div>
-            <div class="text-xs font-bold text-white flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full" style="background-color: #10B981;"></span>
-              Residential Lawn & Grounds
-            </div>
-            <div class="text-[11px] text-slate-400 mt-0.5">
-              Invert: <span class="font-mono text-slate-300">4.6 ft MLLW</span> (2.96 ft NAVD88)
-            </div>
-          </div>
-          <div class="text-right">
-            <span class="text-lg font-black font-mono tracking-tight" style="color: #10B981;">0.0"</span>
-            <div class="text-[10px] font-bold uppercase tracking-wider" style="color: #10B981;">DRY</div>
-          </div>
-        </div>
-        
-        <div class="p-3.5 rounded-xl border flex items-center justify-between transition hover:border-slate-600"
-             style="background-color: rgba(16, 185, 129, 0.1); border-color: #10B98140;">
-          <div>
-            <div class="text-xs font-bold text-white flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full" style="background-color: #10B981;"></span>
-              Garage Apron & Residence High Ground
-            </div>
-            <div class="text-[11px] text-slate-400 mt-0.5">
-              Invert: <span class="font-mono text-slate-300">4.9 ft MLLW</span> (3.26 ft NAVD88)
-            </div>
-          </div>
-          <div class="text-right">
-            <span class="text-lg font-black font-mono tracking-tight" style="color: #10B981;">0.0"</span>
-            <div class="text-[10px] font-bold uppercase tracking-wider" style="color: #10B981;">DRY</div>
-          </div>
-        </div>
-        
+        <div class="text-xs text-slate-500">
+          Blowing water out to Atlantic
         </div>
       </div>
 
-    </div>
-
-    <!-- Operational Commands & System Specs -->
-    <footer class="glass rounded-2xl p-6 text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div>
-        <span>Mathews County Flood Prediction Project • Hybrid Hydrodynamic–ML Pipeline</span>
-        <div class="mt-1 text-slate-500">Gauge WRVV2 (USGS 01670180) • Met Yorktown (8637689) • Surge Windmill Pt (8636580)</div>
+      <!-- Card: Barometric Pressure -->
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
+        <div class="flex items-center justify-between text-xs font-semibold text-slate-500 uppercase">
+          <span>Barometer</span>
+          <i class="fa-solid fa-gauge-high text-indigo-500"></i>
+        </div>
+        <div class="text-2xl font-black text-slate-900 font-mono">
+          1020.0 <span class="text-sm font-semibold text-slate-500">mb</span>
+        </div>
+        <div class="text-xs text-slate-500">
+          Normal atmospheric pressure
+        </div>
       </div>
-      <div class="font-mono text-cyan-400 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
-        CLI: python3 ingest_realtime.py && python3 generate_dashboard.py
+
+      <!-- Card: Mouth of Bay Surge -->
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
+        <div class="flex items-center justify-between text-xs font-semibold text-slate-500 uppercase">
+          <span>Mouth-of-Bay Surge</span>
+          <i class="fa-solid fa-water-ladder text-cyan-500"></i>
+        </div>
+        <div class="text-2xl font-black font-mono text-slate-900">
+          +0.78 <span class="text-sm font-semibold text-slate-500">ft</span>
+        </div>
+        <div class="text-xs text-slate-500">
+          Windmill Point storm surge residual
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  
+    <footer class="bg-slate-900 text-slate-400 text-sm border-t border-slate-800 mt-16 py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <!-- Col 1: Project Info -->
+        <div class="md:col-span-2 space-y-3">
+          <div class="flex items-center gap-2 text-white font-bold text-base">
+            <i class="fa-solid fa-water text-sky-400"></i>
+            <span>Mathews County Coastal Flood Prediction System</span>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed max-w-lg">
+            An open science, hyper-local flood prediction pipeline and machine learning model built from 141 ground-truth storm observations (2021–2024), NOAA NWPS hydrodynamic water level guidance, and NOAA CO-OPS sensor networks across the Middle Peninsula of Virginia.
+          </p>
+          <div class="text-xs text-slate-500 pt-1">
+            Last Automated Cloud Sync: <span class="text-slate-300 font-mono font-medium">2026-09-30 23:50:00 EDT</span> (Runs every 30 mins)
+          </div>
+        </div>
+
+        <!-- Col 2: Navigation Links -->
+        <div>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-200 mb-3">Portal Navigation</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="index.html" class="hover:text-sky-400 transition">Live Dashboard & Forecast</a></li>
+            <li><a href="index.html#map-section" class="hover:text-sky-400 transition">Interactive Coastal Map</a></li>
+            <li><a href="about.html" class="hover:text-sky-400 transition">The Story & Handwritten Notes</a></li>
+            <li><a href="guide.html" class="hover:text-sky-400 transition">Flood Tiers & Plain-English Guide</a></li>
+            <li><a href="data.html" class="hover:text-sky-400 transition">Storm History & Data Archive</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Sensor Networks & Code -->
+        <div>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-200 mb-3">Data & Source Code</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="https://water.noaa.gov/gauges/WRVV2" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA NWPS Ware River (WRVV2)</a></li>
+            <li><a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8637689" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA Yorktown USCG (8637689)</a></li>
+            <li><a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8636580" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA Windmill Point (8636580)</a></li>
+            <li><a href="archive_hourly_observations.csv" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-download text-[10px]"></i> Download Hourly Archive (CSV)</a></li>
+            <li><a href="https://github.com/flatfoot584/mathews-flood-monitor" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-brands fa-github text-[11px]"></i> GitHub Repository</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+        <div>&copy; 2021–2026 Mathews County Flood Prediction Project &bull; Public Community Resource</div>
+        <div class="italic text-[11px]">Empirical model calibrated to 3.99 ft MLLW flood tipping point. Not an official NWS evacuation order.</div>
       </div>
     </footer>
 
-  </div>
+    <script>
+      // Mobile menu toggle
+      const menuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (menuBtn && mobileMenu) {
+        menuBtn.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
+    </script>
+    
 
-  <!-- Chart.js Render Script -->
+  <!-- Embedded JSON Data -->
+  <script id="flood-data" type="application/json">
+    {"status": {"status_generated_at_local": "2026-10-01 01:02:59 EDT", "status_generated_at_utc": "2026-10-01 05:02:59 UTC", "system_location": "Mathews County, Virginia (Ware River / Mobjack Bay Basin)", "current_conditions": {"observation_timestamp_local": "2026-09-30 23:50:00 EDT", "ware_river_stage_mllw_ft": 3.1, "ware_river_stage_navd88_ft": 1.46, "action_stage_threshold_ft": 4.0, "flood_inundation_threshold_ft": 3.99, "estimated_local_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "flood_risk_tier": 0, "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "site_sectors": {"ditches": {"name": "Tidal Ditches & Marsh Channels", "invert_mllw_ft": 2.5, "invert_navd88_ft": 0.86, "depth_in": 6.7, "status": "SUBMERGED", "is_submerged": true}, "road_apron": {"name": "Road Shoulder & Culvert Invert", "invert_mllw_ft": 4.0, "invert_navd88_ft": 2.36, "depth_in": 0.0, "status": "DRY", "is_submerged": false}, "main_driveway": {"name": "Main Driveway (Vehicle Route)", "invert_mllw_ft": 4.4, "invert_navd88_ft": 2.76, "depth_in": 0.0, "status": "DRY", "is_submerged": false}, "yard_lawn": {"name": "Residential Lawn & Grounds", "invert_mllw_ft": 4.6, "invert_navd88_ft": 2.96, "depth_in": 0.0, "status": "DRY", "is_submerged": false}, "garage_foundation": {"name": "Garage Apron & Residence High Ground", "invert_mllw_ft": 4.9, "invert_navd88_ft": 3.26, "depth_in": 0.0, "status": "DRY", "is_submerged": false}}, "yorktown_wind_speed_mph": 6.26, "yorktown_wind_dir_deg": 176.0, "yorktown_wind_dir_cardinal": "S", "yorktown_wind_gust_mph": 8.5, "along_bay_wind_vector_mph": -5.72, "cross_bay_wind_vector_mph": 2.55, "yorktown_baro_pressure_mb": 1020.0, "yorktown_air_temp_f": 68.7, "yorktown_water_level_mllw_ft": 3.176, "yorktown_storm_surge_residual_ft": 0.68, "windmill_point_water_level_mllw_ft": 2.096, "windmill_point_storm_surge_residual_ft": 0.78}, "forecast_48h_outlook": {"peak_forecast_stage_mllw_ft": 3.58, "peak_forecast_stage_time_local": "2026-10-01 13:00:00 EDT", "peak_estimated_flood_depth_in": 0.0, "peak_risk_tier": 0, "peak_risk_label": "Tier 0 (Normal / Safe)", "peak_vehicle_passability": "ALL VEHICLES PASSABLE", "hours_at_or_above_action_stage": 0, "advisory_summary": "NO FLOODING EXPECTED: Water levels will remain inside normal tidal ditches and marsh channels."}, "forecast_hourly_timeline": [{"timestamp_utc": "2026-10-01 05:00:00 UTC", "timestamp_local": "2026-10-01 01:00:00 EDT", "forecast_stage_mllw_ft": 3.16, "nwps_raw_stage_ft": 3.2, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 7.4, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 3.0, "nws_wind_dir_deg": 180.0, "nws_wind_cardinal": "S", "along_bay_wind_mph": -2.82, "cross_bay_wind_mph": 1.03, "nws_short_forecast": "Mostly Cloudy", "nws_temp_f": 64, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 2.348, "windmill_pred_tide_ft": 1.448}, {"timestamp_utc": "2026-10-01 06:00:00 UTC", "timestamp_local": "2026-10-01 02:00:00 EDT", "forecast_stage_mllw_ft": 2.98, "nwps_raw_stage_ft": 3.0, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 5.4, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 2.0, "nws_wind_dir_deg": 180.0, "nws_wind_cardinal": "S", "along_bay_wind_mph": -1.88, "cross_bay_wind_mph": 0.68, "nws_short_forecast": "Mostly Cloudy", "nws_temp_f": 64, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 1.952, "windmill_pred_tide_ft": 1.449}, {"timestamp_utc": "2026-10-01 07:00:00 UTC", "timestamp_local": "2026-10-01 03:00:00 EDT", "forecast_stage_mllw_ft": 2.58, "nwps_raw_stage_ft": 2.6, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.9, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 2.0, "nws_wind_dir_deg": 180.0, "nws_wind_cardinal": "S", "along_bay_wind_mph": -1.88, "cross_bay_wind_mph": 0.68, "nws_short_forecast": "Mostly Cloudy", "nws_temp_f": 64, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 1.429, "windmill_pred_tide_ft": 1.336}, {"timestamp_utc": "2026-10-01 08:00:00 UTC", "timestamp_local": "2026-10-01 04:00:00 EDT", "forecast_stage_mllw_ft": 1.98, "nwps_raw_stage_ft": 2.0, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 2.0, "nws_wind_dir_deg": 180.0, "nws_wind_cardinal": "S", "along_bay_wind_mph": -1.88, "cross_bay_wind_mph": 0.68, "nws_short_forecast": "Mostly Cloudy", "nws_temp_f": 64, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 0.91, "windmill_pred_tide_ft": 1.14}, {"timestamp_utc": "2026-10-01 09:00:00 UTC", "timestamp_local": "2026-10-01 05:00:00 EDT", "forecast_stage_mllw_ft": 1.38, "nwps_raw_stage_ft": 1.4, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 2.0, "nws_wind_dir_deg": 180.0, "nws_wind_cardinal": "S", "along_bay_wind_mph": -1.88, "cross_bay_wind_mph": 0.68, "nws_short_forecast": "Partly Cloudy", "nws_temp_f": 64, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 0.526, "windmill_pred_tide_ft": 0.893}, {"timestamp_utc": "2026-10-01 10:00:00 UTC", "timestamp_local": "2026-10-01 06:00:00 EDT", "forecast_stage_mllw_ft": 0.96, "nwps_raw_stage_ft": 1.0, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 3.0, "nws_wind_dir_deg": 180.0, "nws_wind_cardinal": "S", "along_bay_wind_mph": -2.82, "cross_bay_wind_mph": 1.03, "nws_short_forecast": "Mostly Sunny", "nws_temp_f": 63, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 0.39, "windmill_pred_tide_ft": 0.651}, {"timestamp_utc": "2026-10-01 11:00:00 UTC", "timestamp_local": "2026-10-01 07:00:00 EDT", "forecast_stage_mllw_ft": 0.76, "nwps_raw_stage_ft": 0.8, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 3.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -2.72, "cross_bay_wind_mph": -1.27, "nws_short_forecast": "Mostly Sunny", "nws_temp_f": 64, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 0.546, "windmill_pred_tide_ft": 0.484}, {"timestamp_utc": "2026-10-01 12:00:00 UTC", "timestamp_local": "2026-10-01 08:00:00 EDT", "forecast_stage_mllw_ft": 0.93, "nwps_raw_stage_ft": 1.0, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 5.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -4.53, "cross_bay_wind_mph": -2.11, "nws_short_forecast": "Mostly Sunny", "nws_temp_f": 65, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 0.954, "windmill_pred_tide_ft": 0.438}, {"timestamp_utc": "2026-10-01 13:00:00 UTC", "timestamp_local": "2026-10-01 09:00:00 EDT", "forecast_stage_mllw_ft": 1.33, "nwps_raw_stage_ft": 1.4, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 5.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -4.53, "cross_bay_wind_mph": -2.11, "nws_short_forecast": "Mostly Sunny", "nws_temp_f": 69, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 1.53, "windmill_pred_tide_ft": 0.536}, {"timestamp_utc": "2026-10-01 14:00:00 UTC", "timestamp_local": "2026-10-01 10:00:00 EDT", "forecast_stage_mllw_ft": 2.02, "nwps_raw_stage_ft": 2.1, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 6.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -5.44, "cross_bay_wind_mph": -2.54, "nws_short_forecast": "Sunny", "nws_temp_f": 73, "nws_pop_pct": 1, "yorktown_pred_tide_ft": 2.172, "windmill_pred_tide_ft": 0.786}, {"timestamp_utc": "2026-10-01 15:00:00 UTC", "timestamp_local": "2026-10-01 11:00:00 EDT", "forecast_stage_mllw_ft": 2.8, "nwps_raw_stage_ft": 2.9, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 3.4, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 7.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -6.34, "cross_bay_wind_mph": -2.96, "nws_short_forecast": "Sunny", "nws_temp_f": 76, "nws_pop_pct": 1, "yorktown_pred_tide_ft": 2.731, "windmill_pred_tide_ft": 1.149}, {"timestamp_utc": "2026-10-01 16:00:00 UTC", "timestamp_local": "2026-10-01 12:00:00 EDT", "forecast_stage_mllw_ft": 3.4, "nwps_raw_stage_ft": 3.5, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 10.1, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 7.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -6.34, "cross_bay_wind_mph": -2.96, "nws_short_forecast": "Sunny", "nws_temp_f": 79, "nws_pop_pct": 1, "yorktown_pred_tide_ft": 3.041, "windmill_pred_tide_ft": 1.511}, {"timestamp_utc": "2026-10-01 17:00:00 UTC", "timestamp_local": "2026-10-01 13:00:00 EDT", "forecast_stage_mllw_ft": 3.58, "nwps_raw_stage_ft": 3.7, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 12.1, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 8.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -7.25, "cross_bay_wind_mph": -3.38, "nws_short_forecast": "Sunny", "nws_temp_f": 81, "nws_pop_pct": 1, "yorktown_pred_tide_ft": 3.013, "windmill_pred_tide_ft": 1.748}, {"timestamp_utc": "2026-10-01 18:00:00 UTC", "timestamp_local": "2026-10-01 14:00:00 EDT", "forecast_stage_mllw_ft": 3.28, "nwps_raw_stage_ft": 3.4, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 8.7, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 8.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -7.25, "cross_bay_wind_mph": -3.38, "nws_short_forecast": "Sunny", "nws_temp_f": 83, "nws_pop_pct": 1, "yorktown_pred_tide_ft": 2.689, "windmill_pred_tide_ft": 1.81}, {"timestamp_utc": "2026-10-01 19:00:00 UTC", "timestamp_local": "2026-10-01 15:00:00 EDT", "forecast_stage_mllw_ft": 2.88, "nwps_raw_stage_ft": 3.0, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 4.3, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 8.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -7.25, "cross_bay_wind_mph": -3.38, "nws_short_forecast": "Sunny", "nws_temp_f": 84, "nws_pop_pct": 1, "yorktown_pred_tide_ft": 2.189, "windmill_pred_tide_ft": 1.73}, {"timestamp_utc": "2026-10-01 20:00:00 UTC", "timestamp_local": "2026-10-01 16:00:00 EDT", "forecast_stage_mllw_ft": 2.51, "nwps_raw_stage_ft": 2.6, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.1, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 6.0, "nws_wind_dir_deg": 180.0, "nws_wind_cardinal": "S", "along_bay_wind_mph": -5.64, "cross_bay_wind_mph": 2.05, "nws_short_forecast": "Sunny", "nws_temp_f": 84, "nws_pop_pct": 1, "yorktown_pred_tide_ft": 1.636, "windmill_pred_tide_ft": 1.555}, {"timestamp_utc": "2026-10-01 21:00:00 UTC", "timestamp_local": "2026-10-01 17:00:00 EDT", "forecast_stage_mllw_ft": 1.93, "nwps_raw_stage_ft": 2.0, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 5.0, "nws_wind_dir_deg": 180.0, "nws_wind_cardinal": "S", "along_bay_wind_mph": -4.7, "cross_bay_wind_mph": 1.71, "nws_short_forecast": "Sunny", "nws_temp_f": 82, "nws_pop_pct": 1, "yorktown_pred_tide_ft": 1.136, "windmill_pred_tide_ft": 1.313}, {"timestamp_utc": "2026-10-01 22:00:00 UTC", "timestamp_local": "2026-10-01 18:00:00 EDT", "forecast_stage_mllw_ft": 1.53, "nwps_raw_stage_ft": 1.6, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 5.0, "nws_wind_dir_deg": 180.0, "nws_wind_cardinal": "S", "along_bay_wind_mph": -4.7, "cross_bay_wind_mph": 1.71, "nws_short_forecast": "Mostly Clear", "nws_temp_f": 80, "nws_pop_pct": 1, "yorktown_pred_tide_ft": 0.78, "windmill_pred_tide_ft": 1.036}, {"timestamp_utc": "2026-10-01 23:00:00 UTC", "timestamp_local": "2026-10-01 19:00:00 EDT", "forecast_stage_mllw_ft": 1.16, "nwps_raw_stage_ft": 1.2, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 3.0, "nws_wind_dir_deg": 180.0, "nws_wind_cardinal": "S", "along_bay_wind_mph": -2.82, "cross_bay_wind_mph": 1.03, "nws_short_forecast": "Mostly Clear", "nws_temp_f": 77, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 0.629, "windmill_pred_tide_ft": 0.778}, {"timestamp_utc": "2026-10-02 00:00:00 UTC", "timestamp_local": "2026-10-01 20:00:00 EDT", "forecast_stage_mllw_ft": 0.96, "nwps_raw_stage_ft": 1.0, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 3.0, "nws_wind_dir_deg": 180.0, "nws_wind_cardinal": "S", "along_bay_wind_mph": -2.82, "cross_bay_wind_mph": 1.03, "nws_short_forecast": "Mostly Clear", "nws_temp_f": 73, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 0.698, "windmill_pred_tide_ft": 0.587}, {"timestamp_utc": "2026-10-02 01:00:00 UTC", "timestamp_local": "2026-10-01 21:00:00 EDT", "forecast_stage_mllw_ft": 1.16, "nwps_raw_stage_ft": 1.2, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 3.0, "nws_wind_dir_deg": 180.0, "nws_wind_cardinal": "S", "along_bay_wind_mph": -2.82, "cross_bay_wind_mph": 1.03, "nws_short_forecast": "Mostly Clear", "nws_temp_f": 73, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 0.969, "windmill_pred_tide_ft": 0.498}, {"timestamp_utc": "2026-10-02 02:00:00 UTC", "timestamp_local": "2026-10-01 22:00:00 EDT", "forecast_stage_mllw_ft": 1.66, "nwps_raw_stage_ft": 1.7, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 3.0, "nws_wind_dir_deg": 180.0, "nws_wind_cardinal": "S", "along_bay_wind_mph": -2.82, "cross_bay_wind_mph": 1.03, "nws_short_forecast": "Mostly Clear", "nws_temp_f": 72, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 1.399, "windmill_pred_tide_ft": 0.545}, {"timestamp_utc": "2026-10-02 03:00:00 UTC", "timestamp_local": "2026-10-01 23:00:00 EDT", "forecast_stage_mllw_ft": 2.16, "nwps_raw_stage_ft": 2.2, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 3.0, "nws_wind_dir_deg": 180.0, "nws_wind_cardinal": "S", "along_bay_wind_mph": -2.82, "cross_bay_wind_mph": 1.03, "nws_short_forecast": "Mostly Clear", "nws_temp_f": 72, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 1.889, "windmill_pred_tide_ft": 0.74}, {"timestamp_utc": "2026-10-02 04:00:00 UTC", "timestamp_local": "2026-10-02 00:00:00 EDT", "forecast_stage_mllw_ft": 2.66, "nwps_raw_stage_ft": 2.7, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 1.8, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 3.0, "nws_wind_dir_deg": 180.0, "nws_wind_cardinal": "S", "along_bay_wind_mph": -2.82, "cross_bay_wind_mph": 1.03, "nws_short_forecast": "Mostly Clear", "nws_temp_f": 71, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 2.276, "windmill_pred_tide_ft": 1.023}, {"timestamp_utc": "2026-10-02 05:00:00 UTC", "timestamp_local": "2026-10-02 01:00:00 EDT", "forecast_stage_mllw_ft": 2.76, "nwps_raw_stage_ft": 2.8, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 2.9, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 3.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -2.72, "cross_bay_wind_mph": -1.27, "nws_short_forecast": "Mostly Clear", "nws_temp_f": 71, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 2.413, "windmill_pred_tide_ft": 1.274}, {"timestamp_utc": "2026-10-02 06:00:00 UTC", "timestamp_local": "2026-10-02 02:00:00 EDT", "forecast_stage_mllw_ft": 2.6, "nwps_raw_stage_ft": 2.7, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 1.1, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 7.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -6.34, "cross_bay_wind_mph": -2.96, "nws_short_forecast": "Mostly Clear", "nws_temp_f": 70, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 2.256, "windmill_pred_tide_ft": 1.401}, {"timestamp_utc": "2026-10-02 07:00:00 UTC", "timestamp_local": "2026-10-02 03:00:00 EDT", "forecast_stage_mllw_ft": 2.2, "nwps_raw_stage_ft": 2.3, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 7.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -6.34, "cross_bay_wind_mph": -2.96, "nws_short_forecast": "Mostly Clear", "nws_temp_f": 69, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 1.877, "windmill_pred_tide_ft": 1.395}, {"timestamp_utc": "2026-10-02 08:00:00 UTC", "timestamp_local": "2026-10-02 04:00:00 EDT", "forecast_stage_mllw_ft": 1.7, "nwps_raw_stage_ft": 1.8, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 7.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -6.34, "cross_bay_wind_mph": -2.96, "nws_short_forecast": "Mostly Clear", "nws_temp_f": 68, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 1.403, "windmill_pred_tide_ft": 1.29}, {"timestamp_utc": "2026-10-02 09:00:00 UTC", "timestamp_local": "2026-10-02 05:00:00 EDT", "forecast_stage_mllw_ft": 1.3, "nwps_raw_stage_ft": 1.4, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 7.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -6.34, "cross_bay_wind_mph": -2.96, "nws_short_forecast": "Mostly Clear", "nws_temp_f": 67, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 0.953, "windmill_pred_tide_ft": 1.113}, {"timestamp_utc": "2026-10-02 10:00:00 UTC", "timestamp_local": "2026-10-02 06:00:00 EDT", "forecast_stage_mllw_ft": 0.8, "nwps_raw_stage_ft": 0.9, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 7.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -6.34, "cross_bay_wind_mph": -2.96, "nws_short_forecast": "Sunny", "nws_temp_f": 67, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 0.635, "windmill_pred_tide_ft": 0.888}, {"timestamp_utc": "2026-10-02 11:00:00 UTC", "timestamp_local": "2026-10-02 07:00:00 EDT", "forecast_stage_mllw_ft": 0.5, "nwps_raw_stage_ft": 0.6, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 8.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -7.25, "cross_bay_wind_mph": -3.38, "nws_short_forecast": "Sunny", "nws_temp_f": 67, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 0.527, "windmill_pred_tide_ft": 0.668}, {"timestamp_utc": "2026-10-02 12:00:00 UTC", "timestamp_local": "2026-10-02 08:00:00 EDT", "forecast_stage_mllw_ft": 0.5, "nwps_raw_stage_ft": 0.5, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 8.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -7.25, "cross_bay_wind_mph": -3.38, "nws_short_forecast": "Sunny", "nws_temp_f": 69, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 0.665, "windmill_pred_tide_ft": 0.516}, {"timestamp_utc": "2026-10-02 13:00:00 UTC", "timestamp_local": "2026-10-02 09:00:00 EDT", "forecast_stage_mllw_ft": 0.58, "nwps_raw_stage_ft": 0.7, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 8.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -7.25, "cross_bay_wind_mph": -3.38, "nws_short_forecast": "Sunny", "nws_temp_f": 72, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 1.034, "windmill_pred_tide_ft": 0.472}, {"timestamp_utc": "2026-10-02 14:00:00 UTC", "timestamp_local": "2026-10-02 10:00:00 EDT", "forecast_stage_mllw_ft": 1.2, "nwps_raw_stage_ft": 1.3, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 7.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -6.34, "cross_bay_wind_mph": -2.96, "nws_short_forecast": "Sunny", "nws_temp_f": 76, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 1.574, "windmill_pred_tide_ft": 0.564}, {"timestamp_utc": "2026-10-02 15:00:00 UTC", "timestamp_local": "2026-10-02 11:00:00 EDT", "forecast_stage_mllw_ft": 1.8, "nwps_raw_stage_ft": 1.9, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 7.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -6.34, "cross_bay_wind_mph": -2.96, "nws_short_forecast": "Sunny", "nws_temp_f": 79, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 2.18, "windmill_pred_tide_ft": 0.804}, {"timestamp_utc": "2026-10-02 16:00:00 UTC", "timestamp_local": "2026-10-02 12:00:00 EDT", "forecast_stage_mllw_ft": 2.48, "nwps_raw_stage_ft": 2.6, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 8.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -7.25, "cross_bay_wind_mph": -3.38, "nws_short_forecast": "Sunny", "nws_temp_f": 83, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 2.698, "windmill_pred_tide_ft": 1.148}, {"timestamp_utc": "2026-10-02 17:00:00 UTC", "timestamp_local": "2026-10-02 13:00:00 EDT", "forecast_stage_mllw_ft": 3.06, "nwps_raw_stage_ft": 3.2, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 6.3, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 9.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -8.16, "cross_bay_wind_mph": -3.8, "nws_short_forecast": "Sunny", "nws_temp_f": 85, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 2.973, "windmill_pred_tide_ft": 1.483}, {"timestamp_utc": "2026-10-02 18:00:00 UTC", "timestamp_local": "2026-10-02 14:00:00 EDT", "forecast_stage_mllw_ft": 3.24, "nwps_raw_stage_ft": 3.4, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 8.3, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 10.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -9.06, "cross_bay_wind_mph": -4.23, "nws_short_forecast": "Sunny", "nws_temp_f": 87, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 2.932, "windmill_pred_tide_ft": 1.695}, {"timestamp_utc": "2026-10-02 19:00:00 UTC", "timestamp_local": "2026-10-02 15:00:00 EDT", "forecast_stage_mllw_ft": 3.16, "nwps_raw_stage_ft": 3.3, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 7.4, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 9.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -8.16, "cross_bay_wind_mph": -3.8, "nws_short_forecast": "Sunny", "nws_temp_f": 87, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 2.624, "windmill_pred_tide_ft": 1.749}, {"timestamp_utc": "2026-10-02 20:00:00 UTC", "timestamp_local": "2026-10-02 16:00:00 EDT", "forecast_stage_mllw_ft": 2.8, "nwps_raw_stage_ft": 2.9, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 3.4, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 7.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -6.34, "cross_bay_wind_mph": -2.96, "nws_short_forecast": "Sunny", "nws_temp_f": 87, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 2.169, "windmill_pred_tide_ft": 1.684}, {"timestamp_utc": "2026-10-02 21:00:00 UTC", "timestamp_local": "2026-10-02 17:00:00 EDT", "forecast_stage_mllw_ft": 2.22, "nwps_raw_stage_ft": 2.3, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 6.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -5.44, "cross_bay_wind_mph": -2.54, "nws_short_forecast": "Sunny", "nws_temp_f": 85, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 1.681, "windmill_pred_tide_ft": 1.536}, {"timestamp_utc": "2026-10-02 22:00:00 UTC", "timestamp_local": "2026-10-02 18:00:00 EDT", "forecast_stage_mllw_ft": 1.83, "nwps_raw_stage_ft": 1.9, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 5.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -4.53, "cross_bay_wind_mph": -2.11, "nws_short_forecast": "Partly Cloudy", "nws_temp_f": 84, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 1.236, "windmill_pred_tide_ft": 1.321}, {"timestamp_utc": "2026-10-02 23:00:00 UTC", "timestamp_local": "2026-10-02 19:00:00 EDT", "forecast_stage_mllw_ft": 1.23, "nwps_raw_stage_ft": 1.3, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 5.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -4.53, "cross_bay_wind_mph": -2.11, "nws_short_forecast": "Partly Cloudy", "nws_temp_f": 80, "nws_pop_pct": 0, "yorktown_pred_tide_ft": 0.894, "windmill_pred_tide_ft": 1.066}, {"timestamp_utc": "2026-10-03 00:00:00 UTC", "timestamp_local": "2026-10-02 20:00:00 EDT", "forecast_stage_mllw_ft": 0.86, "nwps_raw_stage_ft": 0.9, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 3.0, "nws_wind_dir_deg": 180.0, "nws_wind_cardinal": "S", "along_bay_wind_mph": -2.82, "cross_bay_wind_mph": 1.03, "nws_short_forecast": "Partly Cloudy", "nws_temp_f": 77, "nws_pop_pct": 11, "yorktown_pred_tide_ft": 0.716, "windmill_pred_tide_ft": 0.819}, {"timestamp_utc": "2026-10-03 01:00:00 UTC", "timestamp_local": "2026-10-02 21:00:00 EDT", "forecast_stage_mllw_ft": 0.76, "nwps_raw_stage_ft": 0.8, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 3.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -2.72, "cross_bay_wind_mph": -1.27, "nws_short_forecast": "Partly Cloudy", "nws_temp_f": 76, "nws_pop_pct": 11, "yorktown_pred_tide_ft": 0.744, "windmill_pred_tide_ft": 0.626}, {"timestamp_utc": "2026-10-03 02:00:00 UTC", "timestamp_local": "2026-10-02 22:00:00 EDT", "forecast_stage_mllw_ft": 0.86, "nwps_raw_stage_ft": 0.9, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 3.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -2.72, "cross_bay_wind_mph": -1.27, "nws_short_forecast": "Mostly Cloudy", "nws_temp_f": 76, "nws_pop_pct": 11, "yorktown_pred_tide_ft": 0.984, "windmill_pred_tide_ft": 0.526}, {"timestamp_utc": "2026-10-03 03:00:00 UTC", "timestamp_local": "2026-10-02 23:00:00 EDT", "forecast_stage_mllw_ft": 1.36, "nwps_raw_stage_ft": 1.4, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 3.0, "nws_wind_dir_deg": 225.0, "nws_wind_cardinal": "SW", "along_bay_wind_mph": -2.72, "cross_bay_wind_mph": -1.27, "nws_short_forecast": "Mostly Cloudy", "nws_temp_f": 75, "nws_pop_pct": 11, "yorktown_pred_tide_ft": 1.391, "windmill_pred_tide_ft": 0.562}, {"timestamp_utc": "2026-10-03 04:00:00 UTC", "timestamp_local": "2026-10-03 00:00:00 EDT", "forecast_stage_mllw_ft": 1.79, "nwps_raw_stage_ft": 1.8, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 3.0, "nws_wind_dir_deg": 270.0, "nws_wind_cardinal": "W", "along_bay_wind_mph": -1.03, "cross_bay_wind_mph": -2.82, "nws_short_forecast": "Mostly Cloudy", "nws_temp_f": 74, "nws_pop_pct": 11, "yorktown_pred_tide_ft": 1.859, "windmill_pred_tide_ft": 0.746}, {"timestamp_utc": "2026-10-03 05:00:00 UTC", "timestamp_local": "2026-10-03 01:00:00 EDT", "forecast_stage_mllw_ft": 2.31, "nwps_raw_stage_ft": 2.3, "compound_flood_depth_in": 0.0, "tidal_depth_in": 0.0, "pluvial_trapped_depth_in": 0.0, "rain_forecast_hourly_in": 0.0, "rain_rolling_6h_in": 0.0, "risk_tier": 0, "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": 0.0, "sector_road_depth_in": 0.0, "sector_driveway_depth_in": 0.0, "sector_yard_depth_in": 0.0, "sector_garage_depth_in": 0.0, "nws_wind_speed_mph": 2.0, "nws_wind_dir_deg": 315.0, "nws_wind_cardinal": "NW", "along_bay_wind_mph": 0.85, "cross_bay_wind_mph": -1.81, "nws_short_forecast": "Mostly Cloudy", "nws_temp_f": 73, "nws_pop_pct": 11, "yorktown_pred_tide_ft": 2.228, "windmill_pred_tide_ft": 1.013}]}, "observations": [{"timestamp_utc": "2026-09-29 18:00:00 UTC", "timestamp_local": "2026-09-29 14:00:00 EDT", "year": "2026", "month": "9", "day": "29", "hour": "14", "ware_river_stage_mllw_ft": "2.69", "ware_river_stage_max_ft": "2.94", "ware_river_stage_navd88_ft": "1.05", "yorktown_wind_speed_mph": "5.46", "yorktown_wind_dir_deg": "70.9", "yorktown_wind_gust_mph": "6.49", "yorktown_baro_mb": "1017.7", "yorktown_air_temp_f": "70.7", "wind_u_mph": "-5.16", "wind_v_mph": "-1.79", "along_bay_wind_mph": "3.44", "cross_bay_wind_mph": "4.24", "yorktown_pred_tide_ft": "2.01", "windmill_pred_tide_ft": "1.73", "windmill_ver_water_ft": "2.806", "windmill_surge_ft": "1.076", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-29 19:00:00 UTC", "timestamp_local": "2026-09-29 15:00:00 EDT", "year": "2026", "month": "9", "day": "29", "hour": "15", "ware_river_stage_mllw_ft": "2.06", "ware_river_stage_max_ft": "2.37", "ware_river_stage_navd88_ft": "0.42", "yorktown_wind_speed_mph": "5.44", "yorktown_wind_dir_deg": "69.0", "yorktown_wind_gust_mph": "7.16", "yorktown_baro_mb": "1017.3", "yorktown_air_temp_f": "70.7", "wind_u_mph": "-5.08", "wind_v_mph": "-1.95", "along_bay_wind_mph": "3.57", "cross_bay_wind_mph": "4.11", "yorktown_pred_tide_ft": "1.388", "windmill_pred_tide_ft": "1.502", "windmill_ver_water_ft": "2.571", "windmill_surge_ft": "1.069", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-29 20:00:00 UTC", "timestamp_local": "2026-09-29 16:00:00 EDT", "year": "2026", "month": "9", "day": "29", "hour": "16", "ware_river_stage_mllw_ft": "1.49", "ware_river_stage_max_ft": "1.71", "ware_river_stage_navd88_ft": "-0.15", "yorktown_wind_speed_mph": "3.83", "yorktown_wind_dir_deg": "80.9", "yorktown_wind_gust_mph": "5.14", "yorktown_baro_mb": "1017.2", "yorktown_air_temp_f": "71.5", "wind_u_mph": "-3.78", "wind_v_mph": "-0.61", "along_bay_wind_mph": "1.86", "cross_bay_wind_mph": "3.35", "yorktown_pred_tide_ft": "0.836", "windmill_pred_tide_ft": "1.202", "windmill_ver_water_ft": "2.244", "windmill_surge_ft": "1.042", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-29 21:00:00 UTC", "timestamp_local": "2026-09-29 17:00:00 EDT", "year": "2026", "month": "9", "day": "29", "hour": "17", "ware_river_stage_mllw_ft": "1.27", "ware_river_stage_max_ft": "1.3", "ware_river_stage_navd88_ft": "-0.37", "yorktown_wind_speed_mph": "4.63", "yorktown_wind_dir_deg": "68.1", "yorktown_wind_gust_mph": "6.49", "yorktown_baro_mb": "1017.1", "yorktown_air_temp_f": "71.6", "wind_u_mph": "-4.3", "wind_v_mph": "-1.73", "along_bay_wind_mph": "3.09", "cross_bay_wind_mph": "3.45", "yorktown_pred_tide_ft": "0.481", "windmill_pred_tide_ft": "0.882", "windmill_ver_water_ft": "1.925", "windmill_surge_ft": "1.043", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-29 22:00:00 UTC", "timestamp_local": "2026-09-29 18:00:00 EDT", "year": "2026", "month": "9", "day": "29", "hour": "18", "ware_river_stage_mllw_ft": "1.41", "ware_river_stage_max_ft": "1.52", "ware_river_stage_navd88_ft": "-0.23", "yorktown_wind_speed_mph": "4.86", "yorktown_wind_dir_deg": "80.9", "yorktown_wind_gust_mph": "6.94", "yorktown_baro_mb": "1017.4", "yorktown_air_temp_f": "70.9", "wind_u_mph": "-4.8", "wind_v_mph": "-0.77", "along_bay_wind_mph": "2.36", "cross_bay_wind_mph": "4.25", "yorktown_pred_tide_ft": "0.415", "windmill_pred_tide_ft": "0.615", "windmill_ver_water_ft": "1.698", "windmill_surge_ft": "1.083", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-29 23:00:00 UTC", "timestamp_local": "2026-09-29 19:00:00 EDT", "year": "2026", "month": "9", "day": "29", "hour": "19", "ware_river_stage_mllw_ft": "1.72", "ware_river_stage_max_ft": "1.91", "ware_river_stage_navd88_ft": "0.08", "yorktown_wind_speed_mph": "3.04", "yorktown_wind_dir_deg": "127.6", "yorktown_wind_gust_mph": "6.26", "yorktown_baro_mb": "1017.8", "yorktown_air_temp_f": "70.1", "wind_u_mph": "-2.41", "wind_v_mph": "1.85", "along_bay_wind_mph": "-0.92", "cross_bay_wind_mph": "2.9", "yorktown_pred_tide_ft": "0.64", "windmill_pred_tide_ft": "0.455", "windmill_ver_water_ft": "1.574", "windmill_surge_ft": "1.119", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 00:00:00 UTC", "timestamp_local": "2026-09-29 20:00:00 EDT", "year": "2026", "month": "9", "day": "29", "hour": "20", "ware_river_stage_mllw_ft": "2.16", "ware_river_stage_max_ft": "2.39", "ware_river_stage_navd88_ft": "0.52", "yorktown_wind_speed_mph": "2.58", "yorktown_wind_dir_deg": "132.0", "yorktown_wind_gust_mph": "4.7", "yorktown_baro_mb": "1018.4", "yorktown_air_temp_f": "69.6", "wind_u_mph": "-1.92", "wind_v_mph": "1.73", "along_bay_wind_mph": "-0.97", "cross_bay_wind_mph": "2.39", "yorktown_pred_tide_ft": "1.075", "windmill_pred_tide_ft": "0.433", "windmill_ver_water_ft": "1.557", "windmill_surge_ft": "1.124", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 01:00:00 UTC", "timestamp_local": "2026-09-29 21:00:00 EDT", "year": "2026", "month": "9", "day": "29", "hour": "21", "ware_river_stage_mllw_ft": "2.73", "ware_river_stage_max_ft": "3.02", "ware_river_stage_navd88_ft": "1.09", "yorktown_wind_speed_mph": "3.51", "yorktown_wind_dir_deg": "158.6", "yorktown_wind_gust_mph": "5.14", "yorktown_baro_mb": "1018.9", "yorktown_air_temp_f": "68.6", "wind_u_mph": "-1.28", "wind_v_mph": "3.27", "along_bay_wind_mph": "-2.63", "cross_bay_wind_mph": "2.32", "yorktown_pred_tide_ft": "1.618", "windmill_pred_tide_ft": "0.571", "windmill_ver_water_ft": "1.677", "windmill_surge_ft": "1.106", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 02:00:00 UTC", "timestamp_local": "2026-09-29 22:00:00 EDT", "year": "2026", "month": "9", "day": "29", "hour": "22", "ware_river_stage_mllw_ft": "3.29", "ware_river_stage_max_ft": "3.48", "ware_river_stage_navd88_ft": "1.65", "yorktown_wind_speed_mph": "2.21", "yorktown_wind_dir_deg": "170.7", "yorktown_wind_gust_mph": "4.93", "yorktown_baro_mb": "1019.2", "yorktown_air_temp_f": "68.2", "wind_u_mph": "-0.36", "wind_v_mph": "2.18", "along_bay_wind_mph": "-1.93", "cross_bay_wind_mph": "1.08", "yorktown_pred_tide_ft": "2.144", "windmill_pred_tide_ft": "0.847", "windmill_ver_water_ft": "1.956", "windmill_surge_ft": "1.109", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 03:00:00 UTC", "timestamp_local": "2026-09-29 23:00:00 EDT", "year": "2026", "month": "9", "day": "29", "hour": "23", "ware_river_stage_mllw_ft": "3.53", "ware_river_stage_max_ft": "3.54", "ware_river_stage_navd88_ft": "1.89", "yorktown_wind_speed_mph": "2.91", "yorktown_wind_dir_deg": "192.6", "yorktown_wind_gust_mph": "5.37", "yorktown_baro_mb": "1019.3", "yorktown_air_temp_f": "68.5", "wind_u_mph": "0.63", "wind_v_mph": "2.84", "along_bay_wind_mph": "-2.89", "cross_bay_wind_mph": "0.37", "yorktown_pred_tide_ft": "2.497", "windmill_pred_tide_ft": "1.172", "windmill_ver_water_ft": "2.251", "windmill_surge_ft": "1.079", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 04:00:00 UTC", "timestamp_local": "2026-09-30 00:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "0", "ware_river_stage_mllw_ft": "3.4", "ware_river_stage_max_ft": "3.5", "ware_river_stage_navd88_ft": "1.76", "yorktown_wind_speed_mph": "2.26", "yorktown_wind_dir_deg": "184.5", "yorktown_wind_gust_mph": "4.93", "yorktown_baro_mb": "1019.1", "yorktown_air_temp_f": "68.8", "wind_u_mph": "0.18", "wind_v_mph": "2.25", "along_bay_wind_mph": "-2.18", "cross_bay_wind_mph": "0.6", "yorktown_pred_tide_ft": "2.544", "windmill_pred_tide_ft": "1.42", "windmill_ver_water_ft": "2.471", "windmill_surge_ft": "1.051", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 05:00:00 UTC", "timestamp_local": "2026-09-30 01:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "1", "ware_river_stage_mllw_ft": "2.98", "ware_river_stage_max_ft": "3.2", "ware_river_stage_navd88_ft": "1.34", "yorktown_wind_speed_mph": "3.94", "yorktown_wind_dir_deg": "186.9", "yorktown_wind_gust_mph": "6.94", "yorktown_baro_mb": "1019.1", "yorktown_air_temp_f": "68.7", "wind_u_mph": "0.47", "wind_v_mph": "3.91", "along_bay_wind_mph": "-3.84", "cross_bay_wind_mph": "0.89", "yorktown_pred_tide_ft": "2.273", "windmill_pred_tide_ft": "1.516", "windmill_ver_water_ft": "2.532", "windmill_surge_ft": "1.016", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 06:00:00 UTC", "timestamp_local": "2026-09-30 02:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "2", "ware_river_stage_mllw_ft": "2.42", "ware_river_stage_max_ft": "2.7", "ware_river_stage_navd88_ft": "0.78", "yorktown_wind_speed_mph": "1.81", "yorktown_wind_dir_deg": "280.4", "yorktown_wind_gust_mph": "3.36", "yorktown_baro_mb": "1019.1", "yorktown_air_temp_f": "68.8", "wind_u_mph": "1.78", "wind_v_mph": "-0.33", "along_bay_wind_mph": "-0.3", "cross_bay_wind_mph": "-1.78", "yorktown_pred_tide_ft": "1.785", "windmill_pred_tide_ft": "1.465", "windmill_ver_water_ft": "2.476", "windmill_surge_ft": "1.011", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 07:00:00 UTC", "timestamp_local": "2026-09-30 03:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "3", "ware_river_stage_mllw_ft": "1.77", "ware_river_stage_max_ft": "2.06", "ware_river_stage_navd88_ft": "0.13", "yorktown_wind_speed_mph": "0.47", "yorktown_wind_dir_deg": "256.9", "yorktown_wind_gust_mph": "2.01", "yorktown_baro_mb": "1018.9", "yorktown_air_temp_f": "68.4", "wind_u_mph": "0.46", "wind_v_mph": "0.11", "along_bay_wind_mph": "-0.26", "cross_bay_wind_mph": "-0.39", "yorktown_pred_tide_ft": "1.212", "windmill_pred_tide_ft": "1.303", "windmill_ver_water_ft": "2.285", "windmill_surge_ft": "0.982", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 08:00:00 UTC", "timestamp_local": "2026-09-30 04:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "4", "ware_river_stage_mllw_ft": "1.24", "ware_river_stage_max_ft": "1.43", "ware_river_stage_navd88_ft": "-0.4", "yorktown_wind_speed_mph": "1.03", "yorktown_wind_dir_deg": "245.2", "yorktown_wind_gust_mph": "2.68", "yorktown_baro_mb": "1018.9", "yorktown_air_temp_f": "67.3", "wind_u_mph": "0.94", "wind_v_mph": "0.43", "along_bay_wind_mph": "-0.73", "cross_bay_wind_mph": "-0.73", "yorktown_pred_tide_ft": "0.684", "windmill_pred_tide_ft": "1.062", "windmill_ver_water_ft": "2.001", "windmill_surge_ft": "0.939", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 09:00:00 UTC", "timestamp_local": "2026-09-30 05:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "5", "ware_river_stage_mllw_ft": "1.08", "ware_river_stage_max_ft": "1.1", "ware_river_stage_navd88_ft": "-0.56", "yorktown_wind_speed_mph": "1.25", "yorktown_wind_dir_deg": "242.9", "yorktown_wind_gust_mph": "2.68", "yorktown_baro_mb": "1019.4", "yorktown_air_temp_f": "66.8", "wind_u_mph": "1.11", "wind_v_mph": "0.57", "along_bay_wind_mph": "-0.92", "cross_bay_wind_mph": "-0.85", "yorktown_pred_tide_ft": "0.343", "windmill_pred_tide_ft": "0.786", "windmill_ver_water_ft": "1.717", "windmill_surge_ft": "0.931", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 10:00:00 UTC", "timestamp_local": "2026-09-30 06:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "6", "ware_river_stage_mllw_ft": "1.23", "ware_river_stage_max_ft": "1.35", "ware_river_stage_navd88_ft": "-0.41", "yorktown_wind_speed_mph": "2.35", "yorktown_wind_dir_deg": "268.1", "yorktown_wind_gust_mph": "4.03", "yorktown_baro_mb": "1020.0", "yorktown_air_temp_f": "66.7", "wind_u_mph": "2.35", "wind_v_mph": "0.08", "along_bay_wind_mph": "-0.88", "cross_bay_wind_mph": "-2.18", "yorktown_pred_tide_ft": "0.307", "windmill_pred_tide_ft": "0.549", "windmill_ver_water_ft": "1.511", "windmill_surge_ft": "0.962", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 11:00:00 UTC", "timestamp_local": "2026-09-30 07:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "7", "ware_river_stage_mllw_ft": "1.54", "ware_river_stage_max_ft": "1.71", "ware_river_stage_navd88_ft": "-0.1", "yorktown_wind_speed_mph": "1.28", "yorktown_wind_dir_deg": "234.7", "yorktown_wind_gust_mph": "3.13", "yorktown_baro_mb": "1020.5", "yorktown_air_temp_f": "67.0", "wind_u_mph": "1.04", "wind_v_mph": "0.74", "along_bay_wind_mph": "-1.05", "cross_bay_wind_mph": "-0.73", "yorktown_pred_tide_ft": "0.596", "windmill_pred_tide_ft": "0.419", "windmill_ver_water_ft": "1.401", "windmill_surge_ft": "0.982", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 12:00:00 UTC", "timestamp_local": "2026-09-30 08:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "8", "ware_river_stage_mllw_ft": "2.0", "ware_river_stage_max_ft": "2.26", "ware_river_stage_navd88_ft": "0.36", "yorktown_wind_speed_mph": "2.06", "yorktown_wind_dir_deg": "63.1", "yorktown_wind_gust_mph": "3.58", "yorktown_baro_mb": "1020.6", "yorktown_air_temp_f": "69.5", "wind_u_mph": "-1.84", "wind_v_mph": "-0.93", "along_bay_wind_mph": "1.5", "cross_bay_wind_mph": "1.41", "yorktown_pred_tide_ft": "1.129", "windmill_pred_tide_ft": "0.434", "windmill_ver_water_ft": "1.391", "windmill_surge_ft": "0.957", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 13:00:00 UTC", "timestamp_local": "2026-09-30 09:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "9", "ware_river_stage_mllw_ft": "2.66", "ware_river_stage_max_ft": "3.04", "ware_river_stage_navd88_ft": "1.02", "yorktown_wind_speed_mph": "2.75", "yorktown_wind_dir_deg": "73.9", "yorktown_wind_gust_mph": "4.25", "yorktown_baro_mb": "1021.1", "yorktown_air_temp_f": "70.4", "wind_u_mph": "-2.64", "wind_v_mph": "-0.76", "along_bay_wind_mph": "1.62", "cross_bay_wind_mph": "2.22", "yorktown_pred_tide_ft": "1.786", "windmill_pred_tide_ft": "0.609", "windmill_ver_water_ft": "1.51", "windmill_surge_ft": "0.901", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 14:00:00 UTC", "timestamp_local": "2026-09-30 10:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "10", "ware_river_stage_mllw_ft": "3.44", "ware_river_stage_max_ft": "3.72", "ware_river_stage_navd88_ft": "1.8", "yorktown_wind_speed_mph": "2.68", "yorktown_wind_dir_deg": "85.6", "yorktown_wind_gust_mph": "4.25", "yorktown_baro_mb": "1021.6", "yorktown_air_temp_f": "71.7", "wind_u_mph": "-2.67", "wind_v_mph": "-0.21", "along_bay_wind_mph": "1.11", "cross_bay_wind_mph": "2.44", "yorktown_pred_tide_ft": "2.437", "windmill_pred_tide_ft": "0.931", "windmill_ver_water_ft": "1.844", "windmill_surge_ft": "0.913", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 15:00:00 UTC", "timestamp_local": "2026-09-30 11:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "11", "ware_river_stage_mllw_ft": "3.87", "ware_river_stage_max_ft": "3.93", "ware_river_stage_navd88_ft": "2.23", "yorktown_wind_speed_mph": "5.64", "yorktown_wind_dir_deg": "80.7", "yorktown_wind_gust_mph": "7.83", "yorktown_baro_mb": "1021.5", "yorktown_air_temp_f": "72.2", "wind_u_mph": "-5.57", "wind_v_mph": "-0.91", "along_bay_wind_mph": "2.76", "cross_bay_wind_mph": "4.92", "yorktown_pred_tide_ft": "2.925", "windmill_pred_tide_ft": "1.324", "windmill_ver_water_ft": "2.224", "windmill_surge_ft": "0.9", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 16:00:00 UTC", "timestamp_local": "2026-09-30 12:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "12", "ware_river_stage_mllw_ft": "3.85", "ware_river_stage_max_ft": "3.93", "ware_river_stage_navd88_ft": "2.21", "yorktown_wind_speed_mph": "9.17", "yorktown_wind_dir_deg": "71.7", "yorktown_wind_gust_mph": "11.19", "yorktown_baro_mb": "1021.0", "yorktown_air_temp_f": "72.5", "wind_u_mph": "-8.71", "wind_v_mph": "-2.88", "along_bay_wind_mph": "5.68", "cross_bay_wind_mph": "7.2", "yorktown_pred_tide_ft": "3.105", "windmill_pred_tide_ft": "1.658", "windmill_ver_water_ft": "2.52", "windmill_surge_ft": "0.862", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 17:00:00 UTC", "timestamp_local": "2026-09-30 13:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "13", "ware_river_stage_mllw_ft": "3.47", "ware_river_stage_max_ft": "3.68", "ware_river_stage_navd88_ft": "1.83", "yorktown_wind_speed_mph": "10.18", "yorktown_wind_dir_deg": "71.3", "yorktown_wind_gust_mph": "11.63", "yorktown_baro_mb": "1020.3", "yorktown_air_temp_f": "72.6", "wind_u_mph": "-9.64", "wind_v_mph": "-3.26", "along_bay_wind_mph": "6.36", "cross_bay_wind_mph": "7.94", "yorktown_pred_tide_ft": "2.934", "windmill_pred_tide_ft": "1.83", "windmill_ver_water_ft": "2.635", "windmill_surge_ft": "0.805", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 18:00:00 UTC", "timestamp_local": "2026-09-30 14:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "14", "ware_river_stage_mllw_ft": "2.94", "ware_river_stage_max_ft": "3.19", "ware_river_stage_navd88_ft": "1.3", "yorktown_wind_speed_mph": "10.49", "yorktown_wind_dir_deg": "81.0", "yorktown_wind_gust_mph": "12.75", "yorktown_baro_mb": "1019.5", "yorktown_air_temp_f": "73.7", "wind_u_mph": "-10.36", "wind_v_mph": "-1.64", "along_bay_wind_mph": "5.09", "cross_bay_wind_mph": "9.17", "yorktown_pred_tide_ft": "2.498", "windmill_pred_tide_ft": "1.824", "windmill_ver_water_ft": "2.63", "windmill_surge_ft": "0.806", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 19:00:00 UTC", "timestamp_local": "2026-09-30 15:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "15", "ware_river_stage_mllw_ft": "2.4", "ware_river_stage_max_ft": "2.66", "ware_river_stage_navd88_ft": "0.76", "yorktown_wind_speed_mph": "10.62", "yorktown_wind_dir_deg": "90.8", "yorktown_wind_gust_mph": "12.97", "yorktown_baro_mb": "1019.1", "yorktown_air_temp_f": "74.7", "wind_u_mph": "-10.62", "wind_v_mph": "0.15", "along_bay_wind_mph": "3.49", "cross_bay_wind_mph": "10.03", "yorktown_pred_tide_ft": "1.926", "windmill_pred_tide_ft": "1.685", "windmill_ver_water_ft": "2.518", "windmill_surge_ft": "0.833", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 20:00:00 UTC", "timestamp_local": "2026-09-30 16:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "16", "ware_river_stage_mllw_ft": "1.84", "ware_river_stage_max_ft": "2.09", "ware_river_stage_navd88_ft": "0.2", "yorktown_wind_speed_mph": "9.42", "yorktown_wind_dir_deg": "101.3", "yorktown_wind_gust_mph": "13.87", "yorktown_baro_mb": "1018.8", "yorktown_air_temp_f": "75.4", "wind_u_mph": "-9.24", "wind_v_mph": "1.85", "along_bay_wind_mph": "1.42", "cross_bay_wind_mph": "9.31", "yorktown_pred_tide_ft": "1.338", "windmill_pred_tide_ft": "1.454", "windmill_ver_water_ft": "2.272", "windmill_surge_ft": "0.818", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 21:00:00 UTC", "timestamp_local": "2026-09-30 17:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "17", "ware_river_stage_mllw_ft": "1.4", "ware_river_stage_max_ft": "1.56", "ware_river_stage_navd88_ft": "-0.24", "yorktown_wind_speed_mph": "8.03", "yorktown_wind_dir_deg": "106.8", "yorktown_wind_gust_mph": "11.4", "yorktown_baro_mb": "1019.0", "yorktown_air_temp_f": "74.9", "wind_u_mph": "-7.69", "wind_v_mph": "2.32", "along_bay_wind_mph": "0.45", "cross_bay_wind_mph": "8.02", "yorktown_pred_tide_ft": "0.847", "windmill_pred_tide_ft": "1.166", "windmill_ver_water_ft": "1.974", "windmill_surge_ft": "0.808", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 22:00:00 UTC", "timestamp_local": "2026-09-30 18:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "18", "ware_river_stage_mllw_ft": "1.22", "ware_river_stage_max_ft": "1.25", "ware_river_stage_navd88_ft": "-0.42", "yorktown_wind_speed_mph": "9.53", "yorktown_wind_dir_deg": "126.1", "yorktown_wind_gust_mph": "14.32", "yorktown_baro_mb": "1019.3", "yorktown_air_temp_f": "73.0", "wind_u_mph": "-7.7", "wind_v_mph": "5.62", "along_bay_wind_mph": "-2.64", "cross_bay_wind_mph": "9.16", "yorktown_pred_tide_ft": "0.561", "windmill_pred_tide_ft": "0.87", "windmill_ver_water_ft": "1.679", "windmill_surge_ft": "0.809", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-09-30 23:00:00 UTC", "timestamp_local": "2026-09-30 19:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "19", "ware_river_stage_mllw_ft": "1.35", "ware_river_stage_max_ft": "1.49", "ware_river_stage_navd88_ft": "-0.29", "yorktown_wind_speed_mph": "6.51", "yorktown_wind_dir_deg": "133.8", "yorktown_wind_gust_mph": "11.19", "yorktown_baro_mb": "1019.6", "yorktown_air_temp_f": "71.7", "wind_u_mph": "-4.7", "wind_v_mph": "4.51", "along_bay_wind_mph": "-2.63", "cross_bay_wind_mph": "5.96", "yorktown_pred_tide_ft": "0.539", "windmill_pred_tide_ft": "0.629", "windmill_ver_water_ft": "1.485", "windmill_surge_ft": "0.856", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-10-01 00:00:00 UTC", "timestamp_local": "2026-09-30 20:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "20", "ware_river_stage_mllw_ft": "1.65", "ware_river_stage_max_ft": "1.79", "ware_river_stage_navd88_ft": "0.01", "yorktown_wind_speed_mph": "5.35", "yorktown_wind_dir_deg": "136.8", "yorktown_wind_gust_mph": "8.5", "yorktown_baro_mb": "1020.1", "yorktown_air_temp_f": "71.0", "wind_u_mph": "-3.66", "wind_v_mph": "3.9", "along_bay_wind_mph": "-2.41", "cross_bay_wind_mph": "4.78", "yorktown_pred_tide_ft": "0.757", "windmill_pred_tide_ft": "0.486", "windmill_ver_water_ft": "1.368", "windmill_surge_ft": "0.882", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-10-01 01:00:00 UTC", "timestamp_local": "2026-09-30 21:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "21", "ware_river_stage_mllw_ft": "2.0", "ware_river_stage_max_ft": "2.2", "ware_river_stage_navd88_ft": "0.36", "yorktown_wind_speed_mph": "4.92", "yorktown_wind_dir_deg": "143.1", "yorktown_wind_gust_mph": "7.61", "yorktown_baro_mb": "1020.2", "yorktown_air_temp_f": "70.1", "wind_u_mph": "-2.95", "wind_v_mph": "3.93", "along_bay_wind_mph": "-2.69", "cross_bay_wind_mph": "4.12", "yorktown_pred_tide_ft": "1.158", "windmill_pred_tide_ft": "0.474", "windmill_ver_water_ft": "1.354", "windmill_surge_ft": "0.88", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-10-01 02:00:00 UTC", "timestamp_local": "2026-09-30 22:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "22", "ware_river_stage_mllw_ft": "2.49", "ware_river_stage_max_ft": "2.74", "ware_river_stage_navd88_ft": "0.85", "yorktown_wind_speed_mph": "2.82", "yorktown_wind_dir_deg": "156.7", "yorktown_wind_gust_mph": "5.59", "yorktown_baro_mb": "1020.4", "yorktown_air_temp_f": "69.3", "wind_u_mph": "-1.12", "wind_v_mph": "2.59", "along_bay_wind_mph": "-2.05", "cross_bay_wind_mph": "1.93", "yorktown_pred_tide_ft": "1.663", "windmill_pred_tide_ft": "0.613", "windmill_ver_water_ft": "1.467", "windmill_surge_ft": "0.854", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-10-01 03:00:00 UTC", "timestamp_local": "2026-09-30 23:00:00 EDT", "year": "2026", "month": "9", "day": "30", "hour": "23", "ware_river_stage_mllw_ft": "2.9", "ware_river_stage_max_ft": "3.1", "ware_river_stage_navd88_ft": "1.26", "yorktown_wind_speed_mph": "3.02", "yorktown_wind_dir_deg": "163.6", "yorktown_wind_gust_mph": "6.04", "yorktown_baro_mb": "1020.5", "yorktown_air_temp_f": "68.7", "wind_u_mph": "-0.85", "wind_v_mph": "2.9", "along_bay_wind_mph": "-2.43", "cross_bay_wind_mph": "1.79", "yorktown_pred_tide_ft": "2.146", "windmill_pred_tide_ft": "0.88", "windmill_ver_water_ft": "1.724", "windmill_surge_ft": "0.844", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-10-01 04:00:00 UTC", "timestamp_local": "2026-10-01 00:00:00 EDT", "year": "2026", "month": "10", "day": "1", "hour": "0", "ware_river_stage_mllw_ft": "", "ware_river_stage_max_ft": "", "ware_river_stage_navd88_ft": "", "yorktown_wind_speed_mph": "5.26", "yorktown_wind_dir_deg": "175.6", "yorktown_wind_gust_mph": "8.5", "yorktown_baro_mb": "1020.2", "yorktown_air_temp_f": "68.7", "wind_u_mph": "-0.4", "wind_v_mph": "5.24", "along_bay_wind_mph": "-4.79", "cross_bay_wind_mph": "2.17", "yorktown_pred_tide_ft": "2.443", "windmill_pred_tide_ft": "1.18", "windmill_ver_water_ft": "2.0", "windmill_surge_ft": "0.82", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Unknown", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}, {"timestamp_utc": "2026-10-01 05:00:00 UTC", "timestamp_local": "2026-10-01 01:00:00 EDT", "year": "2026", "month": "10", "day": "1", "hour": "1", "ware_river_stage_mllw_ft": "", "ware_river_stage_max_ft": "", "ware_river_stage_navd88_ft": "", "yorktown_wind_speed_mph": "", "yorktown_wind_dir_deg": "", "yorktown_wind_gust_mph": "", "yorktown_baro_mb": "", "yorktown_air_temp_f": "", "wind_u_mph": "", "wind_v_mph": "", "along_bay_wind_mph": "", "cross_bay_wind_mph": "", "yorktown_pred_tide_ft": "2.494", "windmill_pred_tide_ft": "1.32", "windmill_ver_water_ft": "", "windmill_surge_ft": "", "estimated_flood_depth_in": "0.0", "is_flooded": "FALSE", "flood_risk_tier": "0", "flood_risk_label": "Unknown", "vehicle_passability": "ALL VEHICLES PASSABLE", "driveway_depth_in": "0.0"}], "forecast": [{"timestamp_utc": "2026-10-01 05:00:00 UTC", "timestamp_local": "2026-10-01 01:00:00 EDT", "forecast_stage_mllw_ft": "3.16", "nwps_raw_stage_ft": "3.2", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "7.4", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "3.0", "nws_wind_dir_deg": "180.0", "nws_wind_cardinal": "S", "along_bay_wind_mph": "-2.82", "cross_bay_wind_mph": "1.03", "nws_short_forecast": "Mostly Cloudy", "nws_temp_f": "64", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "2.348", "windmill_pred_tide_ft": "1.448"}, {"timestamp_utc": "2026-10-01 06:00:00 UTC", "timestamp_local": "2026-10-01 02:00:00 EDT", "forecast_stage_mllw_ft": "2.98", "nwps_raw_stage_ft": "3.0", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "5.4", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "2.0", "nws_wind_dir_deg": "180.0", "nws_wind_cardinal": "S", "along_bay_wind_mph": "-1.88", "cross_bay_wind_mph": "0.68", "nws_short_forecast": "Mostly Cloudy", "nws_temp_f": "64", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "1.952", "windmill_pred_tide_ft": "1.449"}, {"timestamp_utc": "2026-10-01 07:00:00 UTC", "timestamp_local": "2026-10-01 03:00:00 EDT", "forecast_stage_mllw_ft": "2.58", "nwps_raw_stage_ft": "2.6", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.9", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "2.0", "nws_wind_dir_deg": "180.0", "nws_wind_cardinal": "S", "along_bay_wind_mph": "-1.88", "cross_bay_wind_mph": "0.68", "nws_short_forecast": "Mostly Cloudy", "nws_temp_f": "64", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "1.429", "windmill_pred_tide_ft": "1.336"}, {"timestamp_utc": "2026-10-01 08:00:00 UTC", "timestamp_local": "2026-10-01 04:00:00 EDT", "forecast_stage_mllw_ft": "1.98", "nwps_raw_stage_ft": "2.0", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "2.0", "nws_wind_dir_deg": "180.0", "nws_wind_cardinal": "S", "along_bay_wind_mph": "-1.88", "cross_bay_wind_mph": "0.68", "nws_short_forecast": "Mostly Cloudy", "nws_temp_f": "64", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "0.91", "windmill_pred_tide_ft": "1.14"}, {"timestamp_utc": "2026-10-01 09:00:00 UTC", "timestamp_local": "2026-10-01 05:00:00 EDT", "forecast_stage_mllw_ft": "1.38", "nwps_raw_stage_ft": "1.4", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "2.0", "nws_wind_dir_deg": "180.0", "nws_wind_cardinal": "S", "along_bay_wind_mph": "-1.88", "cross_bay_wind_mph": "0.68", "nws_short_forecast": "Partly Cloudy", "nws_temp_f": "64", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "0.526", "windmill_pred_tide_ft": "0.893"}, {"timestamp_utc": "2026-10-01 10:00:00 UTC", "timestamp_local": "2026-10-01 06:00:00 EDT", "forecast_stage_mllw_ft": "0.96", "nwps_raw_stage_ft": "1.0", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "3.0", "nws_wind_dir_deg": "180.0", "nws_wind_cardinal": "S", "along_bay_wind_mph": "-2.82", "cross_bay_wind_mph": "1.03", "nws_short_forecast": "Mostly Sunny", "nws_temp_f": "63", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "0.39", "windmill_pred_tide_ft": "0.651"}, {"timestamp_utc": "2026-10-01 11:00:00 UTC", "timestamp_local": "2026-10-01 07:00:00 EDT", "forecast_stage_mllw_ft": "0.76", "nwps_raw_stage_ft": "0.8", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "3.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-2.72", "cross_bay_wind_mph": "-1.27", "nws_short_forecast": "Mostly Sunny", "nws_temp_f": "64", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "0.546", "windmill_pred_tide_ft": "0.484"}, {"timestamp_utc": "2026-10-01 12:00:00 UTC", "timestamp_local": "2026-10-01 08:00:00 EDT", "forecast_stage_mllw_ft": "0.93", "nwps_raw_stage_ft": "1.0", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "5.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-4.53", "cross_bay_wind_mph": "-2.11", "nws_short_forecast": "Mostly Sunny", "nws_temp_f": "65", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "0.954", "windmill_pred_tide_ft": "0.438"}, {"timestamp_utc": "2026-10-01 13:00:00 UTC", "timestamp_local": "2026-10-01 09:00:00 EDT", "forecast_stage_mllw_ft": "1.33", "nwps_raw_stage_ft": "1.4", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "5.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-4.53", "cross_bay_wind_mph": "-2.11", "nws_short_forecast": "Mostly Sunny", "nws_temp_f": "69", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "1.53", "windmill_pred_tide_ft": "0.536"}, {"timestamp_utc": "2026-10-01 14:00:00 UTC", "timestamp_local": "2026-10-01 10:00:00 EDT", "forecast_stage_mllw_ft": "2.02", "nwps_raw_stage_ft": "2.1", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "6.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-5.44", "cross_bay_wind_mph": "-2.54", "nws_short_forecast": "Sunny", "nws_temp_f": "73", "nws_pop_pct": "1", "yorktown_pred_tide_ft": "2.172", "windmill_pred_tide_ft": "0.786"}, {"timestamp_utc": "2026-10-01 15:00:00 UTC", "timestamp_local": "2026-10-01 11:00:00 EDT", "forecast_stage_mllw_ft": "2.8", "nwps_raw_stage_ft": "2.9", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "3.4", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "7.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-6.34", "cross_bay_wind_mph": "-2.96", "nws_short_forecast": "Sunny", "nws_temp_f": "76", "nws_pop_pct": "1", "yorktown_pred_tide_ft": "2.731", "windmill_pred_tide_ft": "1.149"}, {"timestamp_utc": "2026-10-01 16:00:00 UTC", "timestamp_local": "2026-10-01 12:00:00 EDT", "forecast_stage_mllw_ft": "3.4", "nwps_raw_stage_ft": "3.5", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "10.1", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "7.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-6.34", "cross_bay_wind_mph": "-2.96", "nws_short_forecast": "Sunny", "nws_temp_f": "79", "nws_pop_pct": "1", "yorktown_pred_tide_ft": "3.041", "windmill_pred_tide_ft": "1.511"}, {"timestamp_utc": "2026-10-01 17:00:00 UTC", "timestamp_local": "2026-10-01 13:00:00 EDT", "forecast_stage_mllw_ft": "3.58", "nwps_raw_stage_ft": "3.7", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "12.1", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "8.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-7.25", "cross_bay_wind_mph": "-3.38", "nws_short_forecast": "Sunny", "nws_temp_f": "81", "nws_pop_pct": "1", "yorktown_pred_tide_ft": "3.013", "windmill_pred_tide_ft": "1.748"}, {"timestamp_utc": "2026-10-01 18:00:00 UTC", "timestamp_local": "2026-10-01 14:00:00 EDT", "forecast_stage_mllw_ft": "3.28", "nwps_raw_stage_ft": "3.4", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "8.7", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "8.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-7.25", "cross_bay_wind_mph": "-3.38", "nws_short_forecast": "Sunny", "nws_temp_f": "83", "nws_pop_pct": "1", "yorktown_pred_tide_ft": "2.689", "windmill_pred_tide_ft": "1.81"}, {"timestamp_utc": "2026-10-01 19:00:00 UTC", "timestamp_local": "2026-10-01 15:00:00 EDT", "forecast_stage_mllw_ft": "2.88", "nwps_raw_stage_ft": "3.0", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "4.3", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "8.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-7.25", "cross_bay_wind_mph": "-3.38", "nws_short_forecast": "Sunny", "nws_temp_f": "84", "nws_pop_pct": "1", "yorktown_pred_tide_ft": "2.189", "windmill_pred_tide_ft": "1.73"}, {"timestamp_utc": "2026-10-01 20:00:00 UTC", "timestamp_local": "2026-10-01 16:00:00 EDT", "forecast_stage_mllw_ft": "2.51", "nwps_raw_stage_ft": "2.6", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.1", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "6.0", "nws_wind_dir_deg": "180.0", "nws_wind_cardinal": "S", "along_bay_wind_mph": "-5.64", "cross_bay_wind_mph": "2.05", "nws_short_forecast": "Sunny", "nws_temp_f": "84", "nws_pop_pct": "1", "yorktown_pred_tide_ft": "1.636", "windmill_pred_tide_ft": "1.555"}, {"timestamp_utc": "2026-10-01 21:00:00 UTC", "timestamp_local": "2026-10-01 17:00:00 EDT", "forecast_stage_mllw_ft": "1.93", "nwps_raw_stage_ft": "2.0", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "5.0", "nws_wind_dir_deg": "180.0", "nws_wind_cardinal": "S", "along_bay_wind_mph": "-4.7", "cross_bay_wind_mph": "1.71", "nws_short_forecast": "Sunny", "nws_temp_f": "82", "nws_pop_pct": "1", "yorktown_pred_tide_ft": "1.136", "windmill_pred_tide_ft": "1.313"}, {"timestamp_utc": "2026-10-01 22:00:00 UTC", "timestamp_local": "2026-10-01 18:00:00 EDT", "forecast_stage_mllw_ft": "1.53", "nwps_raw_stage_ft": "1.6", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "5.0", "nws_wind_dir_deg": "180.0", "nws_wind_cardinal": "S", "along_bay_wind_mph": "-4.7", "cross_bay_wind_mph": "1.71", "nws_short_forecast": "Mostly Clear", "nws_temp_f": "80", "nws_pop_pct": "1", "yorktown_pred_tide_ft": "0.78", "windmill_pred_tide_ft": "1.036"}, {"timestamp_utc": "2026-10-01 23:00:00 UTC", "timestamp_local": "2026-10-01 19:00:00 EDT", "forecast_stage_mllw_ft": "1.16", "nwps_raw_stage_ft": "1.2", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "3.0", "nws_wind_dir_deg": "180.0", "nws_wind_cardinal": "S", "along_bay_wind_mph": "-2.82", "cross_bay_wind_mph": "1.03", "nws_short_forecast": "Mostly Clear", "nws_temp_f": "77", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "0.629", "windmill_pred_tide_ft": "0.778"}, {"timestamp_utc": "2026-10-02 00:00:00 UTC", "timestamp_local": "2026-10-01 20:00:00 EDT", "forecast_stage_mllw_ft": "0.96", "nwps_raw_stage_ft": "1.0", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "3.0", "nws_wind_dir_deg": "180.0", "nws_wind_cardinal": "S", "along_bay_wind_mph": "-2.82", "cross_bay_wind_mph": "1.03", "nws_short_forecast": "Mostly Clear", "nws_temp_f": "73", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "0.698", "windmill_pred_tide_ft": "0.587"}, {"timestamp_utc": "2026-10-02 01:00:00 UTC", "timestamp_local": "2026-10-01 21:00:00 EDT", "forecast_stage_mllw_ft": "1.16", "nwps_raw_stage_ft": "1.2", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "3.0", "nws_wind_dir_deg": "180.0", "nws_wind_cardinal": "S", "along_bay_wind_mph": "-2.82", "cross_bay_wind_mph": "1.03", "nws_short_forecast": "Mostly Clear", "nws_temp_f": "73", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "0.969", "windmill_pred_tide_ft": "0.498"}, {"timestamp_utc": "2026-10-02 02:00:00 UTC", "timestamp_local": "2026-10-01 22:00:00 EDT", "forecast_stage_mllw_ft": "1.66", "nwps_raw_stage_ft": "1.7", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "3.0", "nws_wind_dir_deg": "180.0", "nws_wind_cardinal": "S", "along_bay_wind_mph": "-2.82", "cross_bay_wind_mph": "1.03", "nws_short_forecast": "Mostly Clear", "nws_temp_f": "72", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "1.399", "windmill_pred_tide_ft": "0.545"}, {"timestamp_utc": "2026-10-02 03:00:00 UTC", "timestamp_local": "2026-10-01 23:00:00 EDT", "forecast_stage_mllw_ft": "2.16", "nwps_raw_stage_ft": "2.2", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "3.0", "nws_wind_dir_deg": "180.0", "nws_wind_cardinal": "S", "along_bay_wind_mph": "-2.82", "cross_bay_wind_mph": "1.03", "nws_short_forecast": "Mostly Clear", "nws_temp_f": "72", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "1.889", "windmill_pred_tide_ft": "0.74"}, {"timestamp_utc": "2026-10-02 04:00:00 UTC", "timestamp_local": "2026-10-02 00:00:00 EDT", "forecast_stage_mllw_ft": "2.66", "nwps_raw_stage_ft": "2.7", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "1.8", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "3.0", "nws_wind_dir_deg": "180.0", "nws_wind_cardinal": "S", "along_bay_wind_mph": "-2.82", "cross_bay_wind_mph": "1.03", "nws_short_forecast": "Mostly Clear", "nws_temp_f": "71", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "2.276", "windmill_pred_tide_ft": "1.023"}, {"timestamp_utc": "2026-10-02 05:00:00 UTC", "timestamp_local": "2026-10-02 01:00:00 EDT", "forecast_stage_mllw_ft": "2.76", "nwps_raw_stage_ft": "2.8", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "2.9", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "3.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-2.72", "cross_bay_wind_mph": "-1.27", "nws_short_forecast": "Mostly Clear", "nws_temp_f": "71", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "2.413", "windmill_pred_tide_ft": "1.274"}, {"timestamp_utc": "2026-10-02 06:00:00 UTC", "timestamp_local": "2026-10-02 02:00:00 EDT", "forecast_stage_mllw_ft": "2.6", "nwps_raw_stage_ft": "2.7", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "1.1", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "7.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-6.34", "cross_bay_wind_mph": "-2.96", "nws_short_forecast": "Mostly Clear", "nws_temp_f": "70", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "2.256", "windmill_pred_tide_ft": "1.401"}, {"timestamp_utc": "2026-10-02 07:00:00 UTC", "timestamp_local": "2026-10-02 03:00:00 EDT", "forecast_stage_mllw_ft": "2.2", "nwps_raw_stage_ft": "2.3", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "7.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-6.34", "cross_bay_wind_mph": "-2.96", "nws_short_forecast": "Mostly Clear", "nws_temp_f": "69", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "1.877", "windmill_pred_tide_ft": "1.395"}, {"timestamp_utc": "2026-10-02 08:00:00 UTC", "timestamp_local": "2026-10-02 04:00:00 EDT", "forecast_stage_mllw_ft": "1.7", "nwps_raw_stage_ft": "1.8", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "7.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-6.34", "cross_bay_wind_mph": "-2.96", "nws_short_forecast": "Mostly Clear", "nws_temp_f": "68", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "1.403", "windmill_pred_tide_ft": "1.29"}, {"timestamp_utc": "2026-10-02 09:00:00 UTC", "timestamp_local": "2026-10-02 05:00:00 EDT", "forecast_stage_mllw_ft": "1.3", "nwps_raw_stage_ft": "1.4", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "7.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-6.34", "cross_bay_wind_mph": "-2.96", "nws_short_forecast": "Mostly Clear", "nws_temp_f": "67", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "0.953", "windmill_pred_tide_ft": "1.113"}, {"timestamp_utc": "2026-10-02 10:00:00 UTC", "timestamp_local": "2026-10-02 06:00:00 EDT", "forecast_stage_mllw_ft": "0.8", "nwps_raw_stage_ft": "0.9", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "7.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-6.34", "cross_bay_wind_mph": "-2.96", "nws_short_forecast": "Sunny", "nws_temp_f": "67", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "0.635", "windmill_pred_tide_ft": "0.888"}, {"timestamp_utc": "2026-10-02 11:00:00 UTC", "timestamp_local": "2026-10-02 07:00:00 EDT", "forecast_stage_mllw_ft": "0.5", "nwps_raw_stage_ft": "0.6", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "8.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-7.25", "cross_bay_wind_mph": "-3.38", "nws_short_forecast": "Sunny", "nws_temp_f": "67", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "0.527", "windmill_pred_tide_ft": "0.668"}, {"timestamp_utc": "2026-10-02 12:00:00 UTC", "timestamp_local": "2026-10-02 08:00:00 EDT", "forecast_stage_mllw_ft": "0.5", "nwps_raw_stage_ft": "0.5", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "8.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-7.25", "cross_bay_wind_mph": "-3.38", "nws_short_forecast": "Sunny", "nws_temp_f": "69", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "0.665", "windmill_pred_tide_ft": "0.516"}, {"timestamp_utc": "2026-10-02 13:00:00 UTC", "timestamp_local": "2026-10-02 09:00:00 EDT", "forecast_stage_mllw_ft": "0.58", "nwps_raw_stage_ft": "0.7", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "8.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-7.25", "cross_bay_wind_mph": "-3.38", "nws_short_forecast": "Sunny", "nws_temp_f": "72", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "1.034", "windmill_pred_tide_ft": "0.472"}, {"timestamp_utc": "2026-10-02 14:00:00 UTC", "timestamp_local": "2026-10-02 10:00:00 EDT", "forecast_stage_mllw_ft": "1.2", "nwps_raw_stage_ft": "1.3", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "7.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-6.34", "cross_bay_wind_mph": "-2.96", "nws_short_forecast": "Sunny", "nws_temp_f": "76", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "1.574", "windmill_pred_tide_ft": "0.564"}, {"timestamp_utc": "2026-10-02 15:00:00 UTC", "timestamp_local": "2026-10-02 11:00:00 EDT", "forecast_stage_mllw_ft": "1.8", "nwps_raw_stage_ft": "1.9", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "7.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-6.34", "cross_bay_wind_mph": "-2.96", "nws_short_forecast": "Sunny", "nws_temp_f": "79", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "2.18", "windmill_pred_tide_ft": "0.804"}, {"timestamp_utc": "2026-10-02 16:00:00 UTC", "timestamp_local": "2026-10-02 12:00:00 EDT", "forecast_stage_mllw_ft": "2.48", "nwps_raw_stage_ft": "2.6", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "8.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-7.25", "cross_bay_wind_mph": "-3.38", "nws_short_forecast": "Sunny", "nws_temp_f": "83", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "2.698", "windmill_pred_tide_ft": "1.148"}, {"timestamp_utc": "2026-10-02 17:00:00 UTC", "timestamp_local": "2026-10-02 13:00:00 EDT", "forecast_stage_mllw_ft": "3.06", "nwps_raw_stage_ft": "3.2", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "6.3", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "9.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-8.16", "cross_bay_wind_mph": "-3.8", "nws_short_forecast": "Sunny", "nws_temp_f": "85", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "2.973", "windmill_pred_tide_ft": "1.483"}, {"timestamp_utc": "2026-10-02 18:00:00 UTC", "timestamp_local": "2026-10-02 14:00:00 EDT", "forecast_stage_mllw_ft": "3.24", "nwps_raw_stage_ft": "3.4", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "8.3", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "10.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-9.06", "cross_bay_wind_mph": "-4.23", "nws_short_forecast": "Sunny", "nws_temp_f": "87", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "2.932", "windmill_pred_tide_ft": "1.695"}, {"timestamp_utc": "2026-10-02 19:00:00 UTC", "timestamp_local": "2026-10-02 15:00:00 EDT", "forecast_stage_mllw_ft": "3.16", "nwps_raw_stage_ft": "3.3", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "7.4", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "9.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-8.16", "cross_bay_wind_mph": "-3.8", "nws_short_forecast": "Sunny", "nws_temp_f": "87", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "2.624", "windmill_pred_tide_ft": "1.749"}, {"timestamp_utc": "2026-10-02 20:00:00 UTC", "timestamp_local": "2026-10-02 16:00:00 EDT", "forecast_stage_mllw_ft": "2.8", "nwps_raw_stage_ft": "2.9", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "3.4", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "7.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-6.34", "cross_bay_wind_mph": "-2.96", "nws_short_forecast": "Sunny", "nws_temp_f": "87", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "2.169", "windmill_pred_tide_ft": "1.684"}, {"timestamp_utc": "2026-10-02 21:00:00 UTC", "timestamp_local": "2026-10-02 17:00:00 EDT", "forecast_stage_mllw_ft": "2.22", "nwps_raw_stage_ft": "2.3", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "6.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-5.44", "cross_bay_wind_mph": "-2.54", "nws_short_forecast": "Sunny", "nws_temp_f": "85", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "1.681", "windmill_pred_tide_ft": "1.536"}, {"timestamp_utc": "2026-10-02 22:00:00 UTC", "timestamp_local": "2026-10-02 18:00:00 EDT", "forecast_stage_mllw_ft": "1.83", "nwps_raw_stage_ft": "1.9", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "5.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-4.53", "cross_bay_wind_mph": "-2.11", "nws_short_forecast": "Partly Cloudy", "nws_temp_f": "84", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "1.236", "windmill_pred_tide_ft": "1.321"}, {"timestamp_utc": "2026-10-02 23:00:00 UTC", "timestamp_local": "2026-10-02 19:00:00 EDT", "forecast_stage_mllw_ft": "1.23", "nwps_raw_stage_ft": "1.3", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "5.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-4.53", "cross_bay_wind_mph": "-2.11", "nws_short_forecast": "Partly Cloudy", "nws_temp_f": "80", "nws_pop_pct": "0", "yorktown_pred_tide_ft": "0.894", "windmill_pred_tide_ft": "1.066"}, {"timestamp_utc": "2026-10-03 00:00:00 UTC", "timestamp_local": "2026-10-02 20:00:00 EDT", "forecast_stage_mllw_ft": "0.86", "nwps_raw_stage_ft": "0.9", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "3.0", "nws_wind_dir_deg": "180.0", "nws_wind_cardinal": "S", "along_bay_wind_mph": "-2.82", "cross_bay_wind_mph": "1.03", "nws_short_forecast": "Partly Cloudy", "nws_temp_f": "77", "nws_pop_pct": "11", "yorktown_pred_tide_ft": "0.716", "windmill_pred_tide_ft": "0.819"}, {"timestamp_utc": "2026-10-03 01:00:00 UTC", "timestamp_local": "2026-10-02 21:00:00 EDT", "forecast_stage_mllw_ft": "0.76", "nwps_raw_stage_ft": "0.8", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "3.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-2.72", "cross_bay_wind_mph": "-1.27", "nws_short_forecast": "Partly Cloudy", "nws_temp_f": "76", "nws_pop_pct": "11", "yorktown_pred_tide_ft": "0.744", "windmill_pred_tide_ft": "0.626"}, {"timestamp_utc": "2026-10-03 02:00:00 UTC", "timestamp_local": "2026-10-02 22:00:00 EDT", "forecast_stage_mllw_ft": "0.86", "nwps_raw_stage_ft": "0.9", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "3.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-2.72", "cross_bay_wind_mph": "-1.27", "nws_short_forecast": "Mostly Cloudy", "nws_temp_f": "76", "nws_pop_pct": "11", "yorktown_pred_tide_ft": "0.984", "windmill_pred_tide_ft": "0.526"}, {"timestamp_utc": "2026-10-03 03:00:00 UTC", "timestamp_local": "2026-10-02 23:00:00 EDT", "forecast_stage_mllw_ft": "1.36", "nwps_raw_stage_ft": "1.4", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "3.0", "nws_wind_dir_deg": "225.0", "nws_wind_cardinal": "SW", "along_bay_wind_mph": "-2.72", "cross_bay_wind_mph": "-1.27", "nws_short_forecast": "Mostly Cloudy", "nws_temp_f": "75", "nws_pop_pct": "11", "yorktown_pred_tide_ft": "1.391", "windmill_pred_tide_ft": "0.562"}, {"timestamp_utc": "2026-10-03 04:00:00 UTC", "timestamp_local": "2026-10-03 00:00:00 EDT", "forecast_stage_mllw_ft": "1.79", "nwps_raw_stage_ft": "1.8", "compound_flood_depth_in": "0.0", "tidal_depth_in": "0.0", "pluvial_trapped_depth_in": "0.0", "rain_forecast_hourly_in": "0.0", "rain_rolling_6h_in": "0.0", "risk_tier": "0", "risk_label": "Tier 0 (Normal / Safe)", "vehicle_passability": "ALL VEHICLES PASSABLE", "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.", "sector_ditches_depth_in": "0.0", "sector_road_depth_in": "0.0", "sector_driveway_depth_in": "0.0", "sector_yard_depth_in": "0.0", "sector_garage_depth_in": "0.0", "nws_wind_speed_mph": "3.0", "nws_wind_dir_deg": "270.0", "nws_wind_cardinal": "W", "along_bay_wind_mph": "-1.03", "cross_bay_wind_mph": "-2.82", "nws_short_forecast": "Mostly Cloudy", "nws_temp_f": "74", "nws_pop_pct": "11", "yorktown_pred_tide_ft": "1.859", "windmill_pred_tide_ft": "0.746"}]}
+  </script>
+
+  <!-- Interactive Map & Charts Logic -->
   <script>
-    const labels = ["09-29 07:00", "09-29 08:00", "09-29 09:00", "09-29 10:00", "09-29 11:00", "09-29 12:00", "09-29 13:00", "09-29 14:00", "09-29 15:00", "09-29 16:00", "09-29 17:00", "09-29 18:00", "09-29 19:00", "09-29 20:00", "09-29 21:00", "09-29 22:00", "09-29 23:00", "09-30 00:00", "09-30 01:00", "09-30 02:00", "09-30 03:00", "09-30 04:00", "09-30 05:00", "09-30 06:00", "09-30 07:00", "09-30 08:00", "09-30 09:00", "09-30 10:00", "09-30 11:00", "09-30 12:00", "09-30 13:00", "09-30 14:00", "09-30 15:00", "09-30 16:00", "09-30 17:00", "09-30 18:00", "09-30 19:00", "09-30 20:00", "09-30 21:00", "09-30 22:00", "09-30 23:00", "10-01 00:00", "10-01 01:00", "10-01 02:00", "10-01 03:00", "10-01 04:00", "10-01 05:00", "10-01 06:00", "10-01 07:00", "10-01 07:00", "10-01 08:00", "10-01 09:00", "10-01 10:00", "10-01 11:00", "10-01 12:00", "10-01 13:00", "10-01 14:00", "10-01 15:00", "10-01 16:00", "10-01 17:00", "10-01 18:00", "10-01 19:00", "10-01 20:00", "10-01 21:00", "10-01 22:00", "10-01 23:00", "10-02 00:00", "10-02 01:00", "10-02 02:00", "10-02 03:00", "10-02 04:00", "10-02 05:00", "10-02 06:00", "10-02 07:00", "10-02 08:00", "10-02 09:00", "10-02 10:00", "10-02 11:00", "10-02 12:00", "10-02 13:00", "10-02 14:00", "10-02 15:00", "10-02 16:00", "10-02 17:00", "10-02 18:00", "10-02 19:00", "10-02 20:00", "10-02 21:00", "10-02 22:00", "10-02 23:00", "10-03 00:00", "10-03 01:00", "10-03 02:00", "10-03 03:00", "10-03 04:00", "10-03 05:00", "10-03 06:00", "10-03 07:00"];
-    const obsData = [2.04, 2.82, 3.48, 3.91, 4.08, 3.87, 3.3, 2.69, 2.06, 1.49, 1.27, 1.41, 1.72, 2.16, 2.73, 3.29, 3.53, 3.4, 2.98, 2.42, 1.77, 1.24, 1.08, 1.23, 1.54, 2.0, 2.66, 3.44, 3.87, 3.85, 3.47, 2.94, 2.4, 1.84, 1.4, 1.22, 1.35, 1.65, 2.0, 2.49, 2.93, 3.18, 3.07, 2.64, 2.0, 1.42, 1.05, 0.99, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
-    const fcstData = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 0.66, 0.86, 1.36, 2.03, 2.82, 3.42, 3.6, 3.3, 2.9, 2.51, 1.91, 1.53, 1.13, 0.96, 1.16, 1.66, 2.13, 2.63, 2.73, 2.62, 2.22, 1.72, 1.32, 0.82, 0.52, 0.5, 0.6, 1.18, 1.78, 2.48, 3.06, 3.26, 3.18, 2.8, 2.22, 1.83, 1.23, 0.86, 0.73, 0.83, 1.33, 1.79, 2.32, 2.54, 2.57, 2.29, 1.92, 1.52, 1.14];
+    const floodData = JSON.parse(document.getElementById('flood-data').textContent);
+    const curr = floodData.status.current_conditions || {};
+    const outl = floodData.status.forecast_48h_outlook || {};
+    const fcst = floodData.forecast || [];
 
+    // 1. LEAFLET INTERACTIVE MAP
+    const map = L.map('flood-map', {
+      center: [37.385, -76.435],
+      zoom: 11,
+      scrollWheelZoom: false
+    });
+
+    // Add CartoDB Positron / Voyager Neutral Basemap
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap contributors & CartoDB',
+      maxZoom: 18
+    }).addTo(map);
+
+    // Sensor Station Markers
+    const wrvv2Marker = L.circleMarker([37.4082, -76.4714], {
+      radius: 9,
+      fillColor: curr.ware_river_stage_mllw_ft >= 4.0 ? '#ea580c' : '#10b981',
+      color: '#ffffff',
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 0.9
+    }).addTo(map);
+    wrvv2Marker.bindPopup(`
+      <div class="p-1 space-y-1">
+        <div class="font-bold text-sm text-slate-900">Ware River near Schley (WRVV2)</div>
+        <div class="text-xs text-slate-600">Primary Local Reference Gauge</div>
+        <div class="text-base font-extrabold text-sky-900 font-mono">${curr.ware_river_stage_mllw_ft || 'N/A'} ft MLLW</div>
+        <div class="text-[11px] text-slate-500">Flood Action Threshold: 3.99 ft</div>
+      </div>
+    `);
+
+    const yorktownMarker = L.circleMarker([37.2267, -76.4789], {
+      radius: 8,
+      fillColor: '#0284c7',
+      color: '#ffffff',
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 0.85
+    }).addTo(map);
+    yorktownMarker.bindPopup(`
+      <div class="p-1 space-y-1">
+        <div class="font-bold text-sm text-slate-900">Yorktown USCG Station (8637689)</div>
+        <div class="text-xs text-slate-600">Primary Meteorological Reference</div>
+        <div class="text-sm font-bold text-slate-900 font-mono">${curr.yorktown_wind_speed_mph || 'N/A'} mph from ${curr.yorktown_wind_dir_cardinal || 'N/A'}</div>
+        <div class="text-[11px] text-slate-500">Baro: ${curr.yorktown_baro_pressure_mb || 'N/A'} mb</div>
+      </div>
+    `);
+
+    const windmillMarker = L.circleMarker([37.6150, -76.2900], {
+      radius: 8,
+      fillColor: '#0d9488',
+      color: '#ffffff',
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 0.85
+    }).addTo(map);
+    windmillMarker.bindPopup(`
+      <div class="p-1 space-y-1">
+        <div class="font-bold text-sm text-slate-900">Windmill Point (8636580)</div>
+        <div class="text-xs text-slate-600">Northern Bay Storm Surge Reference</div>
+        <div class="text-sm font-bold text-slate-900 font-mono">+${curr.windmill_point_storm_surge_residual_ft || '0.0'} ft Surge Residual</div>
+      </div>
+    `);
+
+    // Property Micro-Topography Zones (Near Ware River / Mobjack corridor)
+    const propertyZones = [
+      {
+        name: "Tidal Ditches & Marsh Inlets",
+        elev: 2.50,
+        coords: [
+          [37.4010, -76.4420], [37.4035, -76.4405],
+          [37.4045, -76.4430], [37.4020, -76.4450]
+        ]
+      },
+      {
+        name: "Road Shoulder & Culvert Swale",
+        elev: 4.00,
+        coords: [
+          [37.4035, -76.4405], [37.4060, -76.4385],
+          [37.4070, -76.4415], [37.4045, -76.4430]
+        ]
+      },
+      {
+        name: "Main Driveway Access Route",
+        elev: 4.40,
+        coords: [
+          [37.4060, -76.4385], [37.4085, -76.4365],
+          [37.4095, -76.4395], [37.4070, -76.4415]
+        ]
+      },
+      {
+        name: "Residential Lawn & Grounds",
+        elev: 4.60,
+        coords: [
+          [37.4085, -76.4365], [37.4110, -76.4345],
+          [37.4120, -76.4375], [37.4095, -76.4395]
+        ]
+      },
+      {
+        name: "Garage Apron & Residence High Ground",
+        elev: 4.90,
+        coords: [
+          [37.4110, -76.4345], [37.4130, -76.4330],
+          [37.4140, -76.4360], [37.4120, -76.4375]
+        ]
+      }
+    ];
+
+    let zonePolygons = [];
+
+    function renderPropertyZones(stageVal) {
+      zonePolygons.forEach(p => map.removeLayer(p));
+      zonePolygons = [];
+
+      propertyZones.forEach(z => {
+        let color = '#10b981'; // Green
+        let depthIn = 0;
+        let statusTxt = 'Dry & Clear';
+
+        if (stageVal >= z.elev) {
+          depthIn = Math.round((stageVal - z.elev) * 12 * 10) / 10;
+          if (depthIn < 4) {
+            color = '#f59e0b'; // Yellow / Nuisance
+            statusTxt = `Nuisance Water (${depthIn}" deep)`;
+          } else if (depthIn < 8) {
+            color = '#ea580c'; // Orange / Moderate
+            statusTxt = `Submerged (${depthIn}" deep) - Sedans Blocked`;
+          } else {
+            color = '#dc2626'; // Red / Severe
+            statusTxt = `Severe Inundation (${depthIn}" deep)`;
+          }
+        } else if (z.elev - stageVal < 0.25) {
+          color = '#f59e0b';
+          statusTxt = 'Caution: Water within 3 inches of brim';
+        }
+
+        const poly = L.polygon(z.coords, {
+          color: color,
+          weight: 2,
+          fillColor: color,
+          fillOpacity: 0.55
+        }).addTo(map);
+
+        poly.bindPopup(`
+          <div class="p-1 space-y-1">
+            <div class="font-bold text-sm text-slate-900">${z.name}</div>
+            <div class="text-xs text-slate-500">Elevation: ${z.elev}' MLLW</div>
+            <div class="text-xs font-semibold" style="color: ${color}">${statusTxt}</div>
+          </div>
+        `);
+
+        zonePolygons.push(poly);
+      });
+    }
+
+    // Initial render with current conditions
+    renderPropertyZones(parseFloat(curr.ware_river_stage_mllw_ft || 3.1));
+
+    // Toggle button handlers
+    const btnCurrent = document.getElementById('btn-map-current');
+    const btnPeak = document.getElementById('btn-map-peak');
+
+    btnCurrent.addEventListener('click', () => {
+      btnCurrent.classList.add('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
+      btnCurrent.classList.remove('text-slate-600');
+      btnPeak.classList.remove('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
+      btnPeak.classList.add('text-slate-600');
+      renderPropertyZones(parseFloat(curr.ware_river_stage_mllw_ft || 3.1));
+    });
+
+    btnPeak.addEventListener('click', () => {
+      btnPeak.classList.add('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
+      btnPeak.classList.remove('text-slate-600');
+      btnCurrent.classList.remove('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
+      btnCurrent.classList.add('text-slate-600');
+      renderPropertyZones(parseFloat(outl.peak_forecast_stage_mllw_ft || 3.5));
+    });
+
+    // 2. CHART.JS 48-HOUR HYDROGRAPH
     const ctx = document.getElementById('hydrographChart').getContext('2d');
+    const labels = fcst.map(r => {
+      const d = r.timestamp_local || '';
+      return d.split(' ')[1] ? d.split(' ')[1].slice(0,5) : d;
+    });
+    const stageData = fcst.map(r => parseFloat(r.forecast_stage_mllw_ft || 0));
+    const rainData = fcst.map(r => parseFloat(r.rain_forecast_hourly_in || 0));
+    const thresholdData = fcst.map(() => 3.99);
+
     new Chart(ctx, {
       type: 'line',
       data: {
         labels: labels,
         datasets: [
           {
-            label: 'Observed Stage (ft)',
-            data: obsData,
-            borderColor: '#06b6d4',
-            backgroundColor: 'rgba(6, 182, 212, 0.1)',
+            label: 'Predicted Stage (ft MLLW)',
+            data: stageData,
+            borderColor: '#0284c7',
+            backgroundColor: 'rgba(2, 132, 199, 0.1)',
             fill: true,
+            tension: 0.35,
             borderWidth: 2.5,
-            pointRadius: 0,
+            pointRadius: 2,
             pointHoverRadius: 5,
-            tension: 0.3
+            yAxisID: 'y'
           },
           {
-            label: 'Hybrid Forecast (ft)',
-            data: fcstData,
-            borderColor: '#38bdf8',
+            label: 'Flood Threshold (3.99 ft)',
+            data: thresholdData,
+            borderColor: '#ef4444',
+            borderWidth: 2,
             borderDash: [5, 5],
-            backgroundColor: 'rgba(56, 189, 248, 0.05)',
-            fill: true,
-            borderWidth: 2.5,
+            fill: false,
             pointRadius: 0,
-            pointHoverRadius: 5,
-            tension: 0.3
+            yAxisID: 'y'
+          },
+          {
+            type: 'bar',
+            label: 'Hourly Rain (in)',
+            data: rainData,
+            backgroundColor: 'rgba(14, 165, 233, 0.4)',
+            yAxisID: 'y1'
           }
         ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        interaction: {
-          mode: 'index',
-          intersect: false
-        },
+        interaction: { mode: 'index', intersect: false },
         plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: '#0f172a',
-            borderColor: '#334155',
-            borderWidth: 1,
-            titleColor: '#f8fafc',
-            bodyColor: '#38bdf8',
-            padding: 12,
-            callbacks: {
-              label: function(context) {
-                let val = context.parsed.y;
-                if (val === null || isNaN(val)) return null;
-                let depth = Math.max(0, 10.95 * val - 43.69);
-                return context.dataset.label + ': ' + val.toFixed(2) + ' ft (' + depth.toFixed(1) + '" depth)';
-              }
-            }
-          }
+          legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } }
         },
         scales: {
-          x: {
-            grid: { color: 'rgba(51, 65, 85, 0.3)' },
-            ticks: {
-              color: '#94a3b8',
-              maxTicksLimit: 12,
-              font: { family: 'JetBrains Mono', size: 10 }
-            }
-          },
+          x: { grid: { display: false }, ticks: { maxTicksLimit: 12, font: { size: 10 } } },
           y: {
+            title: { display: true, text: 'Stage (ft MLLW)', font: { size: 11 } },
+            min: 1.0,
+            max: Math.max(5.5, Math.ceil(Math.max(...stageData, 4.5))),
+            grid: { color: '#f1f5f9' }
+          },
+          y1: {
+            position: 'right',
+            title: { display: true, text: 'Rain (in)', font: { size: 11 } },
             min: 0,
-            max: 5.5,
-            grid: { color: 'rgba(51, 65, 85, 0.3)' },
-            ticks: {
-              color: '#94a3b8',
-              font: { family: 'JetBrains Mono', size: 11 },
-              callback: function(value) { return value.toFixed(1) + ' ft'; }
-            }
+            max: 2.0,
+            grid: { display: false }
           }
         }
       }
