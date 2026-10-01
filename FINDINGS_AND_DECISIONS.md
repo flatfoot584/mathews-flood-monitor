@@ -199,5 +199,17 @@ python3 generate_dashboard.py
   * Automatic deduplication ensures idempotency (0 duplicates on re-runs).
   * Automatically committed and pushed to git on every 30-minute cloud run.
 
+---
+
+## 6. Multi-Page Web Portal & Interactive GIS Map Upgrade
+
+* **Architecture Upgrade**: Transformed single dashboard into a modern, 4-page responsive community portal:
+  * **`index.html` (Live Monitor & GIS Map)**: Human-first advisory hero banner, vehicle passability matrix (Sedans vs SUVs), interactive Leaflet.js coastal flood map with dynamic Green $\to$ Yellow $\to$ Orange $\to$ Red property zones, micro-topography elevation cross-section meter, and 48-hour Chart.js hydrograph.
+  * **`about.html` (The Origin Story & Notebook Gallery)**: Photo gallery of original handwritten observer notes (`IMG_8049.jpeg`–`IMG_8058.jpeg`), validation of mom's empirical rule ($0.10\text{ ft} \approx 1\ 3/16\text{"}$ vs $10.95\text{"/ft}$ regression), and compound flood physics.
+  * **`guide.html` (Flood Severity Guide & Plain-English Glossary)**: Detailed breakdown of Tiers 0–3 with visual descriptions and resident checklists, vehicle water depth danger limits ($3"$, $6"$, $12"$), and plain-English marine definitions (MLLW vs NAVD88, Storm Surge Residual, Along-Bay Wind Setup).
+  * **`data.html` (Storm History & Open Data Archive)**: Major storm comparison cards (Helene, Ophelia, Ian, Idalia, Earl, Nor'easters), interactive 141-record ground-truth explorer, and direct download links for all datasets.
+* **Leaflet GIS Map**: Embedded OpenStreetMap/CartoDB neutral tiles with live sensor pins (WRVV2, Yorktown, Windmill Point) and interactive toggle between Current Water Level and 48-Hour Peak Forecast.
+
+
 
 
