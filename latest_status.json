@@ -1,11 +1,11 @@
 {
-  "status_generated_at_local": "2026-10-01 10:02:02 EDT",
-  "status_generated_at_utc": "2026-10-01 14:02:02 UTC",
+  "status_generated_at_local": "2026-10-01 11:24:08 EDT",
+  "status_generated_at_utc": "2026-10-01 15:24:08 UTC",
   "system_location": "Mathews County, Virginia (Ware River / Mobjack Bay Basin)",
   "current_conditions": {
-    "observation_timestamp_local": "2026-10-01 09:30:00 EDT",
-    "ware_river_stage_mllw_ft": 1.86,
-    "ware_river_stage_navd88_ft": 0.22,
+    "observation_timestamp_local": "2026-10-01 11:00:00 EDT",
+    "ware_river_stage_mllw_ft": 2.97,
+    "ware_river_stage_navd88_ft": 1.33,
     "action_stage_threshold_ft": 4.0,
     "flood_inundation_threshold_ft": 3.99,
     "estimated_local_flood_depth_in": 0.0,
@@ -20,9 +20,9 @@
         "name": "Tidal Ditches & Marsh Channels",
         "invert_mllw_ft": 2.5,
         "invert_navd88_ft": 0.86,
-        "depth_in": 0.0,
-        "status": "DRY",
-        "is_submerged": false
+        "depth_in": 5.3,
+        "status": "SUBMERGED",
+        "is_submerged": true
       },
       "road_apron": {
         "name": "Road Shoulder & Culvert Invert",
@@ -57,18 +57,18 @@
         "is_submerged": false
       }
     },
-    "yorktown_wind_speed_mph": 8.27,
-    "yorktown_wind_dir_deg": 224.0,
-    "yorktown_wind_dir_cardinal": "SW",
-    "yorktown_wind_gust_mph": 10.29,
-    "along_bay_wind_vector_mph": -7.56,
-    "cross_bay_wind_vector_mph": -3.36,
+    "yorktown_wind_speed_mph": 8.95,
+    "yorktown_wind_dir_deg": 256.0,
+    "yorktown_wind_dir_cardinal": "WSW",
+    "yorktown_wind_gust_mph": 10.96,
+    "along_bay_wind_vector_mph": -5.0,
+    "cross_bay_wind_vector_mph": -7.42,
     "yorktown_baro_pressure_mb": 1020.8,
-    "yorktown_air_temp_f": 73.9,
-    "yorktown_water_level_mllw_ft": 2.005,
-    "yorktown_storm_surge_residual_ft": 0.41,
-    "windmill_point_water_level_mllw_ft": 1.289,
-    "windmill_point_storm_surge_residual_ft": 0.73
+    "yorktown_air_temp_f": 77.9,
+    "yorktown_water_level_mllw_ft": 2.963,
+    "yorktown_storm_surge_residual_ft": 0.49,
+    "windmill_point_water_level_mllw_ft": 1.716,
+    "windmill_point_storm_surge_residual_ft": 0.76
   },
   "forecast_48h_outlook": {
     "peak_forecast_stage_mllw_ft": 3.6,
@@ -81,36 +81,6 @@
     "advisory_summary": "NO FLOODING EXPECTED: Water levels will remain inside normal tidal ditches and marsh channels."
   },
   "forecast_hourly_timeline": [
-    {
-      "timestamp_utc": "2026-10-01 14:00:00 UTC",
-      "timestamp_local": "2026-10-01 10:00:00 EDT",
-      "forecast_stage_mllw_ft": 2.03,
-      "nwps_raw_stage_ft": 2.1,
-      "compound_flood_depth_in": 0.0,
-      "tidal_depth_in": 0.0,
-      "pluvial_trapped_depth_in": 0.0,
-      "rain_forecast_hourly_in": 0.0,
-      "rain_rolling_6h_in": 0.0,
-      "risk_tier": 0,
-      "risk_label": "Tier 0 (Normal / Safe)",
-      "vehicle_passability": "ALL VEHICLES PASSABLE",
-      "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.",
-      "sector_ditches_depth_in": 0.0,
-      "sector_road_depth_in": 0.0,
-      "sector_driveway_depth_in": 0.0,
-      "sector_yard_depth_in": 0.0,
-      "sector_garage_depth_in": 0.0,
-      "nws_wind_speed_mph": 5.0,
-      "nws_wind_dir_deg": 225.0,
-      "nws_wind_cardinal": "SW",
-      "along_bay_wind_mph": -4.53,
-      "cross_bay_wind_mph": -2.11,
-      "nws_short_forecast": "Mostly Sunny",
-      "nws_temp_f": 73,
-      "nws_pop_pct": 0,
-      "yorktown_pred_tide_ft": 2.172,
-      "windmill_pred_tide_ft": 0.786
-    },
     {
       "timestamp_utc": "2026-10-01 15:00:00 UTC",
       "timestamp_local": "2026-10-01 11:00:00 EDT",
@@ -1550,6 +1520,36 @@
       "nws_pop_pct": 52,
       "yorktown_pred_tide_ft": 1.049,
       "windmill_pred_tide_ft": 0.493
+    },
+    {
+      "timestamp_utc": "2026-10-03 15:00:00 UTC",
+      "timestamp_local": "2026-10-03 11:00:00 EDT",
+      "forecast_stage_mllw_ft": 1.57,
+      "nwps_raw_stage_ft": 1.4,
+      "compound_flood_depth_in": 0.0,
+      "tidal_depth_in": 0.0,
+      "pluvial_trapped_depth_in": 0.0,
+      "rain_forecast_hourly_in": 0.007,
+      "rain_rolling_6h_in": 0.03,
+      "risk_tier": 0,
+      "risk_label": "Tier 0 (Normal / Safe)",
+      "vehicle_passability": "ALL VEHICLES PASSABLE",
+      "vehicle_passability_desc": "Driveway and road dry. Normal conditions for all passenger vehicles.",
+      "sector_ditches_depth_in": 0.0,
+      "sector_road_depth_in": 0.0,
+      "sector_driveway_depth_in": 0.0,
+      "sector_yard_depth_in": 0.0,
+      "sector_garage_depth_in": 0.0,
+      "nws_wind_speed_mph": 10.0,
+      "nws_wind_dir_deg": 0.0,
+      "nws_wind_cardinal": "N",
+      "along_bay_wind_mph": 9.4,
+      "cross_bay_wind_mph": -3.42,
+      "nws_short_forecast": "Chance Rain Showers",
+      "nws_temp_f": 66,
+      "nws_pop_pct": 52,
+      "yorktown_pred_tide_ft": 1.552,
+      "windmill_pred_tide_ft": 0.566
     }
   ]
 }
