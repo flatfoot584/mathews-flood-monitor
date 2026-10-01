@@ -1,11 +1,11 @@
 {
-  "status_generated_at_local": "2026-10-01 00:50:18 EDT",
-  "status_generated_at_utc": "2026-10-01 04:50:18 UTC",
+  "status_generated_at_local": "2026-10-01 00:55:29 EDT",
+  "status_generated_at_utc": "2026-10-01 04:55:29 UTC",
   "system_location": "Mathews County, Virginia (Ware River / Mobjack Bay Basin)",
   "current_conditions": {
-    "observation_timestamp_local": "2026-09-30 23:15:00 EDT",
-    "ware_river_stage_mllw_ft": 2.9,
-    "ware_river_stage_navd88_ft": 1.26,
+    "observation_timestamp_local": "2026-09-30 23:50:00 EDT",
+    "ware_river_stage_mllw_ft": 3.1,
+    "ware_river_stage_navd88_ft": 1.46,
     "action_stage_threshold_ft": 4.0,
     "flood_inundation_threshold_ft": 3.99,
     "estimated_local_flood_depth_in": 0.0,
@@ -20,7 +20,7 @@
         "name": "Tidal Ditches & Marsh Channels",
         "invert_mllw_ft": 2.5,
         "invert_navd88_ft": 0.86,
-        "depth_in": 4.5,
+        "depth_in": 6.7,
         "status": "SUBMERGED",
         "is_submerged": true
       },
@@ -57,18 +57,18 @@
         "is_submerged": false
       }
     },
-    "yorktown_wind_speed_mph": 6.71,
-    "yorktown_wind_dir_deg": 179.0,
+    "yorktown_wind_speed_mph": 6.26,
+    "yorktown_wind_dir_deg": 174.0,
     "yorktown_wind_dir_cardinal": "S",
     "yorktown_wind_gust_mph": 8.5,
-    "along_bay_wind_vector_mph": -6.26,
-    "cross_bay_wind_vector_mph": 2.4,
+    "along_bay_wind_vector_mph": -5.63,
+    "cross_bay_wind_vector_mph": 2.74,
     "yorktown_baro_pressure_mb": 1020.1,
-    "yorktown_air_temp_f": 68.7,
-    "yorktown_water_level_mllw_ft": 3.159,
+    "yorktown_air_temp_f": 68.5,
+    "yorktown_water_level_mllw_ft": 3.169,
     "yorktown_storm_surge_residual_ft": 0.67,
-    "windmill_point_water_level_mllw_ft": 2.057,
-    "windmill_point_storm_surge_residual_ft": 0.78
+    "windmill_point_water_level_mllw_ft": 2.083,
+    "windmill_point_storm_surge_residual_ft": 0.79
   },
   "forecast_48h_outlook": {
     "peak_forecast_stage_mllw_ft": 3.58,
