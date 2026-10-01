@@ -1,6 +1,6 @@
 {
-  "status_generated_at_local": "2026-10-01 00:47:54 EDT",
-  "status_generated_at_utc": "2026-10-01 04:47:54 UTC",
+  "status_generated_at_local": "2026-10-01 00:50:18 EDT",
+  "status_generated_at_utc": "2026-10-01 04:50:18 UTC",
   "system_location": "Mathews County, Virginia (Ware River / Mobjack Bay Basin)",
   "current_conditions": {
     "observation_timestamp_local": "2026-09-30 23:15:00 EDT",
@@ -68,7 +68,7 @@
     "yorktown_water_level_mllw_ft": 3.159,
     "yorktown_storm_surge_residual_ft": 0.67,
     "windmill_point_water_level_mllw_ft": 2.057,
-    "windmill_point_storm_surge_residual_ft": 0.81
+    "windmill_point_storm_surge_residual_ft": 0.78
   },
   "forecast_48h_outlook": {
     "peak_forecast_stage_mllw_ft": 3.58,
