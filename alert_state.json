@@ -1,0 +1,10 @@
+{
+  "active_event": false,
+  "last_notified_tier": 0,
+  "last_notified_peak_stage": 0.0,
+  "last_notified_peak_time": "",
+  "two_hour_warning_sent_for": "",
+  "last_alert_type": "none",
+  "last_alert_timestamp_utc": "",
+  "last_alert_timestamp_local": ""
+}

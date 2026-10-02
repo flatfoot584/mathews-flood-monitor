@@ -23,6 +23,9 @@ import math
 import argparse
 from datetime import datetime
 
+# Global topic configuration
+DEFAULT_NTFY_TOPIC = os.getenv("NTFY_TOPIC", "mathews-flood-23128")
+
 # Common color themes & risk tiers
 TIER_STYLES = {
     0: {
@@ -108,6 +111,7 @@ def build_shared_navbar(active_page, status):
     
     pages = [
         {"id": "live", "title": "Live Monitor", "href": "index.html", "icon": "fa-water"},
+        {"id": "alerts", "title": "Mobile Alerts", "href": "index.html#alerts-section", "icon": "fa-bell"},
         {"id": "map", "title": "Flood Map", "href": "index.html#map-section", "icon": "fa-map-location-dot"},
         {"id": "about", "title": "About & History", "href": "about.html", "icon": "fa-book-open"},
         {"id": "guide", "title": "Flood Guide & Tiers", "href": "guide.html", "icon": "fa-ruler-vertical"},
@@ -465,7 +469,112 @@ def build_index_html(status, obs_rows, fcst_rows):
       </div>
     </section>
 
-    <!-- 3. INTERACTIVE LEAFLET FLOOD MAP SECTION -->
+    <!-- 3. REAL-TIME MOBILE FLOOD ALERTS (NTFY.SH) BANNER -->
+    <section id="alerts-section" class="bg-gradient-to-br from-slate-900 via-slate-800 to-sky-950 rounded-2xl text-white p-6 sm:p-8 border border-sky-800/50 shadow-lg relative overflow-hidden">
+      <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+        <!-- Explainer & Action Buttons -->
+        <div class="lg:col-span-2 space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 text-xs font-bold uppercase tracking-wider">
+            <i class="fa-solid fa-bell animate-bounce"></i>
+            <span>Instant Mobile Alerts &bull; 100% Free &bull; Zero Accounts</span>
+          </div>
+
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+            Get Audible Flood Warnings on Your Phone Before High Tide
+          </h2>
+
+          <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+            Never get caught off guard by saltwater over Daniel Ave or Bayshore Ave. Receive high-priority push notifications directly to your smartphone <strong>6 to 12 hours before peak high tide</strong>. 
+            <span class="text-sky-300 font-medium">Free forever, no email or password needed, and zero notification spam</span> (only alerts when ditch overflow or road flooding is predicted).
+          </p>
+
+          <!-- 3-Step Setup Guide -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            <div class="bg-slate-800/80 border border-slate-700/80 rounded-xl p-3">
+              <div class="flex items-center gap-2 text-sky-400 font-bold text-xs uppercase mb-1">
+                <span class="w-5 h-5 rounded-full bg-sky-900 text-sky-200 flex items-center justify-center text-[11px]">1</span>
+                <span>Install Free App</span>
+              </div>
+              <p class="text-xs text-slate-300">
+                Install <strong>ntfy</strong> from App Store or Google Play (or subscribe in web browser).
+              </p>
+            </div>
+
+            <div class="bg-slate-800/80 border border-slate-700/80 rounded-xl p-3">
+              <div class="flex items-center gap-2 text-sky-400 font-bold text-xs uppercase mb-1">
+                <span class="w-5 h-5 rounded-full bg-sky-900 text-sky-200 flex items-center justify-center text-[11px]">2</span>
+                <span>Subscribe</span>
+              </div>
+              <p class="text-xs text-slate-300">
+                Tap <strong>+</strong> and enter topic <code class="bg-slate-950 px-1.5 py-0.5 rounded text-amber-300 font-mono text-[11px]">{DEFAULT_NTFY_TOPIC}</code>.
+              </p>
+            </div>
+
+            <div class="bg-slate-800/80 border border-slate-700/80 rounded-xl p-3">
+              <div class="flex items-center gap-2 text-sky-400 font-bold text-xs uppercase mb-1">
+                <span class="w-5 h-5 rounded-full bg-sky-900 text-sky-200 flex items-center justify-center text-[11px]">3</span>
+                <span>Stay Protected</span>
+              </div>
+              <p class="text-xs text-slate-300">
+                Audible chimes warn you in advance with crest timing &amp; inches on the driveway.
+              </p>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <a href="https://ntfy.sh/{DEFAULT_NTFY_TOPIC}" target="_blank" rel="noopener noreferrer" 
+               class="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm shadow-md transition flex items-center gap-2">
+              <i class="fa-solid fa-mobile-screen-button"></i>
+              <span>Subscribe on Phone / Browser</span>
+            </a>
+
+            <button onclick="navigator.clipboard.writeText('{DEFAULT_NTFY_TOPIC}'); alert(&quot;Topic copied to clipboard: {DEFAULT_NTFY_TOPIC}&quot;);" 
+                    class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm transition flex items-center gap-2">
+              <i class="fa-solid fa-copy text-amber-400"></i>
+              <span>Copy Topic: <span class="font-mono text-amber-300">{DEFAULT_NTFY_TOPIC}</span></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- QR Code Card -->
+        <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-5 flex flex-col items-center text-center shadow-inner">
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-qrcode text-sky-400"></i>
+            <span>Scan with Phone Camera</span>
+          </div>
+
+          <div class="p-2.5 bg-white rounded-xl shadow-md inline-block">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=https://ntfy.sh/{DEFAULT_NTFY_TOPIC}" 
+                 alt="Scan to Subscribe to Mathews Flood Alerts" 
+                 class="w-36 h-36 block" 
+                 loading="lazy" />
+          </div>
+
+          <div class="text-[11px] text-slate-400 mt-3 max-w-[200px]">
+            Direct link to <span class="font-mono text-sky-300 font-semibold">ntfy.sh/{DEFAULT_NTFY_TOPIC}</span>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-700/80 w-full flex items-center justify-center gap-4 text-xs text-slate-400">
+            <a href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener noreferrer" class="hover:text-white transition flex items-center gap-1">
+              <i class="fa-brands fa-apple text-sm"></i> iPhone
+            </a>
+            <span class="text-slate-600">&bull;</span>
+            <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener noreferrer" class="hover:text-white transition flex items-center gap-1">
+              <i class="fa-brands fa-google-play text-sm"></i> Android
+            </a>
+            <span class="text-slate-600">&bull;</span>
+            <a href="https://ntfy.sh/{DEFAULT_NTFY_TOPIC}" target="_blank" rel="noopener noreferrer" class="hover:text-white transition flex items-center gap-1">
+              <i class="fa-solid fa-globe text-sm"></i> Web
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. INTERACTIVE LEAFLET FLOOD MAP SECTION -->
     <section id="map-section" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
       <div class="p-5 sm:p-6 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-slate-50/50">
         <div>
@@ -546,7 +655,7 @@ def build_index_html(status, obs_rows, fcst_rows):
       </div>
     </section>
 
-    <!-- 4. COMMUNITY ELEVATION PROFILE & STREET PASSABILITY -->
+    <!-- 5. COMMUNITY ELEVATION PROFILE & STREET PASSABILITY -->
     <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
@@ -646,7 +755,7 @@ def build_index_html(status, obs_rows, fcst_rows):
       </div>
     </section>
 
-    <!-- 5. 48-HOUR HYDROGRAPH & ENVIRONMENTAL DRIVERS -->
+    <!-- 6. 48-HOUR HYDROGRAPH & ENVIRONMENTAL DRIVERS -->
     <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
@@ -669,7 +778,7 @@ def build_index_html(status, obs_rows, fcst_rows):
       </div>
     </section>
 
-    <!-- 6. REAL-TIME SENSOR NETWORK CARDS -->
+    <!-- 7. REAL-TIME SENSOR NETWORK CARDS -->
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <!-- Card: Yorktown Winds -->
       <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">

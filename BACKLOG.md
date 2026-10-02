@@ -47,4 +47,5 @@ This document tracks future features, architectural improvements, and backlog ta
 - [x] **Task 5**: Build coastal flood alert generator (`check_alerts.py`), micro-topography engine (`micro_topography.py`), and standalone interactive web dashboard (`generate_dashboard.py` & `flood_dashboard.html`).
 - [x] **Task 6**: Serverless Cloud Execution & Public Web Hosting (GitHub Actions 30-min cron + GitHub Pages deployment at `https://flatfoot584.github.io/mathews-flood-monitor/`).
 - [x] **Task 7**: Continuous Automated Data Archiving (`archive_hourly_observations.csv` with automatic hourly deduplication and git commits).
+- [x] **Task 8**: Automated Mobile Push Notifications via ntfy.sh (Zero-cost, zero-account topic `mathews-flood-23128`, stateful anti-spam deduplication in `check_alerts.py`, GitHub Actions cron integration, and scannable QR / 1-click subscription UI on `index.html`).
 

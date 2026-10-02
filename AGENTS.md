@@ -108,9 +108,10 @@ Phase 4 (Complete): Predictive Machine Learning Models
   └─ Saved deployable model config: models/model_weights_and_thresholds.json & models/*.pkl
 
 Phase 5 (Complete): Notification, Alerting & Hazard Monitoring
-  └─ Alert generation script: check_alerts.py (with macOS desktop --notify banner)
+  └─ Alert generation script: check_alerts.py (with stateful ntfy.sh mobile push dispatcher & macOS desktop --notify banner)
   └─ Compound pluvial & micro-topography engine: micro_topography.py
-  └─ Standalone interactive web dashboard: generate_dashboard.py & flood_dashboard.html
+  └─ Standalone interactive web dashboard & 4-page portal: generate_dashboard.py, index.html & flood_dashboard.html
+  └─ Automated 30-min cloud pipeline: .github/workflows/update_flood_monitor.yml with Pages deployment & push alerting
   └─ Long-term project roadmap: BACKLOG.md
 ```
 

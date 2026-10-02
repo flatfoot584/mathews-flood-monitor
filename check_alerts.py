@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 """
-check_alerts.py — Coastal Flood Alert Generator & Hazard Monitor
+check_alerts.py — Coastal Flood Alert Generator, Hazard Monitor & Mobile Push Dispatcher
 for Mathews County, Virginia Flood Prediction System.
 
-Inspects latest_status.json (produced by ingest_realtime.py) and generates
-standardized high-priority alert bulletins when flood thresholds are approached or exceeded.
+Inspects latest_status.json (produced by ingest_realtime.py), tracks persistent alert
+state in alert_state.json to prevent duplicate/spam notifications, and dispatches
+audible mobile push notifications via ntfy.sh (topic: mathews-flood-23128).
 
-Threshold Tiers:
-- Tier 0: Normal / Safe (< 4.0 ft) -> 0" flooding
-- Tier 1: Nuisance / Ditch Full (4.0 - 4.3 ft) -> 1" - 4" on property edges/ditches
-- Tier 2: Moderate Inundation (4.4 - 4.7 ft) -> 5" - 8" on driveway/road (passenger cars impassable)
-- Tier 3: Severe Inundation (>= 4.8 ft) -> 9" - 15"+ across property (trucks/SUVs only or stranded)
+Notification Strategy:
+- Tier 0: Absolute silence (normal conditions, no notifications).
+- Advance Warning (Tier 1+): Dispatched 6-12h ahead when a crest is first forecast to exceed 4.0 ft.
+- Escalation Warning: Dispatched if peak stage increases by >= 0.25 ft (3"+) or risk tier escalates.
+- Imminent Crest (2h Warning): Dispatched 1.0 to 2.5 hours before crest peak.
+- All Clear: Dispatched when water recedes below 4.0 ft and no further flooding is expected in 48h.
 
 Author: Antigravity Assistant for Mathews County Flood Prediction Project
 """
@@ -20,9 +22,36 @@ import sys
 import json
 import argparse
 import subprocess
-from datetime import datetime
+import urllib.request
+import urllib.error
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
+
+EASTERN_TZ = ZoneInfo("America/New_York")
+DEFAULT_NTFY_TOPIC = "mathews-flood-23128"
+PUBLIC_PORTAL_URL = "https://flatfoot584.github.io/mathews-flood-monitor/"
+
+def parse_local_time(ts_str):
+    """Parse local Eastern time string into a timezone-aware datetime."""
+    if not ts_str or ts_str in ("N/A", "Unknown"):
+        return None
+    clean = ts_str.replace(" EDT", "").replace(" EST", "").strip()
+    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M"):
+        try:
+            dt = datetime.strptime(clean, fmt)
+            return dt.replace(tzinfo=EASTERN_TZ)
+        except ValueError:
+            continue
+    try:
+        dt = datetime.fromisoformat(clean)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=EASTERN_TZ)
+        return dt
+    except Exception:
+        return None
 
 def format_alert_message(status):
+    """Format human-readable CLI bulletin."""
     curr = status.get("current_conditions", {})
     outl = status.get("forecast_48h_outlook", {})
     timeline = status.get("forecast_hourly_timeline", [])
@@ -57,7 +86,7 @@ def format_alert_message(status):
 
     lines = []
     lines.append("=" * 72)
-    lines.append(f"MATHEWS COUNTY, VA FLOOD ALERT BULLETIN")
+    lines.append("MATHEWS COUNTY, VA FLOOD ALERT BULLETIN")
     lines.append(f"Issued: {status.get('status_generated_at_local', 'N/A')}")
     lines.append("=" * 72)
     lines.append(f"ALERT LEVEL: {banner}")
@@ -70,7 +99,7 @@ def format_alert_message(status):
     lines.append(f"  • Along-Bay Push      : {curr.get('along_bay_wind_vector_mph')} mph (toward Mobjack Bay)")
     lines.append(f"  • Bay Storm Surge     : +{curr.get('windmill_point_storm_surge_residual_ft')} ft at Windmill Point")
     lines.append("-" * 72)
-    lines.append(f"48-HOUR HAZARD OUTLOOK:")
+    lines.append("48-HOUR HAZARD OUTLOOK:")
     lines.append(f"  • Peak Predicted Stage: {peak_stage} ft MLLW")
     lines.append(f"  • Expected Peak Time  : {peak_time}")
     lines.append(f"  • Max Expected Depth  : {peak_depth} inches ({peak_tier_lbl})")
@@ -119,13 +148,256 @@ def send_macos_notification(title, message, subtitle=""):
     except Exception:
         pass
 
+def send_ntfy_push(topic, title, message, priority="default", tags="warning", click_url=PUBLIC_PORTAL_URL, dry_run=False):
+    """
+    Dispatch HTTP POST notification to ntfy.sh topic.
+    Works seamlessly without external pip dependencies (uses urllib).
+    """
+    url = f"https://ntfy.sh/{topic}"
+    headers = {
+        "Title": title,
+        "Priority": priority,
+        "Tags": tags,
+        "Click": click_url,
+        "Actions": f"view, Open Live Monitor, {click_url}"
+    }
+
+    if dry_run:
+        print(f"\n[ntfy DRY-RUN] URL: {url}")
+        print(f"[ntfy DRY-RUN] Headers: {headers}")
+        print(f"[ntfy DRY-RUN] Message Body:\n{message}\n")
+        return True
+
+    try:
+        req = urllib.request.Request(
+            url,
+            data=message.encode("utf-8"),
+            headers=headers,
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=12) as response:
+            code = response.getcode()
+            if code == 200:
+                print(f"[ntfy] Alert successfully dispatched to topic '{topic}' (HTTP 200).")
+                return True
+            else:
+                print(f"[ntfy WARNING] Unexpected response code {code} from ntfy.sh", file=sys.stderr)
+                return False
+    except urllib.error.HTTPError as e:
+        print(f"[ntfy ERROR] HTTP Error {e.code}: {e.reason}", file=sys.stderr)
+        return False
+    except Exception as e:
+        print(f"[ntfy ERROR] Failed to send push notification: {e}", file=sys.stderr)
+        return False
+
+def load_alert_state(state_file):
+    """Load persistent alert state to prevent duplicate notifications."""
+    if os.path.exists(state_file):
+        try:
+            with open(state_file, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"[WARNING] Could not read alert state file {state_file}: {e}", file=sys.stderr)
+    return {
+        "active_event": False,
+        "last_notified_tier": 0,
+        "last_notified_peak_stage": 0.0,
+        "last_notified_peak_time": "",
+        "two_hour_warning_sent_for": "",
+        "last_alert_type": "none",
+        "last_alert_timestamp_utc": "",
+        "last_alert_timestamp_local": ""
+    }
+
+def save_alert_state(state_file, state):
+    """Save persistent alert state to disk."""
+    try:
+        with open(state_file, "w", encoding="utf-8") as f:
+            json.dump(state, f, indent=2)
+    except Exception as e:
+        print(f"[ERROR] Could not save alert state to {state_file}: {e}", file=sys.stderr)
+
+def evaluate_and_dispatch_alerts(status, state_file, topic=DEFAULT_NTFY_TOPIC, force=False, dry_run=False):
+    """
+    State machine that decides whether to send a push notification.
+    Prevents spamming every 30 minutes while ensuring critical warnings arrive on time.
+    """
+    curr = status.get("current_conditions", {})
+    outl = status.get("forecast_48h_outlook", {})
+
+    curr_tier = curr.get("flood_risk_tier", 0)
+    peak_tier = outl.get("peak_risk_tier", 0)
+    max_tier = max(curr_tier, peak_tier)
+
+    peak_stage = outl.get("peak_forecast_stage_mllw_ft", 0.0)
+    peak_depth = outl.get("peak_estimated_flood_depth_in", 0.0)
+    peak_time_str = outl.get("peak_forecast_stage_time_local", "N/A")
+    peak_pass = outl.get("peak_vehicle_passability", "ALL VEHICLES PASSABLE")
+
+    state = load_alert_state(state_file)
+    now_dt = datetime.now(EASTERN_TZ)
+    peak_dt = parse_local_time(peak_time_str)
+
+    hours_to_peak = None
+    if peak_dt:
+        hours_to_peak = (peak_dt - now_dt).total_seconds() / 3600.0
+
+    send_alert = False
+    alert_type = None
+    priority = "default"
+    tags = "warning"
+    title = ""
+    body_lines = []
+
+    # Case 1: Normal Conditions (Tier 0)
+    if max_tier == 0:
+        if state.get("active_event"):
+            # We had an active warning, but water has receded! Send ALL CLEAR.
+            send_alert = True
+            alert_type = "all_clear"
+            priority = "low"
+            tags = "white_check_mark,sunny"
+            title = "Mathews Coastal Flood Advisory: ALL CLEAR"
+            body_lines = [
+                "Water levels have receded below 4.0 ft into normal ditches.",
+                "Roadways, driveways, and community streets are clear and passable.",
+                f"Ware River Stage: {curr.get('ware_river_stage_mllw_ft')} ft MLLW."
+            ]
+            state["active_event"] = False
+            state["last_notified_tier"] = 0
+            state["last_notified_peak_stage"] = 0.0
+            state["last_notified_peak_time"] = ""
+            state["two_hour_warning_sent_for"] = ""
+        else:
+            print(f"[ntfy] Normal conditions (Tier 0). No notification sent.")
+            return False
+
+    # Case 2: Active or Upcoming Flood Event (Tier 1+)
+    else:
+        # Determine priority and tags based on severity
+        if max_tier == 1:
+            priority = "default"
+            tags = "warning,droplet"
+            tier_name = "Tier 1 (Nuisance / Ditches Full)"
+        elif max_tier == 2:
+            priority = "high"
+            tags = "warning,ocean,car"
+            tier_name = "Tier 2 (Moderate Inundation - Driveway Blocked)"
+        else:
+            priority = "urgent"
+            tags = "rotating_light,sos,car"
+            tier_name = "Tier 3 (SEVERE INUNDATION HAZARD)"
+
+        # Check conditions for triggering
+        if force:
+            send_alert = True
+            alert_type = "forced_manual"
+        elif not state.get("active_event"):
+            # New flood event detected (Advance Warning 6-12h ahead)
+            send_alert = True
+            alert_type = "advance_warning"
+        elif peak_time_str != state.get("last_notified_peak_time"):
+            # New crest event (e.g. next day's high tide)
+            send_alert = True
+            alert_type = "new_crest_event"
+        elif max_tier > state.get("last_notified_tier", 0):
+            # Tier escalated (e.g. from Tier 1 to Tier 2)
+            send_alert = True
+            alert_type = "tier_escalation"
+        elif peak_stage >= state.get("last_notified_peak_stage", 0.0) + 0.25:
+            # Stage forecast jumped by 0.25+ ft (3+ inches)
+            send_alert = True
+            alert_type = "forecast_escalation"
+        elif (hours_to_peak is not None and 0.5 <= hours_to_peak <= 2.5 
+              and state.get("two_hour_warning_sent_for") != peak_time_str):
+            # 2-hour pre-crest immediate window reminder
+            send_alert = True
+            alert_type = "imminent_crest_warning"
+            state["two_hour_warning_sent_for"] = peak_time_str
+
+        if send_alert:
+            if alert_type == "imminent_crest_warning":
+                title = f"Mathews Flood Alert: High Tide in ~2 Hours ({peak_depth} in)"
+            elif alert_type in ("tier_escalation", "forecast_escalation"):
+                title = f"Mathews Flood WARNING ESCALATED: {tier_name}"
+            else:
+                title = f"Mathews Coastal Flood Advisory: {tier_name}"
+
+            # Compose concise lockscreen-friendly body
+            body_lines.append(f"Predicted Crest: {peak_depth}\" water at {peak_time_str}")
+            body_lines.append(f"Ware River Stage: {peak_stage} ft MLLW (Threshold: 4.0 ft)")
+            body_lines.append(f"Travel Impact: {peak_pass}")
+            if max_tier >= 2:
+                body_lines.append("Action: Move passenger cars to Bunny Rabbit ridge or high ground.")
+            else:
+                body_lines.append("Action: Water ponding in ditches and low road swales. Drive with caution.")
+
+            state["active_event"] = True
+            state["last_notified_tier"] = max_tier
+            state["last_notified_peak_stage"] = peak_stage
+            state["last_notified_peak_time"] = peak_time_str
+        else:
+            print(f"[ntfy] Flood event active ({tier_name}), but alert already sent for this crest ({peak_time_str}). Skipping to prevent spam.")
+            return False
+
+    # Dispatch notification
+    body_text = "\n".join(body_lines)
+    success = send_ntfy_push(
+        topic=topic,
+        title=title,
+        message=body_text,
+        priority=priority,
+        tags=tags,
+        click_url=PUBLIC_PORTAL_URL,
+        dry_run=dry_run
+    )
+
+    if success and not dry_run:
+        state["last_alert_type"] = alert_type
+        state["last_alert_timestamp_utc"] = datetime.now(timezone.utc).isoformat()
+        state["last_alert_timestamp_local"] = now_dt.strftime("%Y-%m-%d %H:%M:%S %Z")
+        save_alert_state(state_file, state)
+
+    return success
+
+def send_test_alert(topic=DEFAULT_NTFY_TOPIC, dry_run=False):
+    """Send an immediate test alert to verify phone notification reception."""
+    title = "Mathews Flood Monitor: Test Notification"
+    message = (
+        "Mobile push notifications are working!\n\n"
+        "You are subscribed to Mathews County coastal flood alerts. "
+        "You will receive audible warnings with water depth predictions before high-tide flood events.\n"
+        "Portal: " + PUBLIC_PORTAL_URL
+    )
+    print(f"[ntfy] Sending test notification to topic '{topic}'...")
+    return send_ntfy_push(
+        topic=topic,
+        title=title,
+        message=message,
+        priority="default",
+        tags="bell,white_check_mark",
+        click_url=PUBLIC_PORTAL_URL,
+        dry_run=dry_run
+    )
+
 def main():
-    parser = argparse.ArgumentParser(description="Check flood status and generate alert bulletins.")
+    parser = argparse.ArgumentParser(description="Check flood status, generate bulletins, and dispatch ntfy alerts.")
     parser.add_argument("--status-json", type=str, default="latest_status.json", help="Path to latest status JSON file")
+    parser.add_argument("--state-file", type=str, default="alert_state.json", help="Path to alert state file for spam prevention")
+    parser.add_argument("--ntfy-topic", type=str, default=os.getenv("NTFY_TOPIC", DEFAULT_NTFY_TOPIC), help="ntfy topic name (default: mathews-flood-23128)")
+    parser.add_argument("--ntfy", action="store_true", default=True, help="Enable ntfy.sh push notifications (default: True)")
+    parser.add_argument("--no-ntfy", action="store_false", dest="ntfy", help="Disable ntfy.sh push notifications")
+    parser.add_argument("--test-ntfy", action="store_true", help="Send a test notification to verify phone reception")
+    parser.add_argument("--force-ntfy", action="store_true", help="Force send notification regardless of prior state")
+    parser.add_argument("--dry-run", action="store_true", help="Evaluate conditions without sending HTTP request")
     parser.add_argument("--min-tier", type=int, default=1, help="Minimum tier required to trigger alert output (default: 1)")
     parser.add_argument("--always-print", action="store_true", help="Always print bulletin even if Tier 0 (Normal)")
     parser.add_argument("--notify", action="store_true", help="Send native macOS desktop notification when alert triggered")
     args = parser.parse_args()
+
+    if args.test_ntfy:
+        send_test_alert(topic=args.ntfy_topic, dry_run=args.dry_run)
+        return
 
     if not os.path.exists(args.status_json):
         print(f"[ERROR] Status file {args.status_json} not found. Run ingest_realtime.py first.", file=sys.stderr)
@@ -149,8 +421,17 @@ def main():
                 message=outl.get("advisory_summary", "")
             )
     else:
-        print(f"Status is normal (Tier {tier}). No alert needed.")
+        print(f"Status is normal (Tier {tier}). Bulletin output suppressed (use --always-print to view).")
+
+    # Evaluate and dispatch ntfy push notification
+    if args.ntfy:
+        evaluate_and_dispatch_alerts(
+            status=status,
+            state_file=args.state_file,
+            topic=args.ntfy_topic,
+            force=args.force_ntfy,
+            dry_run=args.dry_run
+        )
 
 if __name__ == "__main__":
     main()
-
