@@ -518,7 +518,7 @@ def build_forecast_timeline(nwps_fcst, nws_fcst, yt_pred_fcst, wm_pred_fcst, qpf
         
     return timeline
 
-def generate_latest_status(ware_obs, yt_winds, yt_press, yt_temps, yt_water, yt_preds, wm_water, wm_preds, nwps_fcst, fcst_timeline, sw_water=None, sw_preds=None):
+def generate_latest_status(ware_obs, yt_winds, yt_press, yt_temps, yt_water, yt_preds, wm_water, wm_preds, sw_water, sw_preds, nwps_fcst, fcst_timeline):
     """Construct structured JSON payload describing current status, micro-topography, bay hydraulic slope, and uncertainty outlook."""
     now_utc = datetime.now(timezone.utc)
     now_local = now_utc.astimezone(EASTERN_TZ)
@@ -536,13 +536,13 @@ def generate_latest_status(ware_obs, yt_winds, yt_press, yt_temps, yt_water, yt_
     latest_wm_water = wm_water[-1] if wm_water else None
     latest_wm_pred = wm_preds[-1] if wm_preds else None
     wm_surge = None
-    if latest_wm_water and latest_wm_pred:
+    if latest_wm_water and latest_wm_pred and latest_wm_water.get("water_level_ft") is not None and latest_wm_pred.get("water_level_ft") is not None:
         wm_surge = round(latest_wm_water["water_level_ft"] - latest_wm_pred["water_level_ft"], 2)
         
     latest_sw_water = sw_water[-1] if sw_water else None
     latest_sw_pred = sw_preds[-1] if sw_preds else None
     sw_surge = None
-    if latest_sw_water and latest_sw_pred:
+    if latest_sw_water and latest_sw_pred and latest_sw_water.get("water_level_ft") is not None and latest_sw_pred.get("water_level_ft") is not None:
         sw_surge = round(latest_sw_water["water_level_ft"] - latest_sw_pred["water_level_ft"], 2)
 
     bay_gradient = round(wm_surge - sw_surge, 2) if (wm_surge is not None and sw_surge is not None) else None

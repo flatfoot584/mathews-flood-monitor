@@ -11,16 +11,6 @@ This document tracks future features, architectural improvements, and backlog ta
   - **Discord / Slack Webhook**: Post real-time flood warning cards with vehicle passability to a private family or community channel (Free, zero setup).
   - **Twilio SMS / Email**: Automated emergency text messages or email alerts to designated family phone numbers.
 
-### 1.2 Shaded Confidence Interval Forecasting (Uncertainty Envelope)
-- **Task**: Implement quantile regression (or conformal prediction) in `train_predictive_models.py` and display on the dashboard hydrograph.
-- **Output**:
-  - 10th percentile (best case), 50th percentile (expected), and 90th percentile (worst case) stage and depth.
-  - Renders a semi-transparent shaded uncertainty band around the 48-hour hydrograph curve on `index.html`.
-
-### 1.3 Multi-Station Hydraulic Slope Modeling (Norfolk vs. Rappahannock)
-- **Task**: Incorporate Sewells Point (8638610) at the Chesapeake Bay mouth to calculate the bay hydraulic gradient ($\Delta \text{Surge} = \text{Surge}_{\text{Windmill}} - \text{Surge}_{\text{Sewells}}$).
-- **Physical Rationale**: When northern bay surge exceeds southern bay surge, a hydraulic pressure head pushes water directly into Mobjack Bay and the Ware River.
-
 ---
 
 ## 2. Medium Priority Tasks
@@ -90,3 +80,14 @@ This document tracks future features, architectural improvements, and backlog ta
   - Documented major historical storms: Hurricane Erin ($13"$), October 2025 10-year record nor'easter ($19"$, $5.54\text{ ft}$), and September 2026 twin nor'easters ($17.5"$, $5.38\text{ ft}$).
   - Recalibrated Stage 2 inundation model on all 5 years of observations, boosting $R^2$ from $0.800$ to **$0.851$** (MAE $1.25"$, RMSE $1.69"$).
   - Upgraded `data.html` with new storm showcase cards and a 204-record scrollable sticky-header table.
+
+- [x] **Task 14: Shaded Confidence Interval Forecasting (Uncertainty Envelope)**
+  - Implemented LightGBM quantile regression models ($\alpha = 0.10$ and $\alpha = 0.90$) with empirical conformal residual adjustments in `train_predictive_models.py`.
+  - Added 10th percentile (best case), 50th percentile (expected), and 90th percentile (worst case) stage and depth to `latest_status.json` and `forecast_48h.csv`.
+  - Rendered a semi-transparent shaded uncertainty band around the 48-hour hydrograph curve on `index.html` using Chart.js area fill.
+
+- [x] **Task 15: Multi-Station Hydraulic Slope Modeling (Norfolk vs. Rappahannock)**
+  - Integrated NOAA Sewells Point (`8638610`) at the southern Chesapeake Bay mouth into `ingest_realtime.py`.
+  - Calculated real-time bay hydraulic gradient ($\Delta \text{Surge} = \text{Surge}_{\text{Windmill}} - \text{Surge}_{\text{Sewells}}$) and hydraulic slope across the 46.2-mile transect.
+  - Modeled downward hydraulic pressure head forcing water into Mobjack Bay and the Ware River basin during north-bay surge stacking events.
+  - Added Sewells Point and Bay Hydraulic Slope metric cards to the regional station grid on `index.html`.

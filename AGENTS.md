@@ -96,14 +96,16 @@ Phase 2 (Complete): Historical Data Backfill & Alignment
 Phase 3 (Complete): Automated Real-Time Ingestion Pipeline
   └─ Python collector script: ingest_realtime.py
   └─ Fetches live 6-min Ware River stage (NWPS API) + 4-day forecast hydrograph
-  └─ Fetches live Yorktown USCG met/water & Windmill Point storm surge residual
-  └─ Fetches NWS AKQ 156-hr hourly wind forecast
+  └─ Fetches live Yorktown USCG met/water, Windmill Point & Sewells Point storm surge residuals
+  └─ Computes Chesapeake Bay hydraulic gradient (ΔSurge = Windmill - Sewells) & slope across 46.2-mi transect
+  └─ Fetches NWS AKQ 156-hr hourly wind forecast & QPF precipitation
   └─ Outputs latest_status.json, realtime_recent_observations.csv, forecast_48h.csv
 
 Phase 4 (Complete): Predictive Machine Learning Models
   └─ Training pipeline: train_predictive_models.py
   └─ Stage 1 Nowcasting: R² = 0.973, MAE = 1.5 inches (tested on 2024 holdout storms)
   └─ Stage 1 Forecasting: R² = 0.721, MAE = 4.8 inches (astronomical tide + quadratic wind stress)
+  └─ Quantile Regression Uncertainty Envelope: LightGBM Q10 and Q90 models with conformal calibration
   └─ Stage 2 Local Inundation: R² = 0.851, MAE = 1.25 inches on 181 observations (2021–2026 full record)
   └─ Saved deployable model config: models/model_weights_and_thresholds.json & models/*.pkl
 

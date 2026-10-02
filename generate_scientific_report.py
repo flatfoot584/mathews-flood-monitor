@@ -78,6 +78,19 @@ COMMUNITY_STREET_NETWORK = [
 
 CHANGELOG = [
     {
+        "version": "2.1.0",
+        "date": "2026-10-02",
+        "title": "Multi-Station Hydraulic Gradient & Quantile Uncertainty Envelope",
+        "summary": "Integrated NOAA Sewells Point (8638610) southern Chesapeake Bay reference station and LightGBM quantile regression uncertainty bounds (Q10/Q90) for probabilistic forecasting.",
+        "details": [
+            "Incorporated NOAA Sewells Point (8638610) to calculate Chesapeake Bay hydraulic gradient across the 46.2-mile north-south transect (Delta Surge = Surge_Windmill - Surge_Sewells).",
+            "Identified southward pressure head regime (Delta Surge >= +0.20 ft) actively pushing water into Mobjack Bay and the Ware River basin.",
+            "Trained LightGBM quantile regression models for alpha = 0.10 (best case) and alpha = 0.90 (worst case) with empirical conformal residual adjustments.",
+            "Visualized semi-transparent shaded 80% confidence interval band around the 48-hour hydrograph curve on index.html.",
+            "Expanded regional station grid to 6 cards on index.html featuring Yorktown winds, wind vectors, barometer, Windmill Pt surge, Sewells Pt surge, and bay hydraulic slope."
+        ]
+    },
+    {
         "version": "2.0.0",
         "date": "2026-10-01",
         "title": "5-Year Full Empirical Expansion (2021–2026) & Science Portal Launch",

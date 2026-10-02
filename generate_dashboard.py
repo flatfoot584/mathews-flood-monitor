@@ -322,8 +322,19 @@ def build_index_html(status, obs_rows, fcst_rows):
     along_bay = curr.get("along_bay_wind_vector_mph", "N/A")
     baro = curr.get("yorktown_baro_pressure_mb", "N/A")
     surge = curr.get("windmill_point_storm_surge_residual_ft", "N/A")
+    sw_surge = curr.get("sewells_point_storm_surge_residual_ft", "N/A")
+    sw_water = curr.get("sewells_point_water_level_mllw_ft", "N/A")
+    bay_grad = curr.get("bay_hydraulic_gradient_ft", "N/A")
+    bay_slope = curr.get("bay_hydraulic_slope_ft_per_mile", "N/A")
+    bay_dir = curr.get("bay_hydraulic_pressure_direction", "N/A")
 
     peak_stage = outl.get("peak_forecast_stage_mllw_ft", "N/A")
+    peak_stage_q10 = outl.get("peak_forecast_stage_q10_ft", "N/A")
+    peak_stage_q90 = outl.get("peak_forecast_stage_q90_ft", "N/A")
+    peak_depth_q10 = outl.get("peak_estimated_flood_depth_q10_in", 0.0)
+    peak_depth_q90 = outl.get("peak_estimated_flood_depth_q90_in", 0.0)
+    ci_summary = outl.get("confidence_interval_80pct_summary", "")
+    slope_summary = outl.get("bay_hydraulic_slope_summary", "")
     peak_time = outl.get("peak_forecast_stage_time_local", "N/A")
     peak_depth = outl.get("peak_estimated_flood_depth_in", 0.0)
     peak_tier = outl.get("peak_risk_tier", 0)
@@ -409,7 +420,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         </div>
 
         <!-- Quick Metrics Box -->
-        <div class="flex flex-wrap lg:flex-col gap-3 bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-slate-200/80 shadow-sm min-w-[240px]">
+        <div class="flex flex-wrap lg:flex-col gap-3 bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-slate-200/80 shadow-sm min-w-[250px]">
           <div>
             <div class="text-[11px] font-semibold text-slate-500 uppercase">Current Ware River Stage</div>
             <div class="text-2xl font-black text-slate-900 font-mono">{stage} <span class="text-sm font-semibold text-slate-500">ft MLLW</span></div>
@@ -419,6 +430,10 @@ def build_index_html(status, obs_rows, fcst_rows):
             <div class="text-[11px] font-semibold text-slate-500 uppercase">48-Hour Peak Forecast</div>
             <div class="text-lg font-extrabold text-sky-900 font-mono">{peak_stage} ft <span class="text-xs font-normal text-slate-500">at {peak_time.split(' ')[1] if ' ' in str(peak_time) else peak_time}</span></div>
             <div class="text-xs font-semibold {peak_tier_info['badge_text']}">Inundation: {peak_depth}" ({peak_passability})</div>
+            <div class="text-[11px] font-mono text-slate-500 mt-1 flex items-center justify-between">
+              <span>80% Envelope:</span>
+              <span class="font-bold text-slate-700">{peak_stage_q10}' – {peak_stage_q90}'</span>
+            </div>
           </div>
         </div>
       </div>
@@ -665,11 +680,12 @@ def build_index_html(status, obs_rows, fcst_rows):
             48-Hour Hybrid Forecast Hydrograph
           </h2>
           <p class="text-xs sm:text-sm text-slate-500">
-            NOAA NWPS CBOFS hydrodynamic water model blended with local wind stress ML bias correction and NWS rainfall.
+            NOAA NWPS CBOFS hydrodynamic water model blended with local wind stress ML bias correction, bay hydraulic slope, and quantile regression uncertainty.
           </p>
         </div>
-        <div class="flex items-center gap-3 text-xs">
-          <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-sky-600"></span> Predicted Stage</span>
+        <div class="flex flex-wrap items-center gap-3 text-xs">
+          <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-sky-600"></span> Expected Stage</span>
+          <span class="flex items-center gap-1.5"><span class="w-3.5 h-2 bg-sky-200/80 border border-sky-400 border-dashed rounded-[2px]"></span> 80% Uncertainty Band (Q10–Q90)</span>
           <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-red-500 border-t border-dashed"></span> 3.99' Flood Threshold</span>
         </div>
       </div>
@@ -677,64 +693,97 @@ def build_index_html(status, obs_rows, fcst_rows):
       <div class="h-80 w-full relative">
         <canvas id="hydrographChart"></canvas>
       </div>
+
+      <div class="text-[11px] text-slate-500 flex flex-wrap items-center justify-between pt-2 border-t border-slate-100 gap-2">
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-sky-500"></i> Shaded band represents the 80% confidence interval (10th percentile best-case to 90th percentile worst-case).</span>
+        <span class="font-mono text-slate-700 font-medium">Expected Peak: {peak_stage}' (80% Range: {peak_stage_q10}' to {peak_stage_q90}')</span>
+      </div>
     </section>
 
-    <!-- 6. REAL-TIME SENSOR NETWORK CARDS -->
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <!-- Card: Yorktown Winds -->
-      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
-        <div class="flex items-center justify-between text-xs font-semibold text-slate-500 uppercase">
+    <!-- 6. REAL-TIME SENSOR NETWORK & BAY HYDRAULIC GRADIENT -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
+      <!-- Card 1: Yorktown Winds -->
+      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
+        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
           <span>Yorktown Winds</span>
           <i class="fa-solid fa-wind text-sky-500"></i>
         </div>
         <div class="text-2xl font-black text-slate-900 font-mono">
-          {wind_spd} <span class="text-sm font-semibold text-slate-500">mph</span>
+          {wind_spd} <span class="text-xs font-semibold text-slate-500">mph</span>
         </div>
-        <div class="text-xs text-slate-600 flex items-center justify-between">
+        <div class="text-[11px] text-slate-600 flex items-center justify-between">
           <span>From {wind_dir} ({wind_deg}&deg;)</span>
-          <span>Gusts: {wind_gst} mph</span>
+          <span class="text-slate-400">G: {wind_gst} mph</span>
         </div>
       </div>
 
-      <!-- Card: Along-Bay Wind Vector -->
-      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
-        <div class="flex items-center justify-between text-xs font-semibold text-slate-500 uppercase">
+      <!-- Card 2: Along-Bay Wind Vector -->
+      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
+        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
           <span>Along-Bay Vector</span>
           <i class="fa-solid fa-compass text-blue-500"></i>
         </div>
         <div class="text-2xl font-black font-mono {'text-amber-600' if float(along_bay or 0) > 10 else 'text-slate-900'}">
-          {along_bay} <span class="text-sm font-semibold text-slate-500">mph</span>
+          {along_bay} <span class="text-xs font-semibold text-slate-500">mph</span>
         </div>
-        <div class="text-xs text-slate-500">
-          {'Forcing water into Mobjack Bay' if float(along_bay or 0) > 0 else 'Blowing water out to Atlantic'}
+        <div class="text-[11px] text-slate-500 truncate" title="Along-bay wind stress">
+          {'Forcing water into Mobjack' if float(along_bay or 0) > 0 else 'Blowing water out to Atlantic'}
         </div>
       </div>
 
-      <!-- Card: Barometric Pressure -->
-      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
-        <div class="flex items-center justify-between text-xs font-semibold text-slate-500 uppercase">
+      <!-- Card 3: Barometric Pressure -->
+      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
+        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
           <span>Barometer</span>
           <i class="fa-solid fa-gauge-high text-indigo-500"></i>
         </div>
         <div class="text-2xl font-black text-slate-900 font-mono">
-          {baro} <span class="text-sm font-semibold text-slate-500">mb</span>
+          {baro} <span class="text-xs font-semibold text-slate-500">mb</span>
         </div>
-        <div class="text-xs text-slate-500">
+        <div class="text-[11px] text-slate-500 truncate">
           {'Low pressure (water rising)' if float(baro or 1013) < 1010 else 'Normal atmospheric pressure'}
         </div>
       </div>
 
-      <!-- Card: Mouth of Bay Surge -->
-      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
-        <div class="flex items-center justify-between text-xs font-semibold text-slate-500 uppercase">
-          <span>Mouth-of-Bay Surge</span>
+      <!-- Card 4: North Bay Surge (Windmill Point) -->
+      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
+        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+          <span>North Bay Surge</span>
           <i class="fa-solid fa-water-ladder text-cyan-500"></i>
         </div>
         <div class="text-2xl font-black font-mono {'text-amber-600' if float(surge or 0) > 1.0 else 'text-slate-900'}">
-          +{surge} <span class="text-sm font-semibold text-slate-500">ft</span>
+          +{surge} <span class="text-xs font-semibold text-slate-500">ft</span>
         </div>
-        <div class="text-xs text-slate-500">
-          Windmill Point storm surge residual
+        <div class="text-[11px] text-slate-500 truncate" title="Windmill Point (8636580)">
+          Windmill Pt (8636580)
+        </div>
+      </div>
+
+      <!-- Card 5: South Bay Surge (Sewells Point) -->
+      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
+        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+          <span>South Bay Surge</span>
+          <i class="fa-solid fa-anchor text-blue-600"></i>
+        </div>
+        <div class="text-2xl font-black font-mono {'text-amber-600' if float(sw_surge or 0) > 1.0 else 'text-slate-900'}">
+          +{sw_surge} <span class="text-xs font-semibold text-slate-500">ft</span>
+        </div>
+        <div class="text-[11px] text-slate-500 truncate" title="Sewells Point / Norfolk (8638610)">
+          Sewells Pt (8638610)
+        </div>
+      </div>
+
+      <!-- Card 6: Bay Hydraulic Slope -->
+      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
+        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+          <span>Bay Hydraulic Slope</span>
+          <i class="fa-solid fa-arrows-left-right-to-line text-emerald-600"></i>
+        </div>
+        <div class="text-2xl font-black font-mono {'text-amber-600' if float(bay_grad or 0) >= 0.20 else 'text-slate-900'}">
+          {'+' if float(bay_grad or 0) > 0 else ''}{bay_grad} <span class="text-xs font-semibold text-slate-500">ft</span>
+        </div>
+        <div class="text-[11px] text-slate-500 truncate" title="{bay_dir}">
+          {'South Inflow Head' if float(bay_grad or 0) >= 0.20 else ('North Gradient' if float(bay_grad or 0) <= -0.20 else 'Equilibrium')} (46 mi)
         </div>
       </div>
     </section>
@@ -1219,13 +1268,15 @@ def build_index_html(status, obs_rows, fcst_rows):
       }});
     }}
 
-    // 2. CHART.JS 48-HOUR HYDROGRAPH
+    // 2. CHART.JS 48-HOUR HYDROGRAPH WITH QUANTILE CONFIDENCE ENVELOPE
     const ctx = document.getElementById('hydrographChart').getContext('2d');
     const labels = fcst.map(r => {{
       const d = r.timestamp_local || '';
       return d.split(' ')[1] ? d.split(' ')[1].slice(0,5) : d;
     }});
     const stageData = fcst.map(r => parseFloat(r.forecast_stage_mllw_ft || 0));
+    const stageDataQ10 = fcst.map(r => parseFloat(r.forecast_stage_q10_ft || r.forecast_stage_mllw_ft || 0));
+    const stageDataQ90 = fcst.map(r => parseFloat(r.forecast_stage_q90_ft || r.forecast_stage_mllw_ft || 0));
     const rainData = fcst.map(r => parseFloat(r.rain_forecast_hourly_in || 0));
     const thresholdData = fcst.map(() => 3.99);
 
@@ -1235,13 +1286,36 @@ def build_index_html(status, obs_rows, fcst_rows):
         labels: labels,
         datasets: [
           {{
-            label: 'Predicted Stage (ft MLLW)',
+            label: 'Worst Case (90% Upper)',
+            data: stageDataQ90,
+            borderColor: 'rgba(2, 132, 199, 0.35)',
+            borderDash: [3, 3],
+            borderWidth: 1.5,
+            pointRadius: 0,
+            fill: false,
+            tension: 0.35,
+            yAxisID: 'y'
+          }},
+          {{
+            label: '80% Uncertainty Band (Q10–Q90)',
+            data: stageDataQ10,
+            borderColor: 'rgba(2, 132, 199, 0.35)',
+            borderDash: [3, 3],
+            borderWidth: 1.5,
+            pointRadius: 0,
+            fill: '-1', // fills to dataset 0 (stageDataQ90)
+            backgroundColor: 'rgba(2, 132, 199, 0.15)',
+            tension: 0.35,
+            yAxisID: 'y'
+          }},
+          {{
+            label: 'Expected Stage (ft MLLW)',
             data: stageData,
             borderColor: '#0284c7',
-            backgroundColor: 'rgba(2, 132, 199, 0.1)',
-            fill: true,
+            backgroundColor: 'transparent',
+            fill: false,
             tension: 0.35,
-            borderWidth: 2.5,
+            borderWidth: 2.8,
             pointRadius: 2,
             pointHoverRadius: 5,
             yAxisID: 'y'
@@ -1277,7 +1351,7 @@ def build_index_html(status, obs_rows, fcst_rows):
           y: {{
             title: {{ display: true, text: 'Stage (ft MLLW)', font: {{ size: 11 }} }},
             min: 1.0,
-            max: Math.max(5.5, Math.ceil(Math.max(...stageData, 4.5))),
+            max: Math.max(5.5, Math.ceil(Math.max(...stageDataQ90, ...stageData, 4.5))),
             grid: {{ color: '#f1f5f9' }}
           }},
           y1: {{

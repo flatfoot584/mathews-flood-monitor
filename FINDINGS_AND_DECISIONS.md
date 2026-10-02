@@ -331,3 +331,33 @@ python3 generate_dashboard.py
     1. Added `science.html`, `SCIENTIFIC_FINDINGS.md`, and `models/scientific_evidence.json` (plus `models/model_weights_and_thresholds.json`) to the `_site` artifact assembly step.
     2. Added `science.html` to the automated commit `git add` list so regenerated copies are tracked.
     3. Added `science.html` to `paths-ignore` to avoid recursive workflow dispatch loops.
+
+---
+
+## 13. Quantile Uncertainty Envelope (80% CI) & Multi-Station Hydraulic Slope Modeling
+
+* **Motivation**:
+  * Implement items 1.2 and 1.3 from `BACKLOG.md` to enhance the predictive pipeline with probabilistic confidence bounds and bay-scale hydraulic gradient physics.
+* **1. Shaded Confidence Interval Forecasting (Uncertainty Envelope)**:
+  * **Quantile Loss Function**: Trained LightGBM quantile regression models targeting $\alpha = 0.10$ (10th percentile best case) and $\alpha = 0.90$ (90th percentile worst case) alongside the standard median/mean nowcast and forecast models in `train_predictive_models.py`.
+  * **Empirical Conformal Calibration**: Calibrated residual quantile offsets ($q_{10} = -0.169\text{ ft}$, $q_{90} = +0.907\text{ ft}$) on the 2024 holdout test set to ensure rigorous empirical interval coverage over 48-hour forecast horizons.
+  * **Artifacts & Saved Weights**: Saved `models/stage1_forecast_q10_lgbm.pkl` and `models/stage1_forecast_q90_lgbm.pkl`, and updated `models/model_weights_and_thresholds.json` with the complete `uncertainty_envelope` configuration for pure-Python fallback execution.
+  * **Dashboard Visualization (`index.html`)**: Integrated Chart.js area fill (`fill: '-1'` to Dataset 0) to render a semi-transparent shaded sky-blue uncertainty band (`rgba(2, 132, 199, 0.15)`) between the 90% worst-case dashed boundary and the 10% best-case dashed boundary, centered around the solid 50% expected stage forecast line.
+  * **User Guidance**: Added 80% confidence interval summary badges to the hero advisory card, hydrograph card header, and hover tooltips.
+* **2. Multi-Station Hydraulic Slope Modeling (Norfolk vs. Rappahannock)**:
+  * **Physical Mechanism**: The Chesapeake Bay behaves as a long, shallow estuary (~46.2 statute miles between Windmill Point and Sewells Point). Sustained northerly or north-easterly winds stack water in the northern and central bay while simultaneously draining the lower bay or causing phase lags. This creates a hydraulic pressure head ($\Delta \text{Surge} = \text{Surge}_{\text{Windmill}} - \text{Surge}_{\text{Sewells}} > 0$) that drives water directly into Mobjack Bay, the North River, and the Ware River basin even during low tide.
+  * **Sensor Integration**: Added live automated polling for NOAA CO-OPS station **8638610 (Sewells Point, Norfolk, VA)** in `ingest_realtime.py` (6-minute water level, past verified predictions, and forward astronomical tides).
+  * **Hydraulic Metrics Calculated**:
+    * `sewells_point_storm_surge_residual_ft`: Live southern bay surge residual.
+    * `bay_hydraulic_gradient_ft`: Differential surge ($\text{Surge}_{\text{Windmill}} - \text{Surge}_{\text{Sewells}}$).
+    * `bay_hydraulic_slope_ft_per_mile`: Slope across the 46.2-mile transect ($\Delta \text{Surge} / 46.2$).
+    * `bay_hydraulic_pressure_direction`: Categorical physical state (`Southward Inflow Head`, `Northward / Outflow Gradient`, or `Equilibrium`).
+  * **Forward Hydrodynamic Hybrid Model**: Embedded forward hydraulic push term into the 48-hour hybrid stage equation in `build_forecast_timeline`.
+  * **Dashboard Sensor Network**: Expanded the regional sensor cards on `index.html` to a 6-card grid:
+    1. Yorktown Winds (Speed, direction, gusts)
+    2. Along-Bay Vector (Wind stress forcing)
+    3. Yorktown Barometer (Atmospheric pressure)
+    4. North Bay Surge (Windmill Point 8636580)
+    5. South Bay Surge (Sewells Point 8638610)
+    6. Bay Hydraulic Slope ($\Delta \text{Surge}$ across 46 mi & pressure head direction)
+* **Backlog Cleanup**: Marked both items as completed in `BACKLOG.md` (Tasks 14 and 15) and removed them from active high priority tasks.
