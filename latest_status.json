@@ -1,6 +1,6 @@
 {
-  "status_generated_at_local": "2026-10-01 23:33:53 EDT",
-  "status_generated_at_utc": "2026-10-02 03:33:53 UTC",
+  "status_generated_at_local": "2026-10-01 23:42:16 EDT",
+  "status_generated_at_utc": "2026-10-02 03:42:16 UTC",
   "system_location": "Mathews County, Virginia (Ware River / Mobjack Bay Basin)",
   "current_conditions": {
     "observation_timestamp_local": "2026-10-01 23:15:00 EDT",
@@ -132,18 +132,18 @@
         "description": "Western community boundary lane. Elevated ridge terrain."
       }
     },
-    "yorktown_wind_speed_mph": 8.72,
-    "yorktown_wind_dir_deg": 197.0,
-    "yorktown_wind_dir_cardinal": "SSW",
-    "yorktown_wind_gust_mph": 11.19,
-    "along_bay_wind_vector_mph": -8.71,
-    "cross_bay_wind_vector_mph": 0.46,
-    "yorktown_baro_pressure_mb": 1018.9,
-    "yorktown_air_temp_f": 73.8,
-    "yorktown_water_level_mllw_ft": 2.047,
-    "yorktown_storm_surge_residual_ft": 0.35,
-    "windmill_point_water_level_mllw_ft": 1.263,
-    "windmill_point_storm_surge_residual_ft": 0.62
+    "yorktown_wind_speed_mph": 7.83,
+    "yorktown_wind_dir_deg": 191.0,
+    "yorktown_wind_dir_cardinal": "S",
+    "yorktown_wind_gust_mph": 10.29,
+    "along_bay_wind_vector_mph": -7.73,
+    "cross_bay_wind_vector_mph": 1.22,
+    "yorktown_baro_pressure_mb": 1018.8,
+    "yorktown_air_temp_f": 73.4,
+    "yorktown_water_level_mllw_ft": 2.175,
+    "yorktown_storm_surge_residual_ft": 0.38,
+    "windmill_point_water_level_mllw_ft": 1.296,
+    "windmill_point_storm_surge_residual_ft": 0.61
   },
   "forecast_48h_outlook": {
     "peak_forecast_stage_mllw_ft": 3.4,
