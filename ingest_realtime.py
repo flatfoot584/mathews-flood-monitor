@@ -261,7 +261,8 @@ def aggregate_hourly_observations(ware_obs, yt_winds, yt_press, yt_temps, yt_wat
             hr_dt = r["datetime_utc"].replace(minute=0, second=0, microsecond=0)
             if hr_dt not in grouped:
                 grouped[hr_dt] = []
-            grouped[hr_dt].append(r[val_key])
+            if isinstance(r, dict) and r.get(val_key) is not None:
+                grouped[hr_dt].append(r[val_key])
         return grouped
     
     ware_grouped = group_by_hour(ware_obs, "stage_mllw_ft")
@@ -400,9 +401,9 @@ def build_forecast_timeline(nwps_fcst, nws_fcst, yt_pred_fcst, wm_pred_fcst, qpf
     
     nwps_map = {r["datetime_utc"].replace(minute=0, second=0, microsecond=0): r["forecast_stage_mllw_ft"] for r in nwps_fcst}
     nws_map = {r["datetime_utc"].replace(minute=0, second=0, microsecond=0): r for r in nws_fcst}
-    yt_pred_map = {r["datetime_utc"].replace(minute=0, second=0, microsecond=0): r["water_level_ft"] for r in yt_pred_fcst}
-    wm_pred_map = {r["datetime_utc"].replace(minute=0, second=0, microsecond=0): r["water_level_ft"] for r in wm_pred_fcst}
-    sw_pred_map = {r["datetime_utc"].replace(minute=0, second=0, microsecond=0): r["water_level_ft"] for r in (sewells_pred_fcst or [])}
+    yt_pred_map = {r["datetime_utc"].replace(minute=0, second=0, microsecond=0): r["water_level_ft"] for r in (yt_pred_fcst or []) if r.get("water_level_ft") is not None}
+    wm_pred_map = {r["datetime_utc"].replace(minute=0, second=0, microsecond=0): r["water_level_ft"] for r in (wm_pred_fcst or []) if r.get("water_level_ft") is not None}
+    sw_pred_map = {r["datetime_utc"].replace(minute=0, second=0, microsecond=0): r["water_level_ft"] for r in (sewells_pred_fcst or []) if r.get("water_level_ft") is not None}
     
     timeline = []
     curr = now_utc
@@ -518,14 +519,31 @@ def build_forecast_timeline(nwps_fcst, nws_fcst, yt_pred_fcst, wm_pred_fcst, qpf
         
     return timeline
 
-def generate_latest_status(ware_obs, yt_winds, yt_press, yt_temps, yt_water, yt_preds, wm_water, wm_preds, sw_water, sw_preds, nwps_fcst, fcst_timeline):
+def generate_latest_status(
+    ware_obs=None,
+    yt_winds=None,
+    yt_press=None,
+    yt_temps=None,
+    yt_water=None,
+    yt_preds=None,
+    wm_water=None,
+    wm_preds=None,
+    sw_water=None,
+    sw_preds=None,
+    nwps_fcst=None,
+    fcst_timeline=None,
+):
     """Construct structured JSON payload describing current status, micro-topography, bay hydraulic slope, and uncertainty outlook."""
     now_utc = datetime.now(timezone.utc)
     now_local = now_utc.astimezone(EASTERN_TZ)
     
     latest_ware = ware_obs[-1] if ware_obs else None
-    current_stage = latest_ware["stage_mllw_ft"] if latest_ware else None
-    current_stage_time = latest_ware["datetime_utc"].astimezone(EASTERN_TZ).strftime("%Y-%m-%d %H:%M:%S %Z") if latest_ware else None
+    current_stage = latest_ware.get("stage_mllw_ft") if latest_ware else None
+    current_stage_time = (
+        latest_ware["datetime_utc"].astimezone(EASTERN_TZ).strftime("%Y-%m-%d %H:%M:%S %Z")
+        if (latest_ware and "datetime_utc" in latest_ware)
+        else None
+    )
     
     latest_wind = yt_winds[-1] if yt_winds else None
     latest_press = yt_press[-1] if yt_press else None
@@ -536,13 +554,23 @@ def generate_latest_status(ware_obs, yt_winds, yt_press, yt_temps, yt_water, yt_
     latest_wm_water = wm_water[-1] if wm_water else None
     latest_wm_pred = wm_preds[-1] if wm_preds else None
     wm_surge = None
-    if latest_wm_water and latest_wm_pred and latest_wm_water.get("water_level_ft") is not None and latest_wm_pred.get("water_level_ft") is not None:
+    if (
+        latest_wm_water
+        and latest_wm_pred
+        and latest_wm_water.get("water_level_ft") is not None
+        and latest_wm_pred.get("water_level_ft") is not None
+    ):
         wm_surge = round(latest_wm_water["water_level_ft"] - latest_wm_pred["water_level_ft"], 2)
         
     latest_sw_water = sw_water[-1] if sw_water else None
     latest_sw_pred = sw_preds[-1] if sw_preds else None
     sw_surge = None
-    if latest_sw_water and latest_sw_pred and latest_sw_water.get("water_level_ft") is not None and latest_sw_pred.get("water_level_ft") is not None:
+    if (
+        latest_sw_water
+        and latest_sw_pred
+        and latest_sw_water.get("water_level_ft") is not None
+        and latest_sw_pred.get("water_level_ft") is not None
+    ):
         sw_surge = round(latest_sw_water["water_level_ft"] - latest_sw_pred["water_level_ft"], 2)
 
     bay_gradient = round(wm_surge - sw_surge, 2) if (wm_surge is not None and sw_surge is not None) else None
@@ -558,11 +586,16 @@ def generate_latest_status(ware_obs, yt_winds, yt_press, yt_temps, yt_water, yt_
         bay_pressure_direction = "N/A"
         
     yt_surge = None
-    if latest_yt_water and latest_yt_pred:
+    if (
+        latest_yt_water
+        and latest_yt_pred
+        and latest_yt_water.get("water_level_ft") is not None
+        and latest_yt_pred.get("water_level_ft") is not None
+    ):
         yt_surge = round(latest_yt_water["water_level_ft"] - latest_yt_pred["water_level_ft"], 2)
         
-    w_spd = latest_wind["wind_speed_mph"] if latest_wind else None
-    w_dir = latest_wind["wind_dir_deg"] if latest_wind else None
+    w_spd = latest_wind.get("wind_speed_mph") if latest_wind else None
+    w_dir = latest_wind.get("wind_dir_deg") if latest_wind else None
     along_bay = None
     cross_bay = None
     if w_spd is not None and w_dir is not None:
@@ -618,18 +651,18 @@ def generate_latest_status(ware_obs, yt_winds, yt_press, yt_temps, yt_water, yt_
             "community_streets": current_eval.get("streets", {}),
             "yorktown_wind_speed_mph": w_spd,
             "yorktown_wind_dir_deg": w_dir,
-            "yorktown_wind_dir_cardinal": degrees_to_compass(w_dir),
-            "yorktown_wind_gust_mph": latest_wind["wind_gust_mph"] if latest_wind else None,
+            "yorktown_wind_dir_cardinal": degrees_to_compass(w_dir) if w_dir is not None else "N/A",
+            "yorktown_wind_gust_mph": latest_wind.get("wind_gust_mph") if latest_wind else None,
             "along_bay_wind_vector_mph": along_bay,
             "cross_bay_wind_vector_mph": cross_bay,
-            "yorktown_baro_pressure_mb": latest_press["baro_mb"] if latest_press else None,
-            "yorktown_air_temp_f": latest_temp["air_temp_f"] if latest_temp else None,
-            "yorktown_water_level_mllw_ft": latest_yt_water["water_level_ft"] if latest_yt_water else None,
+            "yorktown_baro_pressure_mb": latest_press.get("baro_mb") if latest_press else None,
+            "yorktown_air_temp_f": latest_temp.get("air_temp_f") if latest_temp else None,
+            "yorktown_water_level_mllw_ft": latest_yt_water.get("water_level_ft") if latest_yt_water else None,
             "yorktown_storm_surge_residual_ft": yt_surge,
-            "windmill_point_water_level_mllw_ft": latest_wm_water["water_level_ft"] if latest_wm_water else None,
+            "windmill_point_water_level_mllw_ft": latest_wm_water.get("water_level_ft") if latest_wm_water else None,
             "windmill_point_storm_surge_residual_ft": wm_surge,
-            "sewells_point_water_level_mllw_ft": latest_sw_water["water_level_ft"] if latest_sw_water else None,
-            "sewells_point_pred_tide_ft": latest_sw_pred["water_level_ft"] if latest_sw_pred else None,
+            "sewells_point_water_level_mllw_ft": latest_sw_water.get("water_level_ft") if latest_sw_water else None,
+            "sewells_point_pred_tide_ft": latest_sw_pred.get("water_level_ft") if latest_sw_pred else None,
             "sewells_point_storm_surge_residual_ft": sw_surge,
             "bay_hydraulic_gradient_ft": bay_gradient,
             "bay_hydraulic_slope_ft_per_mile": bay_slope,
@@ -806,8 +839,18 @@ def main():
 
     # Status summary
     status_summary = generate_latest_status(
-        ware_obs, yt_winds, yt_press, yt_temps, yt_water, yt_preds_past,
-        wm_water, wm_preds_past, sw_water, sw_preds_past, ware_fcst, fcst_timeline
+        ware_obs=ware_obs,
+        yt_winds=yt_winds,
+        yt_press=yt_press,
+        yt_temps=yt_temps,
+        yt_water=yt_water,
+        yt_preds=yt_preds_past,
+        wm_water=wm_water,
+        wm_preds=wm_preds_past,
+        sw_water=sw_water,
+        sw_preds=sw_preds_past,
+        nwps_fcst=ware_fcst,
+        fcst_timeline=fcst_timeline,
     )
 
     # Write files
@@ -839,8 +882,16 @@ def main():
     log(f"  Vehicle Access   : {curr['vehicle_passability']}")
     log(f"  Yorktown Wind    : {curr['yorktown_wind_speed_mph']} mph from {curr['yorktown_wind_dir_cardinal']} ({curr['yorktown_wind_dir_deg']}°)")
     log(f"  Wind Vectors     : Along-Bay={curr['along_bay_wind_vector_mph']} mph, Cross-Bay={curr['cross_bay_wind_vector_mph']} mph")
-    log(f"  Baro Pressure    : {curr['yorktown_baro_pressure_mb']} mb | Windmill Surge: +{curr['windmill_point_storm_surge_residual_ft']} ft | Sewells Surge: +{curr['sewells_point_storm_surge_residual_ft']} ft")
-    log(f"  Bay Hydraulic Grad: {curr['bay_hydraulic_gradient_ft']} ft ({curr['bay_hydraulic_slope_ft_per_mile']} ft/mi) -> {curr['bay_hydraulic_pressure_direction']}")
+    wm_surge_val = curr.get("windmill_point_storm_surge_residual_ft")
+    wm_surge_str = f"{wm_surge_val:+.2f}" if wm_surge_val is not None else "N/A"
+    sw_surge_val = curr.get("sewells_point_storm_surge_residual_ft")
+    sw_surge_str = f"{sw_surge_val:+.2f}" if sw_surge_val is not None else "N/A"
+    log(f"  Baro Pressure    : {curr.get('yorktown_baro_pressure_mb', 'N/A')} mb | Windmill Surge: {wm_surge_str} ft | Sewells Surge: {sw_surge_str} ft")
+    grad_val = curr.get("bay_hydraulic_gradient_ft")
+    grad_str = f"{grad_val:+.2f}" if grad_val is not None else "N/A"
+    slope_val = curr.get("bay_hydraulic_slope_ft_per_mile")
+    slope_str = f"{slope_val}" if slope_val is not None else "N/A"
+    log(f"  Bay Hydraulic Grad: {grad_str} ft ({slope_str} ft/mi) -> {curr.get('bay_hydraulic_pressure_direction', 'N/A')}")
     log("-" * 72)
     log("MICRO-TOPOGRAPHY SECTOR STATUS:")
     for k, v in curr["site_sectors"].items():
