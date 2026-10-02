@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scientific Methodology & Empirical Validation — Mathews County Coastal Flood Prediction</title>
+  <meta name="description" content="Academic benchmarks, machine learning model weights, piecewise inundation formulas, USGS 3DEP LiDAR altimetry validation, and 5-year empirical record for Mathews County, VA.">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+  
+    <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50 shadow-md">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <!-- Logo & Brand -->
+          <div class="flex items-center gap-3">
+            <a href="index.html" class="flex items-center gap-3 group">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-blue-700 flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform">
+                <i class="fa-solid fa-water text-lg text-white"></i>
+              </div>
+              <div>
+                <div class="font-bold text-base sm:text-lg tracking-tight flex items-center gap-2 text-white">
+                  Mathews County Flood Monitor
+                </div>
+                <div class="text-[11px] text-slate-400 font-medium">Middle Peninsula &bull; Mobjack Bay, VA</div>
+              </div>
+            </a>
+          </div>
+
+          <!-- Desktop Navigation -->
+          <nav class="hidden lg:flex items-center gap-1">
+            
+        <a href="index.html" class="px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm rounded-lg transition-all flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-water text-xs"></i>
+          <span>Live Monitor</span>
+        </a>
+        
+        <a href="alerts.html" class="px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm rounded-lg transition-all flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-bell text-xs"></i>
+          <span>Mobile Alerts</span>
+        </a>
+        
+        <a href="index.html#map-section" class="px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm rounded-lg transition-all flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-map-location-dot text-xs"></i>
+          <span>Flood Map</span>
+        </a>
+        
+        <a href="about.html" class="px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm rounded-lg transition-all flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-book-open text-xs"></i>
+          <span>About & History</span>
+        </a>
+        
+        <a href="guide.html" class="px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm rounded-lg transition-all flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-ruler-vertical text-xs"></i>
+          <span>Flood Guide & Tiers</span>
+        </a>
+        
+        <a href="data.html" class="px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm rounded-lg transition-all flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60">
+          <i class="fa-solid fa-database text-xs"></i>
+          <span>Storm Archive & Data</span>
+        </a>
+        
+        <a href="science.html" class="px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm rounded-lg transition-all flex items-center gap-1.5 bg-sky-900/60 text-sky-200 border-b-2 border-sky-400 font-semibold">
+          <i class="fa-solid fa-microscope text-xs"></i>
+          <span>Science & Methodology</span>
+        </a>
+        
+          </nav>
+
+          <!-- Status Pill & Mobile Menu Button -->
+          <div class="flex items-center gap-3">
+            <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 border-emerald-300 border text-xs font-semibold text-emerald-800">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>LIVE: Normal / Safe</span>
+            </div>
+
+            <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 focus:outline-none" aria-label="Toggle Navigation">
+              <i class="fa-solid fa-bars text-lg"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-800 py-3 space-y-1">
+          <div class="px-4 py-2 sm:hidden mb-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 border-emerald-300 border text-xs font-semibold text-emerald-800">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>LIVE STATUS: Normal / Safe</span>
+            </div>
+          </div>
+          
+        <a href="index.html" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-water w-5 text-center mr-2"></i> Live Monitor
+        </a>
+        
+        <a href="alerts.html" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-bell w-5 text-center mr-2"></i> Mobile Alerts
+        </a>
+        
+        <a href="index.html#map-section" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-map-location-dot w-5 text-center mr-2"></i> Flood Map
+        </a>
+        
+        <a href="about.html" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-book-open w-5 text-center mr-2"></i> About & History
+        </a>
+        
+        <a href="guide.html" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-ruler-vertical w-5 text-center mr-2"></i> Flood Guide & Tiers
+        </a>
+        
+        <a href="data.html" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
+          <i class="fa-solid fa-database w-5 text-center mr-2"></i> Storm Archive & Data
+        </a>
+        
+        <a href="science.html" class="block px-4 py-2.5 rounded-lg text-sm transition bg-sky-900/50 text-sky-200 font-semibold">
+          <i class="fa-solid fa-microscope w-5 text-center mr-2"></i> Science & Methodology
+        </a>
+        
+        </div>
+      </div>
+    </header>
+    
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 flex-1">
+
+    <!-- 0. HERO SECTION -->
+    <section class="bg-gradient-to-br from-slate-900 via-slate-800 to-sky-950 text-white rounded-3xl p-6 sm:p-10 shadow-xl border border-slate-700/60 relative overflow-hidden">
+      <div class="relative z-10 max-w-4xl space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-sky-900/80 text-sky-300 border border-sky-700/60 shadow-sm">
+          <i class="fa-solid fa-graduation-cap"></i> PEER-REVIEW READY &bull; OPEN SCIENCE &bull; 5-YEAR EMPIRICAL RECORD
+        </div>
+        <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
+          Scientific Methodology & Model Benchmarks
+        </h1>
+        <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
+          Empirical validation, machine learning hydrodynamics, USGS 3DEP 1-meter LiDAR altimetry ground-truth, and formal version changelog for coastal flooding in Mathews County, Virginia.
+        </p>
+        <div class="flex flex-wrap gap-3 pt-2">
+          <a href="models/scientific_evidence.json" download class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs sm:text-sm shadow-md transition flex items-center gap-2">
+            <i class="fa-solid fa-download"></i> Download JSON Evidence
+          </a>
+          <a href="SCIENTIFIC_FINDINGS.md" target="_blank" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 font-semibold text-xs sm:text-sm transition flex items-center gap-2">
+            <i class="fa-solid fa-file-lines text-sky-400"></i> Read Academic Manuscript (MD)
+          </a>
+          <a href="ground_truth_observations.csv" download class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 font-semibold text-xs sm:text-sm transition flex items-center gap-2">
+            <i class="fa-solid fa-table text-emerald-400"></i> Ground-Truth CSV (204 Events)
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. EXECUTIVE KPI BENCHMARKS GRID (6 CARDS) -->
+    <section>
+      <div class="mb-4">
+        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-chart-simple text-sky-600"></i>
+          Key Empirical & Model Benchmarks
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-500">Quantitative metrics across 5.33 years of continuous storm observations and multi-sensor machine learning.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Card 1: Record Span -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-2 hover:shadow-md transition">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">5.33-Year Record</span>
+            <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-calendar-check"></i></div>
+          </div>
+          <div class="text-2xl sm:text-3xl font-black text-slate-900 font-mono">204 Events</div>
+          <p class="text-xs text-slate-500 leading-snug">181 paired depth records, May 2021 – Sep 2026 across 10 named storms.</p>
+        </div>
+
+        <!-- Card 2: Empirical Correlation -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-2 hover:shadow-md transition">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Empirical Correlation</span>
+            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-chart-line"></i></div>
+          </div>
+          <div class="text-2xl sm:text-3xl font-black text-emerald-700 font-mono">r = 0.9302</div>
+          <p class="text-xs text-slate-500 leading-snug">R&sup2; = 0.8652 (p &lt; 10&minus;15) on flooded events; r = 0.8898 overall.</p>
+        </div>
+
+        <!-- Card 3: LiDAR Culvert Agreement -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-2 hover:shadow-md transition">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">LiDAR Culvert Match</span>
+            <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-bullseye"></i></div>
+          </div>
+          <div class="text-2xl sm:text-3xl font-black text-indigo-700 font-mono">&Delta; = 0.06 ft</div>
+          <p class="text-xs text-slate-500 leading-snug">Culvert invert 4.05' MLLW independently verifies 3.99' tipping point within 0.7".</p>
+        </div>
+
+        <!-- Card 4: Driveway Pad Agreement -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-2 hover:shadow-md transition">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Driveway Pad Match</span>
+            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-road"></i></div>
+          </div>
+          <div class="text-2xl sm:text-3xl font-black text-amber-700 font-mono">&Delta; = 0.00 ft</div>
+          <p class="text-xs text-slate-500 leading-snug">USGS LiDAR 4.40' MLLW exactly matches Tier 2 moderate flood threshold.</p>
+        </div>
+
+        <!-- Card 5: Stage 1 ML Nowcast -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-2 hover:shadow-md transition">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Stage 1 Nowcast ML</span>
+            <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-brain"></i></div>
+          </div>
+          <div class="text-2xl sm:text-3xl font-black text-purple-700 font-mono">R&sup2; = 0.9731</div>
+          <p class="text-xs text-slate-500 leading-snug">Holdout test MAE = 1.46" (0.12') using LightGBM + Wind Stress.</p>
+        </div>
+
+        <!-- Card 6: Stage 2 Inundation Model -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-2 hover:shadow-md transition">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Stage 2 Local Model</span>
+            <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-ruler-combined"></i></div>
+          </div>
+          <div class="text-2xl sm:text-3xl font-black text-rose-700 font-mono">MAE = 1.25"</div>
+          <p class="text-xs text-slate-500 leading-snug">R&sup2; = 0.8511, RMSE = 1.69" across 181 ground-truth storm events.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. TWO-STAGE MACHINE LEARNING & HYDRODYNAMIC ARCHITECTURE -->
+    <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-diagram-project text-sky-600"></i>
+            Two-Stage Machine Learning Predictive Architecture
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500">Decoupled estuarine hydrodynamic physics from hyper-local piecewise micro-topography.</p>
+        </div>
+        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 self-start sm:self-auto">
+          Multi-Sensor Pipeline
+        </span>
+      </div>
+
+      <!-- Architecture Pipeline Diagram -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Stage 1 Box -->
+        <div class="p-5 rounded-xl border border-sky-200 bg-sky-50/40 space-y-3">
+          <div class="flex items-center gap-2 font-bold text-sky-900 text-sm">
+            <span class="w-6 h-6 rounded-full bg-sky-600 text-white flex items-center justify-center text-xs">1</span>
+            Stage 1: Estuarine Hydrodynamic & Water Level Model
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Predicts the regional water level on the Ware River gauge (WRVV2) by synthesizing astronomical tide tables, quadratic wind stress vectors (&tau;<sub>w</sub> &prop; |U|U), barometric pressure tendencies (&Delta;P<sub>3h</sub>), rolling wind set-up memory (3h, 6h, 12h, 24h), and NOAA CBOFS hydrodynamic guidance.
+          </p>
+          <div class="bg-slate-900 text-sky-200 p-3.5 rounded-lg font-mono text-xs overflow-x-auto shadow-inner">
+            <div class="text-slate-400 text-[10px] mb-1 font-sans font-semibold uppercase tracking-wider">Hydrodynamic Formulation:</div>
+            Stage<sub>pred</sub>(t) = Tide<sub>ast</sub>(t) + f<sub>GBM</sub>(&tau;<sub>wx</sub>, &tau;<sub>wy</sub>, &Delta;P<sub>3h</sub>, Memory<sub>wind</sub>)
+          </div>
+        </div>
+
+        <!-- Stage 2 Box -->
+        <div class="p-5 rounded-xl border border-emerald-200 bg-emerald-50/40 space-y-3">
+          <div class="flex items-center gap-2 font-bold text-emerald-900 text-sm">
+            <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs">2</span>
+            Stage 2: Hyper-Local Piecewise Inundation Model
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Translates the predicted or observed gauge stage into exact flood depth in inches on property benchmarks, driveway access corridors, and neighborhood roads using our empirically discovered 3.99 ft tipping point and 10.95 in/ft linear inundation gradient.
+          </p>
+          <div class="bg-slate-900 text-emerald-200 p-3.5 rounded-lg font-mono text-xs overflow-x-auto shadow-inner">
+            <div class="text-slate-400 text-[10px] mb-1 font-sans font-semibold uppercase tracking-wider">Piecewise Inundation Law:</div>
+            Depth(h) = max(0.0, 10.95 &times; Stage<sub>ft</sub> &minus; 43.69) inches
+          </div>
+        </div>
+      </div>
+
+      <!-- Model Performance Matrix Table -->
+      <div>
+        <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-table-list text-slate-400"></i> Model Performance & Holdout Verification Matrix
+        </h3>
+        <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-inner">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+                <th class="px-4 py-2.5">Model Component</th>
+                <th class="px-4 py-2.5">Target Variable</th>
+                <th class="px-4 py-2.5">Algorithm</th>
+                <th class="px-4 py-2.5">Training Horizon</th>
+                <th class="px-4 py-2.5">Holdout / Evaluation Set</th>
+                <th class="px-4 py-2.5">R&sup2; Score</th>
+                <th class="px-4 py-2.5">MAE</th>
+                <th class="px-4 py-2.5">RMSE</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-xs">
+              <tr class="hover:bg-slate-50 transition">
+                <td class="px-4 py-3 font-semibold text-slate-900">Stage 1 (Nowcasting)</td>
+                <td class="px-4 py-3 font-mono text-slate-700">Stage (ft MLLW)</td>
+                <td class="px-4 py-3 text-slate-600">LightGBM + Ridge Blend</td>
+                <td class="px-4 py-3 text-slate-600 font-mono">2021–2023 (32,833 hrs)</td>
+                <td class="px-4 py-3 text-slate-600 font-mono">2024 Holdout Storms</td>
+                <td class="px-4 py-3 font-mono font-bold text-purple-700">0.9731</td>
+                <td class="px-4 py-3 font-mono text-slate-800">1.46" (0.12')</td>
+                <td class="px-4 py-3 font-mono text-slate-800">1.92" (0.16')</td>
+              </tr>
+              <tr class="hover:bg-slate-50 transition">
+                <td class="px-4 py-3 font-semibold text-slate-900">Stage 1 (48h Forecast)</td>
+                <td class="px-4 py-3 font-mono text-slate-700">Stage (ft MLLW)</td>
+                <td class="px-4 py-3 text-slate-600">LightGBM (48h Lead)</td>
+                <td class="px-4 py-3 text-slate-600 font-mono">2021–2023 hourly</td>
+                <td class="px-4 py-3 text-slate-600 font-mono">2024 Holdout Storms</td>
+                <td class="px-4 py-3 font-mono font-bold text-purple-700">0.7209</td>
+                <td class="px-4 py-3 font-mono text-slate-800">4.74" (0.40')</td>
+                <td class="px-4 py-3 font-mono text-slate-800">6.18" (0.51')</td>
+              </tr>
+              <tr class="hover:bg-slate-50 transition bg-sky-50/20">
+                <td class="px-4 py-3 font-semibold text-slate-900">Stage 2 (Hyper-Local Inundation)</td>
+                <td class="px-4 py-3 font-mono text-sky-700 font-bold">Flood Depth (in)</td>
+                <td class="px-4 py-3 text-slate-600">Piecewise Linear Threshold</td>
+                <td class="px-4 py-3 text-slate-600 font-mono">2021–2026 Continuous</td>
+                <td class="px-4 py-3 text-slate-600 font-mono">181 Ground-Truth Events</td>
+                <td class="px-4 py-3 font-mono font-bold text-emerald-700">0.8511</td>
+                <td class="px-4 py-3 font-mono font-bold text-emerald-700">1.25"</td>
+                <td class="px-4 py-3 font-mono font-bold text-slate-800">1.69"</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. USGS 3DEP 1-METER LIDAR GROUND-TRUTH VALIDATION -->
+    <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-satellite text-sky-600"></i>
+            USGS 3DEP 1-Meter LiDAR Altimetry Ground-Truth Validation
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500">Federal airborne laser altimetry independently confirms handwritten empirical tipping points without parameter tuning.</p>
+        </div>
+        <div class="text-xs font-mono bg-sky-50 border border-sky-200 text-sky-800 px-3 py-1.5 rounded-lg">
+          Datum Offset: NAVD88 + 1.64 ft = MLLW
+        </div>
+      </div>
+
+      <!-- LiDAR Benchmark Feature Comparison Table -->
+      <div>
+        <h3 class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-ruler text-slate-400"></i> Physical Benchmark Features vs Empirical Model Thresholds
+        </h3>
+        <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-inner">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+                <th class="px-4 py-2.5">Feature Name</th>
+                <th class="px-4 py-2.5">USGS LiDAR (NAVD88)</th>
+                <th class="px-4 py-2.5">USGS LiDAR (MLLW)</th>
+                <th class="px-4 py-2.5">Model Tipping Point (MLLW)</th>
+                <th class="px-4 py-2.5">Discrepancy (&Delta;)</th>
+                <th class="px-4 py-2.5">Hydrologic Significance</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">Roadside Ditch Culvert Invert (Drainage Tipping Point)</td>
+          <td class="px-4 py-3 font-mono text-slate-700">2.41 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">4.05 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-slate-900">3.99 ft</td>
+          <td class="px-4 py-3"><span class="px-2 py-0.5 rounded text-[11px] font-bold border font-mono bg-sky-100 text-sky-800 border-sky-200">+0.06 ft (+0.7 in)</span></td>
+          <td class="px-4 py-3 text-xs text-slate-600">Water breaches ditch culvert invert at 4.05' MLLW, matching empirical tipping point (3.99') within 0.7 inches.</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">Driveway Benchmark (Daniel Ave / Hobday Transect)</td>
+          <td class="px-4 py-3 font-mono text-slate-700">2.76 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">4.40 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-slate-900">4.40 ft</td>
+          <td class="px-4 py-3"><span class="px-2 py-0.5 rounded text-[11px] font-bold border font-mono bg-emerald-100 text-emerald-800 border-emerald-200">0.00 ft (Exact match)</span></td>
+          <td class="px-4 py-3 text-xs text-slate-600">Exact match to within 0.01 ft: water covers driveway pad at 4.40' MLLW (Tier 2 moderate hazard threshold).</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">Blackwater Creek Marsh Margin (Tidal Wetland Margin)</td>
+          <td class="px-4 py-3 font-mono text-slate-700">-1.09 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">0.55 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-slate-900">0.55 ft</td>
+          <td class="px-4 py-3"><span class="px-2 py-0.5 rounded text-[11px] font-bold border font-mono bg-emerald-100 text-emerald-800 border-emerald-200">0.00 ft (Exact match)</span></td>
+          <td class="px-4 py-3 text-xs text-slate-600">Regular high-tide wetland buffer; submerged twice daily during astronomical tides.</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">Residential Finished Foundation / Garage Slab</td>
+          <td class="px-4 py-3 font-mono text-slate-700">3.26 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">4.90 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-slate-900">4.80 ft</td>
+          <td class="px-4 py-3"><span class="px-2 py-0.5 rounded text-[11px] font-bold border font-mono bg-sky-100 text-sky-800 border-sky-200">+0.10 ft (+1.2 in)</span></td>
+          <td class="px-4 py-3 text-xs text-slate-600">Tier 3 severe property hazard threshold: property impassable and foundation margin reached.</td>
+        </tr>
+        
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Community Street Network LiDAR Invert Elevations Table -->
+      <div>
+        <h3 class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-road text-slate-400"></i> Community Street Network Invert Elevations (Vehicle Hazard Thresholds)
+        </h3>
+        <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-inner">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+                <th class="px-4 py-2.5">Street Name</th>
+                <th class="px-4 py-2.5">Invert Elevation (NAVD88)</th>
+                <th class="px-4 py-2.5">Invert Elevation (MLLW)</th>
+                <th class="px-4 py-2.5">Inundation Sequence & Passability Risk</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">Bayshore Avenue</td>
+          <td class="px-4 py-3 font-mono text-slate-700">2.11 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">3.75 ft</td>
+          <td class="px-4 py-3 text-xs text-slate-600">Lowest waterfront dips flood first during spring tides</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">Julian Street</td>
+          <td class="px-4 py-3 font-mono text-slate-700">2.14 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">3.78 ft</td>
+          <td class="px-4 py-3 text-xs text-slate-600">Southern culvert dip connects to marsh swale</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">Daniel Avenue (Low Point)</td>
+          <td class="px-4 py-3 font-mono text-slate-700">2.24 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">3.88 ft</td>
+          <td class="px-4 py-3 text-xs text-slate-600">Road dip floods prior to driveway bench (4.40')</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">Allview Street</td>
+          <td class="px-4 py-3 font-mono text-slate-700">2.49 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">4.13 ft</td>
+          <td class="px-4 py-3 text-xs text-slate-600">Shallow water across road above 4.13' MLLW</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">River Road</td>
+          <td class="px-4 py-3 font-mono text-slate-700">2.50 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">4.14 ft</td>
+          <td class="px-4 py-3 text-xs text-slate-600">Mid-section dip creates passability obstacle</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">Hobday Street</td>
+          <td class="px-4 py-3 font-mono text-slate-700">2.58 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">4.22 ft</td>
+          <td class="px-4 py-3 text-xs text-slate-600">Ditch overflow reaches roadway edge</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">Little Avenue</td>
+          <td class="px-4 py-3 font-mono text-slate-700">2.59 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">4.23 ft</td>
+          <td class="px-4 py-3 text-xs text-slate-600">Culvert restriction during heavy precipitation</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">Bunny Rabbit Lane</td>
+          <td class="px-4 py-3 font-mono text-slate-700">2.81 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">4.45 ft</td>
+          <td class="px-4 py-3 text-xs text-slate-600">Elevated western ridge; dry during nuisance events</td>
+        </tr>
+        
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. DATASET CHARACTERISTICS & STATISTICAL MOMENTS -->
+    <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+      <div class="border-b border-slate-100 pb-4">
+        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-calculator text-sky-600"></i>
+          Observational Dataset Characteristics & Statistical Moments
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-500">Distribution analysis of 204 human verification records spanning May 2021 to September 2026.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Ware River Stage Moments -->
+        <div class="p-5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-water text-sky-600"></i> Ware River Stage Moments (ft MLLW)
+          </h3>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+              <div class="text-[10px] uppercase font-bold text-slate-400">Min</div>
+              <div class="text-base font-bold font-mono text-slate-800">3.40'</div>
+            </div>
+            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+              <div class="text-[10px] uppercase font-bold text-slate-400">Median</div>
+              <div class="text-base font-bold font-mono text-slate-800">4.35'</div>
+            </div>
+            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+              <div class="text-[10px] uppercase font-bold text-slate-400">Mean</div>
+              <div class="text-base font-bold font-mono text-slate-800">4.39'</div>
+            </div>
+            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+              <div class="text-[10px] uppercase font-bold text-slate-400">Max</div>
+              <div class="text-base font-bold font-mono text-rose-700">5.54'</div>
+            </div>
+          </div>
+          <div class="text-xs text-slate-600 flex justify-between pt-1 font-mono">
+            <span>IQR: [4.14', 4.61'] (&Delta; 0.47')</span>
+            <span>&sigma; = 0.38'</span>
+          </div>
+        </div>
+
+        <!-- Flood Depth Moments -->
+        <div class="p-5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-ruler-vertical text-rose-600"></i> Measured Flood Depth Moments (inches)
+          </h3>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+              <div class="text-[10px] uppercase font-bold text-slate-400">Min</div>
+              <div class="text-base font-bold font-mono text-slate-800">0.0&quot;</div>
+            </div>
+            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+              <div class="text-[10px] uppercase font-bold text-slate-400">Median</div>
+              <div class="text-base font-bold font-mono text-slate-800">3.0&quot;</div>
+            </div>
+            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+              <div class="text-[10px] uppercase font-bold text-slate-400">Mean</div>
+              <div class="text-base font-bold font-mono text-slate-800">4.3&quot;</div>
+            </div>
+            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+              <div class="text-[10px] uppercase font-bold text-slate-400">Max</div>
+              <div class="text-base font-bold font-mono text-rose-700">19.0&quot;</div>
+            </div>
+          </div>
+          <div class="text-xs text-slate-600 flex justify-between pt-1 font-mono">
+            <span>IQR: [0.25&quot;, 7.0&quot;] (&Delta; 6.75&quot;)</span>
+            <span>&sigma; = 4.37&quot;</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Zero-Inundation Baseline Confirmation Callout -->
+      <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-950 text-xs sm:text-sm leading-relaxed flex items-start gap-3">
+        <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5 text-base shrink-0"></i>
+        <div>
+          <strong>Empirical Zero-Inundation Baseline Confirmation:</strong> Exactly 44 observations were recorded when the Ware River gauge was below 4.00 ft MLLW (ranging from 3.40' to 3.98'). All 44 instances exhibited exactly <strong>0.0 inches</strong> of inundation on the yard and road, verifying zero false positive flood alerts below our physical 3.99 ft threshold.
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. BENCHMARK STORM CASE STUDIES -->
+    <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-cloud-bolt text-rose-600"></i>
+            Benchmark Storm Case Studies (Observed vs Model Predicted)
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500">Evaluation against 10 notable tropical cyclones, coastal lows, and king tide events across the 5-year record.</p>
+        </div>
+        <div class="text-xs font-mono text-slate-500">
+          Evaluated via Piecewise Stage 2 Formula
+        </div>
+      </div>
+
+      <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-inner">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+              <th class="px-4 py-2.5">Storm / Event</th>
+              <th class="px-4 py-2.5">Stage (MLLW)</th>
+              <th class="px-4 py-2.5">Observed Depth</th>
+              <th class="px-4 py-2.5">Predicted Depth</th>
+              <th class="px-4 py-2.5">Residual Error</th>
+              <th class="px-4 py-2.5">Wind Forcing</th>
+              <th class="px-4 py-2.5">Hydrologic & Inundation Impact</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">
+            <div>10-Year Record Nor'easter (Subtropical Storm Karen / Coastal Low)</div>
+            <div class="text-[11px] font-mono text-slate-400 font-normal">2025-10-12</div>
+          </td>
+          <td class="px-4 py-3 font-mono font-bold text-slate-800">5.54 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-700">19.00&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">16.97&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-600">+2.03&quot;</td>
+          <td class="px-4 py-3 font-mono text-xs text-slate-600">NNE 24 mph (35 mph gusts)</td>
+          <td class="px-4 py-3 text-xs text-slate-600 leading-snug">All-time 10-year property record. Complete submergence of driveway and yard. Water within inches of foundation pad.</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">
+            <div>Twin Nor'easters (Storm 1 & Storm 2)</div>
+            <div class="text-[11px] font-mono text-slate-400 font-normal">2026-09-22 to 2026-09-26</div>
+          </td>
+          <td class="px-4 py-3 font-mono font-bold text-slate-800">5.38 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-700">17.50&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">15.22&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-600">+2.28&quot;</td>
+          <td class="px-4 py-3 font-mono text-xs text-slate-600">NE 21.9 mph / NNW 23 mph</td>
+          <td class="px-4 py-3 text-xs text-slate-600 leading-snug">Compound back-to-back nor'easters. Sustained surge stacking prevented low-tide drainage. NJ state of emergency.</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">
+            <div>Late Autumn Nor'easter</div>
+            <div class="text-[11px] font-mono text-slate-400 font-normal">2024-11-15</div>
+          </td>
+          <td class="px-4 py-3 font-mono font-bold text-slate-800">5.27 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-700">15.00&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">14.02&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-600">+0.98&quot;</td>
+          <td class="px-4 py-3 font-mono text-xs text-slate-600">NNE 12.8 mph</td>
+          <td class="px-4 py-3 text-xs text-slate-600 leading-snug">Severe property flood; 15 inches of water covering access road and entire yard area.</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">
+            <div>September King Tide (Perigean Spring Tide)</div>
+            <div class="text-[11px] font-mono text-slate-400 font-normal">2024-09-22</div>
+          </td>
+          <td class="px-4 py-3 font-mono font-bold text-slate-800">5.20 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-700">14.50&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">13.25&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-600">+1.25&quot;</td>
+          <td class="px-4 py-3 font-mono text-xs text-slate-600">SE 5–10 mph</td>
+          <td class="px-4 py-3 text-xs text-slate-600 leading-snug">Astronomical perigean high tide combined with light southeasterlies to submerge property.</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">
+            <div>Winter Storm & Blizzard Gale</div>
+            <div class="text-[11px] font-mono text-slate-400 font-normal">2022-01-03</div>
+          </td>
+          <td class="px-4 py-3 font-mono font-bold text-slate-800">5.22 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-700">11.00&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">13.47&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-emerald-600">-2.47&quot;</td>
+          <td class="px-4 py-3 font-mono text-xs text-slate-600">N gale + heavy snow</td>
+          <td class="px-4 py-3 text-xs text-slate-600 leading-snug">Blizzard winds forced Chesapeake Bay surge down into Mobjack Bay; compound snowmelt and surge.</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">
+            <div>Hurricane Erin</div>
+            <div class="text-[11px] font-mono text-slate-400 font-normal">2025-08-21 to 2025-08-22</div>
+          </td>
+          <td class="px-4 py-3 font-mono font-bold text-slate-800">5.12 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-700">13.00&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">12.37&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-600">+0.63&quot;</td>
+          <td class="px-4 py-3 font-mono text-xs text-slate-600">NNE 18.3 mph (24.6 mph gusts)</td>
+          <td class="px-4 py-3 text-xs text-slate-600 leading-snug">Severe tropical surge. Observed rapid 13" to 10.75" drawdown within 30 minutes following tidal crest.</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">
+            <div>Hurricane Ophelia</div>
+            <div class="text-[11px] font-mono text-slate-400 font-normal">2023-09-23</div>
+          </td>
+          <td class="px-4 py-3 font-mono font-bold text-slate-800">5.00 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-700">12.00&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">11.06&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-600">+0.94&quot;</td>
+          <td class="px-4 py-3 font-mono text-xs text-slate-600">SE 20–30 mph</td>
+          <td class="px-4 py-3 text-xs text-slate-600 leading-snug">Tropical storm surge coinciding with lunar perigee; extensive water across neighborhood network.</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">
+            <div>Hurricane Helene</div>
+            <div class="text-[11px] font-mono text-slate-400 font-normal">2024-09-27</div>
+          </td>
+          <td class="px-4 py-3 font-mono font-bold text-slate-800">4.70 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-700">9.75&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">7.77&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-600">+1.98&quot;</td>
+          <td class="px-4 py-3 font-mono text-xs text-slate-600">SE 25.3 mph</td>
+          <td class="px-4 py-3 text-xs text-slate-600 leading-snug">Fast-moving tropical surge pushed water into ditches; peaked at 9.75 inches at 7:30 PM.</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">
+            <div>Hurricane Earl</div>
+            <div class="text-[11px] font-mono text-slate-400 font-normal">2022-09-08</div>
+          </td>
+          <td class="px-4 py-3 font-mono font-bold text-slate-800">4.82 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-700">10.00&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">9.09&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-600">+0.91&quot;</td>
+          <td class="px-4 py-3 font-mono text-xs text-slate-600">NNE 17 mph</td>
+          <td class="px-4 py-3 text-xs text-slate-600 leading-snug">Prolonged multi-cycle driveway inundation lasting through 3 consecutive high-tide cycles.</td>
+        </tr>
+        
+        <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
+          <td class="px-4 py-3 font-semibold text-slate-900">
+            <div>Hurricane Ian</div>
+            <div class="text-[11px] font-mono text-slate-400 font-normal">2022-09-30 to 2022-10-01</div>
+          </td>
+          <td class="px-4 py-3 font-mono font-bold text-slate-800">4.66 ft</td>
+          <td class="px-4 py-3 font-mono font-bold text-rose-700">7.00&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-sky-700">7.34&quot;</td>
+          <td class="px-4 py-3 font-mono font-bold text-emerald-600">-0.34&quot;</td>
+          <td class="px-4 py-3 font-mono text-xs text-slate-600">N 12–25 mph</td>
+          <td class="px-4 py-3 text-xs text-slate-600 leading-snug">Multi-day persistent northerly wind set-up driving continuous water into Mobjack Bay.</td>
+        </tr>
+        
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 6. FORMAL SCIENTIFIC & ENGINEERING CHANGELOG -->
+    <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+      <div class="border-b border-slate-100 pb-4">
+        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-timeline text-sky-600"></i>
+          Project Version Changelog & Revision History
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-500">Documented timeline of model upgrades, dataset expansions, and structural discoveries.</p>
+      </div>
+
+      <div class="pt-2">
+        
+        <div class="relative pl-8 pb-8 border-l-2 border-slate-200 last:border-l-0 last:pb-0">
+          <div class="absolute -left-2.5 top-0 w-5 h-5 rounded-full border-4 border-white bg-sky-600 shadow"></div>
+          <div class="border-sky-300 ring-1 ring-sky-200 bg-sky-50/20 rounded-2xl p-5 sm:p-6 border shadow-sm space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5">
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-sky-600 text-white">v2.0.0</span>
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base">5-Year Full Empirical Expansion (2021–2026) & Science Portal Launch</h3>
+              </div>
+              <span class="text-xs font-mono text-slate-500">2026-10-01</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">Incorporated 63 newly verified storm records from continuous observer logs, expanding ground-truth archive from 141 to 204 events (181 depth pairs).</p>
+            <ul class="list-disc list-inside space-y-1.5 pt-1">
+              <li class='text-xs text-slate-600 leading-relaxed'>Ingested 63 new storm records from 2024-10-16 to 2026-09-28 from RAW Observer data - Mom.gsheet.</li><li class='text-xs text-slate-600 leading-relaxed'>Captured all-time 10-year record nor'easter (2025-10-12: 5.54 ft stage, 19.0" flood depth, 35 mph gusts).</li><li class='text-xs text-slate-600 leading-relaxed'>Captured September 2026 twin nor'easters (2026-09-22 to 09-26: 5.38 ft stage, 17.5" depth, multi-day surge stacking).</li><li class='text-xs text-slate-600 leading-relaxed'>Captured Hurricane Erin (2025-08-21 to 08-22: 5.12 ft stage, 13.0" depth, rapid drainage documented).</li><li class='text-xs text-slate-600 leading-relaxed'>Applied observer depth corrections: Obs 42 (2.50"), Obs 62 (8.00"), Obs 136 (2.00").</li><li class='text-xs text-slate-600 leading-relaxed'>Re-calibrated Stage 2 inundation model: R² improved from 0.800 to 0.8511, MAE = 1.25", RMSE = 1.69" across 181 observations.</li><li class='text-xs text-slate-600 leading-relaxed'>Launched dedicated scientific documentation (SCIENTIFIC_FINDINGS.md, science.html, generate_scientific_report.py).</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="relative pl-8 pb-8 border-l-2 border-slate-200 last:border-l-0 last:pb-0">
+          <div class="absolute -left-2.5 top-0 w-5 h-5 rounded-full border-4 border-white bg-slate-400"></div>
+          <div class="border-slate-200 bg-white rounded-2xl p-5 sm:p-6 border shadow-sm space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5">
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-slate-200 text-slate-800">v1.2.0</span>
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base">Automated Cloud Ingestion & Micro-Topography GIS Engine</h3>
+              </div>
+              <span class="text-xs font-mono text-slate-500">2025-10-15</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">Deployed automated 30-minute cloud pipeline with GitHub Actions, ntfy.sh mobile alerts, and USGS 3DEP LiDAR street network integration.</p>
+            <ul class="list-disc list-inside space-y-1.5 pt-1">
+              <li class='text-xs text-slate-600 leading-relaxed'>Implemented 30-minute automated cron ingestion via .github/workflows/update_flood_monitor.yml.</li><li class='text-xs text-slate-600 leading-relaxed'>Created check_alerts.py stateful alerting engine with instant push dispatcher via ntfy.sh topic mathews-flood-alerts.</li><li class='text-xs text-slate-600 leading-relaxed'>Extracted 8-street LiDAR road invert elevations (3.75' to 4.45' MLLW) for vehicle passability matrix.</li><li class='text-xs text-slate-600 leading-relaxed'>Integrated OpenStreetMap coastline boundary ensuring zero warning polygons fall into open water.</li><li class='text-xs text-slate-600 leading-relaxed'>Created multi-page web portal (index.html, alerts.html, about.html, guide.html, data.html).</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="relative pl-8 pb-8 border-l-2 border-slate-200 last:border-l-0 last:pb-0">
+          <div class="absolute -left-2.5 top-0 w-5 h-5 rounded-full border-4 border-white bg-slate-400"></div>
+          <div class="border-slate-200 bg-white rounded-2xl p-5 sm:p-6 border shadow-sm space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5">
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-slate-200 text-slate-800">v1.1.0</span>
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base">Historical Backfill & Stage 1 Hydrodynamic ML Modeling</h3>
+              </div>
+              <span class="text-xs font-mono text-slate-500">2024-10-01</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">Constructed 32,833-hour training dataset and developed two-stage machine learning predictive architecture.</p>
+            <ul class="list-disc list-inside space-y-1.5 pt-1">
+              <li class='text-xs text-slate-600 leading-relaxed'>Scraped 4 years of 6-minute Ware River hydrograph (USGS 01670180 / WRVV2) via IEM HML API (2021–2024).</li><li class='text-xs text-slate-600 leading-relaxed'>Aligned hourly NOAA CO-OPS Yorktown USCG (8637689) meteorological and Windmill Point (8636580) surge data.</li><li class='text-xs text-slate-600 leading-relaxed'>Engineered physical hydrodynamic features: quadratic wind stress (tau ~ |U|*U), rolling set-up memory (3h, 6h, 12h, 24h), barometric pressure derivatives, and tidal rise rates.</li><li class='text-xs text-slate-600 leading-relaxed'>Trained Stage 1 Nowcasting LightGBM (R² = 0.973, MAE = 1.5 in) and Forward Forecasting LightGBM (R² = 0.721, MAE = 4.8 in).</li><li class='text-xs text-slate-600 leading-relaxed'>Validated against Hurricane Helene (Sep 2024) and September 2024 King Tide holdout test sets.</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="relative pl-8 pb-8 border-l-2 border-slate-200 last:border-l-0 last:pb-0">
+          <div class="absolute -left-2.5 top-0 w-5 h-5 rounded-full border-4 border-white bg-slate-400"></div>
+          <div class="border-slate-200 bg-white rounded-2xl p-5 sm:p-6 border shadow-sm space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5">
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-slate-200 text-slate-800">v1.0.0</span>
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base">Initial Ground-Truth Extraction & Mathematical Threshold Discovery</h3>
+              </div>
+              <span class="text-xs font-mono text-slate-500">2024-09-30</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">Digitized 141 handwritten observer measurements (2021–2024) and established the empirical 3.99 ft flood tipping point.</p>
+            <ul class="list-disc list-inside space-y-1.5 pt-1">
+              <li class='text-xs text-slate-600 leading-relaxed'>Digitized notebook photos (IMG_8049.jpeg–IMG_8058.jpeg) into ground_truth_observations.csv.</li><li class='text-xs text-slate-600 leading-relaxed'>Discovered empirical flooding threshold at 3.99 ft MLLW on the Ware River gauge.</li><li class='text-xs text-slate-600 leading-relaxed'>Discovered linear inundation slope: 10.95 inches per foot rise (~1.1–1.2" per 0.1 ft).</li><li class='text-xs text-slate-600 leading-relaxed'>Mathematically verified observer's handwritten conversion: 0.10 ft ~= 1 3/16" to 1.25".</li><li class='text-xs text-slate-600 leading-relaxed'>Established Risk Severity Tiers 0–3 based on physical elevation thresholds.</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </section>
+
+    <!-- 7. REPRODUCIBILITY & ACADEMIC CITATION -->
+    <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+      <div class="border-b border-slate-100 pb-4">
+        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-code-branch text-sky-600"></i>
+          Reproducibility, API Integration & Academic Citation
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-500">All data collection scripts and statistical engines are reproducible and open-source.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Reproduction Box -->
+        <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-3 flex flex-col justify-between">
+          <div class="space-y-2">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-slate-600"></i> Automated Benchmark Re-execution
+            </h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              When new handwritten observer entries or sensor records are added to <code class="bg-slate-200 px-1 py-0.5 rounded text-xs font-mono">ground_truth_observations.csv</code>, re-run the evidence pipeline to automatically regenerate parameter weights and statistical distributions:
+            </p>
+            <div class="bg-slate-900 text-sky-300 p-3 rounded-lg font-mono text-xs shadow-inner">
+              python generate_scientific_report.py
+            </div>
+          </div>
+          <div class="text-[11px] text-slate-500 italic">
+            Outputs synchronized to <code class="font-mono">models/scientific_evidence.json</code> &amp; <code class="font-mono">SCIENTIFIC_FINDINGS.md</code>.
+          </div>
+        </div>
+
+        <!-- BibTeX Box -->
+        <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-quote-right text-slate-600"></i> BibTeX Academic Citation
+            </h3>
+            <button onclick="copyBibtex()" class="px-2.5 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200 shadow-sm transition flex items-center gap-1.5">
+              <i class="fa-solid fa-copy"></i>
+              <span id="copy-btn-text">Copy</span>
+            </button>
+          </div>
+          <pre id="bibtex-text" class="bg-slate-900 text-slate-200 p-3 rounded-lg font-mono text-[11px] leading-relaxed overflow-x-auto shadow-inner select-all">@misc{mathews_flood_prediction_2026,
+  title={Hyper-Local Coastal Flood Prediction and Empirical Threshold Discovery in Mathews County, Virginia: A 5-Year Observational Benchmark (2021--2026)},
+  author={Hottinger, Howard and Contributors},
+  year={2026},
+  howpublished={{https://flatfoot584.github.io/mathews-flood-monitor/science.html}},
+  note={Ground-truth empirical dataset (N=204) and two-stage machine learning hydrodynamic model}
+}</pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  
+    <footer class="bg-slate-900 text-slate-400 text-sm border-t border-slate-800 mt-16 py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <!-- Col 1: Project Info -->
+        <div class="md:col-span-2 space-y-3">
+          <div class="flex items-center gap-2 text-white font-bold text-base">
+            <i class="fa-solid fa-water text-sky-400"></i>
+            <span>Mathews County Coastal Flood Prediction System</span>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed max-w-lg">
+            An open science, hyper-local flood prediction pipeline and machine learning model built from 204 ground-truth storm observations (2021–2026), NOAA NWPS hydrodynamic water level guidance, and NOAA CO-OPS sensor networks across the Middle Peninsula of Virginia.
+          </p>
+          <div class="text-xs text-slate-500 pt-1">
+            Last Automated Cloud Sync: <span class="text-slate-300 font-mono font-medium">2026-10-01 22:45:00 EDT</span> (Runs every 30 mins)
+          </div>
+        </div>
+
+        <!-- Col 2: Navigation Links -->
+        <div>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-200 mb-3">Portal Navigation</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="index.html" class="hover:text-sky-400 transition">Live Dashboard & Forecast</a></li>
+            <li><a href="alerts.html" class="hover:text-sky-400 transition">Free Mobile Flood Alerts</a></li>
+            <li><a href="index.html#map-section" class="hover:text-sky-400 transition">Interactive Coastal Map</a></li>
+            <li><a href="about.html" class="hover:text-sky-400 transition">The Story & Handwritten Notes</a></li>
+            <li><a href="guide.html" class="hover:text-sky-400 transition">Flood Tiers & Plain-English Guide</a></li>
+            <li><a href="data.html" class="hover:text-sky-400 transition">Storm History & Data Archive</a></li>
+            <li><a href="science.html" class="hover:text-sky-400 transition">Science, Models & Changelog</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Sensor Networks & Code -->
+        <div>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-200 mb-3">Data & Source Code</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="https://water.noaa.gov/gauges/WRVV2" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA NWPS Ware River (WRVV2)</a></li>
+            <li><a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8637689" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA Yorktown USCG (8637689)</a></li>
+            <li><a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8636580" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA Windmill Point (8636580)</a></li>
+            <li><a href="models/scientific_evidence.json" target="_blank" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-code text-[10px]"></i> Scientific Evidence (JSON)</a></li>
+            <li><a href="SCIENTIFIC_FINDINGS.md" target="_blank" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-file-lines text-[10px]"></i> Academic Manuscript (MD)</a></li>
+            <li><a href="https://github.com/flatfoot584/mathews-flood-monitor" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-brands fa-github text-[11px]"></i> GitHub Repository</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+        <div>&copy; 2021–2026 Mathews County Flood Prediction Project &bull; Public Community Resource</div>
+        <div class="italic text-[11px]">Empirical model calibrated to 3.99 ft MLLW flood tipping point. Not an official NWS evacuation order.</div>
+      </div>
+    </footer>
+
+    <script>
+      // Mobile menu toggle
+      const menuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (menuBtn && mobileMenu) {
+        menuBtn.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
+    </script>
+    
+
+  <script>
+    // Copy BibTeX Function
+    function copyBibtex() {
+      const text = document.getElementById('bibtex-text').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('copy-btn-text');
+        if (btn) {
+          btn.innerText = 'Copied!';
+          setTimeout(() => { btn.innerText = 'Copy'; }, 2500);
+        }
+      }).catch(() => {
+        alert('Copied BibTeX to clipboard!');
+      });
+    }
+
+    // Mobile Menu Toggle
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileBtn && mobileMenu) {
+      mobileBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+    }
+  </script>
+</body>
+</html>

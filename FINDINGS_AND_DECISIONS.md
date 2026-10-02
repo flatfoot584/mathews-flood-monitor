@@ -290,3 +290,28 @@ python3 generate_dashboard.py
 * **Portal Storm Explorer Upgrade (`data.html`)**:
   * Updated interactive storm benchmark cards to showcase Hurricane Erin, the October 2025 10-year record flood ($19"$), and the September 2026 twin nor'easters ($17.5"$).
   * Upgraded the observation table to display all 204 records in reverse chronological order (newest storms first) within a sticky-header scrollable container.
+
+---
+
+## 11. Scientific Evidence Generation, Academic Manuscript & Dedicated Science Portal (`science.html`)
+
+* **Motivation & Goal**:
+  * Establish a reproducible scientific evidence engine and manuscript suitable for peer-reviewed academic publication in coastal hydrology / environmental modeling journals.
+  * Provide researchers, hydrologists, and scientific visitors with a dedicated portal page (`science.html`) detailing mathematical formulas, model weights, error matrices, LiDAR ground-truth validations, and an engineering version changelog.
+* **Automated Evidence Engine (`generate_scientific_report.py`)**:
+  * Loads the 204 ground-truth observations, calculates statistical moments (IQR, mean, std, percentiles), computes Pearson correlation ($r = 0.9302$ on flooded observations, $r = 0.8898$ overall), evaluates Stage 1 and Stage 2 models, tabulates LiDAR comparisons, and compiles benchmark storm case studies.
+  * Automatically produces:
+    1. `models/scientific_evidence.json`: Machine-readable parameter benchmark.
+    2. `SCIENTIFIC_FINDINGS.md`: Complete academic manuscript with KaTeX math, tables, and formal citations.
+  * Can be re-executed at any time as new observations arrive via `python generate_scientific_report.py`.
+* **Dedicated Scientific Web Portal (`science.html`)**:
+  * Integrated into `generate_dashboard.py` as a primary portal page with reciprocal links across all 8 site pages (navbar and footer).
+  * Features:
+    * **Executive KPI Cards**: 5.33-year record (204 events), Pearson correlation $r = 0.9302$ ($R^2 = 0.8652$, $p < 10^{-15}$), LiDAR culvert agreement $\Delta = 0.06\text{ ft}$ ($0.7"$), Driveway pad agreement $\Delta = 0.00\text{ ft}$, Stage 1 ML $R^2 = 0.9731$ (MAE $1.46"$), and Stage 2 piecewise model MAE $1.25"$ ($R^2 = 0.8511$, RMSE $1.69"$).
+    * **Two-Stage Architecture & Formulations**: Mathematical expressions for quadratic wind stress ($\tau_w \propto |U|U$), pressure tendencies ($\Delta P_{3h}$), and the piecewise inundation law $D(h) = \max(0, 10.95 \cdot h - 43.69)\text{ in}$.
+    * **USGS 3DEP 1-Meter LiDAR Validation**: Side-by-side comparison tables of federal LiDAR altimetry vs empirical tipping points, plus 8-street community invert network.
+    * **Statistical Moments**: Quartile and distribution tables for Ware River stage and flood depth.
+    * **10-Storm Case Studies**: Benchmark comparisons of observed vs model predicted depths with residuals.
+    * **Formal Changelog Timeline**: Interactive version history covering v1.0.0 through v2.0.0.
+    * **BibTeX Citation & Downloads**: 1-click citation copy button and direct downloads for JSON evidence, Markdown manuscript, and CSV archives.
+

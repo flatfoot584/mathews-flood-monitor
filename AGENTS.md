@@ -110,7 +110,8 @@ Phase 4 (Complete): Predictive Machine Learning Models
 Phase 5 (Complete): Notification, Alerting & Hazard Monitoring
   └─ Alert generation script: check_alerts.py (with stateful ntfy.sh mobile push dispatcher & macOS desktop --notify banner)
   └─ Compound pluvial & micro-topography engine: micro_topography.py
-  └─ Standalone interactive web dashboard & 5-page portal: generate_dashboard.py, index.html, alerts.html (dedicated mobile alerts & subscription guide), about.html, guide.html, data.html
+  └─ Standalone interactive web dashboard & 8-page portal: generate_dashboard.py (index.html, alerts.html, about.html, guide.html, data.html, science.html)
+  └─ Scientific benchmark pipeline & academic manuscript: generate_scientific_report.py, models/scientific_evidence.json, SCIENTIFIC_FINDINGS.md
   └─ Automated 30-min cloud pipeline: .github/workflows/update_flood_monitor.yml with Pages deployment & push alerting
   └─ Long-term project roadmap: BACKLOG.md
 ```
