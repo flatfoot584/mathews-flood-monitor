@@ -97,7 +97,11 @@ This repository runs completely autonomously in the cloud at **zero cost**:
 ├── realtime_recent_observations.csv  # Rolling recent observations
 ├── forecast_48h.csv                  # 48-hour forward hourly forecast
 ├── flood_dashboard.html              # Standalone interactive dashboard
-├── index.html                        # GitHub Pages entrypoint
+├── index.html                        # GitHub Pages live dashboard & interactive map
+├── alerts.html                       # Dedicated mobile flood alerts & subscription guide
+├── about.html                        # Project history & handwritten notebook gallery
+├── guide.html                        # Flood risk tiers & plain-English glossary
+├── data.html                         # Storm comparison & historical dataset explorer
 ├── AGENTS.md                         # Architecture guide & system prompt context
 ├── FINDINGS_AND_DECISIONS.md         # Engineering logbook and physical discoveries
 └── BACKLOG.md                        # Long-term feature roadmap
