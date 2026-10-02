@@ -702,27 +702,32 @@ def update_archive_observations(archive_path, hourly_obs):
     """
     Appends new completed hourly observations to a permanent cumulative archive CSV.
     Deduplicates by timestamp_utc so reruns never duplicate data.
+    Dynamically expands header fields if new sensor products are added over time.
     """
     now_utc = datetime.now(timezone.utc)
     current_hour_utc = now_utc.replace(minute=0, second=0, microsecond=0)
     
     existing_timestamps = set()
     existing_rows = []
-    headers = None
+    headers = []
     
     if os.path.exists(archive_path):
         with open(archive_path, "r", encoding="utf-8") as f:
             reader = csv.DictReader(f)
-            headers = reader.fieldnames
+            if reader.fieldnames:
+                headers = list(reader.fieldnames)
             for row in reader:
-                existing_timestamps.add(row["timestamp_utc"])
+                existing_timestamps.add(row.get("timestamp_utc", ""))
                 existing_rows.append(row)
                 
-    if not headers and hourly_obs:
-        headers = list(hourly_obs[0].keys())
+    # Dynamically expand headers to include any newly introduced columns from hourly_obs
+    for obs in (hourly_obs or []):
+        for k in obs.keys():
+            if k not in headers:
+                headers.append(k)
         
     added = 0
-    for obs in hourly_obs:
+    for obs in (hourly_obs or []):
         ts_str = obs.get("timestamp_utc", "")
         if not ts_str:
             continue
@@ -739,19 +744,19 @@ def update_archive_observations(archive_path, hourly_obs):
             existing_timestamps.add(ts_str)
             added += 1
             
-    if added > 0 or not os.path.exists(archive_path):
+    if (added > 0 or not os.path.exists(archive_path)) and headers:
         existing_rows.sort(key=lambda r: r.get("timestamp_utc", ""))
         with open(archive_path, "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=headers)
+            writer = csv.DictWriter(f, fieldnames=headers, restval="", extrasaction="ignore")
             writer.writeheader()
             writer.writerows(existing_rows)
             
     return added, len(existing_rows)
 
 def write_csv(filepath, rows, fieldnames):
-    """Write list of dictionaries to CSV."""
+    """Write list of dictionaries to CSV safely."""
     with open(filepath, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer = csv.DictWriter(f, fieldnames=fieldnames, restval="", extrasaction="ignore")
         writer.writeheader()
         writer.writerows(rows)
 
