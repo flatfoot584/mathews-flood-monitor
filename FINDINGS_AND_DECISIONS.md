@@ -315,3 +315,19 @@ python3 generate_dashboard.py
     * **Formal Changelog Timeline**: Interactive version history covering v1.0.0 through v2.0.0.
     * **BibTeX Citation & Downloads**: 1-click citation copy button and direct downloads for JSON evidence, Markdown manuscript, and CSV archives.
 
+---
+
+## 12. Troubleshooting GitHub Pages 404 for `science.html`
+
+* **Issue Diagnosed**:
+  * Navigating to `https://flatfoot584.github.io/mathews-flood-monitor/science.html` returned an HTTP 404 Not Found error despite `science.html` being generated in the local workspace and present in the Git repository.
+* **Root Cause**:
+  * The GitHub Pages automated deployment workflow (`.github/workflows/update_flood_monitor.yml`) deploys via `actions/upload-pages-artifact` using a synthesized `_site` directory.
+  * In the "Prepare GitHub Pages site directory" step, files were explicitly copied one by one (`cp index.html _site/`, `cp alerts.html _site/`, etc.).
+  * Because `science.html`, `SCIENTIFIC_FINDINGS.md`, and `models/scientific_evidence.json` were recently introduced, they were missing from the copy list in the workflow step. As a result, `_site` was deployed without `science.html`.
+  * In addition, `science.html` was missing from the workflow's `git add` automated commit step and `paths-ignore` trigger list.
+* **Resolution**:
+  * Updated `.github/workflows/update_flood_monitor.yml`:
+    1. Added `science.html`, `SCIENTIFIC_FINDINGS.md`, and `models/scientific_evidence.json` (plus `models/model_weights_and_thresholds.json`) to the `_site` artifact assembly step.
+    2. Added `science.html` to the automated commit `git add` list so regenerated copies are tracked.
+    3. Added `science.html` to `paths-ignore` to avoid recursive workflow dispatch loops.

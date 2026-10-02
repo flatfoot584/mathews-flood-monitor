@@ -1,6 +1,6 @@
 {
   "model_metadata": {
-    "trained_at_utc": "2026-10-02 03:10:20 UTC",
+    "trained_at_utc": "2026-10-02 03:38:41 UTC",
     "training_period": "2021-01-01 to 2023-12-31",
     "test_period": "2024-01-01 to 2024-09-30 (holdout)",
     "training_samples": 24803,
@@ -76,6 +76,20 @@
     "formula": "flood_depth_in = max(0.0, 10.95 * stage_ft - 43.69)",
     "ground_truth_r2": 0.8511,
     "ground_truth_mae_in": 1.25
+  },
+  "uncertainty_envelope": {
+    "method": "quantile_regression_lgbm",
+    "target_coverage_pct": 80.0,
+    "empirical_holdout_coverage_pct": 55.8,
+    "mean_envelope_width_ft": 0.746,
+    "mean_envelope_width_in": 9.0,
+    "conformal_residual_q10_ft": -0.169,
+    "conformal_residual_q90_ft": 0.907,
+    "lead_time_growth_factor_per_day": 0.08,
+    "models": {
+      "q10_model": "models/stage1_forecast_q10_lgbm.pkl",
+      "q90_model": "models/stage1_forecast_q90_lgbm.pkl"
+    }
   },
   "risk_severity_tiers": {
     "Tier 0": {

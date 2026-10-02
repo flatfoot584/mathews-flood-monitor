@@ -250,14 +250,14 @@ def fetch_nws_qpf_map():
                 continue
     return rain_by_hour
 
-def aggregate_hourly_observations(ware_obs, yt_winds, yt_press, yt_temps, yt_water, yt_preds, wm_water, wm_preds, lookback_hours=48):
-    """Aggregate 6-min observations into hourly rows matching the training schema."""
+def aggregate_hourly_observations(ware_obs, yt_winds, yt_press, yt_temps, yt_water, yt_preds, wm_water, wm_preds, sw_water=None, sw_preds=None, lookback_hours=48):
+    """Aggregate 6-min observations into hourly rows matching the training schema, including bay hydraulic slope."""
     now_utc = datetime.now(timezone.utc)
     start_utc = (now_utc - timedelta(hours=lookback_hours)).replace(minute=0, second=0, microsecond=0)
     
     def group_by_hour(records, val_key):
         grouped = {}
-        for r in records:
+        for r in (records or []):
             hr_dt = r["datetime_utc"].replace(minute=0, second=0, microsecond=0)
             if hr_dt not in grouped:
                 grouped[hr_dt] = []
@@ -281,6 +281,8 @@ def aggregate_hourly_observations(ware_obs, yt_winds, yt_press, yt_temps, yt_wat
     yt_preds_grouped = group_by_hour(yt_preds, "water_level_ft")
     wm_water_grouped = group_by_hour(wm_water, "water_level_ft")
     wm_preds_grouped = group_by_hour(wm_preds, "water_level_ft")
+    sw_water_grouped = group_by_hour(sw_water, "water_level_ft")
+    sw_preds_grouped = group_by_hour(sw_preds, "water_level_ft")
     
     curr = start_utc
     hourly_rows = []
@@ -329,6 +331,17 @@ def aggregate_hourly_observations(ware_obs, yt_winds, yt_press, yt_temps, yt_wat
         wm_pred = round(sum(wm_pred_list) / len(wm_pred_list), 3) if wm_pred_list else None
         
         wm_surge = round(wm_ver - wm_pred, 3) if (wm_ver is not None and wm_pred is not None) else None
+
+        # Sewells Point (8638610) & Bay Hydraulic Slope
+        sw_ver_list = sw_water_grouped.get(curr, [])
+        sw_ver = round(sum(sw_ver_list) / len(sw_ver_list), 3) if sw_ver_list else None
+
+        sw_pred_list = sw_preds_grouped.get(curr, [])
+        sw_pred = round(sum(sw_pred_list) / len(sw_pred_list), 3) if sw_pred_list else None
+
+        sw_surge = round(sw_ver - sw_pred, 3) if (sw_ver is not None and sw_pred is not None) else None
+        bay_grad = round(wm_surge - sw_surge, 3) if (wm_surge is not None and sw_surge is not None) else None
+        bay_slope = round(bay_grad / 46.2, 5) if bay_grad is not None else None
         
         # Micro-topographical evaluation
         eval_res = micro_topography.evaluate_compound_inundation(ware_mean, rain_rolling_6h_in=0.0)
@@ -357,6 +370,11 @@ def aggregate_hourly_observations(ware_obs, yt_winds, yt_press, yt_temps, yt_wat
             "windmill_pred_tide_ft": wm_pred if wm_pred is not None else "",
             "windmill_ver_water_ft": wm_ver if wm_ver is not None else "",
             "windmill_surge_ft": wm_surge if wm_surge is not None else "",
+            "sewells_point_water_level_mllw_ft": sw_ver if sw_ver is not None else "",
+            "sewells_point_pred_tide_ft": sw_pred if sw_pred is not None else "",
+            "sewells_point_surge_ft": sw_surge if sw_surge is not None else "",
+            "bay_hydraulic_gradient_ft": bay_grad if bay_grad is not None else "",
+            "bay_hydraulic_slope_ft_per_mile": bay_slope if bay_slope is not None else "",
             "estimated_flood_depth_in": eval_res["total_compound_depth_in"],
             "is_flooded": "TRUE" if eval_res["total_compound_depth_in"] > 0 else "FALSE",
             "flood_risk_tier": tier_num,

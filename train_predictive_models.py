@@ -174,11 +174,31 @@ def main():
     pred_lr_fc = lr_fc.predict(test_fc[forecast_features])
     res_lr_fc = evaluate_predictions(test_fc[target].values, pred_lr_fc, "Forecast Linear Baseline")
 
-    # Model 2B: Forward Forecast LightGBM
+    # Model 2B: Forward Forecast LightGBM (Expected Mean)
     lgb_fc = LGBMRegressor(n_estimators=300, learning_rate=0.03, num_leaves=31, random_state=42, verbose=-1)
     lgb_fc.fit(train_fc[forecast_features], train_fc[target])
     pred_lgb_fc = lgb_fc.predict(test_fc[forecast_features])
-    res_lgb_fc = evaluate_predictions(test_fc[target].values, pred_lgb_fc, "Forecast LightGBM")
+    res_lgb_fc = evaluate_predictions(test_fc[target].values, pred_lgb_fc, "Forecast LightGBM (Expected)")
+
+    # Model 2C: Quantile Regression Forecasting (10th & 90th Percentiles for Uncertainty Envelope)
+    print("      Training Stage 1 Quantile Regressors (alpha=0.10 and alpha=0.90)...")
+    lgb_fc_q10 = LGBMRegressor(objective='quantile', alpha=0.10, n_estimators=300, learning_rate=0.03, num_leaves=31, random_state=42, verbose=-1)
+    lgb_fc_q10.fit(train_fc[forecast_features], train_fc[target])
+    pred_lgb_fc_q10 = lgb_fc_q10.predict(test_fc[forecast_features])
+
+    lgb_fc_q90 = LGBMRegressor(objective='quantile', alpha=0.90, n_estimators=300, learning_rate=0.03, num_leaves=31, random_state=42, verbose=-1)
+    lgb_fc_q90.fit(train_fc[forecast_features], train_fc[target])
+    pred_lgb_fc_q90 = lgb_fc_q90.predict(test_fc[forecast_features])
+
+    # Evaluate empirical confidence interval coverage on 2024 holdout
+    y_test_fc = test_fc[target].values
+    coverage_80 = float(np.mean((y_test_fc >= pred_lgb_fc_q10) & (y_test_fc <= pred_lgb_fc_q90)))
+    mean_width_ft = float(np.mean(pred_lgb_fc_q90 - pred_lgb_fc_q10))
+    residuals_fc = y_test_fc - pred_lgb_fc
+    q10_offset_ft = float(np.percentile(residuals_fc, 10))
+    q90_offset_ft = float(np.percentile(residuals_fc, 90))
+    print(f"      Quantile Coverage: {coverage_80*100:.1f}% (target: 80.0%), Mean Envelope Width: {mean_width_ft:.2f} ft ({mean_width_ft*12:.1f}\")")
+    print(f"      Conformal Residuals: Q10 = {q10_offset_ft:+.3f} ft, Q90 = {q90_offset_ft:+.3f} ft")
 
     # Display Stage 1 Results
     print("\nSTAGE 1 MODEL COMPARISON (2024 Holdout Test Set):")
@@ -270,6 +290,20 @@ def main():
             "ground_truth_r2": round(float(r2_gt), 4),
             "ground_truth_mae_in": round(float(mae_gt), 2)
         },
+        "uncertainty_envelope": {
+            "method": "quantile_regression_lgbm",
+            "target_coverage_pct": 80.0,
+            "empirical_holdout_coverage_pct": round(float(coverage_80 * 100), 1),
+            "mean_envelope_width_ft": round(float(mean_width_ft), 3),
+            "mean_envelope_width_in": round(float(mean_width_ft * 12.0), 1),
+            "conformal_residual_q10_ft": round(float(q10_offset_ft), 3),
+            "conformal_residual_q90_ft": round(float(q90_offset_ft), 3),
+            "lead_time_growth_factor_per_day": 0.08,
+            "models": {
+                "q10_model": "models/stage1_forecast_q10_lgbm.pkl",
+                "q90_model": "models/stage1_forecast_q90_lgbm.pkl"
+            }
+        },
         "risk_severity_tiers": {
             "Tier 0": {"range_ft": "< 4.0 ft", "depth_range_in": "0\"", "desc": "Normal / Safe"},
             "Tier 1": {"range_ft": "4.0 - 4.3 ft", "depth_range_in": "1\" - 4\"", "desc": "Nuisance / Ditch Full"},
@@ -282,12 +316,16 @@ def main():
         json.dump(model_config, f, indent=2)
     print("\n[*] Saved lightweight deployable config: models/model_weights_and_thresholds.json")
 
-    # Save pickled LGBM models
+    # Save pickled LGBM models (Nowcast, Forecast, and Quantiles)
     with open("models/stage1_nowcast_lgbm.pkl", "wb") as f:
         pickle.dump(lgb_nc, f)
     with open("models/stage1_forecast_lgbm.pkl", "wb") as f:
         pickle.dump(lgb_fc, f)
-    print("[*] Saved full LightGBM models: models/stage1_nowcast_lgbm.pkl & stage1_forecast_lgbm.pkl")
+    with open("models/stage1_forecast_q10_lgbm.pkl", "wb") as f:
+        pickle.dump(lgb_fc_q10, f)
+    with open("models/stage1_forecast_q90_lgbm.pkl", "wb") as f:
+        pickle.dump(lgb_fc_q90, f)
+    print("[*] Saved full LightGBM models (Nowcast, Forecast, Q10, Q90)")
 
     # Save detailed evaluation report
     eval_report = {
@@ -297,6 +335,12 @@ def main():
             "nowcast_lgbm": res_lgb_nc,
             "forecast_linear": res_lr_fc,
             "forecast_lgbm": res_lgb_fc,
+            "uncertainty_envelope_80pct": {
+                "empirical_coverage_pct": round(float(coverage_80 * 100), 1),
+                "mean_width_ft": round(float(mean_width_ft), 3),
+                "q10_offset_ft": round(float(q10_offset_ft), 3),
+                "q90_offset_ft": round(float(q90_offset_ft), 3)
+            },
             "stage2_ground_truth": {
                 "n_observations": len(gt_valid),
                 "r2": round(float(r2_gt), 4),

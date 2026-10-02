@@ -20,6 +20,7 @@ on:
       - 'about.html'
       - 'guide.html'
       - 'data.html'
+      - 'science.html'
       - 'alert_state.json'
 
 permissions:
@@ -64,7 +65,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add latest_status.json forecast_48h.csv realtime_recent_observations.csv archive_hourly_observations.csv flood_dashboard.html index.html alerts.html subscribe.html about.html guide.html data.html alert_state.json
+          git add latest_status.json forecast_48h.csv realtime_recent_observations.csv archive_hourly_observations.csv flood_dashboard.html index.html alerts.html subscribe.html about.html guide.html data.html science.html alert_state.json
           if git diff --staged --quiet; then
             echo "No changes detected. Skipping git commit."
           else
@@ -82,12 +83,17 @@ jobs:
           cp about.html _site/
           cp guide.html _site/
           cp data.html _site/
+          cp science.html _site/
           cp latest_status.json _site/
           cp forecast_48h.csv _site/
           cp realtime_recent_observations.csv _site/
           cp archive_hourly_observations.csv _site/
           cp ground_truth_observations.csv _site/
+          cp SCIENTIFIC_FINDINGS.md _site/
           if [ -f alert_state.json ]; then cp alert_state.json _site/; fi
+          mkdir -p _site/models
+          if [ -f models/scientific_evidence.json ]; then cp models/scientific_evidence.json _site/models/; fi
+          if [ -f models/model_weights_and_thresholds.json ]; then cp models/model_weights_and_thresholds.json _site/models/; fi
           mkdir -p _site/photos
           cp photos/*.jpeg _site/photos/
 

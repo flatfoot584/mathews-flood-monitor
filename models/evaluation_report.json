@@ -1,5 +1,5 @@
 {
-  "evaluation_timestamp": "2026-10-02 03:10:20 UTC",
+  "evaluation_timestamp": "2026-10-02 03:38:41 UTC",
   "metrics": {
     "nowcast_linear": {
       "label": "Nowcast Linear Baseline",
@@ -41,7 +41,7 @@
       "high_water_mae_in": 9.58
     },
     "forecast_lgbm": {
-      "label": "Forecast LightGBM",
+      "label": "Forecast LightGBM (Expected)",
       "n_samples": 6135,
       "r2": 0.7067,
       "rmse_ft": 0.5276,
@@ -52,6 +52,12 @@
       "high_water_rmse_ft": 1.0184,
       "high_water_mae_ft": 0.9075,
       "high_water_mae_in": 10.89
+    },
+    "uncertainty_envelope_80pct": {
+      "empirical_coverage_pct": 55.8,
+      "mean_width_ft": 0.746,
+      "q10_offset_ft": -0.169,
+      "q90_offset_ft": 0.907
     },
     "stage2_ground_truth": {
       "n_observations": 181,
