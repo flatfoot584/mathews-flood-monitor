@@ -255,7 +255,38 @@ python3 generate_dashboard.py
   * Added live interactive street passability overlays on the map and a community street status board on the dashboard.
 * **Quick-Zoom Controls**: Added `[Community Area]` (fits the full yellow neighborhood perimeter), `[Focus Benchmark]` (centers on Daniel Ave at zoom 16), and `[County View]` (zooms to regional sensor network).
 
+---
 
+## 9. Dedicated Mobile Alerts Page & UX Optimization
 
+* **Decision**: Migrated bulky subscription banner off the primary dashboard landing page to preserve top-of-page real estate for real-time flood indicators.
+* **Architecture**:
+  * Created dedicated `alerts.html` (and aliased `subscribe.html`) with interactive topic selector (`mathews-flood-alerts` vs test channel), animated push notification timeline, iOS/Android installation guides, and direct Web Push / ntfy app deep links.
+  * Preserved a compact notification pill in the desktop/mobile navbar and an informative alert callout at the bottom of `index.html`.
 
+---
 
+## 10. 2024–2026 Ground-Truth Dataset Expansion & 5-Year Model Calibration
+
+* **Expansion to 204 Ground-Truth Observations**:
+  * Ingested 63 newly verified storm events spanning October 16, 2024 through September 28, 2026 from `RAW Observer data - Mom.gsheet` into `ground_truth_observations.csv` (and reproducible generator `generate_ground_truth.py`).
+  * Total dataset expanded from 141 records to **204 records** (181 numerical stage-depth pairs).
+* **Observer Log Corrections Applied**:
+  * **Observation 42 (2023-06-03)**: Corrected flood depth from $7.50"$ to $2.50"$ per Mom's verified measurement log.
+  * **Observation 62 (2023-09-27)**: Corrected flood depth from $11.00"$ to $8.00"$ per Mom's verified measurement log.
+  * **Observation 136 (2024-09-26)**: Updated flood depth from $0.00"$ to $2.00"$ (`is_flooded = TRUE`) matching water depth recorded across the driveway and roadside ditch.
+  * **2024-09-18**: Verified against NOAA/USGS stage records that Ware River stage was $4.52\text{ ft}$ (prevented a $5.52\text{ ft}$ manual entry typo).
+* **Major 2024–2026 Benchmark Storms Added**:
+  1. **10-Year Record Nor'easter (October 12, 2025)**: Ware River stage **$5.54\text{ ft MLLW}$**, Flood Depth **$19.0\text{ inches}$**, winds NNE $24\text{ mph}$ ($35\text{ mph}$ gusts). Submerged the driveway and property; highest flood depth recorded in over a decade.
+  2. **Twin Nor'easters (September 22–26, 2026)**: Ware River stage **$5.38\text{ ft MLLW}$**, Flood Depth **$17.5\text{ inches}$**, winds NE/NNW $18\text{–}23\text{ mph}$. Sustained multi-day surge stacking with $0.5" - 2"$ water rise every $10\text{–}15\text{ minutes}$.
+  3. **Late Autumn Nor'easter (November 15, 2024)**: Ware River stage **$5.27\text{ ft MLLW}$**, Flood Depth **$15.0\text{ inches}$**, winds NNE $12.8\text{ mph}$.
+  4. **Hurricane Erin (August 21–22, 2025)**: Ware River stage **$5.12\text{ ft MLLW}$**, Flood Depth **$13.0\text{ inches}$**, winds NNE $18.3\text{ mph}$ ($24.6\text{ mph}$ gusts). Rapid drainage documented post-high tide ($13"$ dropped to $10.75"$ in $30\text{ minutes}$).
+* **Model Retraining & Calibration**:
+  * Re-evaluated Stage 2 inundation model $\text{Depth} = \max(0, 10.95 \times (\text{Stage} - 3.99))$ on all 181 valid 2021–2026 ground-truth records:
+    * **$R^2 = 0.8511$** (improved from $0.800$)
+    * **$\text{MAE} = 1.25\text{ inches}$**
+    * **$\text{RMSE} = 1.69\text{ inches}$**
+  * Updated `models/model_weights_and_thresholds.json` and `models/evaluation_report.json`.
+* **Portal Storm Explorer Upgrade (`data.html`)**:
+  * Updated interactive storm benchmark cards to showcase Hurricane Erin, the October 2025 10-year record flood ($19"$), and the September 2026 twin nor'easters ($17.5"$).
+  * Upgraded the observation table to display all 204 records in reverse chronological order (newest storms first) within a sticky-header scrollable container.

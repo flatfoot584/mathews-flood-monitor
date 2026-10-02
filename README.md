@@ -25,19 +25,19 @@ Mathews County lies on Virginia’s Middle Peninsula, surrounded by the **Chesap
 
 ## 📊 Core Ground-Truth & Empirical Findings
 
-Trained on a continuous human observation log recorded between **May 2021 and September 2024** (141 entries, 121 depth measurements across storms like Ian, Idalia, Ophelia, Helene, and Nor'easters) paired with 285,000 6-minute USGS/NOAA Ware River gauge readings (`ground_truth_observations.csv`):
+Trained on a continuous human observation log recorded between **May 2021 and September 2026** (204 entries, 181 depth measurements across storms like Erin, Ian, Idalia, Ophelia, Helene, the October 2025 10-year record nor'easter, and the September 2026 twin nor'easters) paired with 285,000 6-minute USGS/NOAA Ware River gauge readings (`ground_truth_observations.csv`):
 
 * **Flooding Threshold**: **$3.99\text{ ft MLLW}$** ($\approx 2.35\text{ ft NAVD88}$) on the Ware River gauge (WRVV2 / USGS 01670180).
   * Stage $< 4.0\text{ ft} \implies$ Water remains in marsh channels and drainage ditches ($0"$ depth).
   * Stage $\ge 4.0\text{ ft} \implies$ Water breaches ditch banks and covers the property.
 * **Inundation Rate**: **$10.95\text{ inches of water per foot of river rise}$** ($\approx 1.1\text{ to }1.2\text{ in}$ per $0.10\text{ ft}$).
-* **Correlation**: $r = 0.912$ ($R^2 = 0.832$). Residual variance is explained by wind direction, wind duration, and barometric pressure drops.
+* **Correlation**: $r = 0.923$ ($R^2 = 0.851$). Residual variance is explained by wind direction, wind duration, and barometric pressure drops.
 
 ### Risk Severity Tiers
 * **Tier 0 (Safe / Normal)**: Stage $< 4.0\text{ ft} \to 0"$ flooding.
 * **Tier 1 (Nuisance / Ditch Full)**: Stage $4.0 - 4.3\text{ ft} \to 1" - 4"$ in low spots and culverts.
 * **Tier 2 (Moderate / Driveway Blocked)**: Stage $4.4 - 4.7\text{ ft} \to 5" - 8"$ on driveway (sedans blocked).
-* **Tier 3 (Severe / Property Submerged)**: Stage $\ge 4.8\text{ ft} \to 9" - 15"+$ across yard (SUVs only or impassable).
+* **Tier 3 (Severe / Property Submerged)**: Stage $\ge 4.8\text{ ft} \to 9" - 19"+$ across yard (SUVs only or impassable).
 
 ---
 
@@ -51,7 +51,7 @@ Stage 1: Ware River Stage Nowcast & 48-Hour Forecast
         └─ Features: Astronomical predicted tide + Quadratic wind stress (NNE/NE/ENE/E)
 
 Stage 2: Hyper-Local Ground Inundation Model
-  ├── R² = 0.800, MAE = 1.22 in on ground-truth observations
+  ├── R² = 0.851, MAE = 1.25 in on 181 ground-truth observations (2021–2026)
   └── Piecewise threshold linear model: Depth = 10.95 × (Stage - 3.99 ft)
 
 Compound Pluvial & Micro-Topography Engine (micro_topography.py)
@@ -91,7 +91,7 @@ This repository runs completely autonomously in the cloud at **zero cost**:
 ├── train_predictive_models.py        # Model training & validation pipeline
 ├── build_merged_training_dataset.py  # Historical multi-station dataset merger
 ├── backfill_ware_river_history.py    # IEM HML API scraper for 2021-2024 Ware River stage
-├── ground_truth_observations.csv     # 141 ground-truth observer measurements (2021-2024)
+├── ground_truth_observations.csv     # 204 ground-truth observer measurements (2021-2026)
 ├── merged_hourly_training_dataset.csv # 32,833 continuous hourly aligned training rows
 ├── latest_status.json                # Latest real-time status summary
 ├── realtime_recent_observations.csv  # Rolling recent observations

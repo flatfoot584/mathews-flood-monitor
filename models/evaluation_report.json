@@ -1,5 +1,5 @@
 {
-  "evaluation_timestamp": "2026-10-01 04:12:26 UTC",
+  "evaluation_timestamp": "2026-10-02 03:10:20 UTC",
   "metrics": {
     "nowcast_linear": {
       "label": "Nowcast Linear Baseline",
@@ -54,10 +54,10 @@
       "high_water_mae_in": 10.89
     },
     "stage2_ground_truth": {
-      "n_observations": 119,
-      "r2": 0.8001,
-      "mae_inches": 1.22,
-      "rmse_inches": 1.72
+      "n_observations": 181,
+      "r2": 0.8511,
+      "mae_inches": 1.25,
+      "rmse_inches": 1.69
     }
   },
   "storm_case_studies": {

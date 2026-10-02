@@ -40,7 +40,7 @@ observation_id,date,time_local,time_qualifier,page_source,ware_river_stage_ft,fl
 39,2023-03-13,,,notebook_page_3,4.33,4.00,TRUE,,,,,,
 40,2023-04-30,,,notebook_page_3,3.94,0.00,FALSE,,,,,,No flood recorded
 41,2023-06-02,,,notebook_page_4,4.38,3.00,TRUE,ENE,12.8,,,,ENE 12.8
-42,2023-06-03,,,notebook_page_4,4.61,7.50,TRUE,,,,,Full moon,Full moon
+42,2023-06-03,,,notebook_page_4,4.61,2.50,TRUE,,,,,Full moon,Full moon (depth corrected from 7.5 to 2.5 in Mom log)
 43,2023-06-05,,,notebook_page_4,4.20,0.00,FALSE,,,,,,0 inches
 44,2023-06-20,,,notebook_page_4,4.20,1.50,TRUE,,,,Rain,,Rain Rain
 45,2023-06-21,,,notebook_page_4,4.62,7.00,TRUE,NE,16-25,,Rain,,Rain; NE 16/25
@@ -60,7 +60,7 @@ observation_id,date,time_local,time_qualifier,page_source,ware_river_stage_ft,fl
 59,2023-09-24,,,notebook_page_4,4.17,,,,,,Ophelia,,Ophelia
 60,2023-09-26,,PM,notebook_page_5,4.60,8.00,TRUE,,,,,,4.6 PM
 61,2023-09-27,,,notebook_page_5,4.68,8.00,TRUE,,,,,,
-62,2023-09-27,,,notebook_page_5,4.93,11.00,TRUE,,,,,,
+62,2023-09-27,,,notebook_page_5,4.93,8.00,TRUE,,,,,,Depth corrected from 11.0 to 8.0 in Mom log
 63,2023-09-28,,,notebook_page_5,4.70,10.00,TRUE,,,,,,
 64,2023-09-28,,,notebook_page_5,4.80,9.00,TRUE,,,,,,
 65,2023-09-29,,,notebook_page_5,4.38,6.00,TRUE,,,,,,
@@ -134,9 +134,72 @@ observation_id,date,time_local,time_qualifier,page_source,ware_river_stage_ft,fl
 133,2024-09-25,03:38,AM,notebook_page_8,4.23,2.00,TRUE,SE,5-10,,,,"3:38A; 2"""
 134,2024-09-25,16:20,PM,notebook_page_8,4.38,2.25,TRUE,SE,5-10,,,,"4:20p; 2.25"""
 135,2024-09-26,04:47,AM,notebook_page_8,3.79,0.00,FALSE,,,,,,"4:47A; 0"""
-136,2024-09-26,17:27,PM,notebook_page_8,4.09,0.00,FALSE,,,,,,"5:27p; 0 (2-3"" in rd + ditches)"
+136,2024-09-26,17:27,PM,notebook_page_8,4.09,2.00,TRUE,,,,,,"5:27p; 2.0"" in rd + ditches (updated in Mom log)"
 137,2024-09-27,05:52,AM,notebook_page_8,3.55,0.00,FALSE,,,,,,"5:52A; 0"""
 138,2024-09-27,18:26,PM,notebook_page_8,4.70,9.75,TRUE,SE,25.3,,Hurricane Helene,,"6:26p; 9 3/4""; SE 25.3 mph; Hurricane Helene"
 139,2024-09-27,18:20,PM,sticky_helene,,3.00,TRUE,SE,25.3,,Hurricane Helene,,"Helene: 6:20pm 3"""
 140,2024-09-27,19:30,PM,sticky_helene,4.70,9.75,TRUE,SE,25.3,,Hurricane Helene,,"Helene: 7:30pm 9 3/4"" (peak); Ware River 4.7; winds 25.3 mph SE"
 141,2024-09-27,20:20,PM,sticky_helene,,2.50,TRUE,SE,25.3,,Hurricane Helene,,"Helene: @ 8:20pm tide down 7 1/4"" to 2.5"""
+142,2024-10-16,,,mom_log_sheet,3.40,0.00,FALSE,,,,,,
+143,2024-10-17,,,mom_log_sheet,3.40,0.00,FALSE,,,,,,
+144,2024-10-17,,,mom_log_sheet,3.40,0.00,FALSE,,,,,,
+145,2024-10-18,,,mom_log_sheet,4.00,0.00,FALSE,N,9.2,,,,
+146,2024-10-18,,,mom_log_sheet,3.63,0.00,FALSE,,,,,,
+147,2024-10-19,,,mom_log_sheet,4.29,2.50,TRUE,NNE,8.1,,,,
+148,2024-10-19,,,mom_log_sheet,3.44,0.00,FALSE,,,,,,
+149,2024-10-20,,,mom_log_sheet,3.89,0.00,FALSE,NNW,3.4,,,,
+150,2024-11-14,,,mom_log_sheet,4.24,1.00,TRUE,N,4.7,,Late Autumn Nor'easter,,
+151,2024-11-14,,,mom_log_sheet,4.10,0.50,TRUE,E,11.4,,Late Autumn Nor'easter,,
+152,2024-11-15,,,mom_log_sheet,5.27,15.00,TRUE,NNE,12.8,,Late Autumn Nor'easter,,
+153,2024-11-15,,,mom_log_sheet,4.07,0.50,TRUE,NW,8.1,,Late Autumn Nor'easter,,
+154,2024-11-16,,,mom_log_sheet,4.37,3.00,TRUE,WNW,5.8,,Late Autumn Nor'easter,,
+155,2024-11-16,,,mom_log_sheet,3.98,0.00,FALSE,NW,6.9,,Late Autumn Nor'easter,,
+156,2025-04-11,,,mom_log_sheet,4.03,0.00,FALSE,NE,13.9,,Coastal Low,,"Rain 4-4.5"" | Coastal low NE"
+157,2025-05-21,,,mom_log_sheet,4.48,4.00,TRUE,ENE,18.3,,,,"Rain 2.0"""
+158,2025-05-22,,,mom_log_sheet,4.20,2.00,TRUE,WNW,8.1,,,,
+159,2025-05-22,,,mom_log_sheet,4.18,0.00,FALSE,WNW,11.4,,,,Water 1.5 into road and yard but not to my house
+160,2025-05-23,,,mom_log_sheet,4.00,0.00,FALSE,CALM,0,,,,Water 1.5 into road and yard but not to my house
+161,2025-06-27,,,mom_log_sheet,4.14,0.25,TRUE,ESE,4.7,,,,…1/4 inch yard not house
+162,2025-08-19,,,mom_log_sheet,4.05,0.00,FALSE,E,10.3,,Hurricane Erin,,Water in ditches and road. Not to my house. | Offshore low + Hurricane Erin
+163,2025-08-20,,,mom_log_sheet,4.26,2.00,TRUE,E,3.4,,Hurricane Erin,,
+164,2025-08-21,,,mom_log_sheet,4.63,7.50,TRUE,NNE,18.3,24.6,Hurricane Erin,,Hurricane Erin
+165,2025-08-21,,,mom_log_sheet,5.04,12.50,TRUE,N,10.4,,Hurricane Erin,,
+166,2025-08-22,,,mom_log_sheet,4.48,4.00,TRUE,N,6.9,,Hurricane Erin,,
+167,2025-08-22,,,mom_log_sheet,5.12,13.00,TRUE,CALM,0,,Hurricane Erin,,"Right after high tide water dropped from 13"" to 10 3/4"" in 30 minutes"
+168,2025-08-23,,,mom_log_sheet,4.35,2.00,TRUE,ESE,5.8,,Hurricane Erin,,
+169,2025-08-23,,,mom_log_sheet,4.40,3.00,TRUE,SSE,5.58,,Hurricane Erin,,
+170,2025-08-24,,,mom_log_sheet,4.20,1.00,TRUE,SE,6.9,,Hurricane Erin,,
+171,2025-09-09,,,mom_log_sheet,4.42,3.00,TRUE,NE,13.9,,,Full moon,full moon
+172,2025-09-09,,,mom_log_sheet,4.35,3.00,TRUE,NNE,12.5,,,,
+173,2025-09-10,,,mom_log_sheet,4.61,7.00,TRUE,NNE,15,,,,
+174,2025-09-10,,,mom_log_sheet,4.21,2.00,TRUE,NNE,8,,,,
+175,2025-09-11,,,mom_log_sheet,4.42,3.00,TRUE,NNE,11.4,,,,
+176,2025-09-16,,AM,mom_log_sheet,4.51,4.00,TRUE,N TO NNW,17.2,25-30,Offshore Nor'easter,,Off shore nor'easter 5am 9-16-25 to 1:20am 9-17-25
+177,2025-10-01,,,mom_log_sheet,4.43,3.50,TRUE,NNE,19.5,,Hurricane Imelda,,Off NC/SC hurricane IMELDA headed NE out to Atlantic Ocean
+178,2025-10-02,,,mom_log_sheet,4.19,0.25,TRUE,NE,10.3,,,,
+179,2025-10-02,,,mom_log_sheet,4.32,2.00,TRUE,E,4.7,,,,
+180,2025-10-09,,,mom_log_sheet,4.02,0.00,FALSE,E,12.8,,Subtropical Storm Karen & Nor'easter,,…subtropical storm Karen takes NE path away from the US and a coastal low nor'easter forms off NC/SC… the storm splits.. the NC/SC storm dissipated and a new low formed off the DELMARVA coast… sped off up the Atlantic seaboard
+181,2025-10-10,,,mom_log_sheet,4.27,2.00,TRUE,E,10.3,,Subtropical Storm Karen & Nor'easter,,
+182,2025-10-11,,,mom_log_sheet,4.38,2.00,TRUE,ENE,11,,Subtropical Storm Karen & Nor'easter,,
+183,2025-10-12,,,mom_log_sheet,4.18,0.00,FALSE,ENE,16,20,Subtropical Storm Karen & Nor'easter,,20mph gusts
+184,2025-10-12,,,mom_log_sheet,5.54,19.00,TRUE,NNE,24,35,Subtropical Storm Karen & Nor'easter,,35mph gusts | New record highest in 10 years. | Last personal record was 11.15.24 @ 15 inches Ware River gauge 5.27
+185,2025-10-13,,,mom_log_sheet,4.80,5.00,TRUE,N,16,20,Subtropical Storm Karen & Nor'easter,,20mph gusts
+186,2025-10-13,,,mom_log_sheet,4.78,9.00,TRUE,NNW,16,,Subtropical Storm Karen & Nor'easter,,
+187,2025-10-14,,,mom_log_sheet,4.23,1.00,TRUE,N,15,,Subtropical Storm Karen & Nor'easter,,Water side yard and part back yard..1 inch at pole..water on Matthew Ln
+188,2025-10-18,,,mom_log_sheet,4.17,0.00,FALSE,SSE,9,,Subtropical Storm Karen & Nor'easter,,Water in side yard plus driveway to pole
+189,2025-10-28,,,mom_log_sheet,4.53,4.50,TRUE,NE,21,,,,
+190,2025-10-29,,,mom_log_sheet,4.25,2.00,TRUE,NNE,12,,,,
+191,2025-10-29,,,mom_log_sheet,4.40,4.00,TRUE,NE,10.3,18.3,,,
+192,2025-10-30,,,mom_log_sheet,4.67,5.00,TRUE,SE,17.2,,,,
+193,2025-10-30,,,mom_log_sheet,4.78,9.50,TRUE,SW,4.7,,,,
+194,2026-06-14,,,mom_log_sheet,4.31,0.00,FALSE,N,18,,,Dark of the moon tide,… 2 inches side yard..5-7 inches community dock area..dark of the moon tide
+195,2026-07-12,,,mom_log_sheet,4.12,0.50,TRUE,NE,13,,,,5 inches @ community dock. 2 inches in my side yard
+196,2026-09-22,,,mom_log_sheet,4.68,10.00,TRUE,NE,18.3,,Twin Nor'easters (Storm 1),,2 inch rise every 15 minutes
+197,2026-09-23,,AM,mom_log_sheet,4.89,13.00,TRUE,NE,23,,Twin Nor'easters (Storm 1),,.5 inch rise every 10 minutes - am
+198,2026-09-23,,PM,mom_log_sheet,5.09,13.50,TRUE,NE,16,25,Twin Nor'easters (Storm 1),,pm
+199,2026-09-24,,AM,mom_log_sheet,5.20,15.00,TRUE,NNE,17,23,Twin Nor'easters (Storm 1),,am
+200,2026-09-24,,PM,mom_log_sheet,5.38,17.50,TRUE,NE,21.9,,Twin Nor'easters (Storm 1),,pm
+201,2026-09-25,,AM,mom_log_sheet,5.10,14.00,TRUE,N,18,,Twin Nor'easters (Storm 2),,2nd nor'easter forms off coast of VA - am
+202,2026-09-26,,,mom_log_sheet,5.36,17.00,TRUE,NNW,23,,Twin Nor'easters (Storm 2),,Nor'easter #2 …New Jersey shore under state of emergency
+203,2026-09-27,,PM,mom_log_sheet,4.17,0.00,FALSE,NW,9.2,,Twin Nor'easters (Storm 2),,pm
+204,2026-09-28,,AM,mom_log_sheet,4.08,,TRUE,NNE,2.2,,Twin Nor'easters (Storm 2),,…tide slowly crept in..filled side yard and part of driveway.. continue to move in one hour after high tide - am

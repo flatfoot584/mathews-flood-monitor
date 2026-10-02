@@ -8,12 +8,12 @@ Generates a complete, modern, human-friendly multi-page web portal:
    Property Elevation Cross-Section, Vehicle Passability Matrix, and 48-Hour Hydrograph.
 2. alerts.html (& subscribe.html): Instant Mobile Alerts & Step-by-Step Setup Guide with QR code,
    push notification timelines, and privacy-first ntfy.sh integration.
-3. about.html: The Origin Story, Mom's Handwritten Observer Notebook Gallery (2021-2024),
+3. about.html: The Origin Story, Mom's Handwritten Observer Notebook Gallery (2021-2026),
    Discovery of the 3.99 ft Threshold, and Compound Pluvial Physics.
 4. guide.html: Visual Flood Severity Tiers (Tier 0 to Tier 3), Vehicle Water Depth Safety Guide,
    and Plain-English Coastal Definitions (MLLW vs NAVD88, Storm Surge Residual, Wind Set-Up).
-5. data.html: Major Storm Comparison (Helene, Ian, Idalia, Ophelia, Earl, Nor'easters),
-   Searchable 141-Event Observer Dataset Explorer, and Direct Data Downloads.
+5. data.html: Major Storm Comparison (Erin, Oct 2025 Record Flood, Sep 2026 Nor'easters, Helene, Ian),
+   Searchable 204-Event Observer Dataset Explorer, and Direct Data Downloads.
 
 Author: Antigravity Assistant for Mathews County Flood Prediction Project
 """
@@ -205,7 +205,7 @@ def build_shared_footer(status):
             <span>Mathews County Coastal Flood Prediction System</span>
           </div>
           <p class="text-xs text-slate-400 leading-relaxed max-w-lg">
-            An open science, hyper-local flood prediction pipeline and machine learning model built from 141 ground-truth storm observations (2021–2024), NOAA NWPS hydrodynamic water level guidance, and NOAA CO-OPS sensor networks across the Middle Peninsula of Virginia.
+            An open science, hyper-local flood prediction pipeline and machine learning model built from 204 ground-truth storm observations (2021–2026), NOAA NWPS hydrodynamic water level guidance, and NOAA CO-OPS sensor networks across the Middle Peninsula of Virginia.
           </p>
           <div class="text-xs text-slate-500 pt-1">
             Last Automated Cloud Sync: <span class="text-slate-300 font-mono font-medium">{last_ts}</span> (Runs every 30 mins)
@@ -1834,7 +1834,7 @@ def build_about_html(status):
         From Handwritten Notebooks to a Predictive Flood Model
       </h1>
       <p class="text-lg text-slate-600 leading-relaxed max-w-3xl">
-        How 141 storm observations recorded with measuring tapes across 4 years in Mathews County, Virginia uncovered the mathematical tipping points of coastal compound flooding.
+        How 204 storm observations recorded with measuring tapes across 5 years in Mathews County, Virginia uncovered the mathematical tipping points of coastal compound flooding.
       </p>
     </section>
 
@@ -1860,10 +1860,10 @@ def build_about_html(status):
       <div class="space-y-1">
         <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
           <i class="fa-solid fa-camera text-sky-600"></i>
-          The Ground-Truth Observations (2021–2024)
+          The Ground-Truth Observations (2021–2026)
         </h2>
         <p class="text-slate-600 text-sm">
-          Between May 2021 and September 2024, our family logged 141 individual storm events by hand, measuring water depths in inches and noting Ware River gauge stages and wind directions.
+          Between May 2021 and September 2026, our family logged 204 individual storm events by hand, measuring water depths in inches and noting Ware River gauge stages and wind directions.
         </p>
       </div>
 
@@ -2202,52 +2202,85 @@ def build_data_html(status, ground_truth_rows, obs_rows):
 
     # Notable storms list
     notable_storms = [
-        {"name": "Hurricane Helene", "date": "Sep 27, 2024", "stage": "4.70 ft", "depth": "9.75\"", "wind": "SE 25.3 mph", "notes": "Rapid tropical surge backing up ditches"},
-        {"name": "Hurricane Ophelia", "date": "Sep 23, 2023", "stage": "4.87 ft", "depth": "14.50\"", "wind": "SE 30+ mph", "notes": "Highest flood depth in recent observer records"},
-        {"name": "Hurricane Ian", "date": "Sep 30 – Oct 3, 2022", "stage": "4.66 ft", "depth": "7.00\"", "wind": "N 12–24 mph", "notes": "Multi-day prolonged northerly wind set-up"},
-        {"name": "Hurricane Idalia", "date": "Aug 28–29, 2023", "stage": "4.61 ft", "depth": "7.50\"", "wind": "E 15–20 mph", "notes": "King Tide alignment plus tropical swell"},
-        {"name": "Hurricane Earl", "date": "Sep 7–10, 2022", "stage": "4.82 ft", "depth": "10.00\"", "wind": "NNE 17 mph", "notes": "Driveway submerged for multiple tidal cycles"},
-        {"name": "Winter Storm (Snow/Nor'easter)", "date": "Jan 3, 2022", "stage": "5.22 ft", "depth": "11.00\"", "wind": "N gale", "notes": "Highest Ware River stage recorded (5.22 ft)"}
+        {"name": "10-Yr Record Nor'easter", "badge": "10-Yr Record (19\")", "date": "Oct 12, 2025", "stage": "5.54 ft", "depth": "19.00\"", "wind": "NNE 24 mph (35 mph gusts)", "notes": "All-time 10-year property record (Karen/Coastal Low); 19\" flood submerged driveway and yard"},
+        {"name": "Twin Nor'easters (Storm 1 & 2)", "badge": "Twin Nor'easters (17.5\")", "date": "Sep 22–26, 2026", "stage": "5.38 ft", "depth": "17.50\"", "wind": "NE 22 mph / NNW 23 mph", "notes": "Compound back-to-back nor'easters; 17.5\" peak flood with multi-day surge stacking"},
+        {"name": "Late Autumn Nor'easter", "badge": "Major Flood (15\")", "date": "Nov 15, 2024", "stage": "5.27 ft", "depth": "15.00\"", "wind": "NNE 12.8 mph", "notes": "Severe nor'easter flood; 15\" water over property and access road"},
+        {"name": "Hurricane Erin", "badge": "Hurricane (13\")", "date": "Aug 21–22, 2025", "stage": "5.12 ft", "depth": "13.00\"", "wind": "NNE 18.3 mph (24.6 gusts)", "notes": "Severe tropical surge; rapid 13\" to 10.75\" drop in 30 min post-high tide"},
+        {"name": "September King Tide", "badge": "King Tide (14.5\")", "date": "Sep 21–23, 2024", "stage": "5.20 ft", "depth": "14.50\"", "wind": "SE 5–10 mph", "notes": "Perigean spring tide compound flooding; submerged road and lawn"},
+        {"name": "Winter Storm (Snow/Nor'easter)", "badge": "Winter Gale (11\")", "date": "Jan 3, 2022", "stage": "5.22 ft", "depth": "11.00\"", "wind": "N gale", "notes": "Blizzard surge stacking water into North River & Mobjack Bay"},
+        {"name": "Hurricane Helene", "badge": "Hurricane (9.75\")", "date": "Sep 27, 2024", "stage": "4.70 ft", "depth": "9.75\"", "wind": "SE 25.3 mph", "notes": "Rapid tropical surge backing up ditches; peak 9.75\" at 7:30 PM"},
+        {"name": "Hurricane Ophelia", "badge": "Tropical Storm (12\")", "date": "Sep 22–24, 2023", "stage": "5.00 ft", "depth": "12.00\"", "wind": "SE 20–30 mph", "notes": "Lunar perigee tropical surge and compound drainage block"},
+        {"name": "Hurricane Ian", "badge": "Hurricane (7\")", "date": "Sep 30 – Oct 3, 2022", "stage": "4.66 ft", "depth": "7.00\"", "wind": "N 12–24 mph", "notes": "Multi-day prolonged northerly wind set-up driving surge"}
     ]
 
     storm_cards_html = ""
     for s in notable_storms:
+        badge_text = s.get("badge", "")
+        is_record = "10-Yr Record" in badge_text
+        border_cls = "border-rose-300 ring-2 ring-rose-200 bg-rose-50/20" if is_record else "border-slate-200 bg-white"
+        badge_bg = "bg-rose-100 text-rose-800 border-rose-200" if is_record else ("bg-amber-100 text-amber-800 border-amber-200" if ("Twin" in badge_text or "Major" in badge_text) else "bg-sky-100 text-sky-800 border-sky-200")
+        badge_html = f'<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border {badge_bg}">{badge_text}</span>' if badge_text else ""
+        depth_val = float(s['depth'].replace('\"', ''))
+        depth_color = "text-rose-600" if depth_val >= 15 else ("text-orange-600" if depth_val >= 8 else "text-sky-700")
+
         storm_cards_html += f"""
-        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-sky-700 uppercase tracking-wider">{s['name']}</span>
-            <span class="text-xs text-slate-500 font-mono">{s['date']}</span>
+        <div class="{border_cls} p-5 rounded-xl border shadow-sm space-y-2 flex flex-col justify-between hover:shadow-md transition">
+          <div>
+            <div class="flex items-center justify-between gap-1">
+              <span class="text-xs font-bold text-slate-800 uppercase tracking-wider">{s['name']}</span>
+              {badge_html}
+            </div>
+            <div class="text-[11px] text-slate-500 font-mono mt-0.5">{s['date']}</div>
+            <div class="flex items-baseline justify-between pt-2">
+              <div class="text-xl font-black text-slate-900 font-mono">{s['stage']}</div>
+              <div class="text-sm font-bold {depth_color} font-mono">Depth: {s['depth']}</div>
+            </div>
           </div>
-          <div class="flex items-baseline justify-between pt-1">
-            <div class="text-xl font-black text-slate-900 font-mono">{s['stage']}</div>
-            <div class="text-sm font-bold text-orange-600 font-mono">Depth: {s['depth']}</div>
-          </div>
-          <div class="text-xs text-slate-600 flex items-center justify-between border-t border-slate-100 pt-2">
-            <span>Wind: {s['wind']}</span>
-            <span class="text-[11px] text-slate-500 italic">{s['notes']}</span>
+          <div class="text-xs text-slate-600 flex flex-col gap-1 border-t border-slate-100 pt-2 mt-2">
+            <span class="font-medium text-slate-700"><i class="fa-solid fa-wind text-slate-400 mr-1"></i> {s['wind']}</span>
+            <span class="text-[11px] text-slate-500 italic leading-snug">{s['notes']}</span>
           </div>
         </div>
         """
 
-    # Ground truth table rows
+    # Ground truth table rows (sorted newest first)
+    sorted_gt = sorted(ground_truth_rows, key=lambda x: int(x.get("observation_id", 0)), reverse=True)
     table_rows_html = ""
-    for r in ground_truth_rows[:60]: # Show recent 60
+    for r in sorted_gt:
         date_str = r.get("date", "")
         stage_str = r.get("ware_river_stage_ft", "")
         depth_str = r.get("flood_depth_in", "")
         wind_dir = r.get("wind_direction", "")
         wind_spd = r.get("wind_speed_mph", "")
-        system = r.get("weather_system", "") or r.get("astronomical_event", "")
-        notes = r.get("raw_notes", "")
+        wind_gust = r.get("wind_gust_mph", "")
+        wind_display = f"{wind_dir} {wind_spd}".strip() + (f" (g{wind_gust})" if wind_gust else "") if (wind_dir or wind_spd) else "—"
+        system = r.get("weather_system", "") or r.get("astronomical_event", "") or "—"
+        notes = r.get("raw_notes", "") or ""
+
+        try:
+            depth_val = float(depth_str) if depth_str else 0.0
+        except ValueError:
+            depth_val = 0.0
+
+        if depth_val >= 12.0:
+            depth_badge = f'<span class="font-bold text-rose-600">{depth_str}\"</span>'
+        elif depth_val >= 4.0:
+            depth_badge = f'<span class="font-bold text-orange-600">{depth_str}\"</span>'
+        elif depth_val > 0.0:
+            depth_badge = f'<span class="font-bold text-amber-600">{depth_str}\"</span>'
+        elif depth_str:
+            depth_badge = f'<span class="text-slate-400 font-mono">0\"</span>'
+        else:
+            depth_badge = f'<span class="text-slate-400 italic font-sans text-[11px]">in yard</span>'
 
         table_rows_html += f"""
         <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
-          <td class="px-3 py-2.5 font-mono text-slate-700">{date_str}</td>
-          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">{stage_str} ft</td>
-          <td class="px-3 py-2.5 font-mono font-bold {'text-orange-600' if float(depth_str or 0) > 4 else 'text-slate-700'}">{depth_str}"</td>
-          <td class="px-3 py-2.5 text-slate-600">{wind_dir} {wind_spd}</td>
-          <td class="px-3 py-2.5 text-slate-600 font-medium">{system}</td>
-          <td class="px-3 py-2.5 text-slate-500 truncate max-w-xs">{notes}</td>
+          <td class="px-3 py-2.5 font-mono text-slate-700 whitespace-nowrap">{date_str}</td>
+          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">{stage_str + ' ft' if stage_str else '—'}</td>
+          <td class="px-3 py-2.5 font-mono">{depth_badge}</td>
+          <td class="px-3 py-2.5 text-slate-600 whitespace-nowrap">{wind_display}</td>
+          <td class="px-3 py-2.5 text-slate-700 font-medium">{system}</td>
+          <td class="px-3 py-2.5 text-slate-500 truncate max-w-sm" title="{notes}">{notes}</td>
         </tr>
         """
 
@@ -2282,7 +2315,7 @@ def build_data_html(status, ground_truth_rows, obs_rows):
         Historical Storm Archive & Data Center
       </h1>
       <p class="text-lg text-slate-600 leading-relaxed max-w-3xl">
-        Transparent open data access: browse 141 ground-truth observer measurements from 2021 to 2024 and download our live automated datasets.
+        Transparent open data access: browse 204 ground-truth observer measurements spanning 5 full years (2021 to 2026) and download our live automated datasets.
       </p>
     </section>
 
@@ -2293,7 +2326,7 @@ def build_data_html(status, ground_truth_rows, obs_rows):
           <i class="fa-solid fa-hurricane text-sky-600"></i>
           Major Storm Benchmark Events
         </h2>
-        <span class="text-xs text-slate-500">2021–2024 Observed</span>
+        <span class="text-xs text-slate-500">2021–2026 Observed (5-Year Record)</span>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -2338,10 +2371,10 @@ def build_data_html(status, ground_truth_rows, obs_rows):
             </div>
             <div class="font-bold text-slate-900 text-sm">ground_truth_observations.csv</div>
             <p class="text-xs text-slate-600 leading-relaxed">
-              The original 141 observer measurements transcribed from handwritten notes (2021–2024).
+              The comprehensive 204 observer measurements transcribed from handwritten notes and continuous logs (2021–2026).
             </p>
           </div>
-          <div class="text-[11px] text-slate-400 font-mono pt-4">141 records &bull; Verified</div>
+          <div class="text-[11px] text-slate-400 font-mono pt-4">204 records &bull; Verified 2021–2026</div>
         </a>
 
         <!-- Download 3 -->
@@ -2366,17 +2399,17 @@ def build_data_html(status, ground_truth_rows, obs_rows):
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 class="text-xl font-bold text-slate-900">Ground-Truth Observation Explorer</h2>
-          <p class="text-xs sm:text-sm text-slate-500">Showing 141 human verification records across 4 years of storm seasons.</p>
+          <p class="text-xs sm:text-sm text-slate-500">Showing 204 human verification records across 5 years of storm seasons (sorted newest first).</p>
         </div>
-        <div class="text-xs text-slate-500">
-          Showing 60 most recent events
+        <div class="text-xs text-slate-500 font-mono">
+          All 204 events recorded
         </div>
       </div>
 
-      <div class="overflow-x-auto border border-slate-200 rounded-xl">
+      <div class="overflow-x-auto max-h-[640px] overflow-y-auto border border-slate-200 rounded-xl shadow-inner">
         <table class="w-full text-left border-collapse">
           <thead>
-            <tr class="bg-slate-100 text-slate-700 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+            <tr class="sticky top-0 bg-slate-100 text-slate-700 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200 z-10 shadow-sm">
               <th class="px-3 py-2.5">Date</th>
               <th class="px-3 py-2.5">Ware River Stage</th>
               <th class="px-3 py-2.5">Flood Depth</th>

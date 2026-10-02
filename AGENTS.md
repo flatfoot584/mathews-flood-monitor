@@ -45,19 +45,19 @@
 
 ## 3. Ground-Truth Dataset: `ground_truth_observations.csv`
 
-The core asset of this project is a continuous human observation log recorded between **May 2021 and September 2024** (141 entries, 121 depth records):
-* **Source**: Handwritten logs in `Photos of observations/` (Pages 1–8 + sticky notes) and `RAW Observer data - Mom.gsheet`.
+The core asset of this project is a continuous human observation log recorded between **May 2021 and September 2026** (204 entries, 181 depth records):
+* **Source**: Handwritten logs in `Photos of observations/` (Pages 1–8 + sticky notes) and continuous observer records in `RAW Observer data - Mom.gsheet`.
 * **Columns**:
   * `observation_id`: Unique integer.
   * `date`: YYYY-MM-DD.
   * `time_local`: Local time (EST/EDT) when recorded.
   * `time_qualifier`: AM, PM, or exact timestamp.
-  * `page_source`: Originating notebook page or sticky note.
+  * `page_source`: Originating notebook page or `mom_log_sheet`.
   * `ware_river_stage_ft`: Reading from the Ware River gauge (WRVV2) at time of observation.
   * `flood_depth_in`: Measured water depth in inches at the observation point.
   * `is_flooded`: `TRUE` if depth $> 0$, `FALSE` if depth $= 0$.
   * `wind_direction`, `wind_speed_mph`, `wind_gust_mph`: Wind conditions.
-  * `weather_system`: Named storm or event (Helene, Ian, Idalia, Ophelia, Earl, SC Low, Snow).
+  * `weather_system`: Named storm or event (Erin, Helene, Ian, Idalia, Ophelia, Earl, Karen, SC Low, Snow, Nor'easters).
   * `astronomical_event`: King Tide, Full Moon, Lunar Perigee, Eclipse.
   * `raw_notes`: Raw text transcription.
 
@@ -65,19 +65,19 @@ The core asset of this project is a continuous human observation log recorded be
 
 ## 4. Discovered Physical Rules & Thresholds
 
-From linear and exploratory analysis on the ground-truth observations:
+From linear and exploratory analysis on the full 5-year ground-truth observations:
 
 1. **Flooding Threshold**: **$3.99\text{ ft}$** on the Ware River gauge.
    * $\text{Stage} < 4.0\text{ ft} \implies$ Water remains in ditches/marshes ($0"$ flood depth).
    * $\text{Stage} \ge 4.0\text{ ft} \implies$ Water breaches banks and begins covering the yard/road.
 2. **Inundation Slope**: **$10.95\text{ inches of water per foot of gauge rise}$** ($\approx 1.1\text{ to }1.2\text{ in}$ per $0.10\text{ ft}$ rise).
    * Confirms the observer's handwritten conversion: $0.10\text{ ft} \approx 1\ 3/16\text{"}$ to $1.25\text{"}$.
-3. **Correlation**: $r = 0.912$ ($R^2 = 0.832$). Residual variance is explained by wind direction, wind duration, and barometric pressure drops.
+3. **Correlation**: $r = 0.923$ ($R^2 = 0.851$). Residual variance is explained by wind direction, wind duration, and barometric pressure drops.
 4. **Risk Severity Tiers**:
    * **Tier 0 (Normal / Safe)**: Ware River $< 4.0\text{ ft} \to 0"$ flooding.
    * **Tier 1 (Nuisance / Ditch Full)**: Ware River $4.0 - 4.3\text{ ft} \to 1" - 4"$ in low spots and ditches.
    * **Tier 2 (Moderate Inundation)**: Ware River $4.4 - 4.7\text{ ft} \to 5" - 8"$ on driveway/road (passenger cars blocked).
-   * **Tier 3 (Severe Inundation)**: Ware River $\ge 4.8\text{ ft} \to 9" - 15"+$ across the property (trucks/SUVs only or impassable).
+   * **Tier 3 (Severe Inundation)**: Ware River $\ge 4.8\text{ ft} \to 9" - 19"+$ across the property (trucks/SUVs only or impassable).
 
 ---
 
@@ -104,7 +104,7 @@ Phase 4 (Complete): Predictive Machine Learning Models
   └─ Training pipeline: train_predictive_models.py
   └─ Stage 1 Nowcasting: R² = 0.973, MAE = 1.5 inches (tested on 2024 holdout storms)
   └─ Stage 1 Forecasting: R² = 0.721, MAE = 4.8 inches (astronomical tide + quadratic wind stress)
-  └─ Stage 2 Local Inundation: R² = 0.800, MAE = 1.22 inches on ground truth
+  └─ Stage 2 Local Inundation: R² = 0.851, MAE = 1.25 inches on 181 observations (2021–2026 full record)
   └─ Saved deployable model config: models/model_weights_and_thresholds.json & models/*.pkl
 
 Phase 5 (Complete): Notification, Alerting & Hazard Monitoring
