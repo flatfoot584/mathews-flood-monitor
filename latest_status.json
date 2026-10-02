@@ -1,6 +1,6 @@
 {
-  "status_generated_at_local": "2026-10-01 23:45:23 EDT",
-  "status_generated_at_utc": "2026-10-02 03:45:23 UTC",
+  "status_generated_at_local": "2026-10-01 23:51:24 EDT",
+  "status_generated_at_utc": "2026-10-02 03:51:24 UTC",
   "system_location": "Mathews County, Virginia (Ware River / Mobjack Bay Basin)",
   "current_conditions": {
     "observation_timestamp_local": "2026-10-01 23:15:00 EDT",
@@ -132,23 +132,23 @@
         "description": "Western community boundary lane. Elevated ridge terrain."
       }
     },
-    "yorktown_wind_speed_mph": 7.83,
+    "yorktown_wind_speed_mph": 8.72,
     "yorktown_wind_dir_deg": 191.0,
     "yorktown_wind_dir_cardinal": "S",
-    "yorktown_wind_gust_mph": 10.29,
-    "along_bay_wind_vector_mph": -7.73,
-    "cross_bay_wind_vector_mph": 1.22,
+    "yorktown_wind_gust_mph": 13.2,
+    "along_bay_wind_vector_mph": -8.61,
+    "cross_bay_wind_vector_mph": 1.36,
     "yorktown_baro_pressure_mb": 1018.8,
     "yorktown_air_temp_f": 73.4,
-    "yorktown_water_level_mllw_ft": 2.175,
-    "yorktown_storm_surge_residual_ft": 0.38,
-    "windmill_point_water_level_mllw_ft": 1.296,
-    "windmill_point_storm_surge_residual_ft": 0.61,
-    "sewells_point_water_level_mllw_ft": 2.313,
-    "sewells_point_pred_tide_ft": 2.105,
-    "sewells_point_storm_surge_residual_ft": 0.21,
-    "bay_hydraulic_gradient_ft": 0.4,
-    "bay_hydraulic_slope_ft_per_mile": 0.00866,
+    "yorktown_water_level_mllw_ft": 2.215,
+    "yorktown_storm_surge_residual_ft": 0.37,
+    "windmill_point_water_level_mllw_ft": 1.316,
+    "windmill_point_storm_surge_residual_ft": 0.6,
+    "sewells_point_water_level_mllw_ft": 2.365,
+    "sewells_point_pred_tide_ft": 2.15,
+    "sewells_point_storm_surge_residual_ft": 0.22,
+    "bay_hydraulic_gradient_ft": 0.38,
+    "bay_hydraulic_slope_ft_per_mile": 0.00823,
     "bay_hydraulic_pressure_direction": "Southward Inflow Head (North Bay surge forcing water into Mobjack Bay)"
   },
   "forecast_48h_outlook": {
@@ -164,7 +164,7 @@
     "peak_vehicle_passability": "ALL VEHICLES PASSABLE",
     "hours_at_or_above_action_stage": 0,
     "confidence_interval_80pct_summary": "Expected peak 3.41 ft (80% confidence interval: 3.13 ft [best case] to 3.73 ft [worst case]; depth 0.0\" to 0.0\")",
-    "bay_hydraulic_slope_summary": "Current Bay Gradient: +0.40 ft (Southward Inflow Head (North Bay surge forcing water into Mobjack Bay))",
+    "bay_hydraulic_slope_summary": "Current Bay Gradient: +0.38 ft (Southward Inflow Head (North Bay surge forcing water into Mobjack Bay))",
     "advisory_summary": "NO FLOODING EXPECTED: Water levels will remain inside normal tidal ditches and marsh channels."
   },
   "forecast_hourly_timeline": [
