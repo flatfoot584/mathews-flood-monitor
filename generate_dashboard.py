@@ -23,13 +23,99 @@ import json
 import csv
 import math
 import argparse
+import copy
+import html
+import hashlib
+import base64
+import re
+from functools import wraps
+from runtime_safety import assess_status, finite_number
 from datetime import datetime
 
 # Global topic configuration
 DEFAULT_NTFY_TOPIC = os.getenv("NTFY_TOPIC", "mathews-flood-23128")
+NTFY_SERVER = os.getenv("NTFY_SERVER", "https://ntfy.sh").rstrip("/")
+from urllib.parse import urlsplit
+_url = urlsplit(NTFY_SERVER)
+if (_url.scheme != "https" or not _url.hostname or _url.username or _url.password
+        or _url.path or _url.query or _url.fragment or not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", DEFAULT_NTFY_TOPIC)):
+    raise ValueError("Invalid public ntfy server/topic configuration")
+
+
+class HtmlText(str):
+    """Keep raw strings in JSON and escape interpolation into HTML."""
+    def __format__(self, spec):
+        return html.escape(super().__format__(spec), quote=True)
+    def replace(self, *args):
+        return HtmlText(super().replace(*args))
+    def strip(self, *args):
+        return HtmlText(super().strip(*args))
+    def split(self, *args):
+        return [HtmlText(v) for v in super().split(*args)]
+    def __add__(self, other):
+        return HtmlText(super().__add__(other))
+
+
+def display_value(value):
+    return "Unknown" if value is None else value
+
+
+def escape_view(value):
+    if isinstance(value, str):
+        return HtmlText(value)
+    if isinstance(value, list):
+        return [escape_view(v) for v in value]
+    if isinstance(value, dict):
+        return {escape_view(k): escape_view(v) for k, v in value.items()}
+    return value
+
+
+def status_for_display(status):
+    status = copy.deepcopy(status)
+    quality = assess_status(status)
+    status["data_quality"] = quality
+    if not quality["current_available"]:
+        import micro_topography
+        curr = status.setdefault("current_conditions", {})
+        unknown = micro_topography.evaluate_compound_inundation(None)
+        curr.update(flood_risk_tier=-1, flood_risk_label="Unknown (gauge missing or stale)",
+                    vehicle_passability_code="UNKNOWN", vehicle_passability=unknown["vehicle_passability_label"],
+                    vehicle_passability_desc=unknown["vehicle_passability_desc"],
+                    estimated_local_flood_depth_in=None, site_sectors=unknown["sectors"],
+                    community_streets=unknown["streets"])
+    if not quality["forecast_available"]:
+        outl = status.setdefault("forecast_48h_outlook", {})
+        if outl.get("peak_risk_tier", -1) <= 0:
+            outl["peak_risk_tier"] = -1
+        outl["advisory_summary"] = "Forecast incomplete or stale. Flooding cannot be ruled out."
+    return status
+
+
+def safe_template(function):
+    @wraps(function)
+    def render(status, *args, **kwargs):
+        document = function(escape_view(status_for_display(status)),
+                            *(escape_view(a) for a in args), **{k: escape_view(v) for k, v in kwargs.items()})
+        if not document.startswith("<!DOCTYPE"):
+            return document
+        scripts = re.findall(r'<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>', document, re.S)
+        handlers = [html.unescape(value) for value in re.findall(r'on(?:click|input|change)="([^"]*)"', document)]
+        hashes = ["'sha256-" + base64.b64encode(hashlib.sha256(text.encode()).digest()).decode() + "'" for text in scripts + handlers]
+        policy = ("default-src 'self'; script-src 'self' 'unsafe-hashes' " + " ".join(hashes)
+                  + "; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://unpkg.com https://fonts.googleapis.com; "
+                  + "font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; "
+                  + "img-src 'self' data: https://tile.openstreetmap.org https://server.arcgisonline.com https://api.qrserver.com https://unpkg.com; "
+                  + "connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'")
+        return document.replace('<meta charset="UTF-8">', '<meta charset="UTF-8">\n  <meta http-equiv="Content-Security-Policy" content="' + html.escape(policy, quote=True) + '">', 1)
+    return render
+
 
 # Common color themes & risk tiers
 TIER_STYLES = {
+    -1: {"badge_bg": "bg-slate-100", "badge_text": "text-slate-800", "badge_border": "border-slate-400",
+         "pill": "bg-slate-500", "banner_bg": "bg-slate-100", "banner_border": "border-slate-400",
+         "banner_text": "text-slate-950", "banner_sub": "text-slate-800", "accent": "#64748b",
+         "icon": "fa-circle-question", "label": "Unknown (data unavailable)"},
     0: {
         "badge_bg": "bg-emerald-100",
         "badge_text": "text-emerald-800",
@@ -106,9 +192,10 @@ def load_data(status_json_path, obs_csv_path, fcst_csv_path, ground_truth_path):
     return status, obs_rows, fcst_rows, ground_truth_rows
 
 def build_shared_navbar(active_page, status):
+    status = escape_view(status_for_display(status))
     curr = status.get("current_conditions", {})
     tier = curr.get("flood_risk_tier", 0)
-    tier_info = TIER_STYLES.get(tier, TIER_STYLES[0])
+    tier_info = TIER_STYLES.get(tier, TIER_STYLES[-1])
     tier_lbl = curr.get("flood_risk_label", "Tier 0 (Normal / Safe)").split("(")[-1].replace(")", "")
     
     pages = [
@@ -191,11 +278,20 @@ def build_shared_navbar(active_page, status):
         </div>
       </div>
     </header>
+    <aside id="data-freshness" role="status" class="bg-amber-50 text-amber-950 border-b border-amber-300 px-4 py-3 text-sm">
+      Last update: {status.get('status_generated_at_local', 'Unavailable')}.
+      Gauge observation: {curr.get('observation_timestamp_local') or 'Unavailable'}.
+      {"Data incomplete or stale. Do not assume roads are clear." if status['data_quality']['state'] != 'healthy' else "Check actual road conditions before travel."}
+      {"Mobile push alerts are not enabled." if not status.get('alerting_enabled', False) else ""}
+    </aside>
     """
 
+@safe_template
 def build_shared_footer(status):
     curr = status.get("current_conditions", {})
-    last_ts = curr.get("observation_timestamp_local", "Just now")
+    last_ts = status.get("status_generated_at_local", "Unavailable")
+    generated_iso = json.dumps(status.get("status_generated_at_utc", "")).replace("<", "\\u003c")
+    observed_iso = json.dumps(curr.get("observation_timestamp_local", "")).replace("<", "\\u003c")
     return f"""
     <footer class="bg-slate-900 text-slate-400 text-sm border-t border-slate-800 mt-16 py-12">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -209,7 +305,7 @@ def build_shared_footer(status):
             An open science, hyper-local flood prediction pipeline and machine learning model built from 204 ground-truth storm observations (2021–2026), NOAA NWPS hydrodynamic water level guidance, and NOAA CO-OPS sensor networks across the Middle Peninsula of Virginia.
           </p>
           <div class="text-xs text-slate-500 pt-1">
-            Last Automated Cloud Sync: <span class="text-slate-300 font-mono font-medium">{last_ts}</span> (Runs every 30 mins)
+            Last Automated Cloud Sync: <span class="text-slate-300 font-mono font-medium">{last_ts}</span> (Scheduled every 30 minutes; delays are possible)
           </div>
         </div>
 
@@ -248,6 +344,24 @@ def build_shared_footer(status):
     </footer>
 
     <script>
+      const generatedText = {generated_iso};
+      const observedText = {observed_iso};
+      function utcMillis(text) {{
+        if (!text) return NaN;
+        return Date.parse(text.replace(' UTC', 'Z').replace(' EDT', '-04:00').replace(' EST', '-05:00').replace(' ', 'T'));
+      }}
+      function updateFreshness() {{
+        const stamp = utcMillis(generatedText);
+        const observation = utcMillis(observedText);
+        const old = !Number.isFinite(stamp) || !Number.isFinite(observation) || Date.now() - stamp > 90*60000 || Date.now() - observation > 90*60000;
+        if (old) {{
+          const notice = document.getElementById('data-freshness');
+          if (notice) notice.textContent = 'DATA STALE OR UNAVAILABLE — Flood safety cannot be confirmed. Last update: ' + generatedText;
+          document.querySelectorAll('[data-current-safety]').forEach(el => el.hidden = true);
+        }}
+      }}
+      updateFreshness();
+      setInterval(updateFreshness, 60000);
       // Mobile menu toggle
       const menuBtn = document.getElementById('mobile-menu-btn');
       const mobileMenu = document.getElementById('mobile-menu');
@@ -262,21 +376,22 @@ def build_shared_footer(status):
 # ==============================================================================
 # 1. PAGE 1: INDEX.HTML (LIVE MONITOR & INTERACTIVE MAP)
 # ==============================================================================
+@safe_template
 def build_index_html(status, obs_rows, fcst_rows):
     curr = status.get("current_conditions", {})
     outl = status.get("forecast_48h_outlook", {})
 
-    stage = curr.get("ware_river_stage_mllw_ft", "N/A")
-    stage_navd = curr.get("ware_river_stage_navd88_ft", "N/A")
-    depth = curr.get("estimated_local_flood_depth_in", 0.0)
+    stage = display_value(curr.get("ware_river_stage_mllw_ft", "N/A"))
+    stage_navd = display_value(curr.get("ware_river_stage_navd88_ft", "N/A"))
+    depth = display_value(curr.get("estimated_local_flood_depth_in", 0.0))
     tier = curr.get("flood_risk_tier", 0)
-    tier_info = TIER_STYLES.get(tier, TIER_STYLES[0])
+    tier_info = TIER_STYLES.get(tier, TIER_STYLES[-1])
     passability = curr.get("vehicle_passability", "ALL VEHICLES PASSABLE")
     sectors = curr.get("site_sectors", {})
     streets = curr.get("community_streets", {})
     if not streets or not sectors:
         import micro_topography
-        stg_val = float(stage) if isinstance(stage, (int, float)) else 3.34
+        stg_val = float(stage) if isinstance(stage, (int, float)) else None
         st_eval = micro_topography.evaluate_compound_inundation(stg_val)
         if not streets:
             streets = st_eval.get("streets", {})
@@ -315,36 +430,46 @@ def build_index_html(status, obs_rows, fcst_rows):
           </div>
         """
 
-    wind_spd = curr.get("yorktown_wind_speed_mph", "N/A")
-    wind_dir = curr.get("yorktown_wind_dir_cardinal", "N/A")
-    wind_deg = curr.get("yorktown_wind_dir_deg", "N/A")
-    wind_gst = curr.get("yorktown_wind_gust_mph", "N/A")
-    along_bay = curr.get("along_bay_wind_vector_mph", "N/A")
-    baro = curr.get("yorktown_baro_pressure_mb", "N/A")
-    surge = curr.get("windmill_point_storm_surge_residual_ft", "N/A")
-    sw_surge = curr.get("sewells_point_storm_surge_residual_ft", "N/A")
-    sw_water = curr.get("sewells_point_water_level_mllw_ft", "N/A")
-    bay_grad = curr.get("bay_hydraulic_gradient_ft", "N/A")
-    bay_slope = curr.get("bay_hydraulic_slope_ft_per_mile", "N/A")
+    wind_spd = display_value(curr.get("yorktown_wind_speed_mph", "N/A"))
+    wind_dir = display_value(curr.get("yorktown_wind_dir_cardinal", "N/A"))
+    wind_deg = display_value(curr.get("yorktown_wind_dir_deg", "N/A"))
+    wind_gst = display_value(curr.get("yorktown_wind_gust_mph", "N/A"))
+    along_bay = display_value(curr.get("along_bay_wind_vector_mph", "N/A"))
+    baro = display_value(curr.get("yorktown_baro_pressure_mb", "N/A"))
+    surge = display_value(curr.get("windmill_point_storm_surge_residual_ft", "N/A"))
+    sw_surge = display_value(curr.get("sewells_point_storm_surge_residual_ft", "N/A"))
+    sw_water = display_value(curr.get("sewells_point_water_level_mllw_ft", "N/A"))
+    bay_grad = display_value(curr.get("bay_hydraulic_gradient_ft", "N/A"))
+    bay_slope = display_value(curr.get("bay_hydraulic_slope_ft_per_mile", "N/A"))
     bay_dir = curr.get("bay_hydraulic_pressure_direction", "N/A")
 
-    peak_stage = outl.get("peak_forecast_stage_mllw_ft", "N/A")
-    peak_stage_q10 = outl.get("peak_forecast_stage_q10_ft", "N/A")
-    peak_stage_q90 = outl.get("peak_forecast_stage_q90_ft", "N/A")
-    peak_depth_q10 = outl.get("peak_estimated_flood_depth_q10_in", 0.0)
-    peak_depth_q90 = outl.get("peak_estimated_flood_depth_q90_in", 0.0)
-    ci_summary = outl.get("confidence_interval_80pct_summary", "")
+    peak_stage = display_value(outl.get("peak_forecast_stage_mllw_ft", "N/A"))
+    peak_stage_q10 = display_value(outl.get("peak_forecast_stage_q10_ft", "N/A"))
+    peak_stage_q90 = display_value(outl.get("peak_forecast_stage_q90_ft", "N/A"))
+    peak_depth_q10 = display_value(outl.get("peak_estimated_flood_depth_q10_in", 0.0))
+    peak_depth_q90 = display_value(outl.get("peak_estimated_flood_depth_q90_in", 0.0))
+    ci_summary = outl.get("scenario_range_summary", "")
     slope_summary = outl.get("bay_hydraulic_slope_summary", "")
-    peak_time = outl.get("peak_forecast_stage_time_local", "N/A")
-    peak_depth = outl.get("peak_estimated_flood_depth_in", 0.0)
+    peak_time = display_value(outl.get("peak_forecast_stage_time_local", "N/A"))
+    peak_depth = display_value(outl.get("peak_estimated_flood_depth_in", 0.0))
     peak_tier = outl.get("peak_risk_tier", 0)
-    peak_tier_info = TIER_STYLES.get(peak_tier, TIER_STYLES[0])
+    peak_tier_info = TIER_STYLES.get(peak_tier, TIER_STYLES[-1])
     peak_passability = outl.get("peak_vehicle_passability", "ALL VEHICLES PASSABLE")
     hours_flooded = outl.get("hours_at_or_above_action_stage", 0)
     advisory_summary = outl.get("advisory_summary", "No flooding expected.")
 
+    codes = [curr.get("vehicle_passability_code", "UNKNOWN"), outl.get("peak_vehicle_passability_code", "UNKNOWN")]
+    route_unknown = "UNKNOWN" in codes or status["data_quality"]["state"] != "healthy"
+    route_flooded = any(code in ("YELLOW", "ORANGE", "RED") for code in codes)
+    route_dry = not route_unknown and not route_flooded and all(code == "GREEN" for code in codes)
+    route_title = "DO NOT ENTER FLOODED ROADS" if route_flooded else "CONDITIONS UNKNOWN" if route_unknown else "NO MODELED STANDING WATER"
+    route_description = "Check actual conditions. Never drive into standing or moving floodwater."
+
     # Human headline logic
-    if tier == 0 and peak_tier == 0:
+    if status["data_quality"]["state"] != "healthy":
+        headline = "Data Incomplete — Flood Safety Cannot Be Confirmed"
+        sub_headline = "Some observations or forecasts are missing or stale. Check official forecasts and actual road conditions."
+    elif tier == 0 and peak_tier == 0:
         headline = "Normal Conditions — Driveways & Roads Clear"
         sub_headline = f"Ware River stage is currently {stage} ft MLLW. Water will remain safely contained in marsh ditches over the next 48 hours."
     elif tier == 0 and peak_tier == 1:
@@ -355,7 +480,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         sub_headline = f"Water is forecast to crest at {peak_stage} ft around {peak_time}, covering the driveway with approx {peak_depth}\" of water. Sedans should move before peak tide."
     elif peak_tier == 3:
         headline = f"Severe Coastal Inundation Warning — Property Submerged"
-        sub_headline = f"Extreme high tide and storm surge will crest at {peak_stage} ft around {peak_time} with {peak_depth}\"+ water across roads and yard. High clearance trucks only or impassable."
+        sub_headline = f"Extreme high tide and storm surge will crest at {peak_stage} ft around {peak_time} with {peak_depth}\"+ water across roads and yard. Do not enter flooded roads, regardless of vehicle clearance."
     else:
         headline = "Live Coastal Flood Advisory"
         sub_headline = advisory_summary
@@ -368,7 +493,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         "status": status,
         "observations": obs_rows[-36:] if obs_rows else [],
         "forecast": fcst_rows[:48] if fcst_rows else []
-    })
+    }).replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
 
     return f"""<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
@@ -379,15 +504,15 @@ def build_index_html(status, obs_rows, fcst_rows):
   <meta name="description" content="Hyper-local real-time coastal flood prediction, interactive map, and 48-hour hydrograph for Mathews County, VA.">
   
   <!-- Tailwind CSS & FontAwesome -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/tailwind.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g" crossorigin="anonymous">
   
   <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script src="assets/chart.umd.min.js"></script>
 
   <!-- Leaflet CSS & JS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
+  <script src="assets/leaflet.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
@@ -404,7 +529,7 @@ def build_index_html(status, obs_rows, fcst_rows):
   <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8 w-full">
 
     <!-- 1. HUMAN-FIRST ADVISORY HERO BANNER -->
-    <section class="rounded-2xl {peak_tier_info['banner_bg']} border-2 {peak_tier_info['banner_border']} p-6 sm:p-8 shadow-sm transition-all">
+    <section data-current-safety class="rounded-2xl {peak_tier_info['banner_bg']} border-2 {peak_tier_info['banner_border']} p-6 sm:p-8 shadow-sm transition-all">
       <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
         <div class="space-y-2 max-w-3xl">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full {peak_tier_info['badge_bg']} text-xs font-bold {peak_tier_info['badge_text']} uppercase tracking-wider">
@@ -431,7 +556,7 @@ def build_index_html(status, obs_rows, fcst_rows):
             <div class="text-lg font-extrabold text-sky-900 font-mono">{peak_stage} ft <span class="text-xs font-normal text-slate-500">at {peak_time.split(' ')[1] if ' ' in str(peak_time) else peak_time}</span></div>
             <div class="text-xs font-semibold {peak_tier_info['badge_text']}">Inundation: {peak_depth}" ({peak_passability})</div>
             <div class="text-[11px] font-mono text-slate-500 mt-1 flex items-center justify-between">
-              <span>80% Envelope:</span>
+              <span>Scenario range:</span>
               <span class="font-bold text-slate-700">{peak_stage_q10}' – {peak_stage_q90}'</span>
             </div>
           </div>
@@ -440,35 +565,35 @@ def build_index_html(status, obs_rows, fcst_rows):
     </section>
 
     <!-- 2. VEHICLE PASSABILITY & HUMAN ACTION STRIP -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <section data-current-safety class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <!-- Card 1: Sedans -->
       <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-start gap-4">
-        <div class="w-12 h-12 rounded-xl {'bg-emerald-100 text-emerald-700' if 'PASSABLE' in passability else 'bg-red-100 text-red-700'} flex items-center justify-center text-xl shrink-0">
+        <div class="w-12 h-12 rounded-xl {'bg-emerald-100 text-emerald-700' if route_dry else 'bg-red-100 text-red-700'} flex items-center justify-center text-xl shrink-0">
           <i class="fa-solid fa-car-side"></i>
         </div>
         <div>
           <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Passenger Cars / Sedans</div>
           <div class="text-base font-bold text-slate-900 mt-0.5">
-            {'PASSABLE & SAFE' if 'PASSABLE' in passability else 'DO NOT DRIVE (BLOCKED)'}
+            {route_title}
           </div>
           <p class="text-xs text-slate-600 mt-1">
-            {'All access routes dry. Safe for low clearance sedans.' if 'PASSABLE' in passability else 'Water over road exceeds 4 inches. Risk of engine stall and brake failure.'}
+            {route_description}
           </p>
         </div>
       </div>
 
       <!-- Card 2: SUVs & Trucks -->
       <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-start gap-4">
-        <div class="w-12 h-12 rounded-xl {'bg-emerald-100 text-emerald-700' if tier < 3 else 'bg-amber-100 text-amber-700'} flex items-center justify-center text-xl shrink-0">
+        <div class="w-12 h-12 rounded-xl {'bg-emerald-100 text-emerald-700' if route_dry else 'bg-amber-100 text-amber-700'} flex items-center justify-center text-xl shrink-0">
           <i class="fa-solid fa-truck-pickup"></i>
         </div>
         <div>
           <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">SUVs & High-Clearance Trucks</div>
           <div class="text-base font-bold text-slate-900 mt-0.5">
-            {'PASSABLE' if tier < 3 else 'PROCEED WITH EXTREME CAUTION'}
+            {route_title}
           </div>
           <p class="text-xs text-slate-600 mt-1">
-            {'Ground clearance adequate for current and peak tides.' if tier < 3 else 'Water depth approaching 9-12 inches. Do not drive through moving water.'}
+            {route_description}
           </p>
         </div>
       </div>
@@ -481,17 +606,17 @@ def build_index_html(status, obs_rows, fcst_rows):
         <div>
           <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Recommended Action</div>
           <div class="text-base font-bold text-slate-900 mt-0.5">
-            {'No Action Required' if peak_tier < 2 else 'Plan Around High Tide'}
+            {'Check Actual Conditions' if route_unknown else 'Plan Around Flood Hazards' if route_flooded else 'Monitor Updates'}
           </div>
           <p class="text-xs text-slate-600 mt-1">
-            {'Normal routines. Ditches flowing freely.' if peak_tier < 2 else f'Move low vehicles to higher ground before {peak_time.split(" ")[1] if " " in str(peak_time) else peak_time}.'}
+            {'Do not assume roads are clear when data is missing.' if route_unknown else 'Move vehicles before flooding starts; do not enter floodwater.'}
           </p>
         </div>
       </div>
     </section>
 
     <!-- 3. INTERACTIVE LEAFLET FLOOD MAP SECTION -->
-    <section id="map-section" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <section data-current-safety id="map-section" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
       <div class="p-5 sm:p-6 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-slate-50/50">
         <div>
           <div class="flex items-center gap-2">
@@ -594,12 +719,12 @@ def build_index_html(status, obs_rows, fcst_rows):
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
             <span class="text-slate-700 font-semibold"><i class="fa-solid fa-water text-sky-500 mr-1.5"></i> 1. Bayshore Waterfront Ditches &amp; Swales (Elev: 3.99' MLLW / 2.35' NAVD88)</span>
-            <span class="font-mono font-semibold {'text-sky-700' if sectors.get('ditches', {}).get('depth_in', 0) > 0 else 'text-slate-400'}">
-              {sectors.get('ditches', {}).get('depth_in', 0)}" Water ({sectors.get('ditches', {}).get('status', 'DRY')})
+            <span class="font-mono font-semibold {'text-sky-700' if (sectors.get('ditches', {}).get('depth_in', 0) or 0) > 0 else 'text-slate-400'}">
+              {sectors.get('ditches', {}).get('depth_in', 0) if sectors.get('ditches', {}).get('depth_in', 0) is not None else 'Unknown'}" Water ({sectors.get('ditches', {}).get('status', 'DRY')})
             </span>
           </div>
           <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-            <div class="bg-sky-500 h-full rounded-full transition-all" style="width: {min(100, max(2, int(sectors.get('ditches', {}).get('depth_in', 0) * 15)))}%"></div>
+            <div class="bg-sky-500 h-full rounded-full transition-all" style="width: {min(100, max(2, int((sectors.get('ditches', {}).get('depth_in', 0) or 0) * 15)))}%"></div>
           </div>
         </div>
 
@@ -607,12 +732,12 @@ def build_index_html(status, obs_rows, fcst_rows):
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
             <span class="text-slate-700 font-semibold"><i class="fa-solid fa-road text-amber-500 mr-1.5"></i> 2. Lower Residential Blocks — Allview / Hobday / Little Ave South (Elev: 4.15' MLLW / 2.51' NAVD88)</span>
-            <span class="font-mono font-semibold {'text-amber-700' if sectors.get('road_apron', {}).get('depth_in', 0) > 0 else 'text-emerald-700'}">
-              {sectors.get('road_apron', {}).get('depth_in', 0)}" Water ({sectors.get('road_apron', {}).get('status', 'DRY')})
+            <span class="font-mono font-semibold {'text-amber-700' if (sectors.get('road_apron', {}).get('depth_in', 0) or 0) > 0 else 'text-emerald-700'}">
+              {sectors.get('road_apron', {}).get('depth_in', 0) if sectors.get('road_apron', {}).get('depth_in', 0) is not None else 'Unknown'}" Water ({sectors.get('road_apron', {}).get('status', 'DRY')})
             </span>
           </div>
           <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-            <div class="{'bg-amber-500' if sectors.get('road_apron', {}).get('depth_in', 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {min(100, max(2, int(sectors.get('road_apron', {}).get('depth_in', 0) * 15)))}%"></div>
+            <div class="{'bg-amber-500' if (sectors.get('road_apron', {}).get('depth_in', 0) or 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {min(100, max(2, int((sectors.get('road_apron', {}).get('depth_in', 0) or 0) * 15)))}%"></div>
           </div>
         </div>
 
@@ -620,12 +745,12 @@ def build_index_html(status, obs_rows, fcst_rows):
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
             <span class="text-slate-700 font-semibold"><i class="fa-solid fa-car text-orange-500 mr-1.5"></i> 3. Daniel Ave Central Spine &amp; Julian St — Primary Route (Elev: 4.40' MLLW / 2.76' NAVD88)</span>
-            <span class="font-mono font-semibold {'text-orange-700 font-bold' if sectors.get('main_driveway', {}).get('depth_in', 0) > 0 else 'text-emerald-700 font-bold'}">
-              {sectors.get('main_driveway', {}).get('depth_in', 0)}" Water ({sectors.get('main_driveway', {}).get('status', 'DRY')})
+            <span class="font-mono font-semibold {'text-orange-700 font-bold' if (sectors.get('main_driveway', {}).get('depth_in', 0) or 0) > 0 else 'text-emerald-700 font-bold'}">
+              {sectors.get('main_driveway', {}).get('depth_in', 0) if sectors.get('main_driveway', {}).get('depth_in', 0) is not None else 'Unknown'}" Water ({sectors.get('main_driveway', {}).get('status', 'DRY')})
             </span>
           </div>
           <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-            <div class="{'bg-orange-500' if sectors.get('main_driveway', {}).get('depth_in', 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {min(100, max(2, int(sectors.get('main_driveway', {}).get('depth_in', 0) * 15)))}%"></div>
+            <div class="{'bg-orange-500' if (sectors.get('main_driveway', {}).get('depth_in', 0) or 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {min(100, max(2, int((sectors.get('main_driveway', {}).get('depth_in', 0) or 0) * 15)))}%"></div>
           </div>
         </div>
 
@@ -633,12 +758,12 @@ def build_index_html(status, obs_rows, fcst_rows):
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
             <span class="text-slate-700 font-semibold"><i class="fa-solid fa-tree text-emerald-600 mr-1.5"></i> 4. Upper Residential Grounds &amp; Northern Lots (Elev: 4.60' MLLW / 2.96' NAVD88)</span>
-            <span class="font-mono font-semibold {'text-red-700 font-bold' if sectors.get('yard_lawn', {}).get('depth_in', 0) > 0 else 'text-emerald-700'}">
-              {sectors.get('yard_lawn', {}).get('depth_in', 0)}" Water ({sectors.get('yard_lawn', {}).get('status', 'DRY')})
+            <span class="font-mono font-semibold {'text-red-700 font-bold' if (sectors.get('yard_lawn', {}).get('depth_in', 0) or 0) > 0 else 'text-emerald-700'}">
+              {sectors.get('yard_lawn', {}).get('depth_in', 0) if sectors.get('yard_lawn', {}).get('depth_in', 0) is not None else 'Unknown'}" Water ({sectors.get('yard_lawn', {}).get('status', 'DRY')})
             </span>
           </div>
           <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-            <div class="{'bg-red-500' if sectors.get('yard_lawn', {}).get('depth_in', 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {min(100, max(2, int(sectors.get('yard_lawn', {}).get('depth_in', 0) * 15)))}%"></div>
+            <div class="{'bg-red-500' if (sectors.get('yard_lawn', {}).get('depth_in', 0) or 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {min(100, max(2, int((sectors.get('yard_lawn', {}).get('depth_in', 0) or 0) * 15)))}%"></div>
           </div>
         </div>
 
@@ -646,12 +771,12 @@ def build_index_html(status, obs_rows, fcst_rows):
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
             <span class="text-slate-700 font-semibold"><i class="fa-solid fa-house text-blue-600 mr-1.5"></i> 5. River Road North &amp; Ridge High Ground Pads (Elev: 4.90' MLLW / 3.26' NAVD88)</span>
-            <span class="font-mono font-semibold {'text-red-700 font-bold' if sectors.get('garage_foundation', {}).get('depth_in', 0) > 0 else 'text-emerald-700'}">
-              {sectors.get('garage_foundation', {}).get('depth_in', 0)}" Water ({sectors.get('garage_foundation', {}).get('status', 'SAFE')})
+            <span class="font-mono font-semibold {'text-red-700 font-bold' if (sectors.get('garage_foundation', {}).get('depth_in', 0) or 0) > 0 else 'text-emerald-700'}">
+              {sectors.get('garage_foundation', {}).get('depth_in', 0) if sectors.get('garage_foundation', {}).get('depth_in', 0) is not None else 'Unknown'}" Water ({sectors.get('garage_foundation', {}).get('status', 'SAFE')})
             </span>
           </div>
           <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-            <div class="{'bg-red-600' if sectors.get('garage_foundation', {}).get('depth_in', 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {min(100, max(2, int(sectors.get('garage_foundation', {}).get('depth_in', 0) * 15)))}%"></div>
+            <div class="{'bg-red-600' if (sectors.get('garage_foundation', {}).get('depth_in', 0) or 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {min(100, max(2, int((sectors.get('garage_foundation', {}).get('depth_in', 0) or 0) * 15)))}%"></div>
           </div>
         </div>
       </div>
@@ -685,7 +810,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         </div>
         <div class="flex flex-wrap items-center gap-3 text-xs">
           <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-sky-600"></span> Expected Stage</span>
-          <span class="flex items-center gap-1.5"><span class="w-3.5 h-2 bg-sky-200/80 border border-sky-400 border-dashed rounded-[2px]"></span> 80% Uncertainty Band (Q10–Q90)</span>
+          <span class="flex items-center gap-1.5"><span class="w-3.5 h-2 bg-sky-200/80 border border-sky-400 border-dashed rounded-[2px]"></span> Uncalibrated Scenario Band</span>
           <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-red-500 border-t border-dashed"></span> 3.99' Flood Threshold</span>
         </div>
       </div>
@@ -695,8 +820,8 @@ def build_index_html(status, obs_rows, fcst_rows):
       </div>
 
       <div class="text-[11px] text-slate-500 flex flex-wrap items-center justify-between pt-2 border-t border-slate-100 gap-2">
-        <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-sky-500"></i> Shaded band represents the 80% confidence interval (10th percentile best-case to 90th percentile worst-case).</span>
-        <span class="font-mono text-slate-700 font-medium">Expected Peak: {peak_stage}' (80% Range: {peak_stage_q10}' to {peak_stage_q90}')</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-sky-500"></i> Shaded band is an uncalibrated scenario range. It is not a statistical confidence interval or a guaranteed worst case.</span>
+        <span class="font-mono text-slate-700 font-medium">Expected Peak: {peak_stage}' (Scenario range: {peak_stage_q10}' to {peak_stage_q90}')</span>
       </div>
     </section>
 
@@ -723,11 +848,11 @@ def build_index_html(status, obs_rows, fcst_rows):
           <span>Along-Bay Vector</span>
           <i class="fa-solid fa-compass text-blue-500"></i>
         </div>
-        <div class="text-2xl font-black font-mono {'text-amber-600' if float(along_bay or 0) > 10 else 'text-slate-900'}">
+        <div class="text-2xl font-black font-mono {'text-amber-600' if (along_bay if finite_number(along_bay) else 0) > 10 else 'text-slate-900'}">
           {along_bay} <span class="text-xs font-semibold text-slate-500">mph</span>
         </div>
         <div class="text-[11px] text-slate-500 truncate" title="Along-bay wind stress">
-          {'Forcing water into Mobjack' if float(along_bay or 0) > 0 else 'Blowing water out to Atlantic'}
+          {'Data unavailable' if not finite_number(along_bay) else 'Forcing water into Mobjack' if along_bay > 0 else 'Blowing water out to Atlantic'}
         </div>
       </div>
 
@@ -741,7 +866,7 @@ def build_index_html(status, obs_rows, fcst_rows):
           {baro} <span class="text-xs font-semibold text-slate-500">mb</span>
         </div>
         <div class="text-[11px] text-slate-500 truncate">
-          {'Low pressure (water rising)' if float(baro or 1013) < 1010 else 'Normal atmospheric pressure'}
+          {'Data unavailable' if not finite_number(baro) else 'Low pressure (water rising)' if baro < 1010 else 'Normal atmospheric pressure'}
         </div>
       </div>
 
@@ -751,7 +876,7 @@ def build_index_html(status, obs_rows, fcst_rows):
           <span>North Bay Surge</span>
           <i class="fa-solid fa-water-ladder text-cyan-500"></i>
         </div>
-        <div class="text-2xl font-black font-mono {'text-amber-600' if float(surge or 0) > 1.0 else 'text-slate-900'}">
+        <div class="text-2xl font-black font-mono {'text-amber-600' if (surge if finite_number(surge) else 0) > 1.0 else 'text-slate-900'}">
           +{surge} <span class="text-xs font-semibold text-slate-500">ft</span>
         </div>
         <div class="text-[11px] text-slate-500 truncate" title="Windmill Point (8636580)">
@@ -765,7 +890,7 @@ def build_index_html(status, obs_rows, fcst_rows):
           <span>South Bay Surge</span>
           <i class="fa-solid fa-anchor text-blue-600"></i>
         </div>
-        <div class="text-2xl font-black font-mono {'text-amber-600' if float(sw_surge or 0) > 1.0 else 'text-slate-900'}">
+        <div class="text-2xl font-black font-mono {'text-amber-600' if (sw_surge if finite_number(sw_surge) else 0) > 1.0 else 'text-slate-900'}">
           +{sw_surge} <span class="text-xs font-semibold text-slate-500">ft</span>
         </div>
         <div class="text-[11px] text-slate-500 truncate" title="Sewells Point / Norfolk (8638610)">
@@ -779,11 +904,11 @@ def build_index_html(status, obs_rows, fcst_rows):
           <span>Bay Hydraulic Slope</span>
           <i class="fa-solid fa-arrows-left-right-to-line text-emerald-600"></i>
         </div>
-        <div class="text-2xl font-black font-mono {'text-amber-600' if float(bay_grad or 0) >= 0.20 else 'text-slate-900'}">
-          {'+' if float(bay_grad or 0) > 0 else ''}{bay_grad} <span class="text-xs font-semibold text-slate-500">ft</span>
+        <div class="text-2xl font-black font-mono {'text-amber-600' if (bay_grad if finite_number(bay_grad) else 0) >= 0.20 else 'text-slate-900'}">
+          {'+' if (bay_grad if finite_number(bay_grad) else 0) > 0 else ''}{bay_grad} <span class="text-xs font-semibold text-slate-500">ft</span>
         </div>
         <div class="text-[11px] text-slate-500 truncate" title="{bay_dir}">
-          {'South Inflow Head' if float(bay_grad or 0) >= 0.20 else ('North Gradient' if float(bay_grad or 0) <= -0.20 else 'Equilibrium')} (46 mi)
+          {'South Inflow Head' if (bay_grad if finite_number(bay_grad) else 0) >= 0.20 else ('North Gradient' if (bay_grad if finite_number(bay_grad) else 0) <= -0.20 else 'Equilibrium')} (46 mi)
         </div>
       </div>
     </section>
@@ -801,7 +926,7 @@ def build_index_html(status, obs_rows, fcst_rows):
             <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30">Zero Accounts</span>
           </div>
           <p class="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-            Never get caught off guard by saltwater over Daniel Ave or Bayshore Ave. Push notifications sent <strong>6 to 12 hours before peak high tide</strong>. Zero spam or passwords needed.
+            Never get caught off guard by saltwater over Daniel Ave or Bayshore Ave. Push notifications sent <strong>when fresh forecasts first indicate a flood hazard</strong>. Public subscriptions; authenticated publishing.
           </p>
         </div>
       </div>
@@ -825,6 +950,7 @@ def build_index_html(status, obs_rows, fcst_rows):
 
   <!-- Interactive Map & Charts Logic -->
   <script>
+    const escapeHTML = value => String(value ?? 'Unknown').replace(/[&<>"']/g, ch => ({{'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}}[ch]));
     const floodData = JSON.parse(document.getElementById('flood-data').textContent);
     const curr = floodData.status.current_conditions || {{}};
     const outl = floodData.status.forecast_48h_outlook || {{}};
@@ -890,7 +1016,7 @@ def build_index_html(status, obs_rows, fcst_rows):
       <div class="p-1 space-y-1">
         <div class="font-bold text-sm text-slate-900">Yorktown USCG Station (8637689)</div>
         <div class="text-xs text-slate-600">Primary Meteorological Reference</div>
-        <div class="text-sm font-bold text-slate-900 font-mono">${{curr.yorktown_wind_speed_mph || 'N/A'}} mph from ${{curr.yorktown_wind_dir_cardinal || 'N/A'}}</div>
+        <div class="text-sm font-bold text-slate-900 font-mono">${{curr.yorktown_wind_speed_mph || 'N/A'}} mph from ${{escapeHTML(curr.yorktown_wind_dir_cardinal || 'N/A')}}</div>
         <div class="text-[11px] text-slate-500">Baro: ${{curr.yorktown_baro_pressure_mb || 'N/A'}} mb</div>
       </div>
     `);
@@ -907,7 +1033,7 @@ def build_index_html(status, obs_rows, fcst_rows):
       <div class="p-1 space-y-1">
         <div class="font-bold text-sm text-slate-900">Windmill Point (8636580)</div>
         <div class="text-xs text-slate-600">Northern Bay Storm Surge Reference</div>
-        <div class="text-sm font-bold text-slate-900 font-mono">+${{curr.windmill_point_storm_surge_residual_ft || '0.0'}} ft Surge Residual</div>
+        <div class="text-sm font-bold text-slate-900 font-mono">+${{curr.windmill_point_storm_surge_residual_ft ?? 'Unknown'}} ft Surge Residual</div>
       </div>
     `);
 
@@ -931,10 +1057,10 @@ def build_index_html(status, obs_rows, fcst_rows):
         <div class="text-xs font-mono text-slate-700 bg-slate-100 p-1 rounded">LiDAR Elevation: 2.76' NAVD88 (4.40' MLLW)</div>
         <div class="pt-1 border-t border-slate-100 flex items-baseline justify-between">
           <span class="text-xs text-slate-500">Current Depth:</span>
-          <span class="text-base font-black text-sky-900 font-mono">${{curr.estimated_local_flood_depth_in || '0.0'}}"</span>
+          <span class="text-base font-black text-sky-900 font-mono">${{curr.estimated_local_flood_depth_in ?? 'Unknown'}}"</span>
         </div>
         <div class="text-[11px] font-semibold ${{curr.estimated_local_flood_depth_in > 0 ? 'text-amber-600' : 'text-emerald-600'}}">
-          Passability: ${{curr.vehicle_passability || 'ALL VEHICLES PASSABLE'}}
+          Passability: ${{escapeHTML(curr.vehicle_passability || 'Unknown')}}
         </div>
       </div>
     `);
@@ -1102,7 +1228,8 @@ def build_index_html(status, obs_rows, fcst_rows):
     let zoneLayers = [];
     let streetLayers = [];
 
-    function renderCommunityMap(stageVal) {{
+    function renderCommunityMap(stageVal, streetAssessment = null) {{
+      const unknownStage = stageVal == null || !Number.isFinite(stageVal);
       zoneLayers.forEach(l => map.removeLayer(l));
       zoneLayers = [];
       streetLayers.forEach(l => map.removeLayer(l));
@@ -1112,9 +1239,10 @@ def build_index_html(status, obs_rows, fcst_rows):
       communityZones.forEach(z => {{
         let color = '#10b981'; // Green
         let depthIn = 0;
-        let statusTxt = 'Dry & Clear';
+        let statusTxt = unknownStage ? 'Unknown — data unavailable' : 'No modeled tidal inundation';
+        if (unknownStage) color = '#64748b';
 
-        if (stageVal >= z.elev) {{
+        if (!unknownStage && stageVal >= z.elev) {{
           depthIn = Math.round((stageVal - z.elev) * 12 * 10) / 10;
           if (depthIn < 4) {{
             color = '#f59e0b'; // Yellow / Nuisance
@@ -1126,7 +1254,7 @@ def build_index_html(status, obs_rows, fcst_rows):
             color = '#dc2626'; // Red / Severe
             statusTxt = `Severe Inundation (${{depthIn}}" deep)`;
           }}
-        }} else if (z.elev - stageVal < 0.25) {{
+        }} else if (!unknownStage && z.elev - stageVal < 0.25) {{
           color = '#f59e0b';
           statusTxt = 'Caution: Water within 3 inches of bank';
         }}
@@ -1153,22 +1281,29 @@ def build_index_html(status, obs_rows, fcst_rows):
       for (const [stName, stData] of Object.entries(communityStreetData)) {{
         let stColor = '#059669'; // Emerald
         let stDepth = 0;
-        let stStatus = 'All Vehicles Passable (Dry)';
+        let stStatus = unknownStage ? 'Unknown — data unavailable' : 'No modeled tidal inundation';
+        if (unknownStage) stColor = '#64748b';
 
-        if (stageVal >= stData.elev) {{
+        if (!unknownStage && stageVal >= stData.elev) {{
           stDepth = Math.round((stageVal - stData.elev) * 12 * 10) / 10;
           if (stDepth < 3.5) {{
             stColor = '#d97706'; // Amber
             stStatus = `Caution: Puddles / Ditch Full (${{stDepth}}")`;
           }} else if (stDepth < 7.5) {{
             stColor = '#ea580c'; // Orange
-            stStatus = `Sedans Blocked — Trucks/SUVs Only (${{stDepth}}")`;
+            stStatus = `Flooded Road — Do Not Drive (${{stDepth}}")`;
           }} else {{
             stColor = '#dc2626'; // Red
             stStatus = `Critical — Impassable Deep Water (${{stDepth}}")`;
           }}
         }}
 
+        if (streetAssessment && streetAssessment[stName]) {{
+          const assessment = streetAssessment[stName];
+          stDepth = assessment.depth_in;
+          stStatus = escapeHTML(assessment.status);
+          stColor = ({{ GREEN: '#059669', YELLOW: '#d97706', ORANGE: '#ea580c', RED: '#dc2626', UNKNOWN: '#64748b' }})[assessment.code] || '#64748b';
+        }}
         const line = L.polyline(stData.coords, {{
           color: stColor,
           weight: 5,
@@ -1191,7 +1326,7 @@ def build_index_html(status, obs_rows, fcst_rows):
     }}
 
     // Initial render with current conditions
-    renderCommunityMap(parseFloat(curr.ware_river_stage_mllw_ft || 3.1));
+    renderCommunityMap(floodData.status.data_quality.current_available ? Number(curr.ware_river_stage_mllw_ft) : null, curr.community_streets);
 
     // Toggle button handlers
     const btnCurrent = document.getElementById('btn-map-current');
@@ -1202,7 +1337,7 @@ def build_index_html(status, obs_rows, fcst_rows):
       btnCurrent.classList.remove('text-slate-600');
       btnPeak.classList.remove('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
       btnPeak.classList.add('text-slate-600');
-      renderCommunityMap(parseFloat(curr.ware_river_stage_mllw_ft || 3.1));
+      renderCommunityMap(floodData.status.data_quality.current_available ? Number(curr.ware_river_stage_mllw_ft) : null, curr.community_streets);
     }});
 
     btnPeak.addEventListener('click', () => {{
@@ -1210,7 +1345,8 @@ def build_index_html(status, obs_rows, fcst_rows):
       btnPeak.classList.remove('text-slate-600');
       btnCurrent.classList.remove('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
       btnCurrent.classList.add('text-slate-600');
-      renderCommunityMap(parseFloat(outl.peak_forecast_stage_mllw_ft || 3.5));
+      const peakRow = (floodData.status.forecast_hourly_timeline || []).find(row => row.timestamp_local === outl.peak_hazard_time_local);
+      renderCommunityMap(floodData.status.data_quality.forecast_available && peakRow ? Number(peakRow.forecast_stage_mllw_ft) : null, peakRow?.community_streets);
     }});
 
     // Quick Zoom Button Handlers
@@ -1274,9 +1410,9 @@ def build_index_html(status, obs_rows, fcst_rows):
       const d = r.timestamp_local || '';
       return d.split(' ')[1] ? d.split(' ')[1].slice(0,5) : d;
     }});
-    const stageData = fcst.map(r => parseFloat(r.forecast_stage_mllw_ft || 0));
-    const stageDataQ10 = fcst.map(r => parseFloat(r.forecast_stage_q10_ft || r.forecast_stage_mllw_ft || 0));
-    const stageDataQ90 = fcst.map(r => parseFloat(r.forecast_stage_q90_ft || r.forecast_stage_mllw_ft || 0));
+    const stageData = fcst.map(r => r.forecast_stage_mllw_ft === "" || r.forecast_stage_mllw_ft == null ? null : Number(r.forecast_stage_mllw_ft));
+    const stageDataQ10 = fcst.map(r => r.forecast_stage_q10_ft === "" || r.forecast_stage_q10_ft == null ? null : Number(r.forecast_stage_q10_ft));
+    const stageDataQ90 = fcst.map(r => r.forecast_stage_q90_ft === "" || r.forecast_stage_q90_ft == null ? null : Number(r.forecast_stage_q90_ft));
     const rainData = fcst.map(r => parseFloat(r.rain_forecast_hourly_in || 0));
     const thresholdData = fcst.map(() => 3.99);
 
@@ -1297,7 +1433,7 @@ def build_index_html(status, obs_rows, fcst_rows):
             yAxisID: 'y'
           }},
           {{
-            label: '80% Uncertainty Band (Q10–Q90)',
+            label: 'Uncalibrated Scenario Band',
             data: stageDataQ10,
             borderColor: 'rgba(2, 132, 199, 0.35)',
             borderDash: [3, 3],
@@ -1372,21 +1508,22 @@ def build_index_html(status, obs_rows, fcst_rows):
 # ==============================================================================
 # 2. PAGE 2: ALERTS.HTML (INSTANT MOBILE ALERTS & SUBSCRIPTION GUIDE)
 # ==============================================================================
+@safe_template
 def build_alerts_html(status):
     curr = status.get("current_conditions", {})
     outl = status.get("forecast_48h_outlook", {})
 
-    stage = curr.get("ware_river_stage_mllw_ft", "N/A")
-    stage_navd = curr.get("ware_river_stage_navd88_ft", "N/A")
+    stage = display_value(curr.get("ware_river_stage_mllw_ft", "N/A"))
+    stage_navd = display_value(curr.get("ware_river_stage_navd88_ft", "N/A"))
     tier = curr.get("flood_risk_tier", 0)
-    tier_info = TIER_STYLES.get(tier, TIER_STYLES[0])
+    tier_info = TIER_STYLES.get(tier, TIER_STYLES[-1])
     tier_lbl = curr.get("flood_risk_label", "Tier 0 (Normal / Safe)")
 
-    peak_stage = outl.get("peak_forecast_stage_mllw_ft", "N/A")
-    peak_time = outl.get("peak_forecast_stage_time_local", "N/A")
-    peak_depth = outl.get("peak_estimated_flood_depth_in", 0.0)
+    peak_stage = display_value(outl.get("peak_forecast_stage_mllw_ft", "N/A"))
+    peak_time = display_value(outl.get("peak_forecast_stage_time_local", "N/A"))
+    peak_depth = display_value(outl.get("peak_estimated_flood_depth_in", 0.0))
     peak_tier = outl.get("peak_risk_tier", 0)
-    peak_tier_info = TIER_STYLES.get(peak_tier, TIER_STYLES[0])
+    peak_tier_info = TIER_STYLES.get(peak_tier, TIER_STYLES[-1])
     peak_tier_lbl = outl.get("peak_risk_label", "Tier 0 (Normal / Safe)")
     passability = curr.get("vehicle_passability", "ALL VEHICLES PASSABLE")
 
@@ -1399,11 +1536,11 @@ def build_alerts_html(status):
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Free Mobile Flood Alerts — Mathews County, VA</title>
-  <meta name="description" content="Subscribe to instant audible flood alerts and push notifications for Mathews County, VA before high tide. 100% free, zero accounts required.">
+  <meta name="description" content="Subscribe to instant audible flood alerts and push notifications for Mathews County, VA when fresh data indicates flood risk. Delivery timing depends on updates and mobile connectivity.">
 
   <!-- Tailwind CSS & FontAwesome -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/tailwind.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g" crossorigin="anonymous">
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
@@ -1429,7 +1566,7 @@ def build_alerts_html(status):
       </h1>
 
       <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-3xl">
-        Never get caught off guard by saltwater over Daniel Ave, Bayshore Ave, or neighborhood access roads. Receive loud, high-priority push notifications directly to your smartphone <strong>6 to 12 hours before peak high tide</strong>.
+        Never get caught off guard by saltwater over Daniel Ave, Bayshore Ave, or neighborhood access roads. Receive loud, high-priority push notifications directly to your smartphone <strong>when fresh forecasts first indicate a flood hazard</strong>.
       </p>
 
       <!-- Key Guarantees Badges -->
@@ -1444,7 +1581,7 @@ def build_alerts_html(status):
         </div>
         <div class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-sm">
           <i class="fa-solid fa-bell-slash text-indigo-600"></i>
-          <span>Zero Spam Policy (Alerts only on flood risk)</span>
+          <span>Flood alerts with duplicate suppression</span>
         </div>
       </div>
     </section>
@@ -1471,7 +1608,7 @@ def build_alerts_html(status):
 
           <!-- Action Buttons -->
           <div class="flex flex-wrap items-center gap-3">
-            <a href="https://ntfy.sh/{DEFAULT_NTFY_TOPIC}" target="_blank" rel="noopener noreferrer" 
+            <a href="{NTFY_SERVER}/{DEFAULT_NTFY_TOPIC}" target="_blank" rel="noopener noreferrer"
                class="px-6 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm sm:text-base shadow-lg transition flex items-center gap-2.5 group">
               <i class="fa-solid fa-mobile-screen-button"></i>
               <span>Subscribe on Phone / Browser</span>
@@ -1500,7 +1637,7 @@ def build_alerts_html(status):
             <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener noreferrer" class="hover:text-white transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700">
               <i class="fa-brands fa-google-play text-sm text-emerald-400"></i> Google Play
             </a>
-            <a href="https://ntfy.sh/{DEFAULT_NTFY_TOPIC}" target="_blank" rel="noopener noreferrer" class="hover:text-white transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700">
+            <a href="{NTFY_SERVER}/{DEFAULT_NTFY_TOPIC}" target="_blank" rel="noopener noreferrer" class="hover:text-white transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700">
               <i class="fa-solid fa-globe text-sm text-sky-400"></i> Web Browser
             </a>
           </div>
@@ -1530,7 +1667,7 @@ def build_alerts_html(status):
           </div>
 
           <div class="p-3 bg-white rounded-2xl shadow-xl inline-block">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data=https://ntfy.sh/{DEFAULT_NTFY_TOPIC}" 
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data={NTFY_SERVER}/{DEFAULT_NTFY_TOPIC}"
                  alt="Scan to Subscribe to Mathews Flood Alerts" 
                  class="w-44 h-44 block" 
                  loading="lazy" />
@@ -1624,7 +1761,7 @@ def build_alerts_html(status):
             <h3 class="font-bold text-slate-900 text-lg">Web Browser (Zero App)</h3>
             <ol class="space-y-3 text-xs text-slate-600 leading-relaxed list-decimal list-inside">
               <li>
-                Navigate to <a href="https://ntfy.sh/{DEFAULT_NTFY_TOPIC}" target="_blank" rel="noopener" class="text-sky-600 font-bold hover:underline">ntfy.sh/{DEFAULT_NTFY_TOPIC}</a> in Chrome, Safari, Edge, or Firefox.
+                Navigate to <a href="{NTFY_SERVER}/{DEFAULT_NTFY_TOPIC}" target="_blank" rel="noopener" class="text-sky-600 font-bold hover:underline">ntfy.sh/{DEFAULT_NTFY_TOPIC}</a> in Chrome, Safari, Edge, or Firefox.
               </li>
               <li>
                 Click the <strong>Subscribe</strong> button in the top menu bar.
@@ -1635,7 +1772,7 @@ def build_alerts_html(status):
             </ol>
           </div>
           <div class="pt-3 border-t border-slate-100">
-            <a href="https://ntfy.sh/{DEFAULT_NTFY_TOPIC}" target="_blank" rel="noopener" class="text-xs font-bold text-sky-600 hover:text-sky-700 flex items-center gap-1">
+            <a href="{NTFY_SERVER}/{DEFAULT_NTFY_TOPIC}" target="_blank" rel="noopener" class="text-xs font-bold text-sky-600 hover:text-sky-700 flex items-center gap-1">
               <span>Open Web Feed</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
             </a>
           </div>
@@ -1662,7 +1799,7 @@ def build_alerts_html(status):
             <span class="text-xs font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
               <i class="fa-solid fa-hourglass-start"></i> Stage 1: Advance Notice
             </span>
-            <span class="text-[11px] font-mono font-semibold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full">6–12 Hours Ahead</span>
+            <span class="text-[11px] font-mono font-semibold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full">When Risk Is Detected</span>
           </div>
           <h3 class="font-bold text-slate-900 text-base">Early Crest Warning</h3>
           <p class="text-xs text-slate-700 leading-relaxed">
@@ -1680,7 +1817,7 @@ def build_alerts_html(status):
           </div>
           <h3 class="font-bold text-slate-900 text-base">Pre-Crest Hazard Alert</h3>
           <p class="text-xs text-slate-700 leading-relaxed">
-            Dispatched 60 to 120 minutes before peak high tide. Provides specific estimated flood depths in inches (e.g., <em>"5 to 7 inches over Daniel Ave"</em>) and states whether low passenger cars are passable.
+            Attempted near the crest when fresh forecast data and scheduled updates are available. Provides specific estimated flood depths in inches (e.g., <em>"5 to 7 inches over Daniel Ave"</em>) and describes modeled road hazards.
           </p>
         </div>
 
@@ -1741,7 +1878,7 @@ def build_alerts_html(status):
               ⚠️ Tier 1 Flood Advisory: Ware River Crest at 4.15 ft MLLW
             </div>
             <p class="text-xs text-slate-300 leading-relaxed">
-              Minor ditch overflow expected at 1:30 PM EDT (1-2" in roadside swales). Daniel Ave &amp; Bayshore Ave passable for all passenger vehicles.
+              Minor ditch overflow expected at 1:30 PM EDT (1-2" in roadside swales). Check actual conditions on Daniel Ave &amp; Bayshore Ave before travel.
             </p>
           </div>
         </div>
@@ -1806,7 +1943,7 @@ def build_alerts_html(status):
             Will this wake me up at 3:00 AM?
           </h3>
           <p class="text-slate-600 leading-relaxed text-xs sm:text-sm">
-            If an extreme high tide is predicted to breach roads in the middle of the night, you will receive an Advance Warning <strong>6 to 12 hours earlier during the daytime</strong>, giving you time to park safely before bed. Imminent crest warnings also chime so you are not trapped unexpectedly by rising water.
+            If an extreme high tide is predicted to breach roads in the middle of the night, you will receive an Advance Warning <strong>when a hazard is detected in fresh forecast data</strong>, giving you time to park safely before bed. Imminent crest warnings also chime so you are not trapped unexpectedly by rising water.
           </p>
         </div>
 
@@ -1876,6 +2013,7 @@ def build_alerts_html(status):
 # ==============================================================================
 # 3. PAGE 3: ABOUT.HTML (THE STORY, NOTEBOOKS, AND SCIENCE)
 # ==============================================================================
+@safe_template
 def build_about_html(status):
     navbar_html = build_shared_navbar("about", status)
     footer_html = build_shared_footer(status)
@@ -1888,8 +2026,8 @@ def build_about_html(status):
   <title>About & History — Mathews County Coastal Flood Prediction System</title>
   <meta name="description" content="The story of how handwritten storm logs from 2021 to 2024 uncovered the 3.99 ft flood threshold in Mathews County, VA.">
   
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/tailwind.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g" crossorigin="anonymous">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
     body {{ font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }}
@@ -2066,6 +2204,7 @@ def build_about_html(status):
 # ==============================================================================
 # 4. PAGE 4: GUIDE.HTML (FLOOD TIERS & DEFINITIONS)
 # ==============================================================================
+@safe_template
 def build_guide_html(status):
     navbar_html = build_shared_navbar("guide", status)
     footer_html = build_shared_footer(status)
@@ -2078,8 +2217,8 @@ def build_guide_html(status):
   <title>Flood Severity Guide & Definitions — Mathews County Flood Monitor</title>
   <meta name="description" content="Visual guide to coastal flood risk tiers, vehicle depth safety limits, and plain-English definitions for Mathews County, VA.">
   
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/tailwind.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g" crossorigin="anonymous">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
     body {{ font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }}
@@ -2127,7 +2266,7 @@ def build_guide_html(status):
             Water is fully contained within natural marsh channels and roadside ditch beds. No road or lawn inundation.
           </p>
           <div class="pt-2 border-t border-slate-100 text-xs text-slate-700 space-y-1">
-            <div><strong>Vehicles:</strong> All passenger cars, sedans, and delivery vans 100% passable.</div>
+            <div><strong>Vehicles:</strong> No modeled tidal inundation; verify rainfall and actual road conditions.</div>
             <div><strong>Action:</strong> None required.</div>
           </div>
         </div>
@@ -2146,7 +2285,7 @@ def build_guide_html(status):
             Ditch beds are brim-full. Water begins backing up through driveway culvert pipes and creeps into low grassy depressions.
           </p>
           <div class="pt-2 border-t border-slate-100 text-xs text-slate-700 space-y-1">
-            <div><strong>Vehicles:</strong> Main driveway passable; drive slowly through culvert dip.</div>
+            <div><strong>Vehicles:</strong> Avoid flooded culvert dips; do not drive into standing water.</div>
             <div><strong>Action:</strong> Keep pets inside; check ditch pipes for debris.</div>
           </div>
         </div>
@@ -2273,6 +2412,7 @@ def build_guide_html(status):
 # ==============================================================================
 # 5. PAGE 5: DATA.HTML (STORM ARCHIVE & DOWNLOADS)
 # ==============================================================================
+@safe_template
 def build_data_html(status, ground_truth_rows, obs_rows):
     navbar_html = build_shared_navbar("data", status)
     footer_html = build_shared_footer(status)
@@ -2369,8 +2509,8 @@ def build_data_html(status, ground_truth_rows, obs_rows):
   <title>Storm History & Data Archive — Mathews County Flood Monitor</title>
   <meta name="description" content="Historical storm comparisons (Helene, Ian, Idalia, Ophelia) and open data downloads for Mathews County, VA.">
   
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/tailwind.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g" crossorigin="anonymous">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
     body {{ font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }}
@@ -2513,6 +2653,7 @@ def build_data_html(status, ground_truth_rows, obs_rows):
 # ==============================================================================
 # 6. PAGE 6: SCIENCE.HTML (SCIENTIFIC METHODOLOGY & EMPIRICAL BENCHMARKS)
 # ==============================================================================
+@safe_template
 def build_science_html(status, evidence=None):
     if not evidence:
         evidence_path = os.path.join("models", "scientific_evidence.json")
@@ -2642,8 +2783,8 @@ def build_science_html(status, evidence=None):
   <title>Scientific Methodology & Empirical Validation — Mathews County Coastal Flood Prediction</title>
   <meta name="description" content="Academic benchmarks, machine learning model weights, piecewise inundation formulas, USGS 3DEP LiDAR altimetry validation, and 5-year empirical record for Mathews County, VA.">
   
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/tailwind.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g" crossorigin="anonymous">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
     body {{ font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }}
@@ -2833,7 +2974,7 @@ def build_science_html(status, evidence=None):
                 <td class="px-4 py-3 font-mono text-slate-800">{stage1_rmse_in:.2f}" ({stage1_now.get('test_rmse_ft', 0.16):.2f}')</td>
               </tr>
               <tr class="hover:bg-slate-50 transition">
-                <td class="px-4 py-3 font-semibold text-slate-900">Stage 1 (48h Forecast)</td>
+                <td class="px-4 py-3 font-semibold text-slate-900">Weather-Conditioned Hindcast</td>
                 <td class="px-4 py-3 font-mono text-slate-700">Stage (ft MLLW)</td>
                 <td class="px-4 py-3 text-slate-600">LightGBM (48h Lead)</td>
                 <td class="px-4 py-3 text-slate-600 font-mono">2021–2023 hourly</td>
@@ -3049,6 +3190,7 @@ def build_science_html(status, evidence=None):
       </div>
     </section>
 
+    <aside class="bg-amber-50 border border-amber-300 rounded-xl p-4 text-sm text-amber-950">Historical benchmark scores use observed weather, not issue-time forecasts. They do not validate deployed 6–48-hour forecast accuracy. Live bounds are uncalibrated scenarios.</aside>
     <!-- 7. REPRODUCIBILITY & ACADEMIC CITATION -->
     <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
       <div class="border-b border-slate-100 pb-4">

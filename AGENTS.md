@@ -132,3 +132,12 @@ Phase 5 (Complete): Notification, Alerting & Hazard Monitoring
    * Units: Water levels and gauge stages in **feet (ft)**; ground inundation in **inches (in)**; wind speeds in **mph** (convert knots $\times 1.15078$).
 4. **Offline Resilience**:
    * Cache all downloaded API data locally in CSV or Parquet files so future runs or disconnected environments do not break.
+
+## 7. Operational Safety Contract (October 2026)
+
+- `runtime_safety.py` defines data validity, risk evaluation, and atomic JSON persistence. Tier `-1`, passability code `UNKNOWN`, and null depths mean unavailable data; they must never become Tier 0 or a safe road claim.
+- Status includes `source_health`, `data_quality`, `alerting_enabled`, structured vehicle codes, separate peak stage/depth/hazard times, and forecast weather/rain coverage flags. Gauge and publication age limits are 90 minutes. ALL CLEAR requires healthy current data plus all 48 forecast hours with water, wind, and precipitation coverage.
+- Compound risk includes community road/street impacts. Vehicle clearance is not permission to enter floodwater.
+- Live Q10/Q90-named fields are retained for compatibility but contain heuristic scenario bounds, not statistically calibrated percentiles. Benchmark weather inputs were observed rather than archived issue-time forecasts.
+- Publishing is explicitly enabled, authenticated, and protected by server-side ACLs. Never commit tokens or silently reset corrupt alert state. Follow `ALERTING_SETUP.md`.
+- Run `python3 -m unittest discover -s tests -v` after operational changes. When template utility classes change, run `npm ci --ignore-scripts` and `npm run build:css` to refresh the committed stylesheet; Node is needed only to rebuild CSS.

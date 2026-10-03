@@ -26,3 +26,8 @@ __pycache__/
 
 # Temporary intermediate cache chunks
 ware_river_historical_cache/
+.cache/
+node_modules/
+.env
+.env.*
+_site/
