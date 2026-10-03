@@ -263,6 +263,7 @@ def main():
     # Save lightweight JSON model configuration
     model_config = {
         "model_metadata": {
+            "validation_context": "Weather-conditioned historical holdout; observed weather, not archived issue-time forecasts; not deployed lead-time validation",
             "trained_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
             "training_period": "2021-01-01 to 2023-12-31",
             "test_period": "2024-01-01 to 2024-09-30 (holdout)",
@@ -329,6 +330,7 @@ def main():
 
     # Save detailed evaluation report
     eval_report = {
+        "validation_context": "Weather-conditioned historical holdout; observed weather, not archived issue-time forecasts",
         "evaluation_timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
         "metrics": {
             "nowcast_linear": res_lr_nc,

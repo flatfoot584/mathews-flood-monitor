@@ -37,7 +37,7 @@ Trained on a continuous human observation log recorded between **May 2021 and Se
 * **Tier 0 (Safe / Normal)**: Stage $< 4.0\text{ ft} \to 0"$ flooding.
 * **Tier 1 (Nuisance / Ditch Full)**: Stage $4.0 - 4.3\text{ ft} \to 1" - 4"$ in low spots and culverts.
 * **Tier 2 (Moderate / Driveway Blocked)**: Stage $4.4 - 4.7\text{ ft} \to 5" - 8"$ on driveway (sedans blocked).
-* **Tier 3 (Severe / Property Submerged)**: Stage $\ge 4.8\text{ ft} \to 9" - 19"+$ across yard (SUVs only or impassable).
+* **Tier 3 (Severe / Property Submerged)**: Stage $\ge 4.8\text{ ft} \to 9" - 19"+$ across yard (do not enter flooded roads).
 
 ---
 
@@ -58,17 +58,17 @@ Compound Pluvial & Micro-Topography Engine (micro_topography.py)
   ├── Models ditch backwater restriction: β = clip((Stage - 3.8) / 0.4, 0, 1)
   ├── 5 Community dry-land sectors: Bayshore Swale (3.99'), Lower Blocks (4.15'), Daniel Spine (4.40'), Yards (4.60'), High Ridge (4.90')
   ├── 8-Street LiDAR network: Bayshore, Daniel, Julian, Allview, River Rd, Hobday, Little, Bunny Rabbit
-  └── Vehicle Passability Matrix: Evaluates passenger cars vs. high-clearance trucks
+  └── Vehicle Passability Matrix: Assesses the worst modeled road/street/driveway depth
 ```
 
 ---
 
 ## ☁️ Automated Cloud Architecture (GitHub Actions + Pages)
 
-This repository runs completely autonomously in the cloud at **zero cost**:
+The data pipeline and public website can run on GitHub Actions and Pages. Secure ntfy.sh topic reservation requires a paid plan; self-hosted ntfy has no software subscription. Scheduling is best effort:
 
 * **GitHub Actions (`.github/workflows/update_flood_monitor.yml`)**:
-  * Runs every **30 minutes** via cron (and manual dispatch).
+  * Is scheduled every **30 minutes** via cron (and manual dispatch); actual runs can be delayed.
   * Executes `ingest_realtime.py` (queries NOAA NWPS WRVV2, NOAA CO-OPS 8637689/8636580, NWS AKQ Wakefield).
   * Executes `generate_dashboard.py` to create a standalone, mobile-responsive dashboard.
   * Commits the latest JSON/CSV data files to git history.
@@ -124,3 +124,19 @@ python3 check_alerts.py --notify
 python3 generate_dashboard.py
 open flood_dashboard.html
 ```
+
+## Safety, alert configuration, and checks
+
+See [ALERTING_SETUP.md](ALERTING_SETUP.md) for authenticated hosted/self-hosted publishing and independent health monitoring. Push defaults to disabled until the token and server-side ACLs are configured. Missing/stale data is explicitly unknown and cannot generate ALL CLEAR. The portal checks observation/update age even when cloud updates stop.
+
+Current warning tiers also consider rainfall and modeled community road depths; stage-only tiers above are historical reference thresholds. Do not enter floodwater regardless of vehicle clearance. Reported model scores use observed weather in historical holdouts and do not establish deployed 6–48-hour forecast accuracy. The live system uses NWPS guidance with heuristic local adjustments; its shaded band is an uncalibrated scenario range, not an 80% confidence interval.
+
+```sh
+python3 -m unittest discover -s tests -v
+python3 check_pipeline_health.py
+# Only when modifying the site's utility classes:
+npm ci --ignore-scripts
+npm run build:css
+```
+
+Operational Python uses the standard library. Node dependencies are needed only to rebuild the committed CSS. Frontend JavaScript is bundled locally, external styles are integrity-pinned, and generated pages include a Content Security Policy.

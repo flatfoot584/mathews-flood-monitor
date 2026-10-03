@@ -25,12 +25,20 @@ import json
 import math
 import time
 import argparse
+import hashlib
+import re
+from pathlib import Path
 import urllib.request
 import urllib.error
+import urllib.parse
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 import micro_topography
+from runtime_safety import (assess_status, atomic_write_json, compound_risk_tier,
+                            finite_number, is_recent, UNKNOWN_TIER)
+
+SOURCE_HEALTH = {}
 
 # Timezone standard
 EASTERN_TZ = ZoneInfo("America/New_York")
@@ -58,8 +66,8 @@ def degrees_to_compass(deg):
     return arr[val % 16]
 
 def get_risk_tier(stage_mllw_ft):
-    if stage_mllw_ft is None:
-        return 0, "Unknown"
+    if not finite_number(stage_mllw_ft):
+        return UNKNOWN_TIER, "Unknown (water-level data unavailable)"
     if stage_mllw_ft < 4.0:
         return 0, "Tier 0 (Normal / Safe)"
     elif stage_mllw_ft < 4.4:
@@ -70,27 +78,67 @@ def get_risk_tier(stage_mllw_ft):
         return 3, "Tier 3 (Severe Inundation)"
 
 def estimate_flood_depth_in(stage_mllw_ft):
-    if stage_mllw_ft is None or stage_mllw_ft < FLOOD_STAGE_THRESHOLD:
+    if not finite_number(stage_mllw_ft):
+        return None
+    if stage_mllw_ft < FLOOD_STAGE_THRESHOLD:
         return 0.0
     depth = STAGE_TO_DEPTH_SLOPE * stage_mllw_ft + STAGE_TO_DEPTH_INTERCEPT
     return max(0.0, round(depth, 2))
 
 def fetch_json(url, max_retries=3, backoff=2.0, timeout=15):
-    """Fetch JSON with retry logic and descriptive user agent."""
-    req = urllib.request.Request(
-        url,
-        headers={"User-Agent": "MathewsCountyFloodStudy/1.0 (contact@mathewsflood.org)"}
-    )
-    for attempt in range(1, max_retries + 1):
+    """Cache successful public API responses; expose cached data age explicitly."""
+    cache_dir = Path(os.getenv("FLOOD_CACHE_DIR", ".cache/api"))
+    parsed = urllib.parse.urlsplit(url)
+    parameters = urllib.parse.parse_qs(parsed.query)
+    window = ""
+    if "begin_date" in parameters:
         try:
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
-                if resp.status == 200:
-                    return json.loads(resp.read().decode("utf-8"))
-        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError) as e:
-            if attempt == max_retries:
-                print(f"[WARN] Failed fetching {url} after {max_retries} attempts: {e}", file=sys.stderr)
-                return None
-            time.sleep(backoff * attempt)
+            begin = datetime.strptime(parameters["begin_date"][0], "%Y%m%d %H:%M").replace(tzinfo=timezone.utc)
+            window = "future" if begin >= datetime.now(timezone.utc) - timedelta(hours=1) else "past"
+        except ValueError:
+            window = "unknown"
+    stable_query = urllib.parse.urlencode(sorted((key, values[0]) for key, values in parameters.items()
+                                              if key not in ("begin_date", "end_date")))
+    cache_key = urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, stable_query, "")) + window
+    cache_file = cache_dir / (hashlib.sha256(cache_key.encode()).hexdigest() + ".json")
+    request = urllib.request.Request(url, headers={"User-Agent": "MathewsCountyFloodStudy/1.1"})
+    for attempt in range(max_retries):
+        try:
+            with urllib.request.urlopen(request, timeout=timeout) as response:
+                payload = json.loads(response.read().decode("utf-8"))
+                if not isinstance(payload, dict) or "error" in payload or payload.get("status", 200) in (400, 404, 500):
+                    raise ValueError("API returned an error payload")
+            stamp = datetime.now(timezone.utc).isoformat()
+            SOURCE_HEALTH[url] = {"available": True, "cached": False, "retrieved_at_utc": stamp}
+            try:
+                atomic_write_json(cache_file, {"retrieved_at_utc": stamp, "payload": payload})
+            except OSError:
+                print("[WARN] Could not persist API cache.", file=sys.stderr)
+            return payload
+        except (urllib.error.URLError, OSError, ValueError, TimeoutError):
+            if attempt + 1 < max_retries:
+                time.sleep(backoff * (attempt + 1))
+    try:
+        cached = json.loads(cache_file.read_text(encoding="utf-8"))
+        fresh = is_recent(cached.get("retrieved_at_utc"))
+        SOURCE_HEALTH[url] = {"available": fresh, "cached": True,
+                              "retrieved_at_utc": cached.get("retrieved_at_utc")}
+        print("[WARN] API unavailable; using a timestamped cached response.", file=sys.stderr)
+        return cached["payload"]
+    except (OSError, ValueError, KeyError):
+        SOURCE_HEALTH[url] = {"available": False, "cached": False}
+        print("[WARN] API unavailable and no valid cached response exists.", file=sys.stderr)
+        return None
+
+
+def matched_surge(observed, predictions):
+    """Subtract values at a common time, rather than unrelated latest readings."""
+    predicted = {r["datetime_utc"]: r.get("water_level_ft") for r in predictions or []}
+    for row in reversed(observed or []):
+        actual = row.get("water_level_ft")
+        tide = predicted.get(row["datetime_utc"])
+        if finite_number(actual) and finite_number(tide):
+            return round(actual - tide, 2)
     return None
 
 def fetch_nwps_wrvv2_observed():
@@ -105,7 +153,13 @@ def fetch_nwps_wrvv2_observed():
         stage = item.get("primary")
         if not valid_time_str or stage is None or stage == -999:
             continue
-        dt_utc = datetime.fromisoformat(valid_time_str.replace("Z", "+00:00"))
+        try:
+            stage = float(stage)
+            if not finite_number(stage):
+                continue
+            dt_utc = datetime.fromisoformat(valid_time_str.replace("Z", "+00:00"))
+        except (TypeError, ValueError):
+            continue
         records.append({
             "datetime_utc": dt_utc,
             "stage_mllw_ft": float(stage),
@@ -126,7 +180,13 @@ def fetch_nwps_wrvv2_forecast():
         stage = item.get("primary")
         if not valid_time_str or stage is None or stage == -999:
             continue
-        dt_utc = datetime.fromisoformat(valid_time_str.replace("Z", "+00:00"))
+        try:
+            stage = float(stage)
+            if not finite_number(stage):
+                continue
+            dt_utc = datetime.fromisoformat(valid_time_str.replace("Z", "+00:00"))
+        except (TypeError, ValueError):
+            continue
         records.append({
             "datetime_utc": dt_utc,
             "forecast_stage_mllw_ft": float(stage),
@@ -182,6 +242,8 @@ def fetch_coops_product(station, product, begin_dt_utc, end_dt_utc, datum="mllw"
             except (ValueError, TypeError):
                 continue
                 
+        if any(not finite_number(value) for key, value in rec.items() if key != "datetime_utc"):
+            continue
         records.append(rec)
     records.sort(key=lambda x: x["datetime_utc"])
     return records
@@ -203,19 +265,19 @@ def fetch_nws_hourly_forecast():
         dt_utc = dt.astimezone(timezone.utc)
         
         # Parse wind speed
-        spd_str = p.get("windSpeed", "0 mph")
+        spd_str = p.get("windSpeed", "") or ""
         digits = [float(x) for x in "".join([c if c.isdigit() or c == "." else " " for c in spd_str]).split()]
-        wind_spd = sum(digits) / len(digits) if digits else 0.0
+        wind_spd = sum(digits) / len(digits) if digits else None
         
-        wind_dir_cardinal = p.get("windDirection", "N")
-        wind_dir_deg = COMPASS_DIRS.get(wind_dir_cardinal.upper(), 0.0)
+        wind_dir_cardinal = p.get("windDirection", "") or ""
+        wind_dir_deg = COMPASS_DIRS.get(wind_dir_cardinal.upper())
         temp_f = p.get("temperature")
         pop = p.get("probabilityOfPrecipitation", {}).get("value", 0) or 0
         short_fcst = p.get("shortForecast", "")
         
         records.append({
             "datetime_utc": dt_utc,
-            "wind_speed_mph": round(wind_spd, 1),
+            "wind_speed_mph": round(wind_spd, 1) if wind_spd is not None else None,
             "wind_dir_deg": wind_dir_deg,
             "wind_dir_cardinal": wind_dir_cardinal,
             "temp_f": temp_f,
@@ -225,29 +287,40 @@ def fetch_nws_hourly_forecast():
     records.sort(key=lambda x: x["datetime_utc"])
     return records
 
+def parse_duration(text):
+    """Parse fixed ISO 8601 day/hour/minute/second durations, rejecting months."""
+    match = re.fullmatch(r"P(?:(\d+(?:\.\d+)?)D)?(?:T(?:(\d+(?:\.\d+)?)H)?(?:(\d+(?:\.\d+)?)M)?(?:(\d+(?:\.\d+)?)S)?)?", text)
+    if not match or not any(match.groups()):
+        raise ValueError("Unsupported duration")
+    days, hours, minutes, seconds = (float(v or 0) for v in match.groups())
+    result = timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
+    if result.total_seconds() <= 0 or result > timedelta(days=14):
+        raise ValueError("Invalid forecast duration")
+    return result
+
+
 def fetch_nws_qpf_map():
-    """Fetch quantitative precipitation forecast from NWS gridpoints and map to hourly rain inches."""
-    url = "https://api.weather.gov/gridpoints/AKQ/80,76"
-    data = fetch_json(url)
-    if not data or "properties" not in data or "quantitativePrecipitation" not in data["properties"]:
-        return {}
-    qpf_values = data["properties"]["quantitativePrecipitation"].get("values", [])
+    """Distribute interval rainfall by hourly overlap, preserving total volume."""
+    data = fetch_json("https://api.weather.gov/gridpoints/AKQ/80,76")
+    values = (data or {}).get("properties", {}).get("quantitativePrecipitation", {}).get("values", [])
     rain_by_hour = {}
-    for item in qpf_values:
-        vt = item.get("validTime", "")
-        val_mm = item.get("value") or 0.0
-        val_in = val_mm / 25.4
-        if "/" in vt:
-            start_str, dur_str = vt.split("/")
-            try:
-                start_dt = datetime.fromisoformat(start_str.replace("Z", "+00:00"))
-                dur_hours = int("".join([c for c in dur_str if c.isdigit()]) or 1)
-                hourly_rain = round(val_in / dur_hours, 3)
-                for h in range(dur_hours):
-                    hr_dt = (start_dt + timedelta(hours=h)).replace(minute=0, second=0, microsecond=0)
-                    rain_by_hour[hr_dt] = hourly_rain
-            except Exception:
+    for item in values:
+        try:
+            value = item.get("value")
+            if not finite_number(value) or value < 0:
                 continue
+            start_text, duration_text = item["validTime"].split("/")
+            start = datetime.fromisoformat(start_text.replace("Z", "+00:00")).astimezone(timezone.utc)
+            duration = parse_duration(duration_text)
+            end = start + duration
+            hour = start.replace(minute=0, second=0, microsecond=0)
+            while hour < end:
+                overlap = (min(end, hour + timedelta(hours=1)) - max(start, hour)).total_seconds()
+                if overlap > 0:
+                    rain_by_hour[hour] = rain_by_hour.get(hour, 0.0) + value / 25.4 * overlap / duration.total_seconds()
+                hour += timedelta(hours=1)
+        except (KeyError, TypeError, ValueError):
+            continue
     return rain_by_hour
 
 def aggregate_hourly_observations(ware_obs, yt_winds, yt_press, yt_temps, yt_water, yt_preds, wm_water, wm_preds, sw_water=None, sw_preds=None, lookback_hours=48):
@@ -300,7 +373,9 @@ def aggregate_hourly_observations(ware_obs, yt_winds, yt_press, yt_temps, yt_wat
         # Yorktown wind
         w_info = yt_wind_grouped.get(curr)
         w_spd = round(sum(w_info["speeds"]) / len(w_info["speeds"]), 2) if (w_info and w_info["speeds"]) else None
-        w_dir = round(sum(w_info["dirs"]) / len(w_info["dirs"]), 1) if (w_info and w_info["dirs"]) else None
+        w_dir = round(math.degrees(math.atan2(
+            sum(math.sin(math.radians(d)) for d in w_info["dirs"]),
+            sum(math.cos(math.radians(d)) for d in w_info["dirs"]))) % 360, 1) if (w_info and w_info["dirs"]) else None
         w_gst = round(max(w_info["gusts"]), 2) if (w_info and w_info["gusts"]) else None
         
         # Physical wind vectors
@@ -346,7 +421,7 @@ def aggregate_hourly_observations(ware_obs, yt_winds, yt_press, yt_temps, yt_wat
         
         # Micro-topographical evaluation
         eval_res = micro_topography.evaluate_compound_inundation(ware_mean, rain_rolling_6h_in=0.0)
-        tier_num, tier_lbl = get_risk_tier(ware_mean)
+        tier_num, tier_lbl = compound_risk_tier(ware_mean, eval_res)
         
         row = {
             "timestamp_utc": curr.strftime("%Y-%m-%d %H:%M:%S UTC"),
@@ -377,9 +452,11 @@ def aggregate_hourly_observations(ware_obs, yt_winds, yt_press, yt_temps, yt_wat
             "bay_hydraulic_gradient_ft": bay_grad if bay_grad is not None else "",
             "bay_hydraulic_slope_ft_per_mile": bay_slope if bay_slope is not None else "",
             "estimated_flood_depth_in": eval_res["total_compound_depth_in"],
-            "is_flooded": "TRUE" if eval_res["total_compound_depth_in"] > 0 else "FALSE",
+            "is_flooded": ("" if eval_res["total_compound_depth_in"] is None else "TRUE" if eval_res["total_compound_depth_in"] > 0 else "FALSE"),
             "flood_risk_tier": tier_num,
             "flood_risk_label": tier_lbl,
+            "community_streets": eval_res["streets"],
+            "vehicle_passability_code": eval_res["vehicle_passability_code"],
             "vehicle_passability": eval_res["vehicle_passability_label"],
             "driveway_depth_in": eval_res["sectors"]["main_driveway"]["depth_in"]
         }
@@ -407,7 +484,7 @@ def build_forecast_timeline(nwps_fcst, nws_fcst, yt_pred_fcst, wm_pred_fcst, qpf
     
     timeline = []
     curr = now_utc
-    hourly_rain_history = []
+    hourly_rain_history = [qpf_map.get(now_utc - timedelta(hours=h), 0.0) for h in range(5, 0, -1)]
     
     while curr <= end_utc:
         dt_local = curr.astimezone(EASTERN_TZ)
@@ -419,8 +496,8 @@ def build_forecast_timeline(nwps_fcst, nws_fcst, yt_pred_fcst, wm_pred_fcst, qpf
         
         lead_hours = max(0.0, (curr - now_utc).total_seconds() / 3600.0)
         
-        wind_spd = nws_item.get("wind_speed_mph", 0.0)
-        wind_dir = nws_item.get("wind_dir_deg", 0.0)
+        wind_spd = nws_item.get("wind_speed_mph")
+        wind_dir = nws_item.get("wind_dir_deg")
         along_bay = None
         cross_bay = None
         along_stress = 0.0
@@ -457,7 +534,7 @@ def build_forecast_timeline(nwps_fcst, nws_fcst, yt_pred_fcst, wm_pred_fcst, qpf
         else:
             hybrid_stage = None
 
-        # Quantile Regression Uncertainty Envelope (80% Confidence Interval: Q10 to Q90)
+        # Heuristic scenario envelope (legacy Q10/Q90 field names retained for compatibility)
         # Lead time growth factor: meteorological uncertainty widens over 48 hours
         lead_growth = 0.08 * math.sqrt(lead_hours / 24.0)
         wind_expansion = 0.02 * max(0.0, ((wind_spd or 0.0) - 15.0) / 10.0)
@@ -474,12 +551,16 @@ def build_forecast_timeline(nwps_fcst, nws_fcst, yt_pred_fcst, wm_pred_fcst, qpf
 
         # Compound Inundation & Micro-Topography
         eval_res = micro_topography.evaluate_compound_inundation(hybrid_stage, rolling_rain_6h)
-        tier_num, tier_lbl = get_risk_tier(hybrid_stage)
-        
-        depth_q10 = estimate_flood_depth_in(stage_q10)
-        depth_q90 = estimate_flood_depth_in(stage_q90)
+        tier_num, tier_lbl = compound_risk_tier(hybrid_stage, eval_res)
+
+        # Scenario bounds use the same rainfall contribution as the central estimate.
+        depth_q10 = micro_topography.evaluate_compound_inundation(stage_q10, rolling_rain_6h)["total_compound_depth_in"]
+        depth_q90 = micro_topography.evaluate_compound_inundation(stage_q90, rolling_rain_6h)["total_compound_depth_in"]
         
         timeline.append({
+            "weather_available": bool(nws_item) and finite_number(wind_spd) and finite_number(wind_dir),
+            "precipitation_available": curr in qpf_map,
+            "forecast_source": "nwps" if nwps_stage is not None else "tide_fallback" if yt_pred is not None else "unavailable",
             "timestamp_utc": curr.strftime("%Y-%m-%d %H:%M:%S UTC"),
             "timestamp_local": dt_local.strftime("%Y-%m-%d %H:%M:%S %Z"),
             "forecast_stage_q10_ft": stage_q10 if stage_q10 is not None else "",
@@ -496,6 +577,8 @@ def build_forecast_timeline(nwps_fcst, nws_fcst, yt_pred_fcst, wm_pred_fcst, qpf
             "bay_hydraulic_gradient_ft": forward_hydraulic_gradient,
             "risk_tier": tier_num,
             "risk_label": tier_lbl,
+            "community_streets": eval_res["streets"],
+            "vehicle_passability_code": eval_res["vehicle_passability_code"],
             "vehicle_passability": eval_res["vehicle_passability_label"],
             "vehicle_passability_desc": eval_res["vehicle_passability_desc"],
             "sector_ditches_depth_in": eval_res["sectors"]["ditches"]["depth_in"],
@@ -553,25 +636,10 @@ def generate_latest_status(
     
     latest_wm_water = wm_water[-1] if wm_water else None
     latest_wm_pred = wm_preds[-1] if wm_preds else None
-    wm_surge = None
-    if (
-        latest_wm_water
-        and latest_wm_pred
-        and latest_wm_water.get("water_level_ft") is not None
-        and latest_wm_pred.get("water_level_ft") is not None
-    ):
-        wm_surge = round(latest_wm_water["water_level_ft"] - latest_wm_pred["water_level_ft"], 2)
-        
+    wm_surge = matched_surge(wm_water, wm_preds)
     latest_sw_water = sw_water[-1] if sw_water else None
     latest_sw_pred = sw_preds[-1] if sw_preds else None
-    sw_surge = None
-    if (
-        latest_sw_water
-        and latest_sw_pred
-        and latest_sw_water.get("water_level_ft") is not None
-        and latest_sw_pred.get("water_level_ft") is not None
-    ):
-        sw_surge = round(latest_sw_water["water_level_ft"] - latest_sw_pred["water_level_ft"], 2)
+    sw_surge = matched_surge(sw_water, sw_preds)
 
     bay_gradient = round(wm_surge - sw_surge, 2) if (wm_surge is not None and sw_surge is not None) else None
     bay_slope = round(bay_gradient / 46.2, 5) if bay_gradient is not None else None
@@ -585,15 +653,8 @@ def generate_latest_status(
     else:
         bay_pressure_direction = "N/A"
         
-    yt_surge = None
-    if (
-        latest_yt_water
-        and latest_yt_pred
-        and latest_yt_water.get("water_level_ft") is not None
-        and latest_yt_pred.get("water_level_ft") is not None
-    ):
-        yt_surge = round(latest_yt_water["water_level_ft"] - latest_yt_pred["water_level_ft"], 2)
-        
+    yt_surge = matched_surge(yt_water, yt_preds)
+
     w_spd = latest_wind.get("wind_speed_mph") if latest_wind else None
     w_dir = latest_wind.get("wind_dir_deg") if latest_wind else None
     along_bay = None
@@ -604,9 +665,13 @@ def generate_latest_status(
         cross_bay = round(w_spd * math.sin(bay_rad), 2)
         
     current_eval = micro_topography.evaluate_compound_inundation(current_stage, rain_rolling_6h_in=0.0)
-    current_tier, current_tier_label = get_risk_tier(current_stage)
+    current_tier, current_tier_label = compound_risk_tier(current_stage, current_eval)
+    if not is_recent(current_stage_time, now_utc):
+        current_tier, current_tier_label = UNKNOWN_TIER, "Unknown (gauge missing or stale)"
+        current_eval = micro_topography.evaluate_compound_inundation(None)
     
     # 48h outlook analysis
+    fcst_timeline = fcst_timeline or []
     stages_fcst = [r["forecast_stage_mllw_ft"] for r in fcst_timeline if isinstance(r.get("forecast_stage_mllw_ft"), (int, float))]
     peak_stage = max(stages_fcst) if stages_fcst else None
     peak_stage_time = None
@@ -618,20 +683,28 @@ def generate_latest_status(
                 peak_timeline_item = r
                 break
                 
-    peak_compound_depth = peak_timeline_item["compound_flood_depth_in"] if peak_timeline_item else 0.0
-    peak_tier, peak_tier_label = get_risk_tier(peak_stage) if peak_stage is not None else (0, "Unknown")
+    valid_rows = [r for r in fcst_timeline if finite_number(r.get("compound_flood_depth_in"))]
+    depth_item = max(valid_rows, key=lambda r: r["compound_flood_depth_in"], default=None)
+    hazard_item = max(valid_rows, key=lambda r: (r.get("risk_tier", -1),
+                      max((v for k, v in r.items() if k.startswith("sector_") and k.endswith("depth_in") and finite_number(v)), default=0)), default=None)
+    peak_compound_depth = depth_item["compound_flood_depth_in"] if depth_item else None
+    peak_tier = hazard_item["risk_tier"] if hazard_item else UNKNOWN_TIER
+    peak_tier_label = hazard_item["risk_label"] if hazard_item else "Unknown"
     hours_above_action = sum(1 for s in stages_fcst if s >= 4.0)
 
     stages_q10 = [r["forecast_stage_q10_ft"] for r in fcst_timeline if isinstance(r.get("forecast_stage_q10_ft"), (int, float))]
     stages_q90 = [r["forecast_stage_q90_ft"] for r in fcst_timeline if isinstance(r.get("forecast_stage_q90_ft"), (int, float))]
     peak_stage_q10 = max(stages_q10) if stages_q10 else None
     peak_stage_q90 = max(stages_q90) if stages_q90 else None
-    peak_depth_q10 = estimate_flood_depth_in(peak_stage_q10)
-    peak_depth_q90 = estimate_flood_depth_in(peak_stage_q90)
+    peak_depth_q10 = max((r["compound_flood_depth_q10_in"] for r in fcst_timeline if finite_number(r.get("compound_flood_depth_q10_in"))), default=None)
+    peak_depth_q90 = max((r["compound_flood_depth_q90_in"] for r in fcst_timeline if finite_number(r.get("compound_flood_depth_q90_in"))), default=None)
     
     status = {
         "status_generated_at_local": now_local.strftime("%Y-%m-%d %H:%M:%S %Z"),
         "status_generated_at_utc": now_utc.strftime("%Y-%m-%d %H:%M:%S UTC"),
+        "source_health": SOURCE_HEALTH.copy(),
+        "alerting_enabled": os.getenv("NTFY_ALERTS_ENABLED", "false").lower() == "true",
+        "forecast_method": "NWPS guidance with heuristic local adjustments; scenario bounds are not calibrated confidence intervals",
         "system_location": "Mathews County, Virginia (Ware River / Mobjack Bay Basin)",
         "current_conditions": {
             "observation_timestamp_local": current_stage_time,
@@ -644,6 +717,7 @@ def generate_latest_status(
             "pluvial_trapped_depth_in": current_eval["pluvial_trapped_depth_in"],
             "flood_risk_tier": current_tier,
             "flood_risk_label": current_tier_label,
+            "vehicle_passability_code": current_eval["vehicle_passability_code"],
             "vehicle_passability": current_eval["vehicle_passability_label"],
             "vehicle_passability_desc": current_eval["vehicle_passability_desc"],
             "community_name": current_eval.get("community_name", "Mobjack Bay Estates & Blackwater Community"),
@@ -678,10 +752,13 @@ def generate_latest_status(
             "peak_estimated_flood_depth_q90_in": peak_depth_q90,
             "peak_risk_tier": peak_tier,
             "peak_risk_label": peak_tier_label,
-            "peak_vehicle_passability": peak_timeline_item["vehicle_passability"] if peak_timeline_item else "ALL VEHICLES PASSABLE",
+            "peak_depth_time_local": depth_item["timestamp_local"] if depth_item else None,
+            "peak_hazard_time_local": hazard_item["timestamp_local"] if hazard_item else None,
+            "peak_vehicle_passability_code": hazard_item.get("vehicle_passability_code", "UNKNOWN") if hazard_item else "UNKNOWN",
+            "peak_vehicle_passability": hazard_item["vehicle_passability"] if hazard_item else "UNKNOWN — DATA UNAVAILABLE",
             "hours_at_or_above_action_stage": hours_above_action,
-            "confidence_interval_80pct_summary": (
-                f"Expected peak {peak_stage:.2f} ft (80% confidence interval: {peak_stage_q10:.2f} ft [best case] to {peak_stage_q90:.2f} ft [worst case]; depth {peak_depth_q10:.1f}\" to {peak_depth_q90:.1f}\")"
+            "scenario_range_summary": (
+                f"Expected peak {peak_stage:.2f} ft (uncalibrated scenario range: {peak_stage_q10:.2f} ft [lower scenario] to {peak_stage_q90:.2f} ft [upper scenario]; depth {peak_depth_q10:.1f}\" to {peak_depth_q90:.1f}\")"
                 if peak_stage is not None and peak_stage_q10 is not None else "N/A"
             ),
             "bay_hydraulic_slope_summary": (
@@ -696,6 +773,12 @@ def generate_latest_status(
         },
         "forecast_hourly_timeline": fcst_timeline
     }
+    for url, health in status["source_health"].items():
+        health["required"] = ("forecast/hourly" in url or url.endswith("/80,76")
+                              or ("stageflow/forecast" in url and any(r.get("forecast_source") == "nwps" for r in fcst_timeline)))
+    status["data_quality"] = assess_status(status, now_utc)
+    if not status["data_quality"]["forecast_available"]:
+        status["forecast_48h_outlook"]["advisory_summary"] = "Forecast incomplete or stale. Flooding cannot be ruled out; consult official forecasts and actual conditions."
     return status
 
 def update_archive_observations(archive_path, hourly_obs):
@@ -708,6 +791,8 @@ def update_archive_observations(archive_path, hourly_obs):
     current_hour_utc = now_utc.replace(minute=0, second=0, microsecond=0)
     
     existing_timestamps = set()
+    updated = 0
+    rows_by_timestamp = {}
     existing_rows = []
     headers = []
     
@@ -719,6 +804,7 @@ def update_archive_observations(archive_path, hourly_obs):
             for row in reader:
                 existing_timestamps.add(row.get("timestamp_utc", ""))
                 existing_rows.append(row)
+                rows_by_timestamp[row.get("timestamp_utc", "")] = row
                 
     # Dynamically expand headers to include any newly introduced columns from hourly_obs
     for obs in (hourly_obs or []):
@@ -739,12 +825,20 @@ def update_archive_observations(archive_path, hourly_obs):
         except Exception:
             pass
             
-        if ts_str not in existing_timestamps:
+        if ts_str in existing_timestamps:
+            previous = rows_by_timestamp.get(ts_str, {})
+            # Repair previously missing fields; never replace a good measurement with missing data.
+            for key, value in obs.items():
+                if value not in (None, "") and previous.get(key) in (None, ""):
+                    previous[key] = value
+                    updated += 1
+        else:
             existing_rows.append(obs)
+            rows_by_timestamp[ts_str] = obs
             existing_timestamps.add(ts_str)
             added += 1
             
-    if (added > 0 or not os.path.exists(archive_path)) and headers:
+    if (added > 0 or updated > 0 or not os.path.exists(archive_path)) and headers:
         existing_rows.sort(key=lambda r: r.get("timestamp_utc", ""))
         with open(archive_path, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=headers, restval="", extrasaction="ignore")
@@ -861,8 +955,7 @@ def main():
     # Write files
     log(f"\n[*] Writing outputs:")
     
-    with open(args.json_out, "w", encoding="utf-8") as f:
-        json.dump(status_summary, f, indent=2)
+    atomic_write_json(args.json_out, status_summary)
     log(f"    -> Status JSON: {args.json_out}")
 
     if hourly_obs:
