@@ -1,0 +1,11 @@
+{
+  "name": "mathews-flood-monitor-styles",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -i styles/tailwind.css -o assets/tailwind.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "4.3.0",
+    "@tailwindcss/cli": "4.3.0"
+  }
+}

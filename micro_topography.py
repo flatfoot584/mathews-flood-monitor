@@ -13,6 +13,7 @@ Author: Antigravity Assistant for Mathews County Flood Prediction Project
 """
 
 import math
+from runtime_safety import finite_number
 
 # Primary ground-truth observation benchmark coordinates (Daniel Ave, Blackwater, Mathews County, VA)
 BENCHMARK_LAT = 37.420183
@@ -141,8 +142,19 @@ def evaluate_compound_inundation(stage_mllw_ft, rain_rolling_6h_in=0.0):
         Structured dict with total flood depth, compound pluvial addition,
         sector-specific status, and vehicular accessibility matrix.
     """
-    if stage_mllw_ft is None:
-        stage_mllw_ft = 0.0
+    if not finite_number(stage_mllw_ft):
+        return {
+            "community_name": COMMUNITY_NAME, "stage_mllw_ft": None, "stage_navd88_ft": None,
+            "rainfall_6h_in": rain_rolling_6h_in, "backwater_restriction_pct": None,
+            "tidal_depth_in": None, "pluvial_trapped_depth_in": None, "total_compound_depth_in": None,
+            "vehicle_passability_code": "UNKNOWN", "vehicle_passability_label": "UNKNOWN — DATA UNAVAILABLE",
+            "vehicle_passability_desc": "Water-level data unavailable. Do not infer that roads are dry.",
+            "sectors": {key: {**sec, "invert_navd88_ft": round(sec["invert_mllw_ft"] + DATUM_OFFSET_NAVD88_MLLW, 2),
+                              "depth_in": None, "status": "UNKNOWN", "is_submerged": None}
+                        for key, sec in SECTOR_PROFILES.items()},
+            "streets": {key: {**sec, "name": key, "depth_in": None, "status": "UNKNOWN", "code": "UNKNOWN"}
+                        for key, sec in COMMUNITY_STREET_PROFILES.items()},
+        }
 
     # 1. Base tidal flood depth on property reference marker
     # Regression: depth = 10.95 * stage - 43.69
@@ -191,9 +203,9 @@ def evaluate_compound_inundation(stage_mllw_ft, rain_rolling_6h_in=0.0):
     for st_name, st_info in COMMUNITY_STREET_PROFILES.items():
         st_inv = st_info["invert_mllw_ft"]
         if stage_mllw_ft < st_inv:
-            st_depth = 0.0
-            st_status = "Dry & Passable"
-            st_code = "GREEN"
+            st_depth = pluvial_trapped_in
+            st_status = "Dry & Passable" if st_depth == 0 else f"Rain Ponding ({st_depth}\")"
+            st_code = "GREEN" if st_depth == 0 else "YELLOW" if st_depth < 3.5 else "ORANGE" if st_depth < 7.5 else "RED"
         else:
             st_rise = stage_mllw_ft - st_inv
             st_depth = round(st_rise * 11.2 + pluvial_trapped_in, 1)
@@ -220,22 +232,24 @@ def evaluate_compound_inundation(stage_mllw_ft, rain_rolling_6h_in=0.0):
     driveway_depth = sector_results["main_driveway"]["depth_in"]
     road_depth = sector_results["road_apron"]["depth_in"]
     
-    if driveway_depth == 0.0 and road_depth < 1.0:
+    route_depth = max(driveway_depth, road_depth,
+                      *(st["depth_in"] for st in street_results.values()))
+    if route_depth == 0.0:
         passability_code = "GREEN"
         passability_label = "ALL VEHICLES PASSABLE"
-        passability_desc = "Driveway and road dry. Normal conditions for all passenger vehicles."
-    elif driveway_depth < 3.5:
+        passability_desc = "No modeled standing water on community streets or driveway. Check actual conditions before travel."
+    elif route_depth < 3.5:
         passability_code = "YELLOW"
         passability_label = "CAUTION — LOW-CLEARANCE HAZARDOUS"
-        passability_desc = "1 to 3 inches on driveway apron. Sedans can pass with caution; avoid sudden braking."
-    elif driveway_depth < 7.5:
+        passability_desc = "Standing water on an access route. Avoid flooded roads; depth and road condition may differ from estimates."
+    elif route_depth < 7.5:
         passability_code = "ORANGE"
-        passability_label = "SEDANS BLOCKED — TRUCKS / SUVS ONLY"
-        passability_desc = "4 to 7 inches on main driveway. Passenger cars will stall or float. Move cars to high ground."
+        passability_label = "FLOODED ACCESS ROUTES — DO NOT DRIVE"
+        passability_desc = "Access routes have modeled flooding. Do not drive into standing water. Move vehicles before flooding begins."
     else:
         passability_code = "RED"
         passability_label = "CRITICAL — IMPASSABLE TO CIVILIAN TRAFFIC"
-        passability_desc = "8 to 15+ inches of deep saltwater. Road & driveway impassable. High-clearance emergency only."
+        passability_desc = "Deep modeled water on an access route. Do not enter flooded roads, regardless of vehicle clearance."
 
     return {
         "community_name": COMMUNITY_NAME,

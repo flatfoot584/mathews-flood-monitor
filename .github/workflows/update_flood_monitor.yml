@@ -2,106 +2,93 @@ name: Update Mathews County Flood Monitor
 
 on:
   schedule:
-    # Run every 30 minutes
-    - cron: '*/30 * * * *'
-  workflow_dispatch: # Allows manual trigger from GitHub UI
+    # Avoid top-of-hour contention. GitHub's schedule is best effort.
+    - cron: '7,37 * * * *'
+  workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [main]
     paths-ignore:
+      - '*.html'
       - 'latest_status.json'
+      - '*observations.csv'
       - 'forecast_48h.csv'
-      - 'realtime_recent_observations.csv'
-      - 'archive_hourly_observations.csv'
-      - 'flood_dashboard.html'
-      - 'index.html'
-      - 'alerts.html'
-      - 'subscribe.html'
-      - 'about.html'
-      - 'guide.html'
-      - 'data.html'
-      - 'science.html'
       - 'alert_state.json'
 
 permissions:
-  contents: write
-  pages: write
-  id-token: write
+  contents: read
 
 concurrency:
-  group: 'pages'
+  group: flood-pipeline
   cancel-in-progress: false
 
 jobs:
-  update-and-deploy:
+  update:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    outputs:
+      artifact_ready: ${{ steps.upload.outcome == 'success' }}
+    env:
+      NTFY_SERVER: ${{ vars.NTFY_SERVER || 'https://ntfy.sh' }}
+      NTFY_TOPIC: ${{ vars.NTFY_TOPIC || 'mathews-flood-23128' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+          fetch-depth: 1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.11'
+      - uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: .cache/api
+          key: flood-api-${{ github.run_id }}
+          restore-keys: flood-api-
+      - name: Regression checks
+        run: python3 -m unittest discover -s tests -v
+      - name: Fetch timestamped observations and forecasts
+        run: python3 ingest_realtime.py
+      - name: Generate portal
+        run: python3 generate_dashboard.py
+      - name: Dispatch existing community alerts
+        id: alerts
+        # Still publish fresh/degraded portal data if notification service fails.
+        continue-on-error: true
+        run: python3 check_alerts.py --ntfy
+      - name: Save data, pages, and successfully dispatched alert state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add latest_status.json forecast_48h.csv realtime_recent_observations.csv archive_hourly_observations.csv flood_dashboard.html index.html alerts.html subscribe.html about.html guide.html data.html science.html alert_state.json
+          if ! git diff --staged --quiet; then
+            git commit -m "Automated flood data and portal update [skip ci]"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+      - name: Prepare Pages site
+        run: python3 publish_site.py
+      - id: upload
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
+        with:
+          path: _site
+      - name: Surface notification failure
+        if: steps.alerts.outcome == 'failure'
+        run: |
+          echo 'Required alert delivery/configuration failed. Portal artifact was still prepared.'
+          exit 1
+  deploy:
+    if: always() && needs.update.outputs.artifact_ready == 'true'
+    needs: update
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - name: Set up Python
-        uses: actions/setup-python@v7
-        with:
-          python-version: '3.11'
-
-      - name: Run Real-Time Ingestion Pipeline
-        run: |
-          python3 ingest_realtime.py
-
-      - name: Evaluate Flood Hazards & Dispatch Mobile Push Alerts
-        run: |
-          python3 check_alerts.py --ntfy
-
-      - name: Generate Multi-Page Portal & Interactive Maps
-        run: |
-          python3 generate_dashboard.py
-
-      - name: Commit and push updated observations & portal pages
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add latest_status.json forecast_48h.csv realtime_recent_observations.csv archive_hourly_observations.csv flood_dashboard.html index.html alerts.html subscribe.html about.html guide.html data.html science.html alert_state.json
-          if git diff --staged --quiet; then
-            echo "No changes detected. Skipping git commit."
-          else
-            git commit -m "Automated flood data & portal update [skip ci]"
-            git push
-          fi
-
-      - name: Prepare GitHub Pages site directory
-        run: |
-          mkdir -p _site
-          cp index.html _site/
-          cp flood_dashboard.html _site/
-          cp alerts.html _site/
-          cp subscribe.html _site/
-          cp about.html _site/
-          cp guide.html _site/
-          cp data.html _site/
-          cp science.html _site/
-          cp latest_status.json _site/
-          cp forecast_48h.csv _site/
-          cp realtime_recent_observations.csv _site/
-          cp archive_hourly_observations.csv _site/
-          cp ground_truth_observations.csv _site/
-          cp SCIENTIFIC_FINDINGS.md _site/
-          if [ -f alert_state.json ]; then cp alert_state.json _site/; fi
-          mkdir -p _site/models
-          if [ -f models/scientific_evidence.json ]; then cp models/scientific_evidence.json _site/models/; fi
-          if [ -f models/model_weights_and_thresholds.json ]; then cp models/model_weights_and_thresholds.json _site/models/; fi
-          mkdir -p _site/photos
-          cp photos/*.jpeg _site/photos/
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: '_site'
-
-      - name: Deploy to GitHub Pages
+      - name: Deploy portal
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5
