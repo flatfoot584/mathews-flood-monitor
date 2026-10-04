@@ -31,10 +31,10 @@
     }
   }
   freshness();setInterval(freshness,60000);
-  document.getElementById('refresh-data')?.addEventListener('click',()=>window.location.reload());
+  document.getElementById('refresh-data')?.addEventListener('click',()=>{const url=new URL(window.location.href);url.searchParams.set('_refresh',Date.now());window.location.replace(url.href);});
   function offline(){let notice=document.getElementById('offline-notice');if(!navigator.onLine&&!notice){notice=document.createElement('aside');notice.id='offline-notice';notice.setAttribute('role','status');notice.textContent='Offline copy: observations and forecasts may be out of date. Check their times. Map tiles and external warnings need a connection.';document.querySelector('header')?.after(notice);}if(navigator.onLine&&notice)notice.remove();}
   offline();window.addEventListener('online',offline);window.addEventListener('offline',offline);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('service-worker.js',{updateViaCache:'none'}).catch(()=>{});
   document.getElementById('copy-topic')?.addEventListener('click',async event=>{const feedback=document.getElementById('copy-feedback');try{await navigator.clipboard.writeText(event.currentTarget.dataset.topic);feedback.textContent='Topic copied. Paste it into ntfy to subscribe.';}catch{feedback.textContent='Copy is unavailable. Select and copy the displayed topic manually.'}});
   const modes=['btn-map-current','btn-map-peak'],zooms=['btn-zoom-community','btn-zoom-property','btn-zoom-county'];
   for(const ids of [modes,zooms])ids.forEach((id,index)=>{const el=document.getElementById(id);if(!el)return;el.setAttribute('aria-pressed',String(index===0));el.addEventListener('click',()=>ids.forEach(other=>document.getElementById(other)?.setAttribute('aria-pressed',String(other===id))));});

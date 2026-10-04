@@ -114,6 +114,14 @@ class HealthTests(unittest.TestCase):
         self.assertNotIn('el.hidden=true', Path('assets/community.js').read_text())
         self.assertIn('el.hidden=false', Path('assets/community.js').read_text())
 
+    def test_new_page_uses_content_versioned_age_guard_and_styles(self):
+        page = dashboard.build_index_html(fixture(), [], [])
+        self.assertRegex(page, r'assets/community\.js\?v=[a-f0-9]{12}')
+        self.assertRegex(page, r'assets/community\.css\?v=[a-f0-9]{12}')
+        worker = Path('service-worker.js').read_text()
+        self.assertIn("cache:'no-cache'", worker)
+        self.assertIn("ignoreSearch:event.request.mode==='navigate'", worker)
+
 
 if __name__ == '__main__':
     unittest.main()

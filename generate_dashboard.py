@@ -110,6 +110,15 @@ def safe_template(function):
                             *(escape_view(a) for a in args), **{k: escape_view(v) for k, v in kwargs.items()})
         if not document.startswith("<!DOCTYPE"):
             return document
+        # New HTML must never load an old age guard from the browser/CDN cache.
+        # The worker caches these exact URLs for offline use after an online visit.
+        from pathlib import Path
+        for asset in ('assets/community.js', 'assets/community.css'):
+            asset_path = Path(__file__).resolve().parent / asset
+            if not asset_path.is_file():
+                continue  # The publication allowlist enforces assets at deploy time.
+            revision = hashlib.sha256(asset_path.read_bytes()).hexdigest()[:12]
+            document = document.replace('"' + asset + '"', '"' + asset + '?v=' + revision + '"')
         document = document.replace('</head>', '<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f172a"></head>', 1)
         scripts = re.findall(r'<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>', document, re.S)
         handlers = [html.unescape(value) for value in re.findall(r'on(?:click|input|change)="([^"]*)"', document)]
