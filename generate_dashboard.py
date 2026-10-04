@@ -282,7 +282,7 @@ def build_shared_navbar(active_page, status):
       Last update: {status.get('status_generated_at_local', 'Unavailable')}.
       Gauge observation: {curr.get('observation_timestamp_local') or 'Unavailable'}.
       {"Data incomplete or stale. Do not assume roads are clear." if status['data_quality']['state'] != 'healthy' else "Check actual road conditions before travel."}
-      {"Mobile push alerts are not enabled." if not status.get('alerting_enabled', False) else ""}
+      {"Mobile push alerts are enabled for subscribers." if status.get('alerting_enabled', False) else "Mobile push alerts are not enabled."}
     </aside>
     """
 
@@ -926,7 +926,7 @@ def build_index_html(status, obs_rows, fcst_rows):
             <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30">Zero Accounts</span>
           </div>
           <p class="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-            Never get caught off guard by saltwater over Daniel Ave or Bayshore Ave. Push notifications sent <strong>when fresh forecasts first indicate a flood hazard</strong>. Public subscriptions; authenticated publishing.
+            Never get caught off guard by saltwater over Daniel Ave or Bayshore Ave. Push notifications sent <strong>when fresh forecasts first indicate a flood hazard</strong>. Subscribe to our public alert topic.
           </p>
         </div>
       </div>
