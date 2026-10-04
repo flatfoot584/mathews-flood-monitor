@@ -1,0 +1,939 @@
+{
+  "station": "FTMV2 / USGS 0204289994",
+  "parameter": "62620, ft NAVD88",
+  "history_sha256": "ab83a8fcb0d5dee152836c3345efcb9ada431359a0d77535057be36b67ee9153",
+  "historical_hourly_count": 35064,
+  "software_versions": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "scikit_learn": "1.9.1"
+  },
+  "baseline_sensors": "Ware River, Windmill Point, Yorktown weather and predicted tide, Sewells Point",
+  "protocol": "1h observation latency; train 2021\u201322; validate 2023; test 2024; 48h split gap; fixed Ridge alpha=10; paired complete-case rows; no future observed weather",
+  "promotion_gate": "At least 5% paired test MAE improvement, no high-water MAE or threshold-miss regression at 1/3/6h; actual issued-guidance replay or prospective evidence additionally required",
+  "operational_replay_available": false,
+  "results": [
+    {
+      "horizon_hours": 1,
+      "train_n": 15486,
+      "validation_n": 7705,
+      "baseline": {
+        "validation": {
+          "n": 7705,
+          "mae_ft": 0.12098191969930686,
+          "rmse_ft": 0.16227949005379724,
+          "high_n": 73,
+          "high_mae_ft": 0.1473664590896708,
+          "misses": 13,
+          "false_alarms": 8,
+          "modeled_depth_mae_in": 0.012966033409261484
+        },
+        "test": {
+          "n": 5767,
+          "mae_ft": 0.12621762538983552,
+          "rmse_ft": 0.16664976042791596,
+          "high_n": 121,
+          "high_mae_ft": 0.14069889461119442,
+          "misses": 32,
+          "false_alarms": 6,
+          "modeled_depth_mae_in": 0.027151195314443075
+        }
+      },
+      "fort_monroe": {
+        "validation": {
+          "n": 7705,
+          "mae_ft": 0.0946341623807212,
+          "rmse_ft": 0.1282551191030912,
+          "high_n": 73,
+          "high_mae_ft": 0.13839968237802716,
+          "misses": 18,
+          "false_alarms": 3,
+          "modeled_depth_mae_in": 0.011959224431802386
+        },
+        "test": {
+          "n": 5767,
+          "mae_ft": 0.10015995640318202,
+          "rmse_ft": 0.13380586640641895,
+          "high_n": 121,
+          "high_mae_ft": 0.13583512232751224,
+          "misses": 38,
+          "false_alarms": 1,
+          "modeled_depth_mae_in": 0.024380114008654894
+        }
+      },
+      "improvement_pct": 20.645031869496698,
+      "events": [
+        {
+          "start": "2024-01-10 11:00:00+00:00",
+          "end": "2024-01-10 11:00:00+00:00",
+          "n": 49,
+          "baseline_mae_ft": 0.28715683082141935,
+          "fort_mae_ft": 0.1820811490335934,
+          "baseline_peak_error_ft": 0.24179785763800776,
+          "fort_peak_error_ft": 0.10631615917471038
+        },
+        {
+          "start": "2024-01-13 13:00:00+00:00",
+          "end": "2024-01-13 14:00:00+00:00",
+          "n": 48,
+          "baseline_mae_ft": 0.15910977280886393,
+          "fort_mae_ft": 0.13743234159692205,
+          "baseline_peak_error_ft": 0.10586618034365003,
+          "fort_peak_error_ft": 0.10872333526049083
+        },
+        {
+          "start": "2024-02-06 08:00:00+00:00",
+          "end": "2024-02-08 11:00:00+00:00",
+          "n": 100,
+          "baseline_mae_ft": 0.16990178081664514,
+          "fort_mae_ft": 0.12131061896357821,
+          "baseline_peak_error_ft": 0.25019151146863194,
+          "fort_peak_error_ft": 0.265519424932231
+        },
+        {
+          "start": "2024-02-11 13:00:00+00:00",
+          "end": "2024-02-13 16:00:00+00:00",
+          "n": 92,
+          "baseline_mae_ft": 0.14429438440782355,
+          "fort_mae_ft": 0.12773647523706436,
+          "baseline_peak_error_ft": 0.11569528356044234,
+          "fort_peak_error_ft": 0.19403004769053656
+        },
+        {
+          "start": "2024-03-09 10:00:00+00:00",
+          "end": "2024-03-10 13:00:00+00:00",
+          "n": 76,
+          "baseline_mae_ft": 0.21057541083787318,
+          "fort_mae_ft": 0.18662226171797117,
+          "baseline_peak_error_ft": 0.2595964261727426,
+          "fort_peak_error_ft": 0.1949828531069775
+        },
+        {
+          "start": "2024-03-26 00:00:00+00:00",
+          "end": "2024-03-27 14:00:00+00:00",
+          "n": 80,
+          "baseline_mae_ft": 0.17508878120276,
+          "fort_mae_ft": 0.1300883108915234,
+          "baseline_peak_error_ft": 0.2900737053219222,
+          "fort_peak_error_ft": 0.31543744444483135
+        },
+        {
+          "start": "2024-04-09 00:00:00+00:00",
+          "end": "2024-04-11 02:00:00+00:00",
+          "n": 87,
+          "baseline_mae_ft": 0.1296677624920477,
+          "fort_mae_ft": 0.11168747679290043,
+          "baseline_peak_error_ft": 0.061949504128141264,
+          "fort_peak_error_ft": 0.16891815403800248
+        },
+        {
+          "start": "2024-05-04 09:00:00+00:00",
+          "end": "2024-05-04 21:00:00+00:00",
+          "n": 61,
+          "baseline_mae_ft": 0.1272894251706792,
+          "fort_mae_ft": 0.10106631361346527,
+          "baseline_peak_error_ft": 0.05831507339168418,
+          "fort_peak_error_ft": 0.08376703759686643
+        },
+        {
+          "start": "2024-05-10 01:00:00+00:00",
+          "end": "2024-05-12 03:00:00+00:00",
+          "n": 99,
+          "baseline_mae_ft": 0.12471585675008919,
+          "fort_mae_ft": 0.11021179945541576,
+          "baseline_peak_error_ft": 0.2607671902889761,
+          "fort_peak_error_ft": 0.25882158828056756
+        },
+        {
+          "start": "2024-05-15 05:00:00+00:00",
+          "end": "2024-05-15 05:00:00+00:00",
+          "n": 49,
+          "baseline_mae_ft": 0.16630455613769823,
+          "fort_mae_ft": 0.14815009606793186,
+          "baseline_peak_error_ft": 0.501560447873278,
+          "fort_peak_error_ft": 0.5773527403191911
+        },
+        {
+          "start": "2024-09-15 22:00:00+00:00",
+          "end": "2024-09-29 22:00:00+00:00",
+          "n": 361,
+          "baseline_mae_ft": 0.10659714158967534,
+          "fort_mae_ft": 0.07946828688602756,
+          "baseline_peak_error_ft": 0.12148498027040855,
+          "fort_peak_error_ft": 0.23475358426917303
+        }
+      ]
+    },
+    {
+      "horizon_hours": 3,
+      "train_n": 15433,
+      "validation_n": 7678,
+      "baseline": {
+        "validation": {
+          "n": 7678,
+          "mae_ft": 0.1536015218178904,
+          "rmse_ft": 0.20810316302909465,
+          "high_n": 72,
+          "high_mae_ft": 0.22297522796382355,
+          "misses": 24,
+          "false_alarms": 8,
+          "modeled_depth_mae_in": 0.018489599788402263
+        },
+        "test": {
+          "n": 5748,
+          "mae_ft": 0.1647066152548503,
+          "rmse_ft": 0.2162947078630292,
+          "high_n": 121,
+          "high_mae_ft": 0.21525929965440452,
+          "misses": 48,
+          "false_alarms": 7,
+          "modeled_depth_mae_in": 0.03630008326190489
+        }
+      },
+      "fort_monroe": {
+        "validation": {
+          "n": 7678,
+          "mae_ft": 0.14853797418553968,
+          "rmse_ft": 0.20150770484386057,
+          "high_n": 72,
+          "high_mae_ft": 0.22737124899415542,
+          "misses": 26,
+          "false_alarms": 8,
+          "modeled_depth_mae_in": 0.018309796012364484
+        },
+        "test": {
+          "n": 5748,
+          "mae_ft": 0.15677881018432344,
+          "rmse_ft": 0.20683372699171304,
+          "high_n": 121,
+          "high_mae_ft": 0.20990336831374276,
+          "misses": 48,
+          "false_alarms": 4,
+          "modeled_depth_mae_in": 0.03542690672206791
+        }
+      },
+      "improvement_pct": 4.813288803403671,
+      "events": [
+        {
+          "start": "2024-01-10 09:00:00+00:00",
+          "end": "2024-01-10 09:00:00+00:00",
+          "n": 49,
+          "baseline_mae_ft": 0.38586183614507846,
+          "fort_mae_ft": 0.3600539070971875,
+          "baseline_peak_error_ft": 0.18510796913079552,
+          "fort_peak_error_ft": 0.1253334898638787
+        },
+        {
+          "start": "2024-01-13 11:00:00+00:00",
+          "end": "2024-01-13 12:00:00+00:00",
+          "n": 48,
+          "baseline_mae_ft": 0.2032137508772489,
+          "fort_mae_ft": 0.2062518916763685,
+          "baseline_peak_error_ft": 0.04945734125556456,
+          "fort_peak_error_ft": 0.024736152805394873
+        },
+        {
+          "start": "2024-02-06 06:00:00+00:00",
+          "end": "2024-02-08 09:00:00+00:00",
+          "n": 100,
+          "baseline_mae_ft": 0.2562345472384855,
+          "fort_mae_ft": 0.23332923142046164,
+          "baseline_peak_error_ft": 0.30984233409393624,
+          "fort_peak_error_ft": 0.333097144296965
+        },
+        {
+          "start": "2024-02-11 11:00:00+00:00",
+          "end": "2024-02-13 14:00:00+00:00",
+          "n": 92,
+          "baseline_mae_ft": 0.1943729865630188,
+          "fort_mae_ft": 0.20009562041929424,
+          "baseline_peak_error_ft": 0.3515950691689014,
+          "fort_peak_error_ft": 0.3826342204680335
+        },
+        {
+          "start": "2024-03-09 08:00:00+00:00",
+          "end": "2024-03-10 11:00:00+00:00",
+          "n": 76,
+          "baseline_mae_ft": 0.30258266461966304,
+          "fort_mae_ft": 0.29129948592965976,
+          "baseline_peak_error_ft": 0.12265425945232611,
+          "fort_peak_error_ft": 0.1613617363744595
+        },
+        {
+          "start": "2024-03-25 22:00:00+00:00",
+          "end": "2024-03-27 12:00:00+00:00",
+          "n": 81,
+          "baseline_mae_ft": 0.2563016910629606,
+          "fort_mae_ft": 0.24663505464891364,
+          "baseline_peak_error_ft": 0.27615016838021766,
+          "fort_peak_error_ft": 0.2380151712408045
+        },
+        {
+          "start": "2024-04-08 22:00:00+00:00",
+          "end": "2024-04-11 00:00:00+00:00",
+          "n": 87,
+          "baseline_mae_ft": 0.16953952471112277,
+          "fort_mae_ft": 0.166884314605989,
+          "baseline_peak_error_ft": 0.11861746588681132,
+          "fort_peak_error_ft": 0.14077472247480172
+        },
+        {
+          "start": "2024-05-04 07:00:00+00:00",
+          "end": "2024-05-04 19:00:00+00:00",
+          "n": 61,
+          "baseline_mae_ft": 0.18432366097281655,
+          "fort_mae_ft": 0.17044642239481975,
+          "baseline_peak_error_ft": 0.11410470084849678,
+          "fort_peak_error_ft": 0.0365639523276764
+        },
+        {
+          "start": "2024-05-09 23:00:00+00:00",
+          "end": "2024-05-12 01:00:00+00:00",
+          "n": 99,
+          "baseline_mae_ft": 0.1680781878064268,
+          "fort_mae_ft": 0.16410880923235197,
+          "baseline_peak_error_ft": 0.319358608630651,
+          "fort_peak_error_ft": 0.4227456064364308
+        },
+        {
+          "start": "2024-05-15 03:00:00+00:00",
+          "end": "2024-05-15 03:00:00+00:00",
+          "n": 49,
+          "baseline_mae_ft": 0.21504458536520493,
+          "fort_mae_ft": 0.2093029157556408,
+          "baseline_peak_error_ft": 0.7674939014776347,
+          "fort_peak_error_ft": 0.8111724709150434
+        },
+        {
+          "start": "2024-09-15 20:00:00+00:00",
+          "end": "2024-09-29 20:00:00+00:00",
+          "n": 361,
+          "baseline_mae_ft": 0.1403684301878869,
+          "fort_mae_ft": 0.13463200478203666,
+          "baseline_peak_error_ft": 0.33185593011662906,
+          "fort_peak_error_ft": 0.33144494442113803
+        }
+      ]
+    },
+    {
+      "horizon_hours": 6,
+      "train_n": 15353,
+      "validation_n": 7641,
+      "baseline": {
+        "validation": {
+          "n": 7641,
+          "mae_ft": 0.1761714247694265,
+          "rmse_ft": 0.23955355484301932,
+          "high_n": 71,
+          "high_mae_ft": 0.3348134828933745,
+          "misses": 31,
+          "false_alarms": 9,
+          "modeled_depth_mae_in": 0.02467328740982257
+        },
+        "test": {
+          "n": 5715,
+          "mae_ft": 0.18555596283833506,
+          "rmse_ft": 0.24507014681931266,
+          "high_n": 121,
+          "high_mae_ft": 0.2704911303779311,
+          "misses": 57,
+          "false_alarms": 8,
+          "modeled_depth_mae_in": 0.04335019333365617
+        }
+      },
+      "fort_monroe": {
+        "validation": {
+          "n": 7641,
+          "mae_ft": 0.1749608516909289,
+          "rmse_ft": 0.23780408407340684,
+          "high_n": 71,
+          "high_mae_ft": 0.3338880221592216,
+          "misses": 31,
+          "false_alarms": 8,
+          "modeled_depth_mae_in": 0.02365158128088861
+        },
+        "test": {
+          "n": 5715,
+          "mae_ft": 0.1816953156782259,
+          "rmse_ft": 0.24071060183464837,
+          "high_n": 121,
+          "high_mae_ft": 0.2710867456436148,
+          "misses": 56,
+          "false_alarms": 6,
+          "modeled_depth_mae_in": 0.04330696069558909
+        }
+      },
+      "improvement_pct": 2.080583723128717,
+      "events": [
+        {
+          "start": "2024-01-10 06:00:00+00:00",
+          "end": "2024-01-10 06:00:00+00:00",
+          "n": 49,
+          "baseline_mae_ft": 0.4356085083521225,
+          "fort_mae_ft": 0.4315235117220364,
+          "baseline_peak_error_ft": 0.47105985216103186,
+          "fort_peak_error_ft": 0.39446992353934274
+        },
+        {
+          "start": "2024-01-13 08:00:00+00:00",
+          "end": "2024-01-13 09:00:00+00:00",
+          "n": 48,
+          "baseline_mae_ft": 0.2630010247334578,
+          "fort_mae_ft": 0.2655199631352551,
+          "baseline_peak_error_ft": 0.16049972907382948,
+          "fort_peak_error_ft": 0.1706039975782785
+        },
+        {
+          "start": "2024-02-06 03:00:00+00:00",
+          "end": "2024-02-08 06:00:00+00:00",
+          "n": 100,
+          "baseline_mae_ft": 0.3130323228971383,
+          "fort_mae_ft": 0.30245425306127083,
+          "baseline_peak_error_ft": 0.42623893196502216,
+          "fort_peak_error_ft": 0.439388149886744
+        },
+        {
+          "start": "2024-02-11 08:00:00+00:00",
+          "end": "2024-02-13 11:00:00+00:00",
+          "n": 92,
+          "baseline_mae_ft": 0.23398472221515168,
+          "fort_mae_ft": 0.23759390375692585,
+          "baseline_peak_error_ft": 0.20326219568213766,
+          "fort_peak_error_ft": 0.27424571610959525
+        },
+        {
+          "start": "2024-03-09 05:00:00+00:00",
+          "end": "2024-03-10 08:00:00+00:00",
+          "n": 76,
+          "baseline_mae_ft": 0.3454326447170732,
+          "fort_mae_ft": 0.3405029857547371,
+          "baseline_peak_error_ft": 0.3714422257937029,
+          "fort_peak_error_ft": 0.437041495092509
+        },
+        {
+          "start": "2024-03-25 19:00:00+00:00",
+          "end": "2024-03-27 09:00:00+00:00",
+          "n": 82,
+          "baseline_mae_ft": 0.3126113900152744,
+          "fort_mae_ft": 0.3060391047956413,
+          "baseline_peak_error_ft": 0.34920170967782926,
+          "fort_peak_error_ft": 0.33642407594928336
+        },
+        {
+          "start": "2024-04-08 19:00:00+00:00",
+          "end": "2024-04-10 21:00:00+00:00",
+          "n": 87,
+          "baseline_mae_ft": 0.16490936157116157,
+          "fort_mae_ft": 0.16856785658622478,
+          "baseline_peak_error_ft": 0.16735535282028202,
+          "fort_peak_error_ft": 0.16021929531594958
+        },
+        {
+          "start": "2024-05-04 04:00:00+00:00",
+          "end": "2024-05-04 16:00:00+00:00",
+          "n": 61,
+          "baseline_mae_ft": 0.199530476606408,
+          "fort_mae_ft": 0.19740820433271536,
+          "baseline_peak_error_ft": 0.05482270525442434,
+          "fort_peak_error_ft": 0.03721092700802675
+        },
+        {
+          "start": "2024-05-09 20:00:00+00:00",
+          "end": "2024-05-11 22:00:00+00:00",
+          "n": 99,
+          "baseline_mae_ft": 0.17998705504074747,
+          "fort_mae_ft": 0.1793559947620591,
+          "baseline_peak_error_ft": 0.47937438344687866,
+          "fort_peak_error_ft": 0.4459830035271919
+        },
+        {
+          "start": "2024-05-15 00:00:00+00:00",
+          "end": "2024-05-15 00:00:00+00:00",
+          "n": 49,
+          "baseline_mae_ft": 0.24382372899748458,
+          "fort_mae_ft": 0.23481098686012283,
+          "baseline_peak_error_ft": 0.7449588769968134,
+          "fort_peak_error_ft": 0.7316882704904244
+        },
+        {
+          "start": "2024-09-15 17:00:00+00:00",
+          "end": "2024-09-29 17:00:00+00:00",
+          "n": 361,
+          "baseline_mae_ft": 0.15307448211259114,
+          "fort_mae_ft": 0.14987723966123465,
+          "baseline_peak_error_ft": 0.47357574334230534,
+          "fort_peak_error_ft": 0.4587177993955649
+        }
+      ]
+    },
+    {
+      "horizon_hours": 12,
+      "train_n": 15214,
+      "validation_n": 7574,
+      "baseline": {
+        "validation": {
+          "n": 7574,
+          "mae_ft": 0.2028497906509508,
+          "rmse_ft": 0.28031966180300316,
+          "high_n": 74,
+          "high_mae_ft": 0.4888585223872838,
+          "misses": 37,
+          "false_alarms": 12,
+          "modeled_depth_mae_in": 0.030826193220343585
+        },
+        "test": {
+          "n": 5653,
+          "mae_ft": 0.21806861661128565,
+          "rmse_ft": 0.2892246584058881,
+          "high_n": 124,
+          "high_mae_ft": 0.311406477424273,
+          "misses": 61,
+          "false_alarms": 6,
+          "modeled_depth_mae_in": 0.04533371710131279
+        }
+      },
+      "fort_monroe": {
+        "validation": {
+          "n": 7574,
+          "mae_ft": 0.20124952245041638,
+          "rmse_ft": 0.2784414110010164,
+          "high_n": 74,
+          "high_mae_ft": 0.48266944686254565,
+          "misses": 38,
+          "false_alarms": 10,
+          "modeled_depth_mae_in": 0.02950781938636906
+        },
+        "test": {
+          "n": 5653,
+          "mae_ft": 0.21453884133247503,
+          "rmse_ft": 0.2852302027240392,
+          "high_n": 124,
+          "high_mae_ft": 0.31234222799791705,
+          "misses": 62,
+          "false_alarms": 6,
+          "modeled_depth_mae_in": 0.045737729661569346
+        }
+      },
+      "improvement_pct": 1.618653492493404,
+      "events": [
+        {
+          "start": "2024-01-10 00:00:00+00:00",
+          "end": "2024-01-10 00:00:00+00:00",
+          "n": 49,
+          "baseline_mae_ft": 0.623582674291141,
+          "fort_mae_ft": 0.5986271364978286,
+          "baseline_peak_error_ft": 0.4871850364686363,
+          "fort_peak_error_ft": 0.4825938061646884
+        },
+        {
+          "start": "2024-01-13 02:00:00+00:00",
+          "end": "2024-01-13 03:00:00+00:00",
+          "n": 46,
+          "baseline_mae_ft": 0.3637749120921328,
+          "fort_mae_ft": 0.36413440662468466,
+          "baseline_peak_error_ft": 0.20387143838628585,
+          "fort_peak_error_ft": 0.17419138037498527
+        },
+        {
+          "start": "2024-02-05 21:00:00+00:00",
+          "end": "2024-02-08 00:00:00+00:00",
+          "n": 100,
+          "baseline_mae_ft": 0.36584124087199804,
+          "fort_mae_ft": 0.35887537307299977,
+          "baseline_peak_error_ft": 0.47576581588026556,
+          "fort_peak_error_ft": 0.47927994501819704
+        },
+        {
+          "start": "2024-02-11 02:00:00+00:00",
+          "end": "2024-02-13 05:00:00+00:00",
+          "n": 90,
+          "baseline_mae_ft": 0.3107174560222538,
+          "fort_mae_ft": 0.310522920005442,
+          "baseline_peak_error_ft": 0.2887309043326409,
+          "fort_peak_error_ft": 0.2578171532742193
+        },
+        {
+          "start": "2024-03-08 23:00:00+00:00",
+          "end": "2024-03-10 02:00:00+00:00",
+          "n": 76,
+          "baseline_mae_ft": 0.45195301168581226,
+          "fort_mae_ft": 0.4468851027564962,
+          "baseline_peak_error_ft": 0.27249047816467975,
+          "fort_peak_error_ft": 0.26044981411095414
+        },
+        {
+          "start": "2024-03-25 13:00:00+00:00",
+          "end": "2024-03-27 03:00:00+00:00",
+          "n": 83,
+          "baseline_mae_ft": 0.3878765717213253,
+          "fort_mae_ft": 0.37952113390018494,
+          "baseline_peak_error_ft": 0.4819349038839764,
+          "fort_peak_error_ft": 0.4477519706895139
+        },
+        {
+          "start": "2024-04-08 13:00:00+00:00",
+          "end": "2024-04-11 16:00:00+00:00",
+          "n": 92,
+          "baseline_mae_ft": 0.23455755133063821,
+          "fort_mae_ft": 0.22851419087102928,
+          "baseline_peak_error_ft": 0.43060351567842314,
+          "fort_peak_error_ft": 0.5003719148461592
+        },
+        {
+          "start": "2024-05-03 22:00:00+00:00",
+          "end": "2024-05-04 10:00:00+00:00",
+          "n": 61,
+          "baseline_mae_ft": 0.2799618985067135,
+          "fort_mae_ft": 0.26565187614654834,
+          "baseline_peak_error_ft": 0.14975458874021275,
+          "fort_peak_error_ft": 0.08878217087602014
+        },
+        {
+          "start": "2024-05-09 14:00:00+00:00",
+          "end": "2024-05-11 16:00:00+00:00",
+          "n": 99,
+          "baseline_mae_ft": 0.24801431253749331,
+          "fort_mae_ft": 0.24609539349179982,
+          "baseline_peak_error_ft": 0.6811331836407275,
+          "fort_peak_error_ft": 0.7105178406715975
+        },
+        {
+          "start": "2024-05-14 18:00:00+00:00",
+          "end": "2024-05-14 18:00:00+00:00",
+          "n": 49,
+          "baseline_mae_ft": 0.2789378832924903,
+          "fort_mae_ft": 0.2642910245833416,
+          "baseline_peak_error_ft": 0.43782612149873756,
+          "fort_peak_error_ft": 0.469020660108014
+        },
+        {
+          "start": "2024-09-15 11:00:00+00:00",
+          "end": "2024-09-29 11:00:00+00:00",
+          "n": 361,
+          "baseline_mae_ft": 0.1903693824487723,
+          "fort_mae_ft": 0.1859436107240431,
+          "baseline_peak_error_ft": 0.4352335468812596,
+          "fort_peak_error_ft": 0.47437409521933294
+        }
+      ]
+    },
+    {
+      "horizon_hours": 24,
+      "train_n": 14946,
+      "validation_n": 7441,
+      "baseline": {
+        "validation": {
+          "n": 7441,
+          "mae_ft": 0.26834785334320205,
+          "rmse_ft": 0.369612540672583,
+          "high_n": 71,
+          "high_mae_ft": 0.7966995757007339,
+          "misses": 53,
+          "false_alarms": 13,
+          "modeled_depth_mae_in": 0.03911057457537652
+        },
+        "test": {
+          "n": 5544,
+          "mae_ft": 0.2955735842604256,
+          "rmse_ft": 0.39150970525618084,
+          "high_n": 122,
+          "high_mae_ft": 0.5363631617106586,
+          "misses": 87,
+          "false_alarms": 2,
+          "modeled_depth_mae_in": 0.060020352580126474
+        }
+      },
+      "fort_monroe": {
+        "validation": {
+          "n": 7441,
+          "mae_ft": 0.26644979600878743,
+          "rmse_ft": 0.36666556182343935,
+          "high_n": 71,
+          "high_mae_ft": 0.7898000357788204,
+          "misses": 52,
+          "false_alarms": 15,
+          "modeled_depth_mae_in": 0.037802262370627004
+        },
+        "test": {
+          "n": 5544,
+          "mae_ft": 0.29273571585315994,
+          "rmse_ft": 0.3865701129746719,
+          "high_n": 122,
+          "high_mae_ft": 0.5301775415061208,
+          "misses": 85,
+          "false_alarms": 2,
+          "modeled_depth_mae_in": 0.06010833852803787
+        }
+      },
+      "improvement_pct": 0.9601224731792276,
+      "events": [
+        {
+          "start": "2024-01-09 12:00:00+00:00",
+          "end": "2024-01-09 12:00:00+00:00",
+          "n": 49,
+          "baseline_mae_ft": 0.7449418488808429,
+          "fort_mae_ft": 0.7404893559168225,
+          "baseline_peak_error_ft": 0.37191877103286597,
+          "fort_peak_error_ft": 0.35622178376538427
+        },
+        {
+          "start": "2024-01-12 14:00:00+00:00",
+          "end": "2024-01-12 14:00:00+00:00",
+          "n": 39,
+          "baseline_mae_ft": 0.5361759427078757,
+          "fort_mae_ft": 0.5309616660520686,
+          "baseline_peak_error_ft": 0.3508920466537129,
+          "fort_peak_error_ft": 0.40244657717216725
+        },
+        {
+          "start": "2024-02-05 09:00:00+00:00",
+          "end": "2024-02-07 12:00:00+00:00",
+          "n": 100,
+          "baseline_mae_ft": 0.57199239044844,
+          "fort_mae_ft": 0.561043128567139,
+          "baseline_peak_error_ft": 0.6872225590200998,
+          "fort_peak_error_ft": 0.5959508312404456
+        },
+        {
+          "start": "2024-02-10 14:00:00+00:00",
+          "end": "2024-02-12 17:00:00+00:00",
+          "n": 85,
+          "baseline_mae_ft": 0.4960685848874508,
+          "fort_mae_ft": 0.49969375439411623,
+          "baseline_peak_error_ft": 0.5625448799961612,
+          "fort_peak_error_ft": 0.5937424406533016
+        },
+        {
+          "start": "2024-03-08 11:00:00+00:00",
+          "end": "2024-03-09 14:00:00+00:00",
+          "n": 76,
+          "baseline_mae_ft": 0.6461283605026575,
+          "fort_mae_ft": 0.6376042062461224,
+          "baseline_peak_error_ft": 0.4799930422999088,
+          "fort_peak_error_ft": 0.4692665430128313
+        },
+        {
+          "start": "2024-03-25 01:00:00+00:00",
+          "end": "2024-03-26 15:00:00+00:00",
+          "n": 83,
+          "baseline_mae_ft": 0.6643002267080513,
+          "fort_mae_ft": 0.6465446810575908,
+          "baseline_peak_error_ft": 0.6924053659090506,
+          "fort_peak_error_ft": 0.6904111544711071
+        },
+        {
+          "start": "2024-04-08 01:00:00+00:00",
+          "end": "2024-04-11 04:00:00+00:00",
+          "n": 102,
+          "baseline_mae_ft": 0.3780630785413978,
+          "fort_mae_ft": 0.37418953827021423,
+          "baseline_peak_error_ft": 0.6942068511379107,
+          "fort_peak_error_ft": 0.6894165619492516
+        },
+        {
+          "start": "2024-05-03 10:00:00+00:00",
+          "end": "2024-05-03 22:00:00+00:00",
+          "n": 61,
+          "baseline_mae_ft": 0.4124595626314517,
+          "fort_mae_ft": 0.40296360097481804,
+          "baseline_peak_error_ft": 0.19340425852162202,
+          "fort_peak_error_ft": 0.24656946156403015
+        },
+        {
+          "start": "2024-05-09 02:00:00+00:00",
+          "end": "2024-05-11 04:00:00+00:00",
+          "n": 99,
+          "baseline_mae_ft": 0.38749527617697394,
+          "fort_mae_ft": 0.40136814151632394,
+          "baseline_peak_error_ft": 0.5668316044748289,
+          "fort_peak_error_ft": 0.5368998181357982
+        },
+        {
+          "start": "2024-05-14 06:00:00+00:00",
+          "end": "2024-05-14 06:00:00+00:00",
+          "n": 49,
+          "baseline_mae_ft": 0.41914967455391283,
+          "fort_mae_ft": 0.40941614632673906,
+          "baseline_peak_error_ft": 0.7085640363700518,
+          "fort_peak_error_ft": 0.7484969601337381
+        },
+        {
+          "start": "2024-09-14 23:00:00+00:00",
+          "end": "2024-09-28 23:00:00+00:00",
+          "n": 361,
+          "baseline_mae_ft": 0.3317998404599074,
+          "fort_mae_ft": 0.3310305234681048,
+          "baseline_peak_error_ft": 0.5298889586875308,
+          "fort_peak_error_ft": 0.5332989417854685
+        }
+      ]
+    },
+    {
+      "horizon_hours": 48,
+      "train_n": 14912,
+      "validation_n": 7414,
+      "baseline": {
+        "validation": {
+          "n": 7414,
+          "mae_ft": 0.3800235840141057,
+          "rmse_ft": 0.508099745098701,
+          "high_n": 78,
+          "high_mae_ft": 1.2606888412496577,
+          "misses": 77,
+          "false_alarms": 3,
+          "modeled_depth_mae_in": 0.039897340915420264
+        },
+        "test": {
+          "n": 5491,
+          "mae_ft": 0.4365825019299671,
+          "rmse_ft": 0.5667934957179193,
+          "high_n": 123,
+          "high_mae_ft": 0.9724543628230993,
+          "misses": 120,
+          "false_alarms": 0,
+          "modeled_depth_mae_in": 0.07515116993265777
+        }
+      },
+      "fort_monroe": {
+        "validation": {
+          "n": 7414,
+          "mae_ft": 0.38091250538157195,
+          "rmse_ft": 0.5086570228243902,
+          "high_n": 78,
+          "high_mae_ft": 1.2513375010806183,
+          "misses": 76,
+          "false_alarms": 1,
+          "modeled_depth_mae_in": 0.0394891724732155
+        },
+        "test": {
+          "n": 5491,
+          "mae_ft": 0.4346952988608011,
+          "rmse_ft": 0.5641805992770478,
+          "high_n": 123,
+          "high_mae_ft": 0.952631265951706,
+          "misses": 120,
+          "false_alarms": 0,
+          "modeled_depth_mae_in": 0.07499875924161438
+        }
+      },
+      "improvement_pct": 0.43226722574161697,
+      "events": [
+        {
+          "start": "2024-01-08 12:00:00+00:00",
+          "end": "2024-01-08 12:00:00+00:00",
+          "n": 49,
+          "baseline_mae_ft": 0.911754830454126,
+          "fort_mae_ft": 0.9071919313520036,
+          "baseline_peak_error_ft": 0.8914132994267678,
+          "fort_peak_error_ft": 0.8656765943268603
+        },
+        {
+          "start": "2024-01-11 14:00:00+00:00",
+          "end": "2024-01-11 15:00:00+00:00",
+          "n": 41,
+          "baseline_mae_ft": 0.8826777229262224,
+          "fort_mae_ft": 0.9012828270105603,
+          "baseline_peak_error_ft": 0.8783324832474566,
+          "fort_peak_error_ft": 0.902603093471094
+        },
+        {
+          "start": "2024-02-04 09:00:00+00:00",
+          "end": "2024-02-06 12:00:00+00:00",
+          "n": 100,
+          "baseline_mae_ft": 1.0425368250267324,
+          "fort_mae_ft": 1.0281565863790625,
+          "baseline_peak_error_ft": 1.1081377692492573,
+          "fort_peak_error_ft": 1.0476083941864118
+        },
+        {
+          "start": "2024-02-09 14:00:00+00:00",
+          "end": "2024-02-11 17:00:00+00:00",
+          "n": 85,
+          "baseline_mae_ft": 0.8107569964808949,
+          "fort_mae_ft": 0.8150313649784545,
+          "baseline_peak_error_ft": 1.125596054424253,
+          "fort_peak_error_ft": 1.1350004176555055
+        },
+        {
+          "start": "2024-03-07 11:00:00+00:00",
+          "end": "2024-03-08 14:00:00+00:00",
+          "n": 76,
+          "baseline_mae_ft": 0.9122043152036086,
+          "fort_mae_ft": 0.904351706532215,
+          "baseline_peak_error_ft": 1.0986313298435437,
+          "fort_peak_error_ft": 1.0733149354226654
+        },
+        {
+          "start": "2024-03-24 01:00:00+00:00",
+          "end": "2024-03-25 15:00:00+00:00",
+          "n": 83,
+          "baseline_mae_ft": 1.1438568771315905,
+          "fort_mae_ft": 1.1404830006735185,
+          "baseline_peak_error_ft": 1.2236736969407036,
+          "fort_peak_error_ft": 1.1886082342037696
+        },
+        {
+          "start": "2024-04-07 01:00:00+00:00",
+          "end": "2024-04-10 04:00:00+00:00",
+          "n": 114,
+          "baseline_mae_ft": 0.5000322739169029,
+          "fort_mae_ft": 0.49816119401819114,
+          "baseline_peak_error_ft": 1.0182215756180542,
+          "fort_peak_error_ft": 0.9870282220563125
+        },
+        {
+          "start": "2024-05-02 10:00:00+00:00",
+          "end": "2024-05-02 22:00:00+00:00",
+          "n": 47,
+          "baseline_mae_ft": 0.7780288598027301,
+          "fort_mae_ft": 0.7656247665821284,
+          "baseline_peak_error_ft": 0.6613843719528143,
+          "fort_peak_error_ft": 0.5902593750791132
+        },
+        {
+          "start": "2024-05-08 02:00:00+00:00",
+          "end": "2024-05-10 04:00:00+00:00",
+          "n": 99,
+          "baseline_mae_ft": 0.6894222278645318,
+          "fort_mae_ft": 0.6990291283612745,
+          "baseline_peak_error_ft": 1.3267962563515683,
+          "fort_peak_error_ft": 1.3080136659345953
+        },
+        {
+          "start": "2024-05-13 06:00:00+00:00",
+          "end": "2024-05-13 06:00:00+00:00",
+          "n": 49,
+          "baseline_mae_ft": 0.4649259687084305,
+          "fort_mae_ft": 0.4701236946682346,
+          "baseline_peak_error_ft": 1.0677358708670877,
+          "fort_peak_error_ft": 0.9825646781163968
+        },
+        {
+          "start": "2024-09-13 23:00:00+00:00",
+          "end": "2024-09-27 23:00:00+00:00",
+          "n": 361,
+          "baseline_mae_ft": 0.637868978623639,
+          "fort_mae_ft": 0.6384339347671844,
+          "baseline_peak_error_ft": 1.0673832254434217,
+          "fort_peak_error_ft": 1.043709650335538
+        }
+      ]
+    }
+  ],
+  "historical_gate_passed": false,
+  "promoted": false,
+  "decision": "Collect Fort Monroe and paired issued forecasts in shadow mode; retain current operational forecast. Historical ablation cannot prove incremental skill over deployed NWPS guidance.",
+  "limits": [
+    "Revised historical observations, not historical receipt times; simulated 1h latency.",
+    "No historical issued NWPS or NWS forecast archive; comparator is a causal Ridge baseline, not the deployed guidance.",
+    "Depth errors use the existing conversion, not independent local field labels.",
+    "Complete-case sampling does not prove outage resilience or calibrated uncertainty."
+  ],
+  "training_dataset_sha256": "4260978ccf8e6171e3f29c065e1c49072bd79996e9a3d79a27b1560b2a33113a",
+  "sources": [
+    "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=0204289994&startDT=2021-01-01&endDT=2024-12-31&parameterCd=62620",
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter (Sewells Point 8638610, hourly_height, MLLW, GMT, annual 2021\u20132024)",
+    "Local hourly public gauge/met alignment; original observer fields excluded from features and outputs"
+  ],
+  "promotion_reason": "The 3h and 6h paired improvements are below the predeclared 5% gate. Actual issued-guidance incremental skill has not been established."
+}

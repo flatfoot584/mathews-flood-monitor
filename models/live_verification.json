@@ -1,0 +1,55 @@
+{
+  "updated_at_utc": "2026-10-04T04:21:10+00:00",
+  "issued_rows": 12,
+  "results": [
+    {
+      "lead_hours": 1,
+      "n": 0,
+      "mae_ft": null,
+      "high_water_n": 0,
+      "misses": 0,
+      "false_alarms": 0
+    },
+    {
+      "lead_hours": 3,
+      "n": 0,
+      "mae_ft": null,
+      "high_water_n": 0,
+      "misses": 0,
+      "false_alarms": 0
+    },
+    {
+      "lead_hours": 6,
+      "n": 0,
+      "mae_ft": null,
+      "high_water_n": 0,
+      "misses": 0,
+      "false_alarms": 0
+    },
+    {
+      "lead_hours": 12,
+      "n": 0,
+      "mae_ft": null,
+      "high_water_n": 0,
+      "misses": 0,
+      "false_alarms": 0
+    },
+    {
+      "lead_hours": 24,
+      "n": 0,
+      "mae_ft": null,
+      "high_water_n": 0,
+      "misses": 0,
+      "false_alarms": 0
+    },
+    {
+      "lead_hours": 48,
+      "n": 0,
+      "mae_ft": null,
+      "high_water_n": 0,
+      "misses": 0,
+      "false_alarms": 0
+    }
+  ],
+  "interpretation": "Prospective deployed guidance verification against Ware River; Nominal lead bins use the nearest forecast hour; actual_lead_hours records exact lead. Repeated issues are correlated. No independent local-depth validation. Fort Monroe remains observational until a paired candidate passes promotion gates."
+}

@@ -39,6 +39,7 @@ from runtime_safety import (assess_status, atomic_write_json, compound_risk_tier
                             finite_number, is_recent, UNKNOWN_TIER)
 
 SOURCE_HEALTH = {}
+FORECAST_ISSUED_AT = None
 
 # Timezone standard
 EASTERN_TZ = ZoneInfo("America/New_York")
@@ -171,7 +172,9 @@ def fetch_nwps_wrvv2_observed():
 def fetch_nwps_wrvv2_forecast():
     """Fetch forecast stage hydrograph from NOAA NWPS API for WRVV2."""
     url = "https://api.water.noaa.gov/nwps/v1/gauges/WRVV2/stageflow/forecast"
+    global FORECAST_ISSUED_AT
     data = fetch_json(url)
+    FORECAST_ISSUED_AT = data.get("issuedTime") if data else None
     if not data or "data" not in data:
         return []
     records = []
@@ -194,6 +197,57 @@ def fetch_nwps_wrvv2_forecast():
         })
     records.sort(key=lambda x: x["datetime_utc"])
     return records
+
+def fetch_fort_monroe_observed():
+    """FTMV2 primary values are MLLW; metadata specifies NAVD88 = MLLW - 1.70.
+    Keep this station conversion separate from Ware River's 1.64 ft offset.
+    This is an optional evaluation sensor, never a required safety input.
+    """
+    url = "https://api.water.noaa.gov/nwps/v1/gauges/FTMV2/stageflow/observed"
+    payload = fetch_json(url)
+    if not payload or payload.get("primaryUnits") != "ft":
+        return []
+    records = []
+    for row in payload.get("data", []):
+        value = row.get("primary")
+        if not finite_number(value) or value == -999:
+            continue
+        try:
+            dt = datetime.fromisoformat(row["validTime"].replace("Z", "+00:00"))
+        except (KeyError, ValueError, TypeError):
+            continue
+        records.append({"datetime_utc": dt, "elevation_navd88_ft": round(value - 1.70, 3),
+                        "water_level_mllw_ft": value,
+                        "received_at_utc": row.get("generatedTime")})
+    return sorted(records, key=lambda r: r["datetime_utc"])
+
+
+def add_fort_hourly(hourly, observations):
+    grouped = {}
+    for row in observations:
+        hour = row["datetime_utc"].replace(minute=0, second=0, microsecond=0)
+        grouped.setdefault(hour, []).append(row["elevation_navd88_ft"])
+    for row in hourly:
+        stamp = datetime.strptime(row["timestamp_utc"], "%Y-%m-%d %H:%M:%S UTC").replace(tzinfo=timezone.utc)
+        values = grouped.get(stamp, [])
+        row["fort_monroe_elevation_navd88_ft"] = round(sum(values) / len(values), 3) if values else ""
+    return hourly
+
+
+def fetch_official_alerts():
+    url = "https://api.weather.gov/alerts/active?point=37.420183,-76.406550"
+    payload = fetch_json(url, max_retries=2)
+    health = SOURCE_HEALTH.get(url, {})
+    items = []
+    for feature in (payload or {}).get("features", []):
+        props = feature.get("properties", {})
+        items.append({"event": props.get("event"), "headline": props.get("headline"),
+                      "effective": props.get("effective"), "expires": props.get("expires"),
+                      "severity": props.get("severity")})
+    return {"available": bool(payload and health.get("available")),
+            "retrieved_at_utc": health.get("retrieved_at_utc"), "alerts": items,
+            "source": "https://www.weather.gov/akq/"}
+
 
 def fetch_coops_product(station, product, begin_dt_utc, end_dt_utc, datum="mllw"):
     """Fetch NOAA CO-OPS data product for a given station and time window."""
@@ -919,6 +973,9 @@ def main():
     sw_preds_future = fetch_coops_product("8638610", "predictions", now_utc, forward_end_utc)
     log(f"      -> Sewells Pt water: {len(sw_water)}, verified: {len(sw_preds_past)}, fwd tides: {len(sw_preds_future)}")
 
+    fort_obs = fetch_fort_monroe_observed()
+    log(f"      -> Fort Monroe evaluation sensor: {len(fort_obs)} observations")
+
     # 5. NWS Grid Forecast & QPF Rain
     log("[6/7] Fetching NWS AKQ hourly wind & weather forecast...")
     nws_fcst = fetch_nws_hourly_forecast()
@@ -934,6 +991,7 @@ def main():
         ware_obs, yt_winds, yt_press, yt_temps, yt_water, yt_preds_past,
         wm_water, wm_preds_past, sw_water, sw_preds_past, lookback_hours=args.hours
     )
+    add_fort_hourly(hourly_obs, fort_obs)
     log(f"    -> Aligned {len(hourly_obs)} hourly observation rows.")
 
     log("[*] Building forward 48-hour Hybrid Hydrodynamic–ML forecast timeline...")
@@ -958,6 +1016,23 @@ def main():
         nwps_fcst=ware_fcst,
         fcst_timeline=fcst_timeline,
     )
+
+    status_summary["official_nws_alerts"] = fetch_official_alerts()
+    status_summary["source_health"] = SOURCE_HEALTH.copy()
+    latest_fort = fort_obs[-1] if fort_obs else {}
+    ft = latest_fort.get("datetime_utc")
+    status_summary["forecast_issued_at_utc"] = FORECAST_ISSUED_AT
+    status_summary["fort_monroe"] = {
+        "station": "FTMV2 / USGS 0204289994", "role": "evaluation_only",
+        "observation_time_utc": ft.isoformat() if ft else None,
+        "received_at_utc": latest_fort.get("received_at_utc"),
+        "elevation_navd88_ft": latest_fort.get("elevation_navd88_ft"),
+        "water_level_mllw_ft": latest_fort.get("water_level_mllw_ft"),
+        "datum_offset_ft": -1.70, "fresh": is_recent(ft.isoformat()) if ft else False,
+        "model_promoted": False,
+    }
+    from forecast_verification import archive_and_verify
+    status_summary["live_verification"] = archive_and_verify(status_summary, ware_obs)
 
     # Write files
     log(f"\n[*] Writing outputs:")

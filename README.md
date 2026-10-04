@@ -46,3 +46,32 @@ checks detect stale output. `check_pipeline_health.py` supports independent moni
 
 Node is needed only to rebuild the committed stylesheet after template changes:
 `npm ci --ignore-scripts` followed by `npm run build:css`.
+
+## Fort Monroe evaluation and resident portal
+
+Fort Monroe FTMV2 (USGS 0204289994) is collected as an optional evaluation
+sensor. NWPS MLLW readings are converted with that station's 1.70 ft offset to
+NAVD88, checked against coincident USGS parameter 62620 observations.
+Its hourly NAVD88 elevations are stored in the public observation archive.
+
+The historical causal ablation uses past readings from all existing station
+groups, known future astronomical tides, chronological 2021–22 training, 2023
+validation and 2024 testing, with boundary gaps. Fort Monroe improves the
+1-hour Ridge baseline but does not pass the multi-lead promotion gate. This
+experiment does not establish incremental accuracy over issued NWPS guidance.
+The operational forecast is retained; see `models/fort_monroe_evaluation.json`.
+The private hourly analysis dataset remains local and excluded from publication.
+Run `experiments/evaluate_fort_monroe.py` in the local numerical environment
+with cached public Fort Monroe and Sewells data to reproduce the ablation.
+
+`forecast_verification.py` archives six lead bins per issue, retaining exact
+lead times and matching predictions to subsequent Ware River readings.
+`models/live_verification.json` reports prospective stage scores, with sample
+counts and limitations. Repeated issues are correlated and local depth remains
+unverified. Fort Monroe outages do not disable the existing forecast or alerts.
+
+The resident portal separates present observations, modeled future impacts,
+official NWS warnings, source times and evidence limits. Device-specific ntfy
+setup retains the existing community topic. Offline pages visibly retain data
+age. The Data page prepares an observation draft locally for manual submission
+to the existing GitHub issue review queue; it never writes training labels.

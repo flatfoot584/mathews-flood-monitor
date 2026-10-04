@@ -42,6 +42,8 @@ if (_url.scheme != "https" or not _url.hostname or _url.username or _url.passwor
     raise ValueError("Invalid public ntfy server/topic configuration")
 
 
+import resident_ui
+
 class HtmlText(str):
     """Keep raw strings in JSON and escape interpolation into HTML."""
     def __format__(self, spec):
@@ -98,6 +100,7 @@ def safe_template(function):
                             *(escape_view(a) for a in args), **{k: escape_view(v) for k, v in kwargs.items()})
         if not document.startswith("<!DOCTYPE"):
             return document
+        document = document.replace('</head>', '<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f172a"></head>', 1)
         scripts = re.findall(r'<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>', document, re.S)
         handlers = [html.unescape(value) for value in re.findall(r'on(?:click|input|change)="([^"]*)"', document)]
         hashes = ["'sha256-" + base64.b64encode(hashlib.sha256(text.encode()).digest()).decode() + "'" for text in scripts + handlers]
@@ -192,186 +195,11 @@ def load_data(status_json_path, obs_csv_path, fcst_csv_path, ground_truth_path):
     return status, obs_rows, fcst_rows, ground_truth_rows
 
 def build_shared_navbar(active_page, status):
-    status = escape_view(status_for_display(status))
-    curr = status.get("current_conditions", {})
-    tier = curr.get("flood_risk_tier", 0)
-    tier_info = TIER_STYLES.get(tier, TIER_STYLES[-1])
-    tier_lbl = curr.get("flood_risk_label", "Tier 0 (Normal / Safe)").split("(")[-1].replace(")", "")
-    
-    pages = [
-        {"id": "live", "title": "Live Monitor", "href": "index.html", "icon": "fa-water"},
-        {"id": "alerts", "title": "Mobile Alerts", "href": "alerts.html", "icon": "fa-bell"},
-        {"id": "map", "title": "Flood Map", "href": "index.html#map-section", "icon": "fa-map-location-dot"},
-        {"id": "about", "title": "About & History", "href": "about.html", "icon": "fa-book-open"},
-        {"id": "guide", "title": "Flood Guide & Tiers", "href": "guide.html", "icon": "fa-ruler-vertical"},
-        {"id": "data", "title": "Storm Archive & Data", "href": "data.html", "icon": "fa-database"},
-        {"id": "science", "title": "Science & Methodology", "href": "science.html", "icon": "fa-microscope"}
-    ]
-
-    nav_links_html = ""
-    mobile_links_html = ""
-    for p in pages:
-        is_active = (active_page == p["id"])
-        active_class = "bg-sky-900/60 text-sky-200 border-b-2 border-sky-400 font-semibold" if is_active else "text-slate-300 hover:text-white hover:bg-slate-800/60"
-        mobile_active = "bg-sky-900/50 text-sky-200 font-semibold" if is_active else "text-slate-300 hover:text-white hover:bg-slate-800"
-        
-        nav_links_html += f"""
-        <a href="{p['href']}" class="px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm rounded-lg transition-all flex items-center gap-1.5 {active_class}">
-          <i class="fa-solid {p['icon']} text-xs"></i>
-          <span>{p['title']}</span>
-        </a>
-        """
-        mobile_links_html += f"""
-        <a href="{p['href']}" class="block px-4 py-2.5 rounded-lg text-sm transition {mobile_active}">
-          <i class="fa-solid {p['icon']} w-5 text-center mr-2"></i> {p['title']}
-        </a>
-        """
-
-    last_ts = curr.get("observation_timestamp_local", "Just now")
-
-    return f"""
-    <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50 shadow-md">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-          <!-- Logo & Brand -->
-          <div class="flex items-center gap-3">
-            <a href="index.html" class="flex items-center gap-3 group">
-              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-blue-700 flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform">
-                <i class="fa-solid fa-water text-lg text-white"></i>
-              </div>
-              <div>
-                <div class="font-bold text-base sm:text-lg tracking-tight flex items-center gap-2 text-white">
-                  Mathews County Flood Monitor
-                </div>
-                <div class="text-[11px] text-slate-400 font-medium">Middle Peninsula &bull; Mobjack Bay, VA</div>
-              </div>
-            </a>
-          </div>
-
-          <!-- Desktop Navigation -->
-          <nav class="hidden lg:flex items-center gap-1">
-            {nav_links_html}
-          </nav>
-
-          <!-- Status Pill & Mobile Menu Button -->
-          <div class="flex items-center gap-3">
-            <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full {tier_info['badge_bg']} {tier_info['badge_border']} border text-xs font-semibold {tier_info['badge_text']}">
-              <span class="w-2.5 h-2.5 rounded-full {tier_info['pill']} animate-pulse"></span>
-              <span>LIVE: {tier_lbl.strip()}</span>
-            </div>
-
-            <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 focus:outline-none" aria-label="Toggle Navigation">
-              <i class="fa-solid fa-bars text-lg"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- Mobile Menu Dropdown -->
-        <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-800 py-3 space-y-1">
-          <div class="px-4 py-2 sm:hidden mb-2">
-            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full {tier_info['badge_bg']} {tier_info['badge_border']} border text-xs font-semibold {tier_info['badge_text']}">
-              <span class="w-2.5 h-2.5 rounded-full {tier_info['pill']} animate-pulse"></span>
-              <span>LIVE STATUS: {tier_lbl.strip()}</span>
-            </div>
-          </div>
-          {mobile_links_html}
-        </div>
-      </div>
-    </header>
-    <aside id="data-freshness" role="status" class="bg-amber-50 text-amber-950 border-b border-amber-300 px-4 py-3 text-sm">
-      Last update: {status.get('status_generated_at_local', 'Unavailable')}.
-      Gauge observation: {curr.get('observation_timestamp_local') or 'Unavailable'}.
-      {"Data incomplete or stale. Do not assume roads are clear." if status['data_quality']['state'] != 'healthy' else "Check actual road conditions before travel."}
-      {"Mobile push alerts are enabled for subscribers." if status.get('alerting_enabled', False) else "Mobile push alerts are not enabled."}
-    </aside>
-    """
+    return resident_ui.navbar(active_page, status)
 
 @safe_template
 def build_shared_footer(status):
-    curr = status.get("current_conditions", {})
-    last_ts = status.get("status_generated_at_local", "Unavailable")
-    generated_iso = json.dumps(status.get("status_generated_at_utc", "")).replace("<", "\\u003c")
-    observed_iso = json.dumps(curr.get("observation_timestamp_local", "")).replace("<", "\\u003c")
-    return f"""
-    <footer class="bg-slate-900 text-slate-400 text-sm border-t border-slate-800 mt-16 py-12">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
-        <!-- Col 1: Project Info -->
-        <div class="md:col-span-2 space-y-3">
-          <div class="flex items-center gap-2 text-white font-bold text-base">
-            <i class="fa-solid fa-water text-sky-400"></i>
-            <span>Mathews County Coastal Flood Prediction System</span>
-          </div>
-          <p class="text-xs text-slate-400 leading-relaxed max-w-lg">
-            An open science, hyper-local flood prediction pipeline and machine learning model built from 204 ground-truth storm observations (2021–2026), NOAA NWPS hydrodynamic water level guidance, and NOAA CO-OPS sensor networks across the Middle Peninsula of Virginia.
-          </p>
-          <div class="text-xs text-slate-500 pt-1">
-            Last Automated Cloud Sync: <span class="text-slate-300 font-mono font-medium">{last_ts}</span> (Scheduled every 30 minutes; delays are possible)
-          </div>
-        </div>
-
-        <!-- Col 2: Navigation Links -->
-        <div>
-          <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-200 mb-3">Portal Navigation</h4>
-          <ul class="space-y-2 text-xs">
-            <li><a href="index.html" class="hover:text-sky-400 transition">Live Dashboard & Forecast</a></li>
-            <li><a href="alerts.html" class="hover:text-sky-400 transition">Free Mobile Flood Alerts</a></li>
-            <li><a href="index.html#map-section" class="hover:text-sky-400 transition">Interactive Coastal Map</a></li>
-            <li><a href="about.html" class="hover:text-sky-400 transition">The Story & Handwritten Notes</a></li>
-            <li><a href="guide.html" class="hover:text-sky-400 transition">Flood Tiers & Plain-English Guide</a></li>
-            <li><a href="data.html" class="hover:text-sky-400 transition">Storm History & Data Archive</a></li>
-            <li><a href="science.html" class="hover:text-sky-400 transition">Science, Models & Changelog</a></li>
-          </ul>
-        </div>
-
-        <!-- Col 3: Sensor Networks & Code -->
-        <div>
-          <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-200 mb-3">Data & Source Code</h4>
-          <ul class="space-y-2 text-xs">
-            <li><a href="https://water.noaa.gov/gauges/WRVV2" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA NWPS Ware River (WRVV2)</a></li>
-            <li><a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8637689" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA Yorktown USCG (8637689)</a></li>
-            <li><a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8636580" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA Windmill Point (8636580)</a></li>
-            <li><a href="models/scientific_evidence.json" target="_blank" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-code text-[10px]"></i> Scientific Evidence (JSON)</a></li>
-            <li><a href="science.html" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-file-lines text-[10px]"></i> Public Methodology</a></li>
-            <li><a href="https://github.com/flatfoot584/mathews-flood-monitor" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-brands fa-github text-[11px]"></i> GitHub Repository</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
-        <div>&copy; 2021–2026 Mathews County Flood Prediction Project &bull; Public Community Resource</div>
-        <div class="italic text-[11px]">Empirical model calibrated to 3.99 ft MLLW flood tipping point. Not an official NWS evacuation order.</div>
-      </div>
-    </footer>
-
-    <script>
-      const generatedText = {generated_iso};
-      const observedText = {observed_iso};
-      function utcMillis(text) {{
-        if (!text) return NaN;
-        return Date.parse(text.replace(' UTC', 'Z').replace(' EDT', '-04:00').replace(' EST', '-05:00').replace(' ', 'T'));
-      }}
-      function updateFreshness() {{
-        const stamp = utcMillis(generatedText);
-        const observation = utcMillis(observedText);
-        const old = !Number.isFinite(stamp) || !Number.isFinite(observation) || Date.now() - stamp > 90*60000 || Date.now() - observation > 90*60000;
-        if (old) {{
-          const notice = document.getElementById('data-freshness');
-          if (notice) notice.textContent = 'DATA STALE OR UNAVAILABLE — Flood safety cannot be confirmed. Last update: ' + generatedText;
-          document.querySelectorAll('[data-current-safety]').forEach(el => el.hidden = true);
-        }}
-      }}
-      updateFreshness();
-      setInterval(updateFreshness, 60000);
-      // Mobile menu toggle
-      const menuBtn = document.getElementById('mobile-menu-btn');
-      const mobileMenu = document.getElementById('mobile-menu');
-      if (menuBtn && mobileMenu) {{
-        menuBtn.addEventListener('click', () => {{
-          mobileMenu.classList.toggle('hidden');
-        }});
-      }}
-    </script>
-    """
+    return resident_ui.footer(status)
 
 # ==============================================================================
 # 1. PAGE 1: INDEX.HTML (LIVE MONITOR & INTERACTIVE MAP)
@@ -470,7 +298,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         headline = "Data Incomplete — Flood Safety Cannot Be Confirmed"
         sub_headline = "Some observations or forecasts are missing or stale. Check official forecasts and actual road conditions."
     elif tier == 0 and peak_tier == 0:
-        headline = "Normal Conditions — Driveways & Roads Clear"
+        headline = "No tidal inundation estimated"
         sub_headline = f"Ware River stage is currently {stage} ft MLLW. Water will remain safely contained in marsh ditches over the next 48 hours."
     elif tier == 0 and peak_tier == 1:
         headline = f"Nuisance Ditch Overflow Expected Around {peak_time.split(' ')[1] if ' ' in str(peak_time) else peak_time}"
@@ -526,94 +354,40 @@ def build_index_html(status, obs_rows, fcst_rows):
 
   {navbar_html}
 
-  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8 w-full">
+  <main id="main-content" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8 w-full">
 
-    <!-- 1. HUMAN-FIRST ADVISORY HERO BANNER -->
-    <section data-current-safety class="rounded-2xl {peak_tier_info['banner_bg']} border-2 {peak_tier_info['banner_border']} p-6 sm:p-8 shadow-sm transition-all">
-      <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-        <div class="space-y-2 max-w-3xl">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full {peak_tier_info['badge_bg']} text-xs font-bold {peak_tier_info['badge_text']} uppercase tracking-wider">
-            <i class="fa-solid {peak_tier_info['icon']}"></i>
-            <span>Current Status &bull; {curr.get('flood_risk_label', 'Normal')}</span>
-          </div>
-          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold {peak_tier_info['banner_text']} tracking-tight leading-tight">
-            {headline}
-          </h1>
-          <p class="text-base {peak_tier_info['banner_sub']} leading-relaxed">
-            {sub_headline}
+    {resident_ui.summary(status)}
+
+    <!-- 5. 48-HOUR HYDROGRAPH & ENVIRONMENTAL DRIVERS -->
+    <section data-current-safety class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-chart-line text-sky-600"></i>
+            48-hour water-level forecast
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500">
+            NOAA water-level guidance with empirical local weather adjustments. The band shows uncalibrated scenarios.
           </p>
         </div>
-
-        <!-- Quick Metrics Box -->
-        <div class="flex flex-wrap lg:flex-col gap-3 bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-slate-200/80 shadow-sm min-w-[250px]">
-          <div>
-            <div class="text-[11px] font-semibold text-slate-500 uppercase">Current Ware River Stage</div>
-            <div class="text-2xl font-black text-slate-900 font-mono">{stage} <span class="text-sm font-semibold text-slate-500">ft MLLW</span></div>
-            <div class="text-[11px] text-slate-500 font-medium">({stage_navd} ft NAVD88)</div>
-          </div>
-          <div class="pt-2 border-t border-slate-200">
-            <div class="text-[11px] font-semibold text-slate-500 uppercase">48-Hour Peak Forecast</div>
-            <div class="text-lg font-extrabold text-sky-900 font-mono">{peak_stage} ft <span class="text-xs font-normal text-slate-500">at {peak_time.split(' ')[1] if ' ' in str(peak_time) else peak_time}</span></div>
-            <div class="text-xs font-semibold {peak_tier_info['badge_text']}">Inundation: {peak_depth}" ({peak_passability})</div>
-            <div class="text-[11px] font-mono text-slate-500 mt-1 flex items-center justify-between">
-              <span>Scenario range:</span>
-              <span class="font-bold text-slate-700">{peak_stage_q10}' – {peak_stage_q90}'</span>
-            </div>
-          </div>
+        <div class="flex flex-wrap items-center gap-3 text-xs">
+          <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-sky-600"></span> Expected Stage</span>
+          <span class="flex items-center gap-1.5"><span class="w-3.5 h-2 bg-sky-200/80 border border-sky-400 border-dashed rounded-[2px]"></span> Uncalibrated Scenario Band</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-red-500 border-t border-dashed"></span> 3.99' Flood Threshold</span>
         </div>
+      </div>
+
+      <div class="h-80 w-full relative">
+        <canvas id="hydrographChart" role="img" aria-label="48-hour Ware River water-level forecast with uncalibrated scenarios. Hourly values are in the table below."></canvas>
+      </div>
+
+      <div class="text-[11px] text-slate-500 flex flex-wrap items-center justify-between pt-2 border-t border-slate-100 gap-2">
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-sky-500"></i> Shaded band is an uncalibrated scenario range. It is not a statistical confidence interval or a guaranteed worst case.</span>
+        <span class="font-mono text-slate-700 font-medium">Expected Peak: {peak_stage}' (Scenario range: {peak_stage_q10}' to {peak_stage_q90}')</span>
       </div>
     </section>
 
-    <!-- 2. VEHICLE PASSABILITY & HUMAN ACTION STRIP -->
-    <section data-current-safety class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <!-- Card 1: Sedans -->
-      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-start gap-4">
-        <div class="w-12 h-12 rounded-xl {'bg-emerald-100 text-emerald-700' if route_dry else 'bg-red-100 text-red-700'} flex items-center justify-center text-xl shrink-0">
-          <i class="fa-solid fa-car-side"></i>
-        </div>
-        <div>
-          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Passenger Cars / Sedans</div>
-          <div class="text-base font-bold text-slate-900 mt-0.5">
-            {route_title}
-          </div>
-          <p class="text-xs text-slate-600 mt-1">
-            {route_description}
-          </p>
-        </div>
-      </div>
-
-      <!-- Card 2: SUVs & Trucks -->
-      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-start gap-4">
-        <div class="w-12 h-12 rounded-xl {'bg-emerald-100 text-emerald-700' if route_dry else 'bg-amber-100 text-amber-700'} flex items-center justify-center text-xl shrink-0">
-          <i class="fa-solid fa-truck-pickup"></i>
-        </div>
-        <div>
-          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">SUVs & High-Clearance Trucks</div>
-          <div class="text-base font-bold text-slate-900 mt-0.5">
-            {route_title}
-          </div>
-          <p class="text-xs text-slate-600 mt-1">
-            {route_description}
-          </p>
-        </div>
-      </div>
-
-      <!-- Card 3: Action Checklist -->
-      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-start gap-4">
-        <div class="w-12 h-12 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center text-xl shrink-0">
-          <i class="fa-solid fa-clipboard-check"></i>
-        </div>
-        <div>
-          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Recommended Action</div>
-          <div class="text-base font-bold text-slate-900 mt-0.5">
-            {'Check Actual Conditions' if route_unknown else 'Plan Around Flood Hazards' if route_flooded else 'Monitor Updates'}
-          </div>
-          <p class="text-xs text-slate-600 mt-1">
-            {'Do not assume roads are clear when data is missing.' if route_unknown else 'Move vehicles before flooding starts; do not enter floodwater.'}
-          </p>
-        </div>
-      </div>
-    </section>
+    {resident_ui.forecast_table(status)}
 
     <!-- 3. INTERACTIVE LEAFLET FLOOD MAP SECTION -->
     <section data-current-safety id="map-section" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
@@ -624,7 +398,7 @@ def build_index_html(status, obs_rows, fcst_rows):
             <span class="px-2.5 py-0.5 text-xs font-semibold bg-amber-100 text-amber-900 rounded-full font-mono">Community Monitoring Zone</span>
           </div>
           <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
-            Hyper-local elevation monitoring enclosing <strong>Daniel Ave, Bayshore Ave, River Rd, and connecting neighborhood streets</strong>, calibrated to USGS 1-meter LiDAR on dry land.
+            Hyper-local elevation monitoring enclosing <strong>Daniel Ave, Bayshore Ave, River Rd, and connecting neighborhood streets</strong>, using estimated elevations from USGS 1-meter LiDAR. Map colors are estimates, not verified road conditions.
           </p>
         </div>
 
@@ -671,19 +445,19 @@ def build_index_html(status, obs_rows, fcst_rows):
           </div>
           <div class="flex items-center gap-2">
             <span class="w-3.5 h-3.5 rounded bg-emerald-500 shrink-0"></span>
-            <span class="text-slate-700 font-medium">Safe / Dry (&lt; 4.0')</span>
+            <span class="text-slate-700 font-medium">No inundation estimated</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="w-3.5 h-3.5 rounded bg-amber-500 shrink-0"></span>
-            <span class="text-slate-700 font-medium">Nuisance / Puddles (4.0-4.3')</span>
+            <span class="text-slate-700 font-medium">Low-spot flooding estimated</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="w-3.5 h-3.5 rounded bg-orange-500 shrink-0"></span>
-            <span class="text-slate-700 font-medium">Roads Flooded (4.4-4.7')</span>
+            <span class="text-slate-700 font-medium">Moderate flooding estimated</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="w-3.5 h-3.5 rounded bg-red-600 shrink-0"></span>
-            <span class="text-slate-700 font-medium">Severe / Impassable (&ge; 4.8')</span>
+            <span class="text-slate-700 font-medium">Severe flooding estimated</span>
           </div>
         </div>
       </div>
@@ -697,12 +471,13 @@ def build_index_html(status, obs_rows, fcst_rows):
     </section>
 
     <!-- 4. COMMUNITY ELEVATION PROFILE & STREET PASSABILITY -->
+    <details data-current-safety><summary>Estimated elevations &amp; street details</summary>
     <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
             <i class="fa-solid fa-stairs text-sky-600"></i>
-            Community Elevation Profile &amp; Street Passability
+            Estimated community elevations &amp; current tidal inundation
           </h2>
           <p class="text-xs sm:text-sm text-slate-500">
             Micro-topographical water encroachment across Mobjack Bay Estates &amp; Blackwater Peninsula (Threshold: 3.99 ft MLLW = 2.35 ft NAVD88).
@@ -786,7 +561,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         <div class="flex items-center justify-between mb-3">
           <h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
             <i class="fa-solid fa-route text-sky-600"></i>
-            Community Street Passability &amp; LiDAR Invert Elevations
+            Modeled street inundation &amp; elevation estimates
           </h3>
           <span class="text-xs text-slate-500">Mobjack Bay Estates &amp; Blackwater Road Network</span>
         </div>
@@ -796,36 +571,12 @@ def build_index_html(status, obs_rows, fcst_rows):
       </div>
     </section>
 
-    <!-- 5. 48-HOUR HYDROGRAPH & ENVIRONMENTAL DRIVERS -->
-    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-chart-line text-sky-600"></i>
-            48-Hour Hybrid Forecast Hydrograph
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-500">
-            NOAA NWPS CBOFS hydrodynamic water model blended with local wind stress ML bias correction, bay hydraulic slope, and quantile regression uncertainty.
-          </p>
-        </div>
-        <div class="flex flex-wrap items-center gap-3 text-xs">
-          <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-sky-600"></span> Expected Stage</span>
-          <span class="flex items-center gap-1.5"><span class="w-3.5 h-2 bg-sky-200/80 border border-sky-400 border-dashed rounded-[2px]"></span> Uncalibrated Scenario Band</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-red-500 border-t border-dashed"></span> 3.99' Flood Threshold</span>
-        </div>
-      </div>
+    </details>
 
-      <div class="h-80 w-full relative">
-        <canvas id="hydrographChart"></canvas>
-      </div>
-
-      <div class="text-[11px] text-slate-500 flex flex-wrap items-center justify-between pt-2 border-t border-slate-100 gap-2">
-        <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-sky-500"></i> Shaded band is an uncalibrated scenario range. It is not a statistical confidence interval or a guaranteed worst case.</span>
-        <span class="font-mono text-slate-700 font-medium">Expected Peak: {peak_stage}' (Scenario range: {peak_stage_q10}' to {peak_stage_q90}')</span>
-      </div>
-    </section>
+    {resident_ui.monitoring(status)}
 
     <!-- 6. REAL-TIME SENSOR NETWORK & BAY HYDRAULIC GRADIENT -->
+    <details><summary>Weather &amp; regional gauge details</summary>
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
       <!-- Card 1: Yorktown Winds -->
       <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
@@ -913,6 +664,8 @@ def build_index_html(status, obs_rows, fcst_rows):
       </div>
     </section>
 
+    </details>
+
     <!-- 7. REAL-TIME MOBILE FLOOD ALERTS CALLOUT -->
     <section id="alerts-section" class="bg-gradient-to-r from-slate-900 via-slate-800 to-sky-950 rounded-2xl text-white p-6 sm:p-7 border border-sky-800/50 shadow-md flex flex-col md:flex-row items-center justify-between gap-6">
       <div class="flex items-start sm:items-center gap-4">
@@ -922,11 +675,11 @@ def build_index_html(status, obs_rows, fcst_rows):
         <div class="space-y-1">
           <div class="flex flex-wrap items-center gap-2">
             <h3 class="font-bold text-base sm:text-lg text-white">Get Audible Flood Warnings on Your Phone</h3>
-            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">100% Free Forever</span>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">No subscription fee currently</span>
             <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30">Zero Accounts</span>
           </div>
           <p class="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-            Never get caught off guard by saltwater over Daniel Ave or Bayshore Ave. Push notifications sent <strong>when fresh forecasts first indicate a flood hazard</strong>. Subscribe to our public alert topic.
+            Stay informed about estimated flooding near Daniel Ave and Bayshore Ave. Push notifications sent <strong>when fresh forecasts first indicate a flood hazard</strong>. Subscribe to our public alert topic.
           </p>
         </div>
       </div>
@@ -1134,7 +887,7 @@ def build_index_html(status, obs_rows, fcst_rows):
       {{
         name: "Upper Residential Grounds & Northern Lots",
         elev: 4.60,
-        desc: "Elevated residential lawns and northern lots along Daniel Ave. Trucks and SUVs required.",
+        desc: "Elevated residential lawns and northern lots along Daniel Ave. Do not enter flooded roads, regardless of vehicle clearance.",
         coords: [
           [37.4223, -76.4116], [37.4223, -76.4075], [37.4206, -76.4075],
           [37.4206, -76.4116]
@@ -1143,7 +896,7 @@ def build_index_html(status, obs_rows, fcst_rows):
       {{
         name: "River Road North & Ridge High Ground Pads",
         elev: 4.90,
-        desc: "Elevated building footprint and highest ground along River Road. Impassable only in severe storms.",
+        desc: "Elevated building footprint and highest ground along River Road. Flooding may occur; actual access must be checked.",
         coords: [
           [37.4222, -76.4075], [37.4222, -76.4070], [37.422058, -76.406547],
           [37.421872, -76.406392], [37.421717, -76.406211], [37.421448, -76.406030],
@@ -1404,11 +1157,11 @@ def build_index_html(status, obs_rows, fcst_rows):
       }});
     }}
 
-    // 2. CHART.JS 48-HOUR HYDROGRAPH WITH QUANTILE CONFIDENCE ENVELOPE
+    // 2. Water-level chart with uncalibrated scenarios
     const ctx = document.getElementById('hydrographChart').getContext('2d');
     const labels = fcst.map(r => {{
       const d = r.timestamp_local || '';
-      return d.split(' ')[1] ? d.split(' ')[1].slice(0,5) : d;
+      return d ? d.slice(5,10) + ' ' + (d.split(' ')[1] || '').slice(0,5) : d;
     }});
     const stageData = fcst.map(r => r.forecast_stage_mllw_ft === "" || r.forecast_stage_mllw_ft == null ? null : Number(r.forecast_stage_mllw_ft));
     const stageDataQ10 = fcst.map(r => r.forecast_stage_q10_ft === "" || r.forecast_stage_q10_ft == null ? null : Number(r.forecast_stage_q10_ft));
@@ -1422,7 +1175,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         labels: labels,
         datasets: [
           {{
-            label: 'Worst Case (90% Upper)',
+            label: 'Upper scenario (uncalibrated)',
             data: stageDataQ90,
             borderColor: 'rgba(2, 132, 199, 0.35)',
             borderDash: [3, 3],
@@ -1510,509 +1263,8 @@ def build_index_html(status, obs_rows, fcst_rows):
 # ==============================================================================
 @safe_template
 def build_alerts_html(status):
-    curr = status.get("current_conditions", {})
-    outl = status.get("forecast_48h_outlook", {})
+    return resident_ui.alerts(status, NTFY_SERVER, DEFAULT_NTFY_TOPIC)
 
-    stage = display_value(curr.get("ware_river_stage_mllw_ft", "N/A"))
-    stage_navd = display_value(curr.get("ware_river_stage_navd88_ft", "N/A"))
-    tier = curr.get("flood_risk_tier", 0)
-    tier_info = TIER_STYLES.get(tier, TIER_STYLES[-1])
-    tier_lbl = curr.get("flood_risk_label", "Tier 0 (Normal / Safe)")
-
-    peak_stage = display_value(outl.get("peak_forecast_stage_mllw_ft", "N/A"))
-    peak_time = display_value(outl.get("peak_forecast_stage_time_local", "N/A"))
-    peak_depth = display_value(outl.get("peak_estimated_flood_depth_in", 0.0))
-    peak_tier = outl.get("peak_risk_tier", 0)
-    peak_tier_info = TIER_STYLES.get(peak_tier, TIER_STYLES[-1])
-    peak_tier_lbl = outl.get("peak_risk_label", "Tier 0 (Normal / Safe)")
-    passability = curr.get("vehicle_passability", "ALL VEHICLES PASSABLE")
-
-    navbar_html = build_shared_navbar("alerts", status)
-    footer_html = build_shared_footer(status)
-
-    return f"""<!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Free Mobile Flood Alerts — Mathews County, VA</title>
-  <meta name="description" content="Subscribe to instant audible flood alerts and push notifications for Mathews County, VA when fresh data indicates flood risk. Delivery timing depends on updates and mobile connectivity.">
-
-  <!-- Tailwind CSS & FontAwesome -->
-  <link rel="stylesheet" href="assets/tailwind.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g" crossorigin="anonymous">
-
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
-    body {{ font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }}
-    .font-mono {{ font-family: 'JetBrains Mono', monospace; }}
-  </style>
-</head>
-<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased">
-
-  {navbar_html}
-
-  <main class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 w-full">
-
-    <!-- HERO HEADER -->
-    <section class="space-y-4 text-center sm:text-left">
-      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-400/20 text-amber-800 border border-amber-400/30 text-xs font-bold uppercase tracking-wider">
-        <i class="fa-solid fa-bell animate-bounce text-amber-600"></i>
-        <span>Instant Mobile Alerts &bull; 100% Free Forever &bull; Zero Accounts</span>
-      </div>
-
-      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-        Get Audible Flood Warnings on Your Phone Before High Tide
-      </h1>
-
-      <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-3xl">
-        Never get caught off guard by saltwater over Daniel Ave, Bayshore Ave, or neighborhood access roads. Receive loud, high-priority push notifications directly to your smartphone <strong>when fresh forecasts first indicate a flood hazard</strong>.
-      </p>
-
-      <!-- Key Guarantees Badges -->
-      <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-2">
-        <div class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-sm">
-          <i class="fa-solid fa-shield-halved text-emerald-600"></i>
-          <span>100% Free &amp; Open Source</span>
-        </div>
-        <div class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-sm">
-          <i class="fa-solid fa-user-shield text-sky-600"></i>
-          <span>No Email, Password, or Sign-Up</span>
-        </div>
-        <div class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-sm">
-          <i class="fa-solid fa-bell-slash text-indigo-600"></i>
-          <span>Flood alerts with duplicate suppression</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- 1. PRIMARY SUBSCRIPTION HERO BLOCK (ACTION + QR CODE) -->
-    <section class="bg-gradient-to-br from-slate-900 via-slate-800 to-sky-950 rounded-3xl text-white p-6 sm:p-10 border border-sky-800/50 shadow-2xl relative overflow-hidden">
-      <div class="absolute -right-16 -bottom-16 w-80 h-80 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-      <div class="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-        <!-- Left 2 Cols: Setup Buttons & Live State -->
-        <div class="lg:col-span-2 space-y-6">
-          <div class="space-y-2">
-            <div class="text-xs font-bold uppercase tracking-wider text-sky-400 flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>1-Click Subscription Channel</span>
-            </div>
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
-              Subscribe to Channel: <span class="font-mono text-amber-300">{DEFAULT_NTFY_TOPIC}</span>
-            </h2>
-            <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
-              Powered by <strong>ntfy.sh</strong>, a lightweight open-source push notification system. You can subscribe with a single tap in your web browser, or via the free mobile app for iPhone and Android.
-            </p>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="flex flex-wrap items-center gap-3">
-            <a href="{NTFY_SERVER}/{DEFAULT_NTFY_TOPIC}" target="_blank" rel="noopener noreferrer"
-               class="px-6 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm sm:text-base shadow-lg transition flex items-center gap-2.5 group">
-              <i class="fa-solid fa-mobile-screen-button"></i>
-              <span>Subscribe on Phone / Browser</span>
-              <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-75 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
-            </a>
-
-            <button onclick="copyTopic()" 
-                    class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm transition flex items-center gap-2">
-              <i class="fa-solid fa-copy text-amber-400"></i>
-              <span>Copy Topic: <span class="font-mono text-amber-300">{DEFAULT_NTFY_TOPIC}</span></span>
-            </button>
-          </div>
-
-          <!-- Copy Toast Feedback -->
-          <div id="copy-feedback" class="hidden text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
-            <i class="fa-solid fa-circle-check"></i>
-            <span>Topic name copied to clipboard! Paste it into the ntfy app.</span>
-          </div>
-
-          <!-- App Store Quick Links -->
-          <div class="pt-2 flex flex-wrap items-center gap-4 text-xs text-slate-300">
-            <span class="text-slate-400 font-medium">Free app downloads:</span>
-            <a href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener noreferrer" class="hover:text-white transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700">
-              <i class="fa-brands fa-apple text-sm text-slate-200"></i> Apple App Store
-            </a>
-            <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener noreferrer" class="hover:text-white transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700">
-              <i class="fa-brands fa-google-play text-sm text-emerald-400"></i> Google Play
-            </a>
-            <a href="{NTFY_SERVER}/{DEFAULT_NTFY_TOPIC}" target="_blank" rel="noopener noreferrer" class="hover:text-white transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700">
-              <i class="fa-solid fa-globe text-sm text-sky-400"></i> Web Browser
-            </a>
-          </div>
-
-          <!-- Live Alert Engine Status Pill -->
-          <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-4 grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-            <div>
-              <div class="text-slate-400 text-[11px] uppercase">Current River Stage</div>
-              <div class="text-base font-extrabold text-white font-mono mt-0.5">{stage} ft MLLW</div>
-            </div>
-            <div>
-              <div class="text-slate-400 text-[11px] uppercase">Peak 48h Forecast</div>
-              <div class="text-base font-extrabold text-sky-300 font-mono mt-0.5">{peak_stage} ft</div>
-            </div>
-            <div class="col-span-2 sm:col-span-1">
-              <div class="text-slate-400 text-[11px] uppercase">Alert Dispatch Status</div>
-              <div class="text-base font-extrabold text-emerald-400 mt-0.5">{tier_lbl.split('(')[-1].replace(')', '')}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right Col: Big Scannable QR Code -->
-        <div class="bg-slate-800/90 border border-slate-700 rounded-3xl p-6 flex flex-col items-center text-center shadow-inner">
-          <div class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-4 flex items-center gap-2">
-            <i class="fa-solid fa-qrcode text-sky-400 text-base"></i>
-            <span>Scan with Phone Camera</span>
-          </div>
-
-          <div class="p-3 bg-white rounded-2xl shadow-xl inline-block">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data={NTFY_SERVER}/{DEFAULT_NTFY_TOPIC}"
-                 alt="Scan to Subscribe to Mathews Flood Alerts" 
-                 class="w-44 h-44 block" 
-                 loading="lazy" />
-          </div>
-
-          <div class="text-xs text-slate-300 mt-4 leading-snug">
-            Point your iPhone or Android camera to open:
-            <div class="font-mono text-sky-300 font-bold mt-1 text-sm">ntfy.sh/{DEFAULT_NTFY_TOPIC}</div>
-          </div>
-
-          <div class="mt-4 pt-3 border-t border-slate-700/80 w-full text-[11px] text-slate-400">
-            Works instantly in camera app &bull; Zero configuration
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. DEVICE-BY-DEVICE STEP-BY-STEP SETUP GUIDE -->
-    <section class="space-y-6">
-      <div class="space-y-1">
-        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-screwdriver-wrench text-sky-600"></i>
-          Step-by-Step Setup Guide
-        </h2>
-        <p class="text-slate-600 text-sm">
-          Setup takes less than 60 seconds on any smartphone, tablet, or laptop.
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Card 1: iPhone & iPad (iOS) -->
-        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
-          <div class="space-y-3">
-            <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center text-xl">
-              <i class="fa-brands fa-apple"></i>
-            </div>
-            <h3 class="font-bold text-slate-900 text-lg">Apple iPhone &amp; iPad</h3>
-            <ol class="space-y-3 text-xs text-slate-600 leading-relaxed list-decimal list-inside">
-              <li>
-                Install the free <a href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener" class="text-sky-600 font-bold hover:underline">ntfy app</a> from the App Store.
-              </li>
-              <li>
-                Open the app, tap the <strong class="text-slate-900">+</strong> icon in the top-right corner, and type topic name:
-                <div class="mt-1 font-mono bg-slate-100 text-slate-900 px-2 py-1 rounded text-[11px] font-bold border border-slate-200 inline-block">{DEFAULT_NTFY_TOPIC}</div>
-              </li>
-              <li>
-                Tap <strong>Subscribe</strong>. In iOS Settings &gt; Notifications &gt; ntfy, make sure <em>Sounds &amp; Banners</em> are enabled so you receive audible warnings before high tide crests.
-              </li>
-            </ol>
-          </div>
-          <div class="pt-3 border-t border-slate-100">
-            <a href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener" class="text-xs font-bold text-sky-600 hover:text-sky-700 flex items-center gap-1">
-              <span>View in App Store</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
-            </a>
-          </div>
-        </div>
-
-        <!-- Card 2: Android -->
-        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
-          <div class="space-y-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
-              <i class="fa-brands fa-google-play"></i>
-            </div>
-            <h3 class="font-bold text-slate-900 text-lg">Android Devices</h3>
-            <ol class="space-y-3 text-xs text-slate-600 leading-relaxed list-decimal list-inside">
-              <li>
-                Install the free <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener" class="text-emerald-700 font-bold hover:underline">ntfy app</a> from the Google Play Store.
-              </li>
-              <li>
-                Open the app, tap the <strong class="text-slate-900">+</strong> button in the bottom right, enter topic:
-                <div class="mt-1 font-mono bg-slate-100 text-slate-900 px-2 py-1 rounded text-[11px] font-bold border border-slate-200 inline-block">{DEFAULT_NTFY_TOPIC}</div>
-              </li>
-              <li>
-                Tap <strong>Subscribe</strong>. In your device settings, disable battery optimization for ntfy to ensure notifications arrive in real time without sleep delays.
-              </li>
-            </ol>
-          </div>
-          <div class="pt-3 border-t border-slate-100">
-            <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1">
-              <span>View in Google Play</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
-            </a>
-          </div>
-        </div>
-
-        <!-- Card 3: Web Browser (No App) -->
-        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
-          <div class="space-y-3">
-            <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl">
-              <i class="fa-solid fa-globe"></i>
-            </div>
-            <h3 class="font-bold text-slate-900 text-lg">Web Browser (Zero App)</h3>
-            <ol class="space-y-3 text-xs text-slate-600 leading-relaxed list-decimal list-inside">
-              <li>
-                Navigate to <a href="{NTFY_SERVER}/{DEFAULT_NTFY_TOPIC}" target="_blank" rel="noopener" class="text-sky-600 font-bold hover:underline">ntfy.sh/{DEFAULT_NTFY_TOPIC}</a> in Chrome, Safari, Edge, or Firefox.
-              </li>
-              <li>
-                Click the <strong>Subscribe</strong> button in the top menu bar.
-              </li>
-              <li>
-                When your browser prompts: <em>"Allow ntfy.sh to send notifications?"</em>, click <strong>Allow</strong>. That's it! You will now receive push notifications directly in your browser.
-              </li>
-            </ol>
-          </div>
-          <div class="pt-3 border-t border-slate-100">
-            <a href="{NTFY_SERVER}/{DEFAULT_NTFY_TOPIC}" target="_blank" rel="noopener" class="text-xs font-bold text-sky-600 hover:text-sky-700 flex items-center gap-1">
-              <span>Open Web Feed</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3. HOW THE ALERT SYSTEM WORKS (THE 4-STAGE PIPELINE) -->
-    <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
-      <div class="space-y-1">
-        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-clock-rotate-left text-sky-600"></i>
-          How &amp; When You Receive Flood Warnings
-        </h2>
-        <p class="text-slate-600 text-sm">
-          Our system is completely automated and runs every 30 minutes. It evaluates hydrological water levels and dispatches alerts along four distinct warning stages:
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <!-- Stage 1: Advance Warning -->
-        <div class="p-5 rounded-xl border border-amber-200 bg-amber-50/50 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
-              <i class="fa-solid fa-hourglass-start"></i> Stage 1: Advance Notice
-            </span>
-            <span class="text-[11px] font-mono font-semibold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full">When Risk Is Detected</span>
-          </div>
-          <h3 class="font-bold text-slate-900 text-base">Early Crest Warning</h3>
-          <p class="text-xs text-slate-700 leading-relaxed">
-            Dispatched as soon as the NOAA NWPS / CBOFS forecast first indicates that an upcoming high tide will breach the <strong>3.99 ft flood tipping point</strong>. Gives you plenty of time to plan travel, move vehicles, or secure items before water rises.
-          </p>
-        </div>
-
-        <!-- Stage 2: Imminent Warning -->
-        <div class="p-5 rounded-xl border border-orange-200 bg-orange-50/50 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-orange-800 flex items-center gap-1.5">
-              <i class="fa-solid fa-triangle-exclamation"></i> Stage 2: Imminent Warning
-            </span>
-            <span class="text-[11px] font-mono font-semibold bg-orange-200 text-orange-900 px-2 py-0.5 rounded-full">1–2 Hours Ahead</span>
-          </div>
-          <h3 class="font-bold text-slate-900 text-base">Pre-Crest Hazard Alert</h3>
-          <p class="text-xs text-slate-700 leading-relaxed">
-            Attempted near the crest when fresh forecast data and scheduled updates are available. Provides specific estimated flood depths in inches (e.g., <em>"5 to 7 inches over Daniel Ave"</em>) and describes modeled road hazards.
-          </p>
-        </div>
-
-        <!-- Stage 3: Escalation Alert -->
-        <div class="p-5 rounded-xl border border-red-200 bg-red-50/50 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-red-800 flex items-center gap-1.5">
-              <i class="fa-solid fa-bolt text-red-600"></i> Stage 3: Surge Escalation
-            </span>
-            <span class="text-[11px] font-mono font-semibold bg-red-200 text-red-900 px-2 py-0.5 rounded-full">Immediate</span>
-          </div>
-          <h3 class="font-bold text-slate-900 text-base">Sudden Surge Increase</h3>
-          <p class="text-xs text-slate-700 leading-relaxed">
-            If persistent easterly or along-bay winds drive storm surge <strong>&ge; 0.25 ft (3+ inches) higher</strong> than the previous forecast, or if the risk tier escalates to Tier 3, an immediate update is dispatched.
-          </p>
-        </div>
-
-        <!-- Stage 4: All Clear -->
-        <div class="p-5 rounded-xl border border-emerald-200 bg-emerald-50/50 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
-              <i class="fa-solid fa-circle-check text-emerald-600"></i> Stage 4: Water Receding
-            </span>
-            <span class="text-[11px] font-mono font-semibold bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full">Post-Crest</span>
-          </div>
-          <h3 class="font-bold text-slate-900 text-base">All-Clear Bulletin</h3>
-          <p class="text-xs text-slate-700 leading-relaxed">
-            Dispatched when the Ware River gauge safely drops back below 3.99 ft, water recedes into drainage ditches, and no further high water is predicted within the next 48-hour forecast window.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 4. REALISTIC LOCK-SCREEN NOTIFICATION SIMULATOR -->
-    <section class="space-y-6">
-      <div class="space-y-1">
-        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-mobile text-sky-600"></i>
-          Sample Phone Push Notifications
-        </h2>
-        <p class="text-slate-600 text-sm">
-          Here is what alerts look like when they appear on your smartphone lock screen:
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Sample 1: Tier 1 Nuisance -->
-        <div class="bg-slate-900 text-white rounded-2xl p-4 sm:p-5 border border-slate-800 shadow-md flex items-start gap-3.5">
-          <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-lg shrink-0">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-          </div>
-          <div class="space-y-1 w-full">
-            <div class="flex items-center justify-between text-[11px] text-slate-400">
-              <span class="font-semibold text-slate-300">ntfy &bull; mathews-flood-23128</span>
-              <span>2h ago</span>
-            </div>
-            <div class="font-bold text-sm text-amber-300">
-              ⚠️ Tier 1 Flood Advisory: Ware River Crest at 4.15 ft MLLW
-            </div>
-            <p class="text-xs text-slate-300 leading-relaxed">
-              Minor ditch overflow expected at 1:30 PM EDT (1-2" in roadside swales). Check actual conditions on Daniel Ave &amp; Bayshore Ave before travel.
-            </p>
-          </div>
-        </div>
-
-        <!-- Sample 2: Tier 2 Moderate -->
-        <div class="bg-slate-900 text-white rounded-2xl p-4 sm:p-5 border border-slate-800 shadow-md flex items-start gap-3.5">
-          <div class="w-10 h-10 rounded-xl bg-orange-500/20 text-orange-400 border border-orange-500/30 flex items-center justify-center text-lg shrink-0">
-            <i class="fa-solid fa-car-burst"></i>
-          </div>
-          <div class="space-y-1 w-full">
-            <div class="flex items-center justify-between text-[11px] text-slate-400">
-              <span class="font-semibold text-slate-300">ntfy &bull; mathews-flood-23128</span>
-              <span>1h ago</span>
-            </div>
-            <div class="font-bold text-sm text-orange-300">
-              🚨 Coastal Flood Warning: Road Flooding Expected at 2:00 PM
-            </div>
-            <p class="text-xs text-slate-300 leading-relaxed">
-              Peak stage 4.52 ft MLLW. 5 to 7 inches water across Daniel Ave &amp; Bayshore Ave. Passenger cars blocked. Move vehicles to high ground now.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 5. FREQUENTLY ASKED QUESTIONS (FAQ) -->
-    <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
-      <div class="space-y-1">
-        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-circle-question text-sky-600"></i>
-          Frequently Asked Questions
-        </h2>
-        <p class="text-slate-600 text-sm">
-          Everything you need to know about our privacy-first community notification system.
-        </p>
-      </div>
-
-      <div class="divide-y divide-slate-100 text-sm space-y-4 pt-2">
-        <div class="pt-4 space-y-1.5">
-          <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
-            <i class="fa-solid fa-comment-dots text-sky-600"></i>
-            Why ntfy.sh instead of standard SMS text messages?
-          </h3>
-          <p class="text-slate-600 leading-relaxed text-xs sm:text-sm">
-            Standard SMS text messaging requires collecting and storing community members' personal phone numbers, paying telecom gateway fees, and navigating complex carrier spam filters. <strong>ntfy.sh</strong> is 100% free, decentralized, open-source, and does not require you to share any personal information whatsoever.
-          </p>
-        </div>
-
-        <div class="pt-4 space-y-1.5">
-          <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
-            <i class="fa-solid fa-lock text-sky-600"></i>
-            Do I have to create an account or give my email?
-          </h3>
-          <p class="text-slate-600 leading-relaxed text-xs sm:text-sm">
-            No. There are <strong>zero accounts, zero passwords, and zero email registrations</strong>. Subscribing to an ntfy topic is just like tuning a radio to a broadcast channel.
-          </p>
-        </div>
-
-        <div class="pt-4 space-y-1.5">
-          <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
-            <i class="fa-solid fa-volume-high text-sky-600"></i>
-            Will this wake me up at 3:00 AM?
-          </h3>
-          <p class="text-slate-600 leading-relaxed text-xs sm:text-sm">
-            If an extreme high tide is predicted to breach roads in the middle of the night, you will receive an Advance Warning <strong>when a hazard is detected in fresh forecast data</strong>, giving you time to park safely before bed. Imminent crest warnings also chime so you are not trapped unexpectedly by rising water.
-          </p>
-        </div>
-
-        <div class="pt-4 space-y-1.5">
-          <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
-            <i class="fa-solid fa-battery-full text-sky-600"></i>
-            Will this drain my phone's battery?
-          </h3>
-          <p class="text-slate-600 leading-relaxed text-xs sm:text-sm">
-            No. ntfy uses standard Apple Push Notification service (APNs) on iOS and Google Firebase Cloud Messaging on Android, using virtually 0% additional battery.
-          </p>
-        </div>
-
-        <div class="pt-4 space-y-1.5">
-          <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
-            <i class="fa-solid fa-trash-can text-sky-600"></i>
-            How do I unsubscribe?
-          </h3>
-          <p class="text-slate-600 leading-relaxed text-xs sm:text-sm">
-            In the ntfy app, swipe left or long-press on <code class="bg-slate-100 px-1 py-0.5 rounded font-mono text-xs">{DEFAULT_NTFY_TOPIC}</code> and tap <strong>Delete</strong>. In a web browser, tap Unsubscribe in the top corner. You are instantly removed.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 6. BACK TO LIVE MONITOR CTA -->
-    <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
-      <div class="space-y-1 text-center sm:text-left">
-        <h3 class="text-lg font-bold text-slate-900">Want to see real-time water levels right now?</h3>
-        <p class="text-xs sm:text-sm text-slate-600">
-          Check the live Ware River stage, interactive coastal flood map, and 48-hour hydrograph.
-        </p>
-      </div>
-      <a href="index.html" class="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md transition flex items-center gap-2 shrink-0">
-        <i class="fa-solid fa-water text-sky-400"></i>
-        <span>View Live Monitor</span>
-        <i class="fa-solid fa-arrow-right text-xs ml-1"></i>
-      </a>
-    </section>
-
-  </main>
-
-  {footer_html}
-
-  <script>
-    function copyTopic() {{
-      const topic = '{DEFAULT_NTFY_TOPIC}';
-      navigator.clipboard.writeText(topic).then(() => {{
-        const feedback = document.getElementById('copy-feedback');
-        if (feedback) {{
-          feedback.classList.remove('hidden');
-          setTimeout(() => {{
-            feedback.classList.add('hidden');
-          }}, 4000);
-        }} else {{
-          alert('Topic copied to clipboard: ' + topic);
-        }}
-      }}).catch(() => {{
-        prompt('Copy topic name:', topic);
-      }});
-    }}
-  </script>
-</body>
-</html>
-"""
-
-# ==============================================================================
-# 3. PAGE 3: ABOUT.HTML (THE STORY, NOTEBOOKS, AND SCIENCE)
-# ==============================================================================
 @safe_template
 def build_about_html(status):
     navbar_html = build_shared_navbar("about", status)
@@ -2038,7 +1290,8 @@ def build_about_html(status):
 
   {navbar_html}
 
-  <main class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 w-full">
+  <main id="main-content" class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 w-full">
+    <section class="resident-card"><h2>A community observation project</h2><p>Howard Hottinger maintains this independent monitor. Family observations recorded since 2021 provide the local depth record. NOAA and USGS provide regional measurements and guidance. Original notes and notebook photographs are kept private.</p><p><a href="https://github.com/flatfoot584/mathews-flood-monitor/issues/new">Contact the maintainer or report a problem</a></p></section>
 
     <!-- Hero Header -->
     <section class="space-y-3">
@@ -2049,7 +1302,7 @@ def build_about_html(status):
         From Handwritten Notebooks to a Predictive Flood Model
       </h1>
       <p class="text-lg text-slate-600 leading-relaxed max-w-3xl">
-        How 204 storm observations recorded with measuring tapes across 5 years in Mathews County, Virginia uncovered the mathematical tipping points of coastal compound flooding.
+        How 204 community observations recorded with measuring tapes across 5 years in Mathews County, Virginia uncovered the mathematical tipping points of coastal compound flooding.
       </p>
     </section>
 
@@ -2057,16 +1310,16 @@ def build_about_html(status):
     <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-4">
       <div class="flex items-center gap-3 text-sky-600">
         <i class="fa-solid fa-compass text-2xl"></i>
-        <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Why Regional Weather Reports Fail Mathews County</h2>
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-900">How local estimates supplement official warnings</h2>
       </div>
       <p class="text-slate-700 leading-relaxed">
         Mathews County is an almost sea-level peninsula surrounded by the Chesapeake Bay, Mobjack Bay, and the Piankatank River. Much of the land sits less than 5 to 10 feet above sea level.
       </p>
       <p class="text-slate-700 leading-relaxed">
-        When TV forecasts in Richmond or Norfolk announce a "Coastal Flood Warning," it offers almost zero practical value to a local homeowner. It doesn’t tell you whether the water will stay in the ditch or flood the driveway, what time high tide will block your car, or whether an SUV can get through.
+        Official coastal flood warnings describe regional hazards and should guide safety decisions. This community project adds estimates at local reference points and neighborhood streets, with uncertainties from drainage, rainfall, elevation and the remote Ware River gauge.
       </p>
       <div class="bg-sky-50 border-l-4 border-sky-500 p-4 rounded-r-xl text-sky-950 text-sm">
-        <strong>The Core Question:</strong> "At exactly what river stage does the water breach our ditches, and how many inches of water does every additional tenth of a foot create?"
+        <strong>The Core Question:</strong> "At approximately what river stage does the water breach our ditches, and how many inches of water does every additional tenth of a foot create?"
       </div>
     </section>
 
@@ -2088,7 +1341,7 @@ def build_about_html(status):
           <div class="text-sky-600 font-bold text-2xl font-mono">3.99 ft</div>
           <h3 class="font-bold text-slate-900 text-sm">1. The Tipping Point</h3>
           <p class="text-xs text-slate-600 leading-relaxed">
-            Below 3.99 ft MLLW, water remains in ditches (0" flooding). Above 4.00 ft, ditch banks breach and water spreads across the driveway.
+            The historical depth relationship begins near 3.99 ft MLLW. Other low streets can flood earlier, and rainfall can cause ponding independently of tidal stage.
           </p>
         </div>
 
@@ -2096,7 +1349,7 @@ def build_about_html(status):
           <div class="text-sky-600 font-bold text-2xl font-mono">10.95" / ft</div>
           <h3 class="font-bold text-slate-900 text-sm">2. The Inundation Slope</h3>
           <p class="text-xs text-slate-600 leading-relaxed">
-            Every 0.10 ft of river rise yields 1.1 to 1.2 inches of water depth on the property ($r = 0.912$, $R^2 = 0.832$).
+            Every 0.10 ft of river rise yields 1.1 to 1.2 inches of water depth on the property in the historical record. See Science for metrics and the subsets used.
           </p>
         </div>
 
@@ -2122,7 +1375,7 @@ def build_about_html(status):
       <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
         <li>A cloud runner spins up and queries NOAA NWPS (Ware River WRVV2 6-min stage & 4-day forecast hydrograph).</li>
         <li>Fetches real-time winds and storm surge from Yorktown USCG and Windmill Point.</li>
-        <li>Computes the Hybrid Hydrodynamic–ML stage forecast and micro-topography water depths.</li>
+        <li>Computes NOAA guidance with empirical weather adjustments and estimated local water depths.</li>
         <li>Appends verified hours to our permanent <code class="bg-slate-800 text-sky-300 px-1 py-0.5 rounded">archive_hourly_observations.csv</code>.</li>
         <li>Rebuilds and publishes this website on GitHub Pages.</li>
       </ul>
@@ -2163,7 +1416,7 @@ def build_guide_html(status):
 
   {navbar_html}
 
-  <main class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 w-full">
+  <main id="main-content" class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 w-full">
 
     <!-- Hero Header -->
     <section class="space-y-3">
@@ -2238,7 +1491,7 @@ def build_guide_html(status):
             Water sheets completely across the main driveway. Road edges disappear underwater.
           </p>
           <div class="pt-2 border-t border-slate-100 text-xs text-slate-700 space-y-1">
-            <div><strong>Vehicles:</strong> Passenger cars & sedans <strong>BLOCKED</strong>. SUVs/trucks only.</div>
+            <div><strong>Vehicles:</strong> Passenger cars & sedans <strong>BLOCKED</strong>. Do not enter flooded roads in any vehicle.</div>
             <div><strong>Action:</strong> Move cars to high ground before high tide; plan travel around low tide.</div>
           </div>
         </div>
@@ -2277,14 +1530,14 @@ def build_guide_html(status):
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
         <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
           <div class="text-emerald-700 font-black text-xl font-mono">3 Inches</div>
-          <div class="font-bold text-xs text-slate-900">Tire Splash Zone</div>
-          <p class="text-[11px] text-slate-600">Passable for all passenger vehicles. Slow down to avoid throwing salt spray into engine compartments.</p>
+          <div class="font-bold text-xs text-slate-900">Shallow water still poses a hazard</div>
+          <p class="text-[11px] text-slate-600">Do not enter floodwater in any vehicle. Even shallow water can hide road damage, current and deeper areas.</p>
         </div>
 
         <div class="p-4 rounded-xl bg-orange-50 border border-orange-200 space-y-1.5">
           <div class="text-orange-700 font-black text-xl font-mono">6 Inches</div>
-          <div class="font-bold text-xs text-orange-900">Sedan Danger Threshold</div>
-          <p class="text-[11px] text-orange-800">Reaches floorboards and exhaust pipes of passenger sedans. Stalls engines and ruins electronic modules.</p>
+          <div class="font-bold text-xs text-orange-900">Loss of control hazard</div>
+          <p class="text-[11px] text-orange-800">Six inches of moving water can knock a person down. Water depth does not establish that a road is safe to cross.</p>
         </div>
 
         <div class="p-4 rounded-xl bg-red-50 border border-red-200 space-y-1.5">
@@ -2295,6 +1548,7 @@ def build_guide_html(status):
       </div>
     </section>
 
+    <section class="resident-card"><h2>Save the monitor for offline viewing</h2><p>On iPhone, open the site in Safari and use Share, then Add to Home Screen. On Android or a supported desktop browser, use its Install or Add to Home Screen option. Visit the dashboard online first to save the main pages.</p><p>Offline pages retain their original timestamps and show an offline notice. Forecasts do not update offline; external warnings and map tiles may be unavailable. Mobile ntfy alerts are configured separately.</p></section>
     <!-- 3. PLAIN-ENGLISH GLOSSARY -->
     <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
       <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
@@ -2413,7 +1667,7 @@ def build_data_html(status, ground_truth_rows, obs_rows):
 
   {navbar_html}
 
-  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 min-w-0 w-full w-full">
+  <main id="main-content" class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 min-w-0 w-full w-full">
 
     <!-- Hero Header -->
     <section class="space-y-3">
@@ -2438,7 +1692,7 @@ def build_data_html(status, ground_truth_rows, obs_rows):
       <div>
         <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
           <i class="fa-solid fa-file-arrow-down text-sky-600"></i>
-          Download Raw Datasets
+          Download public data
         </h2>
         <p class="text-xs sm:text-sm text-slate-500 mt-1">
           These downloads contain public automated observations, forecasts, and yearly historical summaries. Original observer records and internal documents are not published.
@@ -2453,7 +1707,7 @@ def build_data_html(status, ground_truth_rows, obs_rows):
               <span class="text-xs font-bold text-sky-700 uppercase">Hourly Archive</span>
               <i class="fa-solid fa-download text-slate-400 group-hover:text-sky-600 transition"></i>
             </div>
-            <div class="font-bold text-slate-900 text-sm">archive_hourly_observations.csv</div>
+            <div class="font-bold text-slate-900 text-sm">Hourly sensor observations (CSV)</div>
             <p class="text-xs text-slate-600 leading-relaxed">
               Permanent cumulative hourly dataset appended every 30 minutes in the cloud.
             </p>
@@ -2468,7 +1722,7 @@ def build_data_html(status, ground_truth_rows, obs_rows):
               <span class="text-xs font-bold text-sky-700 uppercase">Ground Truth</span>
               <i class="fa-solid fa-download text-slate-400 group-hover:text-sky-600 transition"></i>
             </div>
-            <div class="font-bold text-slate-900 text-sm">observer_yearly_summary.csv</div>
+            <div class="font-bold text-slate-900 text-sm">Yearly observation summary (CSV)</div>
             <p class="text-xs text-slate-600 leading-relaxed">
               Yearly record counts and numerical stage/depth summaries; no individual records, notebook images, or free-text notes.
             </p>
@@ -2483,7 +1737,7 @@ def build_data_html(status, ground_truth_rows, obs_rows):
               <span class="text-xs font-bold text-sky-700 uppercase">JSON API</span>
               <i class="fa-solid fa-download text-slate-400 group-hover:text-sky-600 transition"></i>
             </div>
-            <div class="font-bold text-slate-900 text-sm">latest_status.json</div>
+            <div class="font-bold text-slate-900 text-sm">Current conditions &amp; forecast (JSON)</div>
             <p class="text-xs text-slate-600 leading-relaxed">
               Real-time API JSON endpoint with current stage, sector elevations, passability, and 48h outlook.
             </p>
@@ -2492,6 +1746,8 @@ def build_data_html(status, ground_truth_rows, obs_rows):
         </a>
       </div>
     </section>
+
+    {resident_ui.reporting()}
 
     <!-- 3. GROUND TRUTH OBSERVATION EXPLORER TABLE -->
     <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden space-y-4 p-6">
@@ -2676,13 +1932,13 @@ def build_science_html(status, evidence=None):
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
   {navbar_html}
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 flex-1 min-w-0 w-full">
+  <main id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 flex-1 min-w-0 w-full">
 
     <!-- 0. HERO SECTION -->
     <section class="bg-gradient-to-br from-slate-900 via-slate-800 to-sky-950 text-white rounded-3xl p-6 sm:p-10 shadow-xl border border-slate-700/60 relative overflow-hidden">
       <div class="relative z-10 max-w-4xl space-y-4">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-sky-900/80 text-sky-300 border border-sky-700/60 shadow-sm">
-          <i class="fa-solid fa-graduation-cap"></i> PEER-REVIEW READY &bull; OPEN SCIENCE &bull; 5-YEAR EMPIRICAL RECORD
+          <i class="fa-solid fa-graduation-cap"></i> COMMUNITY RESEARCH &bull; PUBLIC METHODS &bull; HISTORICAL OBSERVATIONS
         </div>
         <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
           Scientific Methodology & Model Benchmarks
@@ -2694,9 +1950,6 @@ def build_science_html(status, evidence=None):
           <a href="models/scientific_evidence.json" download class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs sm:text-sm shadow-md transition flex items-center gap-2">
             <i class="fa-solid fa-download"></i> Download JSON Evidence
           </a>
-          <a href="models/scientific_evidence.json" target="_blank" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 font-semibold text-xs sm:text-sm transition flex items-center gap-2">
-            <i class="fa-solid fa-file-lines text-sky-400"></i> Download Aggregate Benchmarks
-          </a>
           <a href="observer_yearly_summary.csv" download class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 font-semibold text-xs sm:text-sm transition flex items-center gap-2">
             <i class="fa-solid fa-table text-emerald-400"></i> Yearly Observation Summary
           </a>
@@ -2704,6 +1957,7 @@ def build_science_html(status, evidence=None):
       </div>
     </section>
 
+    <aside class="official-card"><strong>How to interpret these scores</strong><p>Historical observed-weather benchmarks do not validate deployed forecasts. Stage 2 scores use the same historical record used to establish the depth relationship, not an independent holdout. A 1-meter LiDAR grid describes horizontal spacing, not vertical accuracy. Apparent threshold agreement does not prove sub-inch precision; elevation date, point type, vertical error and datum conversion need a documented survey audit.</p></aside>
     <!-- 1. EXECUTIVE KPI BENCHMARKS GRID (6 CARDS) -->
     <section>
       <div class="mb-4">
@@ -2721,7 +1975,7 @@ def build_science_html(status, evidence=None):
             <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">5.33-Year Record</span>
             <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-calendar-check"></i></div>
           </div>
-          <div class="text-2xl sm:text-3xl font-black text-slate-900 font-mono">{total_obs} Events</div>
+          <div class="text-2xl sm:text-3xl font-black text-slate-900 font-mono">{total_obs} Observations</div>
           <p class="text-xs text-slate-500 leading-snug">{valid_pairs} paired depth records, May 2021 – Sep 2026 across 10 named storms.</p>
         </div>
 
@@ -2742,7 +1996,7 @@ def build_science_html(status, evidence=None):
             <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-bullseye"></i></div>
           </div>
           <div class="text-2xl sm:text-3xl font-black text-indigo-700 font-mono">&Delta; = 0.06 ft</div>
-          <p class="text-xs text-slate-500 leading-snug">Culvert invert 4.05' MLLW independently verifies 3.99' tipping point within 0.7".</p>
+          <p class="text-xs text-slate-500 leading-snug">Culvert invert 4.05' MLLW is close to the 3.99' empirical threshold. Vertical and datum uncertainty remain.</p>
         </div>
 
         <!-- Card 4: Driveway Pad Agreement -->
@@ -2752,7 +2006,7 @@ def build_science_html(status, evidence=None):
             <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-road"></i></div>
           </div>
           <div class="text-2xl sm:text-3xl font-black text-amber-700 font-mono">&Delta; = 0.00 ft</div>
-          <p class="text-xs text-slate-500 leading-snug">USGS LiDAR 4.40' MLLW exactly matches Tier 2 moderate flood threshold.</p>
+          <p class="text-xs text-slate-500 leading-snug">USGS LiDAR 4.40' MLLW is close to the empirical moderate-flood threshold; this is not a survey-precision validation.</p>
         </div>
 
         <!-- Card 5: Stage 1 ML Nowcast -->
@@ -2816,7 +2070,7 @@ def build_science_html(status, evidence=None):
             Stage 2: Hyper-Local Piecewise Inundation Model
           </div>
           <p class="text-xs text-slate-600 leading-relaxed">
-            Translates the predicted or observed gauge stage into exact flood depth in inches on property benchmarks, driveway access corridors, and neighborhood roads using our empirically discovered 3.99 ft tipping point and 10.95 in/ft linear inundation gradient.
+            Translates the predicted or observed gauge stage into estimated flood depth in inches on property benchmarks, driveway access corridors, and neighborhood roads using our empirically discovered 3.99 ft tipping point and 10.95 in/ft linear inundation gradient.
           </p>
           <div class="bg-slate-900 text-emerald-200 p-3.5 rounded-lg font-mono text-xs overflow-x-auto shadow-inner">
             <div class="text-slate-400 text-[10px] mb-1 font-sans font-semibold uppercase tracking-wider">Piecewise Inundation Law:</div>
@@ -2870,7 +2124,7 @@ def build_science_html(status, evidence=None):
                 <td class="px-4 py-3 font-mono text-sky-700 font-bold">Flood Depth (in)</td>
                 <td class="px-4 py-3 text-slate-600">Piecewise Linear Threshold</td>
                 <td class="px-4 py-3 text-slate-600 font-mono">2021–2026 Continuous</td>
-                <td class="px-4 py-3 text-slate-600 font-mono">181 Ground-Truth Events</td>
+                <td class="px-4 py-3 text-slate-600 font-mono">181 paired observations (same record)</td>
                 <td class="px-4 py-3 font-mono font-bold text-emerald-700">{stage2_r2:.4f}</td>
                 <td class="px-4 py-3 font-mono font-bold text-emerald-700">{stage2_mae_in:.2f}"</td>
                 <td class="px-4 py-3 font-mono font-bold text-slate-800">{stage2_rmse_in:.2f}"</td>
@@ -2887,7 +2141,7 @@ def build_science_html(status, evidence=None):
         <div>
           <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
             <i class="fa-solid fa-satellite text-sky-600"></i>
-            USGS 3DEP 1-Meter LiDAR Altimetry Ground-Truth Validation
+            USGS 3DEP elevation estimates &amp; limitations
           </h2>
           <p class="text-xs sm:text-sm text-slate-500">Federal airborne laser altimetry independently confirms handwritten empirical tipping points without parameter tuning.</p>
         </div>
@@ -3017,45 +2271,12 @@ def build_science_html(status, evidence=None):
       <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-950 text-xs sm:text-sm leading-relaxed flex items-start gap-3">
         <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5 text-base shrink-0"></i>
         <div>
-          <strong>Empirical Zero-Inundation Baseline Confirmation:</strong> Exactly 44 observations were recorded when the Ware River gauge was below 4.00 ft MLLW (ranging from 3.40' to 3.98'). All 44 instances exhibited exactly <strong>0.0 inches</strong> of inundation on the yard and road, verifying zero false positive flood alerts below our physical 3.99 ft threshold.
+          <strong>Empirical Zero-Inundation Baseline Confirmation:</strong> Exactly 44 observations were recorded when the Ware River gauge was below 4.00 ft MLLW (ranging from 3.40' to 3.98'). All 44 instances exhibited exactly <strong>0.0 inches</strong> of inundation on the yard and road, describing this sample only. This does not establish zero future false alarms or cover rainfall-only flooding.
         </div>
       </div>
     </section>
 
-    <!-- 5. BENCHMARK STORM CASE STUDIES -->
-    <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
-        <div>
-          <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-cloud-bolt text-rose-600"></i>
-            Benchmark Storm Case Studies (Observed vs Model Predicted)
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-500">Evaluation against 10 notable tropical cyclones, coastal lows, and king tide events across the 5-year record.</p>
-        </div>
-        <div class="text-xs font-mono text-slate-500">
-          Evaluated via Piecewise Stage 2 Formula
-        </div>
-      </div>
-
-      <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-inner">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-slate-100 text-slate-700 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
-              <th class="px-4 py-2.5">Storm / Event</th>
-              <th class="px-4 py-2.5">Stage (MLLW)</th>
-              <th class="px-4 py-2.5">Observed Depth</th>
-              <th class="px-4 py-2.5">Predicted Depth</th>
-              <th class="px-4 py-2.5">Residual Error</th>
-              <th class="px-4 py-2.5">Wind Forcing</th>
-              <th class="px-4 py-2.5">Hydrologic & Inundation Impact</th>
-            </tr>
-          </thead>
-          <tbody>
-            {storm_rows_html}
-          </tbody>
-        </table>
-      </div>
-    </section>
+    {resident_ui.evidence_section()}
 
     <!-- 6. FORMAL SCIENTIFIC & ENGINEERING CHANGELOG -->
     <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">

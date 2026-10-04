@@ -87,7 +87,7 @@
       "elevation_mllw_ft": 4.4,
       "model_empirical_mllw_ft": 4.4,
       "discrepancy_ft": 0.0,
-      "significance": "Exact match to within 0.01 ft: water covers driveway pad at 4.40' MLLW (Tier 2 moderate hazard threshold)."
+      "significance": "Approximate elevation agreement, with unquantified vertical/datum uncertainty: water covers driveway pad at 4.40' MLLW (Tier 2 moderate hazard threshold)."
     },
     {
       "feature": "Blackwater Creek Marsh Margin (Tidal Wetland Margin)",

@@ -106,7 +106,7 @@ SECTOR_PROFILES = {
         "name": "Upper Residential Grounds & Northern Lots",
         "invert_mllw_ft": 4.60,
         "bank_mllw_ft": 4.89,
-        "description": "Open yards and north property interiors. Trucks and SUVs required."
+        "description": "Open yards and north property interiors. Avoid flooded roads in any vehicle."
     },
     "garage_foundation": {
         "name": "River Road North & Ridge High Ground Pads",
@@ -181,7 +181,7 @@ def evaluate_compound_inundation(stage_mllw_ft, rain_rolling_6h_in=0.0):
                 status = "DITCH FULL (RAIN BACKED UP)" if key == "ditches" else "PUDDLING"
             else:
                 sec_depth = 0.0
-                status = "DRY"
+                status = "No tidal flooding estimated"
         else:
             rise_ft = stage_mllw_ft - inv
             # Stage rise converted to ground depth inches (~11.0 to 11.5 in per ft rise)
@@ -204,7 +204,7 @@ def evaluate_compound_inundation(stage_mllw_ft, rain_rolling_6h_in=0.0):
         st_inv = st_info["invert_mllw_ft"]
         if stage_mllw_ft < st_inv:
             st_depth = pluvial_trapped_in
-            st_status = "Dry & Passable" if st_depth == 0 else f"Rain Ponding ({st_depth}\")"
+            st_status = "No tidal flooding estimated" if st_depth == 0 else f"Rain Ponding ({st_depth}\")"
             st_code = "GREEN" if st_depth == 0 else "YELLOW" if st_depth < 3.5 else "ORANGE" if st_depth < 7.5 else "RED"
         else:
             st_rise = stage_mllw_ft - st_inv
@@ -213,7 +213,7 @@ def evaluate_compound_inundation(stage_mllw_ft, rain_rolling_6h_in=0.0):
                 st_status = f"Puddles & Ditch Full ({st_depth}\")"
                 st_code = "YELLOW"
             elif st_depth < 7.5:
-                st_status = f"Submerged — Sedans Blocked ({st_depth}\")"
+                st_status = f"Flooding estimated ({st_depth}\")"
                 st_code = "ORANGE"
             else:
                 st_status = f"Impassable Deep Water ({st_depth}\")"
@@ -236,11 +236,11 @@ def evaluate_compound_inundation(stage_mllw_ft, rain_rolling_6h_in=0.0):
                       *(st["depth_in"] for st in street_results.values()))
     if route_depth == 0.0:
         passability_code = "GREEN"
-        passability_label = "ALL VEHICLES PASSABLE"
+        passability_label = "NO INUNDATION ESTIMATED"
         passability_desc = "No modeled standing water on community streets or driveway. Check actual conditions before travel."
     elif route_depth < 3.5:
         passability_code = "YELLOW"
-        passability_label = "CAUTION — LOW-CLEARANCE HAZARDOUS"
+        passability_label = "LOW-SPOT FLOODING ESTIMATED"
         passability_desc = "Standing water on an access route. Avoid flooded roads; depth and road condition may differ from estimates."
     elif route_depth < 7.5:
         passability_code = "ORANGE"
@@ -248,7 +248,7 @@ def evaluate_compound_inundation(stage_mllw_ft, rain_rolling_6h_in=0.0):
         passability_desc = "Access routes have modeled flooding. Do not drive into standing water. Move vehicles before flooding begins."
     else:
         passability_code = "RED"
-        passability_label = "CRITICAL — IMPASSABLE TO CIVILIAN TRAFFIC"
+        passability_label = "DEEP FLOODING ESTIMATED — DO NOT ENTER"
         passability_desc = "Deep modeled water on an access route. Do not enter flooded roads, regardless of vehicle clearance."
 
     return {

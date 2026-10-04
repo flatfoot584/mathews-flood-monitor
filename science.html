@@ -2,7 +2,7 @@
 <html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src &#x27;self&#x27;; script-src &#x27;self&#x27; &#x27;unsafe-hashes&#x27; &#x27;sha256-YnuP+/flEhK9+cEPAnW1feVYiXh1RIpJlnYl/FiSzkI=&#x27; &#x27;sha256-Zo7qLYHPVcRuc6G+I90l4H3Yr3unbjUYVuhggKi6F94=&#x27; &#x27;sha256-UP6Lgyi2MyR/qMmH5sZzcSF3s9BSksjlOexIcfcFEBc=&#x27;; style-src &#x27;self&#x27; &#x27;unsafe-inline&#x27; https://cdnjs.cloudflare.com https://unpkg.com https://fonts.googleapis.com; font-src &#x27;self&#x27; https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src &#x27;self&#x27; data: https://tile.openstreetmap.org https://server.arcgisonline.com https://api.qrserver.com https://unpkg.com; connect-src &#x27;self&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;; frame-src &#x27;none&#x27;">
+  <meta http-equiv="Content-Security-Policy" content="default-src &#x27;self&#x27;; script-src &#x27;self&#x27; &#x27;unsafe-hashes&#x27; &#x27;sha256-+tqGoeI0tyYGUXA+BwLlz3008BFx5MYjvOniD0s4tF4=&#x27; &#x27;sha256-Zo7qLYHPVcRuc6G+I90l4H3Yr3unbjUYVuhggKi6F94=&#x27; &#x27;sha256-UP6Lgyi2MyR/qMmH5sZzcSF3s9BSksjlOexIcfcFEBc=&#x27;; style-src &#x27;self&#x27; &#x27;unsafe-inline&#x27; https://cdnjs.cloudflare.com https://unpkg.com https://fonts.googleapis.com; font-src &#x27;self&#x27; https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src &#x27;self&#x27; data: https://tile.openstreetmap.org https://server.arcgisonline.com https://api.qrserver.com https://unpkg.com; connect-src &#x27;self&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;; frame-src &#x27;none&#x27;">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Scientific Methodology & Empirical Validation — Mathews County Coastal Flood Prediction</title>
   <meta name="description" content="Academic benchmarks, machine learning model weights, piecewise inundation formulas, USGS 3DEP LiDAR altimetry validation, and 5-year empirical record for Mathews County, VA.">
@@ -14,135 +14,24 @@
     body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
     .font-mono { font-family: 'JetBrains Mono', monospace; }
   </style>
-</head>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f172a"></head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
-  
-    <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50 shadow-md">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-          <!-- Logo & Brand -->
-          <div class="flex items-center gap-3">
-            <a href="index.html" class="flex items-center gap-3 group">
-              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-blue-700 flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform">
-                <i class="fa-solid fa-water text-lg text-white"></i>
-              </div>
-              <div>
-                <div class="font-bold text-base sm:text-lg tracking-tight flex items-center gap-2 text-white">
-                  Mathews County Flood Monitor
-                </div>
-                <div class="text-[11px] text-slate-400 font-medium">Middle Peninsula &bull; Mobjack Bay, VA</div>
-              </div>
-            </a>
-          </div>
+  <link rel="stylesheet" href="assets/community.css">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="community-header"><div class="community-header-inner"><a class="community-brand" href="index.html">Mathews Flood Monitor<small>Blackwater &amp; Mobjack Bay Estates, Virginia</small></a>
+<button id="mobile-menu-btn" aria-label="Toggle Navigation" aria-expanded="false" aria-controls="mobile-menu">Menu</button>
+<nav id="mobile-menu" aria-label="Main navigation"><a href="index.html" >Dashboard</a><a href="index.html#map-section" >Map</a><a href="alerts.html" >Alerts</a><a href="guide.html" >Guide</a><details><summary>More</summary><div><a href="about.html" >About</a><a href="data.html" >Data</a><a href="science.html" aria-current=page>Science</a></div></details></nav></div></header>
+<aside id="data-freshness" role="status" class="freshness"><strong id="freshness-label">Fresh data</strong><span>Updated Sun, Oct 4 at 12:21 AM EDT</span>
+<details><summary>Data times &amp; alerts</summary><p>Ware River observation: Sat, Oct 3 at 11:45 PM EDT<br>Forecast issued: Sat, Oct 3 at 1:43 PM EDT<br>Website generated: Sun, Oct 4 at 12:21 AM EDT</p>
+<p>Mobile push alerts are enabled for subscribers. Dispatch status does not confirm reception on a phone.</p></details></aside>
 
-          <!-- Desktop Navigation -->
-          <nav class="hidden lg:flex items-center gap-1">
-            
-        <a href="index.html" class="px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm rounded-lg transition-all flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60">
-          <i class="fa-solid fa-water text-xs"></i>
-          <span>Live Monitor</span>
-        </a>
-        
-        <a href="alerts.html" class="px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm rounded-lg transition-all flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60">
-          <i class="fa-solid fa-bell text-xs"></i>
-          <span>Mobile Alerts</span>
-        </a>
-        
-        <a href="index.html#map-section" class="px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm rounded-lg transition-all flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60">
-          <i class="fa-solid fa-map-location-dot text-xs"></i>
-          <span>Flood Map</span>
-        </a>
-        
-        <a href="about.html" class="px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm rounded-lg transition-all flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60">
-          <i class="fa-solid fa-book-open text-xs"></i>
-          <span>About & History</span>
-        </a>
-        
-        <a href="guide.html" class="px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm rounded-lg transition-all flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60">
-          <i class="fa-solid fa-ruler-vertical text-xs"></i>
-          <span>Flood Guide & Tiers</span>
-        </a>
-        
-        <a href="data.html" class="px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm rounded-lg transition-all flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60">
-          <i class="fa-solid fa-database text-xs"></i>
-          <span>Storm Archive & Data</span>
-        </a>
-        
-        <a href="science.html" class="px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm rounded-lg transition-all flex items-center gap-1.5 bg-sky-900/60 text-sky-200 border-b-2 border-sky-400 font-semibold">
-          <i class="fa-solid fa-microscope text-xs"></i>
-          <span>Science & Methodology</span>
-        </a>
-        
-          </nav>
-
-          <!-- Status Pill & Mobile Menu Button -->
-          <div class="flex items-center gap-3">
-            <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 border-emerald-300 border text-xs font-semibold text-emerald-800">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>LIVE: No modeled inundation</span>
-            </div>
-
-            <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 focus:outline-none" aria-label="Toggle Navigation">
-              <i class="fa-solid fa-bars text-lg"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- Mobile Menu Dropdown -->
-        <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-800 py-3 space-y-1">
-          <div class="px-4 py-2 sm:hidden mb-2">
-            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 border-emerald-300 border text-xs font-semibold text-emerald-800">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>LIVE STATUS: No modeled inundation</span>
-            </div>
-          </div>
-          
-        <a href="index.html" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
-          <i class="fa-solid fa-water w-5 text-center mr-2"></i> Live Monitor
-        </a>
-        
-        <a href="alerts.html" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
-          <i class="fa-solid fa-bell w-5 text-center mr-2"></i> Mobile Alerts
-        </a>
-        
-        <a href="index.html#map-section" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
-          <i class="fa-solid fa-map-location-dot w-5 text-center mr-2"></i> Flood Map
-        </a>
-        
-        <a href="about.html" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
-          <i class="fa-solid fa-book-open w-5 text-center mr-2"></i> About & History
-        </a>
-        
-        <a href="guide.html" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
-          <i class="fa-solid fa-ruler-vertical w-5 text-center mr-2"></i> Flood Guide & Tiers
-        </a>
-        
-        <a href="data.html" class="block px-4 py-2.5 rounded-lg text-sm transition text-slate-300 hover:text-white hover:bg-slate-800">
-          <i class="fa-solid fa-database w-5 text-center mr-2"></i> Storm Archive & Data
-        </a>
-        
-        <a href="science.html" class="block px-4 py-2.5 rounded-lg text-sm transition bg-sky-900/50 text-sky-200 font-semibold">
-          <i class="fa-solid fa-microscope w-5 text-center mr-2"></i> Science & Methodology
-        </a>
-        
-        </div>
-      </div>
-    </header>
-    <aside id="data-freshness" role="status" class="bg-amber-50 text-amber-950 border-b border-amber-300 px-4 py-3 text-sm">
-      Last update: 2026-10-03 23:30:39 EDT.
-      Gauge observation: 2026-10-03 23:00:00 EDT.
-      Check actual road conditions before travel.
-      Mobile push alerts are enabled for subscribers.
-    </aside>
-    
-
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 flex-1 min-w-0 w-full">
+  <main id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 flex-1 min-w-0 w-full">
 
     <!-- 0. HERO SECTION -->
     <section class="bg-gradient-to-br from-slate-900 via-slate-800 to-sky-950 text-white rounded-3xl p-6 sm:p-10 shadow-xl border border-slate-700/60 relative overflow-hidden">
       <div class="relative z-10 max-w-4xl space-y-4">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-sky-900/80 text-sky-300 border border-sky-700/60 shadow-sm">
-          <i class="fa-solid fa-graduation-cap"></i> PEER-REVIEW READY &bull; OPEN SCIENCE &bull; 5-YEAR EMPIRICAL RECORD
+          <i class="fa-solid fa-graduation-cap"></i> COMMUNITY RESEARCH &bull; PUBLIC METHODS &bull; HISTORICAL OBSERVATIONS
         </div>
         <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
           Scientific Methodology & Model Benchmarks
@@ -154,9 +43,6 @@
           <a href="models/scientific_evidence.json" download class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs sm:text-sm shadow-md transition flex items-center gap-2">
             <i class="fa-solid fa-download"></i> Download JSON Evidence
           </a>
-          <a href="models/scientific_evidence.json" target="_blank" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 font-semibold text-xs sm:text-sm transition flex items-center gap-2">
-            <i class="fa-solid fa-file-lines text-sky-400"></i> Download Aggregate Benchmarks
-          </a>
           <a href="observer_yearly_summary.csv" download class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 font-semibold text-xs sm:text-sm transition flex items-center gap-2">
             <i class="fa-solid fa-table text-emerald-400"></i> Yearly Observation Summary
           </a>
@@ -164,6 +50,7 @@
       </div>
     </section>
 
+    <aside class="official-card"><strong>How to interpret these scores</strong><p>Historical observed-weather benchmarks do not validate deployed forecasts. Stage 2 scores use the same historical record used to establish the depth relationship, not an independent holdout. A 1-meter LiDAR grid describes horizontal spacing, not vertical accuracy. Apparent threshold agreement does not prove sub-inch precision; elevation date, point type, vertical error and datum conversion need a documented survey audit.</p></aside>
     <!-- 1. EXECUTIVE KPI BENCHMARKS GRID (6 CARDS) -->
     <section>
       <div class="mb-4">
@@ -181,7 +68,7 @@
             <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">5.33-Year Record</span>
             <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-calendar-check"></i></div>
           </div>
-          <div class="text-2xl sm:text-3xl font-black text-slate-900 font-mono">204 Events</div>
+          <div class="text-2xl sm:text-3xl font-black text-slate-900 font-mono">204 Observations</div>
           <p class="text-xs text-slate-500 leading-snug">181 paired depth records, May 2021 – Sep 2026 across 10 named storms.</p>
         </div>
 
@@ -202,7 +89,7 @@
             <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-bullseye"></i></div>
           </div>
           <div class="text-2xl sm:text-3xl font-black text-indigo-700 font-mono">&Delta; = 0.06 ft</div>
-          <p class="text-xs text-slate-500 leading-snug">Culvert invert 4.05' MLLW independently verifies 3.99' tipping point within 0.7".</p>
+          <p class="text-xs text-slate-500 leading-snug">Culvert invert 4.05' MLLW is close to the 3.99' empirical threshold. Vertical and datum uncertainty remain.</p>
         </div>
 
         <!-- Card 4: Driveway Pad Agreement -->
@@ -212,7 +99,7 @@
             <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-sm font-bold"><i class="fa-solid fa-road"></i></div>
           </div>
           <div class="text-2xl sm:text-3xl font-black text-amber-700 font-mono">&Delta; = 0.00 ft</div>
-          <p class="text-xs text-slate-500 leading-snug">USGS LiDAR 4.40' MLLW exactly matches Tier 2 moderate flood threshold.</p>
+          <p class="text-xs text-slate-500 leading-snug">USGS LiDAR 4.40' MLLW is close to the empirical moderate-flood threshold; this is not a survey-precision validation.</p>
         </div>
 
         <!-- Card 5: Stage 1 ML Nowcast -->
@@ -276,7 +163,7 @@
             Stage 2: Hyper-Local Piecewise Inundation Model
           </div>
           <p class="text-xs text-slate-600 leading-relaxed">
-            Translates the predicted or observed gauge stage into exact flood depth in inches on property benchmarks, driveway access corridors, and neighborhood roads using our empirically discovered 3.99 ft tipping point and 10.95 in/ft linear inundation gradient.
+            Translates the predicted or observed gauge stage into estimated flood depth in inches on property benchmarks, driveway access corridors, and neighborhood roads using our empirically discovered 3.99 ft tipping point and 10.95 in/ft linear inundation gradient.
           </p>
           <div class="bg-slate-900 text-emerald-200 p-3.5 rounded-lg font-mono text-xs overflow-x-auto shadow-inner">
             <div class="text-slate-400 text-[10px] mb-1 font-sans font-semibold uppercase tracking-wider">Piecewise Inundation Law:</div>
@@ -330,7 +217,7 @@
                 <td class="px-4 py-3 font-mono text-sky-700 font-bold">Flood Depth (in)</td>
                 <td class="px-4 py-3 text-slate-600">Piecewise Linear Threshold</td>
                 <td class="px-4 py-3 text-slate-600 font-mono">2021–2026 Continuous</td>
-                <td class="px-4 py-3 text-slate-600 font-mono">181 Ground-Truth Events</td>
+                <td class="px-4 py-3 text-slate-600 font-mono">181 paired observations (same record)</td>
                 <td class="px-4 py-3 font-mono font-bold text-emerald-700">0.8511</td>
                 <td class="px-4 py-3 font-mono font-bold text-emerald-700">1.25"</td>
                 <td class="px-4 py-3 font-mono font-bold text-slate-800">1.69"</td>
@@ -347,7 +234,7 @@
         <div>
           <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
             <i class="fa-solid fa-satellite text-sky-600"></i>
-            USGS 3DEP 1-Meter LiDAR Altimetry Ground-Truth Validation
+            USGS 3DEP elevation estimates &amp; limitations
           </h2>
           <p class="text-xs sm:text-sm text-slate-500">Federal airborne laser altimetry independently confirms handwritten empirical tipping points without parameter tuning.</p>
         </div>
@@ -390,7 +277,7 @@
           <td class="px-4 py-3 font-mono font-bold text-sky-700">4.40 ft</td>
           <td class="px-4 py-3 font-mono font-bold text-slate-900">4.40 ft</td>
           <td class="px-4 py-3"><span class="px-2 py-0.5 rounded text-[11px] font-bold border font-mono bg-emerald-100 text-emerald-800 border-emerald-200">0.00 ft (Exact match)</span></td>
-          <td class="px-4 py-3 text-xs text-slate-600">Exact match to within 0.01 ft: water covers driveway pad at 4.40&#x27; MLLW (Tier 2 moderate hazard threshold).</td>
+          <td class="px-4 py-3 text-xs text-slate-600">Approximate elevation agreement, with unquantified vertical/datum uncertainty: water covers driveway pad at 4.40&#x27; MLLW (Tier 2 moderate hazard threshold).</td>
         </tr>
         
         <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-xs sm:text-sm">
@@ -569,45 +456,12 @@
       <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-950 text-xs sm:text-sm leading-relaxed flex items-start gap-3">
         <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5 text-base shrink-0"></i>
         <div>
-          <strong>Empirical Zero-Inundation Baseline Confirmation:</strong> Exactly 44 observations were recorded when the Ware River gauge was below 4.00 ft MLLW (ranging from 3.40' to 3.98'). All 44 instances exhibited exactly <strong>0.0 inches</strong> of inundation on the yard and road, verifying zero false positive flood alerts below our physical 3.99 ft threshold.
+          <strong>Empirical Zero-Inundation Baseline Confirmation:</strong> Exactly 44 observations were recorded when the Ware River gauge was below 4.00 ft MLLW (ranging from 3.40' to 3.98'). All 44 instances exhibited exactly <strong>0.0 inches</strong> of inundation on the yard and road, describing this sample only. This does not establish zero future false alarms or cover rainfall-only flooding.
         </div>
       </div>
     </section>
 
-    <!-- 5. BENCHMARK STORM CASE STUDIES -->
-    <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
-        <div>
-          <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-cloud-bolt text-rose-600"></i>
-            Benchmark Storm Case Studies (Observed vs Model Predicted)
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-500">Evaluation against 10 notable tropical cyclones, coastal lows, and king tide events across the 5-year record.</p>
-        </div>
-        <div class="text-xs font-mono text-slate-500">
-          Evaluated via Piecewise Stage 2 Formula
-        </div>
-      </div>
-
-      <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-inner">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-slate-100 text-slate-700 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
-              <th class="px-4 py-2.5">Storm / Event</th>
-              <th class="px-4 py-2.5">Stage (MLLW)</th>
-              <th class="px-4 py-2.5">Observed Depth</th>
-              <th class="px-4 py-2.5">Predicted Depth</th>
-              <th class="px-4 py-2.5">Residual Error</th>
-              <th class="px-4 py-2.5">Wind Forcing</th>
-              <th class="px-4 py-2.5">Hydrologic & Inundation Impact</th>
-            </tr>
-          </thead>
-          <tbody>
-            
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <section class="resident-card"><h2>Fort Monroe: measured historical contribution</h2><p>2024 held-out causal forecasts use past observations and known astronomical tides. This comparison uses a Ridge baseline, not archived issued NOAA guidance. A historical gain cannot establish improvement to the deployed forecast.</p><div class="table-scroll"><table><thead><tr><th>Lead time</th><th>Baseline MAE (ft)</th><th>With Fort Monroe MAE (ft)</th><th>Change in skill</th></tr></thead><tbody><tr><th scope="row">1 hours</th><td>0.126</td><td>0.100</td><td>+20.6%</td></tr><tr><th scope="row">3 hours</th><td>0.165</td><td>0.157</td><td>+4.8%</td></tr><tr><th scope="row">6 hours</th><td>0.186</td><td>0.182</td><td>+2.1%</td></tr><tr><th scope="row">12 hours</th><td>0.218</td><td>0.215</td><td>+1.6%</td></tr><tr><th scope="row">24 hours</th><td>0.296</td><td>0.293</td><td>+1.0%</td></tr><tr><th scope="row">48 hours</th><td>0.437</td><td>0.435</td><td>+0.4%</td></tr></tbody></table></div><p>Fort Monroe is collected for evaluation. The current operational forecast remains in use pending paired prospective evidence.</p><a href="models/fort_monroe_evaluation.json">Download experiment metrics and limitations</a></section>
 
     <!-- 6. FORMAL SCIENTIFIC & ENGINEERING CHANGELOG -->
     <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
@@ -666,86 +520,9 @@
 
   </main>
 
-  
-    <footer class="bg-slate-900 text-slate-400 text-sm border-t border-slate-800 mt-16 py-12">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
-        <!-- Col 1: Project Info -->
-        <div class="md:col-span-2 space-y-3">
-          <div class="flex items-center gap-2 text-white font-bold text-base">
-            <i class="fa-solid fa-water text-sky-400"></i>
-            <span>Mathews County Coastal Flood Prediction System</span>
-          </div>
-          <p class="text-xs text-slate-400 leading-relaxed max-w-lg">
-            An open science, hyper-local flood prediction pipeline and machine learning model built from 204 ground-truth storm observations (2021–2026), NOAA NWPS hydrodynamic water level guidance, and NOAA CO-OPS sensor networks across the Middle Peninsula of Virginia.
-          </p>
-          <div class="text-xs text-slate-500 pt-1">
-            Last Automated Cloud Sync: <span class="text-slate-300 font-mono font-medium">2026-10-03 23:30:39 EDT</span> (Scheduled every 30 minutes; delays are possible)
-          </div>
-        </div>
-
-        <!-- Col 2: Navigation Links -->
-        <div>
-          <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-200 mb-3">Portal Navigation</h4>
-          <ul class="space-y-2 text-xs">
-            <li><a href="index.html" class="hover:text-sky-400 transition">Live Dashboard & Forecast</a></li>
-            <li><a href="alerts.html" class="hover:text-sky-400 transition">Free Mobile Flood Alerts</a></li>
-            <li><a href="index.html#map-section" class="hover:text-sky-400 transition">Interactive Coastal Map</a></li>
-            <li><a href="about.html" class="hover:text-sky-400 transition">The Story & Handwritten Notes</a></li>
-            <li><a href="guide.html" class="hover:text-sky-400 transition">Flood Tiers & Plain-English Guide</a></li>
-            <li><a href="data.html" class="hover:text-sky-400 transition">Storm History & Data Archive</a></li>
-            <li><a href="science.html" class="hover:text-sky-400 transition">Science, Models & Changelog</a></li>
-          </ul>
-        </div>
-
-        <!-- Col 3: Sensor Networks & Code -->
-        <div>
-          <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-200 mb-3">Data & Source Code</h4>
-          <ul class="space-y-2 text-xs">
-            <li><a href="https://water.noaa.gov/gauges/WRVV2" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA NWPS Ware River (WRVV2)</a></li>
-            <li><a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8637689" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA Yorktown USCG (8637689)</a></li>
-            <li><a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8636580" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA Windmill Point (8636580)</a></li>
-            <li><a href="models/scientific_evidence.json" target="_blank" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-code text-[10px]"></i> Scientific Evidence (JSON)</a></li>
-            <li><a href="science.html" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-file-lines text-[10px]"></i> Public Methodology</a></li>
-            <li><a href="https://github.com/flatfoot584/mathews-flood-monitor" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-brands fa-github text-[11px]"></i> GitHub Repository</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
-        <div>&copy; 2021–2026 Mathews County Flood Prediction Project &bull; Public Community Resource</div>
-        <div class="italic text-[11px]">Empirical model calibrated to 3.99 ft MLLW flood tipping point. Not an official NWS evacuation order.</div>
-      </div>
-    </footer>
-
-    <script>
-      const generatedText = "2026-10-04 03:30:39 UTC";
-      const observedText = "2026-10-03 23:00:00 EDT";
-      function utcMillis(text) {
-        if (!text) return NaN;
-        return Date.parse(text.replace(' UTC', 'Z').replace(' EDT', '-04:00').replace(' EST', '-05:00').replace(' ', 'T'));
-      }
-      function updateFreshness() {
-        const stamp = utcMillis(generatedText);
-        const observation = utcMillis(observedText);
-        const old = !Number.isFinite(stamp) || !Number.isFinite(observation) || Date.now() - stamp > 90*60000 || Date.now() - observation > 90*60000;
-        if (old) {
-          const notice = document.getElementById('data-freshness');
-          if (notice) notice.textContent = 'DATA STALE OR UNAVAILABLE — Flood safety cannot be confirmed. Last update: ' + generatedText;
-          document.querySelectorAll('[data-current-safety]').forEach(el => el.hidden = true);
-        }
-      }
-      updateFreshness();
-      setInterval(updateFreshness, 60000);
-      // Mobile menu toggle
-      const menuBtn = document.getElementById('mobile-menu-btn');
-      const mobileMenu = document.getElementById('mobile-menu');
-      if (menuBtn && mobileMenu) {
-        menuBtn.addEventListener('click', () => {
-          mobileMenu.classList.toggle('hidden');
-        });
-      }
-    </script>
-    
+  <footer class="community-footer"><div><strong>Independent community research</strong><p>Maintained by Howard Hottinger using NOAA and USGS data. Estimates cover Blackwater and Mobjack Bay Estates, not all of Mathews County. No agency endorsement is implied.</p>
+<a href="about.html">About this project</a> · <a href="https://github.com/flatfoot584/mathews-flood-monitor/issues/new">Report a problem or observed flooding</a> · <a href="science.html">Methods &amp; evidence</a></div><p>Scheduled updates every 30 minutes, with possible delays. Never enter flooded roads. Follow official warnings and local emergency instructions.</p></footer>
+<script id="freshness-times" type="application/json">{"generated": "2026-10-04 04:21:10 UTC", "observed": "2026-10-03 23:45:00 EDT"}</script><script src="assets/community.js"></script>
 
   <script>
     // Copy BibTeX Function

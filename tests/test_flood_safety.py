@@ -50,7 +50,7 @@ class FloodSafetyTests(unittest.TestCase):
         atomic_write_json(self.state_file, {'active_event':True})
         with patch.object(alerts, 'send_ntfy_push', return_value=True) as send:
             alerts.evaluate_and_dispatch_alerts(status, self.state_file)
-        self.assertIn('ALL CLEAR', send.call_args.kwargs['title'])
+        self.assertIn('Modeled hazard ended', send.call_args.kwargs['title'])
         self.assertFalse(json.loads(Path(self.state_file).read_text())['active_event'])
 
     def test_missing_sources_never_clear_active_event(self):
@@ -97,11 +97,11 @@ class FloodSafetyTests(unittest.TestCase):
         page = dashboard.build_index_html(status, [], [])
         self.assertNotIn('PASSABLE & SAFE', page)
         self.assertNotIn('All access routes dry. Safe for low clearance sedans.', page)
-        self.assertIn('DO NOT ENTER FLOODED ROADS', page)
+        self.assertIn('never enter floodwater', page)
 
     def test_forecast_hazard_controls_vehicle_cards(self):
         page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])
-        self.assertIn('DO NOT ENTER FLOODED ROADS', page)
+        self.assertIn('never enter floodwater', page)
         self.assertNotIn('Ground clearance adequate for current and peak tides.', page)
 
     def test_rain_flooded_road_blocks_sedans_and_escalates(self):
@@ -183,7 +183,8 @@ class FloodSafetyTests(unittest.TestCase):
                             (dashboard.build_data_html,([],[])), (dashboard.build_science_html,())]:
             page = build(status, *args)
             self.assertIn('data-freshness', page)
-            self.assertIn('updateFreshness()', page)
+            self.assertIn('assets/community.js', page)
+            self.assertIn('age>90*60000', Path('assets/community.js').read_text())
             self.assertNotIn('Normal Conditions — Driveways & Roads Clear', page)
 
     def test_script_breakout_and_attribute_injection_are_escaped(self):
@@ -319,7 +320,7 @@ class FloodSafetyTests(unittest.TestCase):
         original=os.getcwd()
         try:
             os.chdir(self.directory.name)
-            with patch.object(sys,'argv',['ingest_realtime.py','--quiet']),patch.object(ingest,'fetch_nwps_wrvv2_observed',return_value=[{'datetime_utc':now,'stage_mllw_ft':1.0}]),patch.object(ingest,'fetch_nwps_wrvv2_forecast',return_value=[{'datetime_utc':h,'forecast_stage_mllw_ft':1.0} for h in hours]),patch.object(ingest,'fetch_coops_product',side_effect=coops),patch.object(ingest,'fetch_nws_hourly_forecast',return_value=wind),patch.object(ingest,'fetch_nws_qpf_map',return_value={h:0.0 for h in hours}):
+            with patch.object(sys,'argv',['ingest_realtime.py','--quiet']),patch.object(ingest,'fetch_nwps_wrvv2_observed',return_value=[{'datetime_utc':now,'stage_mllw_ft':1.0}]),patch.object(ingest,'fetch_nwps_wrvv2_forecast',return_value=[{'datetime_utc':h,'forecast_stage_mllw_ft':1.0} for h in hours]),patch.object(ingest,'fetch_coops_product',side_effect=coops),patch.object(ingest,'fetch_nws_hourly_forecast',return_value=wind),patch.object(ingest,'fetch_nws_qpf_map',return_value={h:0.0 for h in hours}),patch.object(ingest,'fetch_fort_monroe_observed',return_value=[]),patch.object(ingest,'fetch_official_alerts',return_value={'available':False,'alerts':[]}):
                 ingest.SOURCE_HEALTH.clear()
                 ingest.main()
             status=json.loads(Path('latest_status.json').read_text())

@@ -273,9 +273,9 @@ def evaluate_and_dispatch_alerts(status, state_file, topic=DEFAULT_NTFY_TOPIC, f
             alert_type = "all_clear"
             priority = "low"
             tags = "white_check_mark,sunny"
-            title = "Mathews Coastal Flood Advisory: ALL CLEAR"
+            title = "Mathews Flood Monitor: Modeled hazard ended"
             body_lines = [
-                "Water levels have receded below 4.0 ft into normal ditches.",
+                "The current model no longer estimates inundation from tidal water levels or forecast rainfall.",
                 "No modeled coastal or forecast rainfall hazard remains. Check actual road conditions before travel.",
                 f"Ware River Stage: {curr.get('ware_river_stage_mllw_ft')} ft MLLW."
             ]
@@ -346,7 +346,7 @@ def evaluate_and_dispatch_alerts(status, state_file, topic=DEFAULT_NTFY_TOPIC, f
             body_lines.append(f"Ware River Stage: {peak_stage} ft MLLW (Threshold: 4.0 ft)")
             body_lines.append(f"Travel Impact: {peak_pass}")
             if max_tier >= 2:
-                body_lines.append("Action: Move passenger cars to Bunny Rabbit ridge or high ground.")
+                body_lines.append("Action: Move vehicles to verified dry high ground before flooding starts. Never enter floodwater.")
             else:
                 body_lines.append("Action: Water ponding in low spots. Do not drive into flooded roads.")
 
