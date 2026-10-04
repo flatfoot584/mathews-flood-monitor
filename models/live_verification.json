@@ -1,35 +1,35 @@
 {
-  "updated_at_utc": "2026-10-04T15:18:40+00:00",
-  "issued_rows": 30,
+  "updated_at_utc": "2026-10-04T20:30:35+00:00",
+  "issued_rows": 36,
   "results": [
     {
       "lead_hours": 1,
-      "n": 4,
-      "mae_ft": 0.38250000000000006,
+      "n": 5,
+      "mae_ft": 0.35,
       "high_water_n": 0,
       "misses": 0,
       "false_alarms": 0
     },
     {
       "lead_hours": 3,
-      "n": 3,
-      "mae_ft": 0.20999999999999996,
+      "n": 4,
+      "mae_ft": 0.22999999999999998,
       "high_water_n": 0,
       "misses": 0,
       "false_alarms": 0
     },
     {
       "lead_hours": 6,
-      "n": 3,
-      "mae_ft": 0.16,
+      "n": 4,
+      "mae_ft": 0.25749999999999995,
       "high_water_n": 0,
       "misses": 0,
       "false_alarms": 0
     },
     {
       "lead_hours": 12,
-      "n": 0,
-      "mae_ft": null,
+      "n": 3,
+      "mae_ft": 0.41,
       "high_water_n": 0,
       "misses": 0,
       "false_alarms": 0
