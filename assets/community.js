@@ -20,11 +20,12 @@
       document.querySelectorAll('[data-age-label]').forEach(el=>el.textContent=el.dataset.lastLabel);
       document.querySelectorAll('[data-current-safety]').forEach(el=>{
         el.hidden=false;el.classList.add('outdated-estimate');
-        if(!el.querySelector('.estimate-age-note')){
-          const p=document.createElement('p');p.className='estimate-age-note';
-          p.textContent=expired?'Historical forecast: its valid period has ended. These values do not describe current conditions.':'Last available estimates: check the dates below. Current conditions and road safety cannot be confirmed.';
+        let p=el.querySelector('.estimate-age-note');
+        if(!p){
+          p=document.createElement('p');p.className='estimate-age-note';
           if(el.tagName==='DETAILS')el.querySelector('summary')?.after(p);else el.prepend(p);
         }
+        p.textContent=expired?'Historical forecast: its valid period has ended. These values do not describe current conditions.':'Last available estimates: check the dates below. Current conditions and road safety cannot be confirmed.';
       });
       const notice=document.getElementById('data-freshness');
       if(notice){notice.classList.add('data-degraded');let p=document.getElementById('stale-detail');if(!p){p=document.createElement('p');p.id='stale-detail';notice.append(p);}p.textContent=stale?'Updates are overdue or gauge data is missing. The last saved forecast remains visible for reference. Check pipeline status for failure details and official forecasts for current guidance.':`${(times.quality?.reasons||[]).join(' ')} Last available estimates remain visible for reference.`;}
