@@ -2,13 +2,14 @@
 <html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src &#x27;self&#x27;; script-src &#x27;self&#x27; &#x27;unsafe-hashes&#x27; &#x27;sha256-PR5g+QuRzqaCHosuWx5lAu0/TDR2WaJWOHUGCt+7FTk=&#x27; &#x27;sha256-gCMKe9Z9m72LrtjYTePxDBzRuJQrzR/KEYPoke5NNi4=&#x27; &#x27;sha256-3YkOyYvrtDgfEIT4CydBPZs3ckgiR1SoDp951EE62hI=&#x27;; style-src &#x27;self&#x27; &#x27;unsafe-inline&#x27; https://cdnjs.cloudflare.com https://unpkg.com https://fonts.googleapis.com; font-src &#x27;self&#x27; https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src &#x27;self&#x27; data: https://tile.openstreetmap.org https://server.arcgisonline.com https://api.qrserver.com https://unpkg.com; connect-src &#x27;self&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;; frame-src &#x27;none&#x27;">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Free Mobile Flood Alerts — Mathews County, VA</title>
-  <meta name="description" content="Subscribe to instant audible flood alerts and push notifications for Mathews County, VA before high tide. 100% free, zero accounts required.">
+  <meta name="description" content="Subscribe to instant audible flood alerts and push notifications for Mathews County, VA when fresh data indicates flood risk. Delivery timing depends on updates and mobile connectivity.">
 
   <!-- Tailwind CSS & FontAwesome -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/tailwind.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g" crossorigin="anonymous">
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
@@ -81,7 +82,7 @@
           <div class="flex items-center gap-3">
             <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 border-emerald-300 border text-xs font-semibold text-emerald-800">
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>LIVE: Normal / Safe</span>
+              <span>LIVE: No modeled inundation</span>
             </div>
 
             <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 focus:outline-none" aria-label="Toggle Navigation">
@@ -95,7 +96,7 @@
           <div class="px-4 py-2 sm:hidden mb-2">
             <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 border-emerald-300 border text-xs font-semibold text-emerald-800">
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>LIVE STATUS: Normal / Safe</span>
+              <span>LIVE STATUS: No modeled inundation</span>
             </div>
           </div>
           
@@ -130,6 +131,12 @@
         </div>
       </div>
     </header>
+    <aside id="data-freshness" role="status" class="bg-amber-50 text-amber-950 border-b border-amber-300 px-4 py-3 text-sm">
+      Last update: 2026-10-03 22:58:15 EDT.
+      Gauge observation: 2026-10-03 22:30:00 EDT.
+      Data incomplete or stale. Do not assume roads are clear.
+      Mobile push alerts are not enabled.
+    </aside>
     
 
   <main class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 w-full">
@@ -146,7 +153,7 @@
       </h1>
 
       <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-3xl">
-        Never get caught off guard by saltwater over Daniel Ave, Bayshore Ave, or neighborhood access roads. Receive loud, high-priority push notifications directly to your smartphone <strong>6 to 12 hours before peak high tide</strong>.
+        Never get caught off guard by saltwater over Daniel Ave, Bayshore Ave, or neighborhood access roads. Receive loud, high-priority push notifications directly to your smartphone <strong>when fresh forecasts first indicate a flood hazard</strong>.
       </p>
 
       <!-- Key Guarantees Badges -->
@@ -161,7 +168,7 @@
         </div>
         <div class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-sm">
           <i class="fa-solid fa-bell-slash text-indigo-600"></i>
-          <span>Zero Spam Policy (Alerts only on flood risk)</span>
+          <span>Flood alerts with duplicate suppression</span>
         </div>
       </div>
     </section>
@@ -188,7 +195,7 @@
 
           <!-- Action Buttons -->
           <div class="flex flex-wrap items-center gap-3">
-            <a href="https://ntfy.sh/mathews-flood-23128" target="_blank" rel="noopener noreferrer" 
+            <a href="https://ntfy.sh/mathews-flood-23128" target="_blank" rel="noopener noreferrer"
                class="px-6 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm sm:text-base shadow-lg transition flex items-center gap-2.5 group">
               <i class="fa-solid fa-mobile-screen-button"></i>
               <span>Subscribe on Phone / Browser</span>
@@ -226,7 +233,7 @@
           <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-4 grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
             <div>
               <div class="text-slate-400 text-[11px] uppercase">Current River Stage</div>
-              <div class="text-base font-extrabold text-white font-mono mt-0.5">1.34 ft MLLW</div>
+              <div class="text-base font-extrabold text-white font-mono mt-0.5">1.37 ft MLLW</div>
             </div>
             <div>
               <div class="text-slate-400 text-[11px] uppercase">Peak 48h Forecast</div>
@@ -234,7 +241,7 @@
             </div>
             <div class="col-span-2 sm:col-span-1">
               <div class="text-slate-400 text-[11px] uppercase">Alert Dispatch Status</div>
-              <div class="text-base font-extrabold text-emerald-400 mt-0.5">Normal / Safe</div>
+              <div class="text-base font-extrabold text-emerald-400 mt-0.5">No modeled inundation</div>
             </div>
           </div>
         </div>
@@ -247,7 +254,7 @@
           </div>
 
           <div class="p-3 bg-white rounded-2xl shadow-xl inline-block">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data=https://ntfy.sh/mathews-flood-23128" 
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data=https://ntfy.sh/mathews-flood-23128"
                  alt="Scan to Subscribe to Mathews Flood Alerts" 
                  class="w-44 h-44 block" 
                  loading="lazy" />
@@ -379,7 +386,7 @@
             <span class="text-xs font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
               <i class="fa-solid fa-hourglass-start"></i> Stage 1: Advance Notice
             </span>
-            <span class="text-[11px] font-mono font-semibold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full">6–12 Hours Ahead</span>
+            <span class="text-[11px] font-mono font-semibold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full">When Risk Is Detected</span>
           </div>
           <h3 class="font-bold text-slate-900 text-base">Early Crest Warning</h3>
           <p class="text-xs text-slate-700 leading-relaxed">
@@ -397,7 +404,7 @@
           </div>
           <h3 class="font-bold text-slate-900 text-base">Pre-Crest Hazard Alert</h3>
           <p class="text-xs text-slate-700 leading-relaxed">
-            Dispatched 60 to 120 minutes before peak high tide. Provides specific estimated flood depths in inches (e.g., <em>"5 to 7 inches over Daniel Ave"</em>) and states whether low passenger cars are passable.
+            Attempted near the crest when fresh forecast data and scheduled updates are available. Provides specific estimated flood depths in inches (e.g., <em>"5 to 7 inches over Daniel Ave"</em>) and describes modeled road hazards.
           </p>
         </div>
 
@@ -458,7 +465,7 @@
               ⚠️ Tier 1 Flood Advisory: Ware River Crest at 4.15 ft MLLW
             </div>
             <p class="text-xs text-slate-300 leading-relaxed">
-              Minor ditch overflow expected at 1:30 PM EDT (1-2" in roadside swales). Daniel Ave &amp; Bayshore Ave passable for all passenger vehicles.
+              Minor ditch overflow expected at 1:30 PM EDT (1-2" in roadside swales). Check actual conditions on Daniel Ave &amp; Bayshore Ave before travel.
             </p>
           </div>
         </div>
@@ -523,7 +530,7 @@
             Will this wake me up at 3:00 AM?
           </h3>
           <p class="text-slate-600 leading-relaxed text-xs sm:text-sm">
-            If an extreme high tide is predicted to breach roads in the middle of the night, you will receive an Advance Warning <strong>6 to 12 hours earlier during the daytime</strong>, giving you time to park safely before bed. Imminent crest warnings also chime so you are not trapped unexpectedly by rising water.
+            If an extreme high tide is predicted to breach roads in the middle of the night, you will receive an Advance Warning <strong>when a hazard is detected in fresh forecast data</strong>, giving you time to park safely before bed. Imminent crest warnings also chime so you are not trapped unexpectedly by rising water.
           </p>
         </div>
 
@@ -579,7 +586,7 @@
             An open science, hyper-local flood prediction pipeline and machine learning model built from 204 ground-truth storm observations (2021–2026), NOAA NWPS hydrodynamic water level guidance, and NOAA CO-OPS sensor networks across the Middle Peninsula of Virginia.
           </p>
           <div class="text-xs text-slate-500 pt-1">
-            Last Automated Cloud Sync: <span class="text-slate-300 font-mono font-medium">2026-10-03 22:20:00 EDT</span> (Runs every 30 mins)
+            Last Automated Cloud Sync: <span class="text-slate-300 font-mono font-medium">2026-10-03 22:58:15 EDT</span> (Scheduled every 30 minutes; delays are possible)
           </div>
         </div>
 
@@ -605,7 +612,7 @@
             <li><a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8637689" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA Yorktown USCG (8637689)</a></li>
             <li><a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8636580" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA Windmill Point (8636580)</a></li>
             <li><a href="models/scientific_evidence.json" target="_blank" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-code text-[10px]"></i> Scientific Evidence (JSON)</a></li>
-            <li><a href="SCIENTIFIC_FINDINGS.md" target="_blank" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-file-lines text-[10px]"></i> Academic Manuscript (MD)</a></li>
+            <li><a href="science.html" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-file-lines text-[10px]"></i> Public Methodology</a></li>
             <li><a href="https://github.com/flatfoot584/mathews-flood-monitor" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-brands fa-github text-[11px]"></i> GitHub Repository</a></li>
           </ul>
         </div>
@@ -618,6 +625,24 @@
     </footer>
 
     <script>
+      const generatedText = "2026-10-04 02:58:15 UTC";
+      const observedText = "2026-10-03 22:30:00 EDT";
+      function utcMillis(text) {
+        if (!text) return NaN;
+        return Date.parse(text.replace(' UTC', 'Z').replace(' EDT', '-04:00').replace(' EST', '-05:00').replace(' ', 'T'));
+      }
+      function updateFreshness() {
+        const stamp = utcMillis(generatedText);
+        const observation = utcMillis(observedText);
+        const old = !Number.isFinite(stamp) || !Number.isFinite(observation) || Date.now() - stamp > 90*60000 || Date.now() - observation > 90*60000;
+        if (old) {
+          const notice = document.getElementById('data-freshness');
+          if (notice) notice.textContent = 'DATA STALE OR UNAVAILABLE — Flood safety cannot be confirmed. Last update: ' + generatedText;
+          document.querySelectorAll('[data-current-safety]').forEach(el => el.hidden = true);
+        }
+      }
+      updateFreshness();
+      setInterval(updateFreshness, 60000);
       // Mobile menu toggle
       const menuBtn = document.getElementById('mobile-menu-btn');
       const mobileMenu = document.getElementById('mobile-menu');
