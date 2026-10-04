@@ -915,6 +915,26 @@ def write_csv(filepath, rows, fieldnames):
         writer.writeheader()
         writer.writerows(rows)
 
+def preserve_last_forecast(status, path):
+    """Keep original forecast dates on total outages; never use fallback for alerts."""
+    if any(finite_number(r.get('forecast_stage_mllw_ft')) for r in status.get('forecast_hourly_timeline', [])):
+        return
+    try:
+        with open(path, encoding='utf-8') as stream:
+            previous = json.load(stream)
+    except (OSError, ValueError):
+        return
+    if any(finite_number(r.get('forecast_stage_mllw_ft')) for r in previous.get('forecast_hourly_timeline', [])):
+        status['last_available_forecast'] = {
+            'saved_at_utc': previous.get('status_generated_at_utc'),
+            'forecast_issued_at_utc': previous.get('forecast_issued_at_utc'),
+            'forecast_hourly_timeline': previous['forecast_hourly_timeline'],
+            'forecast_48h_outlook': previous.get('forecast_48h_outlook', {}),
+        }
+    elif previous.get('last_available_forecast'):
+        status['last_available_forecast'] = previous['last_available_forecast']
+
+
 def main():
     parser = argparse.ArgumentParser(description="Fetch real-time hydrological & meteorological data for Mathews County flood prediction.")
     parser.add_argument("--hours", type=int, default=48, help="Number of past observation hours to aggregate (default: 48)")
@@ -1037,6 +1057,7 @@ def main():
     # Write files
     log(f"\n[*] Writing outputs:")
     
+    preserve_last_forecast(status_summary, args.json_out)
     atomic_write_json(args.json_out, status_summary)
     log(f"    -> Status JSON: {args.json_out}")
 

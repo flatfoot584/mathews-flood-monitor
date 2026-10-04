@@ -1,4 +1,4 @@
-import json,tempfile,unittest
+import csv,json,tempfile,unittest
 from pathlib import Path
 from datetime import datetime,timedelta,timezone
 from unittest.mock import patch
@@ -36,15 +36,24 @@ class FortTests(unittest.TestCase):
             self.assertTrue(all(r['n']==0 and r['mae_ft'] is None for r in first['results']))
 
     def test_matching_observation_is_verified_and_old_rows_preserved(self):
-        status=fixture();stamp=ingest.datetime.now(timezone.utc).replace(minute=0,second=0,microsecond=0)+timedelta(hours=1)
-        with tempfile.TemporaryDirectory() as folder:
-            path=Path(folder)/'archive.csv';score=Path(folder)/'score.json'
-            first=verify.archive_and_verify(status,[],path,score)
-            result=verify.archive_and_verify(status,[{'datetime_utc':stamp,'stage_mllw_ft':1.25}],path,score)
-            self.assertEqual(result['results'][0]['n'],1)
-            self.assertAlmostEqual(result['results'][0]['mae_ft'],.25)
-            no_match=verify.archive_and_verify(status,[{'datetime_utc':stamp+timedelta(minutes=30),'stage_mllw_ft':9}],path,score)
-            self.assertEqual(no_match['results'][0]['mae_ft'],result['results'][0]['mae_ft'])
+        for minute in (7, 30, 37, 59):
+            with self.subTest(issue_minute=minute):
+                status=fixture()
+                issued=verify.parse_timestamp(status['status_generated_at_utc']).replace(minute=minute,second=0,microsecond=0)
+                status['status_generated_at_utc']=issued.isoformat()
+                with tempfile.TemporaryDirectory() as folder:
+                    path=Path(folder)/'archive.csv';score=Path(folder)/'score.json'
+                    verify.archive_and_verify(status,[],path,score)
+                    # Nearest nominal 1h valid time changes after :30.
+                    # Match the archived time rather than assuming the next hour.
+                    with path.open() as stream:
+                        row=next(r for r in csv.DictReader(stream) if r['lead_hours']=='1')
+                    stamp=verify.parse_timestamp(row['valid_time_utc'])
+                    result=verify.archive_and_verify(status,[{'datetime_utc':stamp,'stage_mllw_ft':1.25}],path,score)
+                    self.assertEqual(result['results'][0]['n'],1)
+                    self.assertAlmostEqual(result['results'][0]['mae_ft'],.25)
+                    no_match=verify.archive_and_verify(status,[{'datetime_utc':stamp+timedelta(minutes=30),'stage_mllw_ft':9}],path,score)
+                    self.assertEqual(no_match['results'][0]['mae_ft'],result['results'][0]['mae_ft'])
 
     def test_resident_forecast_has_no_vehicle_crossing_permission(self):
         for stage in (1,4.1,4.5,5.2):

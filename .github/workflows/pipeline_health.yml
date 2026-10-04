@@ -1,0 +1,39 @@
+name: Monitor flood pipeline health
+
+on:
+  workflow_run:
+    workflows: [Update Mathews County Flood Monitor]
+    types: [completed]
+    branches: [main]
+  schedule:
+    - cron: '22,52 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: flood-pipeline-health
+  cancel-in-progress: false
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      NTFY_SERVER: ${{ vars.NTFY_SERVER || 'https://ntfy.sh' }}
+      NTFY_TOPIC: ${{ vars.NTFY_TOPIC || 'mathews-flood-23128' }}
+      NTFY_HEALTH_TOPIC: ${{ vars.NTFY_HEALTH_TOPIC }}
+    steps:
+      # Never run this behind the collection pipeline's regression checks.
+      # Always check trusted main, not the workflow_run event's arbitrary SHA.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Check published data, report failures/recovery, retry overdue updates
+        run: python3 pipeline_health.py --github-state --retry-overdue

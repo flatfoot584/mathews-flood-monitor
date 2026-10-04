@@ -75,16 +75,26 @@ def escape_view(value):
 def status_for_display(status):
     status = copy.deepcopy(status)
     quality = assess_status(status)
+    if status.get("display_only_fallback"):
+        quality.update(forecast_available=False, forecast_usable=False, alerts_all_clear_allowed=False, state="degraded")
     status["data_quality"] = quality
+    fallback = status.get("last_available_forecast", {})
+    if not any(finite_number(row.get("forecast_stage_mllw_ft")) for row in status.get("forecast_hourly_timeline", [])) and fallback:
+        status["forecast_hourly_timeline"] = fallback.get("forecast_hourly_timeline", [])
+        status["forecast_48h_outlook"] = fallback.get("forecast_48h_outlook", {})
+        status["display_forecast_saved_at_utc"] = fallback.get("saved_at_utc")
+        status["display_forecast_issued_at_utc"] = fallback.get("forecast_issued_at_utc")
+        status["display_only_fallback"] = True
     if not quality["current_available"]:
         import micro_topography
         curr = status.setdefault("current_conditions", {})
         unknown = micro_topography.evaluate_compound_inundation(None)
+        status["last_available_current_conditions"] = copy.deepcopy(curr)
         curr.update(flood_risk_tier=-1, flood_risk_label="Unknown (gauge missing or stale)",
                     vehicle_passability_code="UNKNOWN", vehicle_passability=unknown["vehicle_passability_label"],
-                    vehicle_passability_desc=unknown["vehicle_passability_desc"],
-                    estimated_local_flood_depth_in=None, site_sectors=unknown["sectors"],
-                    community_streets=unknown["streets"])
+                    vehicle_passability_desc=unknown["vehicle_passability_desc"])
+        if not finite_number(curr.get("ware_river_stage_mllw_ft")):
+            curr.update(estimated_local_flood_depth_in=None, site_sectors=unknown["sectors"], community_streets=unknown["streets"])
     if not quality["forecast_available"]:
         outl = status.setdefault("forecast_48h_outlook", {})
         if outl.get("peak_risk_tier", -1) <= 0:
@@ -208,6 +218,8 @@ def build_shared_footer(status):
 def build_index_html(status, obs_rows, fcst_rows):
     curr = status.get("current_conditions", {})
     outl = status.get("forecast_48h_outlook", {})
+    if status.get("display_only_fallback"):
+        fcst_rows = status.get("forecast_hourly_timeline", [])
 
     stage = display_value(curr.get("ware_river_stage_mllw_ft", "N/A"))
     stage_navd = display_value(curr.get("ware_river_stage_navd88_ft", "N/A"))
@@ -364,7 +376,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         <div>
           <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
             <i class="fa-solid fa-chart-line text-sky-600"></i>
-            48-hour water-level forecast
+            <span data-age-label data-last-label="Last saved water-level forecast">48-hour water-level forecast</span>
           </h2>
           <p class="text-xs sm:text-sm text-slate-500">
             NOAA water-level guidance with empirical local weather adjustments. The band shows uncalibrated scenarios.
