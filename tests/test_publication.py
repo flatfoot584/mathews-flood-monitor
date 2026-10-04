@@ -1,10 +1,12 @@
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
 
 import generate_dashboard as dashboard
+import ingest_realtime as ingest
 import publish_site
 
 
@@ -52,8 +54,17 @@ class PublicationTests(unittest.TestCase):
         workflow = Path('.github/workflows/update_flood_monitor.yml').read_text()
         self.assertIn('run: python3 check_alerts.py --ntfy', workflow)
         self.assertIn('run: python3 publish_site.py', workflow)
-        self.assertNotIn('NTFY_ALERTS_ENABLED', workflow)
+        self.assertIn("NTFY_ALERTS_ENABLED: 'true'", workflow)
         self.assertNotIn('NTFY_TOKEN', workflow)
+
+    def test_alert_enablement_reaches_rendered_banner(self):
+        for enabled in ('true', 'false'):
+            with self.subTest(enabled=enabled), patch.dict(os.environ, {'NTFY_ALERTS_ENABLED': enabled}):
+                status = ingest.generate_latest_status(fcst_timeline=[])
+                page = dashboard.build_about_html(status)
+                self.assertEqual(status['alerting_enabled'], enabled == 'true')
+                self.assertEqual('Mobile push alerts are enabled for subscribers.' in page, enabled == 'true')
+                self.assertEqual('Mobile push alerts are not enabled.' in page, enabled == 'false')
 
 
 if __name__ == '__main__':

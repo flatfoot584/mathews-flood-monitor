@@ -30,6 +30,8 @@ jobs:
     outputs:
       artifact_ready: ${{ steps.upload.outcome == 'success' }}
     env:
+      # Status metadata must match the unconditional --ntfy dispatch below.
+      NTFY_ALERTS_ENABLED: 'true'
       NTFY_SERVER: ${{ vars.NTFY_SERVER || 'https://ntfy.sh' }}
       NTFY_TOPIC: ${{ vars.NTFY_TOPIC || 'mathews-flood-23128' }}
     steps:
