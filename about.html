@@ -2,12 +2,13 @@
 <html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src &#x27;self&#x27;; script-src &#x27;self&#x27; &#x27;unsafe-hashes&#x27; &#x27;sha256-PR5g+QuRzqaCHosuWx5lAu0/TDR2WaJWOHUGCt+7FTk=&#x27;; style-src &#x27;self&#x27; &#x27;unsafe-inline&#x27; https://cdnjs.cloudflare.com https://unpkg.com https://fonts.googleapis.com; font-src &#x27;self&#x27; https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src &#x27;self&#x27; data: https://tile.openstreetmap.org https://server.arcgisonline.com https://api.qrserver.com https://unpkg.com; connect-src &#x27;self&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;; frame-src &#x27;none&#x27;">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About & History — Mathews County Coastal Flood Prediction System</title>
   <meta name="description" content="The story of how handwritten storm logs from 2021 to 2024 uncovered the 3.99 ft flood threshold in Mathews County, VA.">
   
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/tailwind.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g" crossorigin="anonymous">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
     body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
@@ -79,7 +80,7 @@
           <div class="flex items-center gap-3">
             <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 border-emerald-300 border text-xs font-semibold text-emerald-800">
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>LIVE: Normal / Safe</span>
+              <span>LIVE: No modeled inundation</span>
             </div>
 
             <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 focus:outline-none" aria-label="Toggle Navigation">
@@ -93,7 +94,7 @@
           <div class="px-4 py-2 sm:hidden mb-2">
             <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 border-emerald-300 border text-xs font-semibold text-emerald-800">
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>LIVE STATUS: Normal / Safe</span>
+              <span>LIVE STATUS: No modeled inundation</span>
             </div>
           </div>
           
@@ -128,6 +129,12 @@
         </div>
       </div>
     </header>
+    <aside id="data-freshness" role="status" class="bg-amber-50 text-amber-950 border-b border-amber-300 px-4 py-3 text-sm">
+      Last update: 2026-10-03 22:58:15 EDT.
+      Gauge observation: 2026-10-03 22:30:00 EDT.
+      Data incomplete or stale. Do not assume roads are clear.
+      Mobile push alerts are not enabled.
+    </aside>
     
 
   <main class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 w-full">
@@ -162,76 +169,10 @@
       </div>
     </section>
 
-    <!-- 2. Mom's Notebooks Gallery -->
-    <section class="space-y-6">
-      <div class="space-y-1">
-        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-camera text-sky-600"></i>
-          The Ground-Truth Observations (2021–2026)
-        </h2>
-        <p class="text-slate-600 text-sm">
-          Between May 2021 and September 2026, our family logged 204 individual storm events by hand, measuring water depths in inches and noting Ware River gauge stages and wind directions.
-        </p>
-      </div>
-
-      <!-- Photo Cards Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Photo Card 1: IMG_8049 (The Formula) -->
-        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition">
-          <div class="h-64 bg-slate-100 overflow-hidden relative">
-            <img src="photos/IMG_8049.jpeg" alt="Observer Handwritten Formula" class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300">
-            <div class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[11px] font-mono px-2 py-0.5 rounded backdrop-blur">IMG_8049.jpeg</div>
-          </div>
-          <div class="p-5 space-y-2">
-            <h3 class="font-bold text-slate-900 text-base">The Discovery Note: ".10 = 1 3/16th IN"</h3>
-            <p class="text-xs text-slate-600 leading-relaxed">
-              On this sticky note, mom recorded her empirical conversion: <strong>0.10 ft of river rise equals almost 1.25 inches of ground flood</strong>. Three years later, our rigorous linear regression proved her exact ratio: <strong>10.95 inches per foot (1.10" per 0.10')</strong>!
-            </p>
-          </div>
-        </div>
-
-        <!-- Photo Card 2: IMG_8050 (Notebook Page 1) -->
-        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition">
-          <div class="h-64 bg-slate-100 overflow-hidden relative">
-            <img src="photos/IMG_8050.jpeg" alt="Notebook Page 1" class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300">
-            <div class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[11px] font-mono px-2 py-0.5 rounded backdrop-blur">IMG_8050.jpeg</div>
-          </div>
-          <div class="p-5 space-y-2">
-            <h3 class="font-bold text-slate-900 text-base">Notebook Page 1: May 2021 to Jan 2022</h3>
-            <p class="text-xs text-slate-600 leading-relaxed">
-              Tracking early nor'easters, winter storms, and the May 2021 high water event (5.10 ft stage yielding 14.0" flood depth). Clear records of wind directions and speeds.
-            </p>
-          </div>
-        </div>
-
-        <!-- Photo Card 3: IMG_8051 (Hurricanes Ian & Earl) -->
-        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition">
-          <div class="h-64 bg-slate-100 overflow-hidden relative">
-            <img src="photos/IMG_8051.jpeg" alt="Notebook Page 2 - Hurricanes" class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300">
-            <div class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[11px] font-mono px-2 py-0.5 rounded backdrop-blur">IMG_8051.jpeg</div>
-          </div>
-          <div class="p-5 space-y-2">
-            <h3 class="font-bold text-slate-900 text-base">Page 2: Hurricane Earl & Hurricane Ian</h3>
-            <p class="text-xs text-slate-600 leading-relaxed">
-              Documenting Hurricane Earl (Sep 2022, 10" depth) and Hurricane Ian (Oct 2022, 7" depth). Demonstrates how wind direction dictated flood depth even when river stages were identical.
-            </p>
-          </div>
-        </div>
-
-        <!-- Photo Card 4: IMG_8054 (Tape Measure Verification) -->
-        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition">
-          <div class="h-64 bg-slate-100 overflow-hidden relative">
-            <img src="photos/IMG_8054.jpeg" alt="Physical Water Depth Measurement" class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300">
-            <div class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[11px] font-mono px-2 py-0.5 rounded backdrop-blur">IMG_8054.jpeg</div>
-          </div>
-          <div class="p-5 space-y-2">
-            <h3 class="font-bold text-slate-900 text-base">Direct Physical Verification</h3>
-            <p class="text-xs text-slate-600 leading-relaxed">
-              Every point in our training dataset was physically verified with yardsticks and tape measures at key reference spots on the driveway and yard.
-            </p>
-          </div>
-        </div>
-      </div>
+    <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-4">
+      <h2 class="text-2xl font-bold text-slate-900">Community observation archive</h2>
+      <p class="text-slate-600 leading-relaxed">Historical community observations inform the model. Original notebooks and individual observer records are retained privately. The Data page provides yearly numerical summaries, while the Science page explains aggregate benchmarks and their limitations.</p>
+      <a href="data.html" class="font-semibold text-sky-600">Explore the public historical summaries</a>
     </section>
 
     <!-- 3. Key Physical Breakthroughs -->
@@ -301,7 +242,7 @@
             An open science, hyper-local flood prediction pipeline and machine learning model built from 204 ground-truth storm observations (2021–2026), NOAA NWPS hydrodynamic water level guidance, and NOAA CO-OPS sensor networks across the Middle Peninsula of Virginia.
           </p>
           <div class="text-xs text-slate-500 pt-1">
-            Last Automated Cloud Sync: <span class="text-slate-300 font-mono font-medium">2026-10-02 18:45:00 EDT</span> (Runs every 30 mins)
+            Last Automated Cloud Sync: <span class="text-slate-300 font-mono font-medium">2026-10-03 22:58:15 EDT</span> (Scheduled every 30 minutes; delays are possible)
           </div>
         </div>
 
@@ -327,7 +268,7 @@
             <li><a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8637689" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA Yorktown USCG (8637689)</a></li>
             <li><a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8636580" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA Windmill Point (8636580)</a></li>
             <li><a href="models/scientific_evidence.json" target="_blank" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-code text-[10px]"></i> Scientific Evidence (JSON)</a></li>
-            <li><a href="SCIENTIFIC_FINDINGS.md" target="_blank" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-file-lines text-[10px]"></i> Academic Manuscript (MD)</a></li>
+            <li><a href="science.html" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-file-lines text-[10px]"></i> Public Methodology</a></li>
             <li><a href="https://github.com/flatfoot584/mathews-flood-monitor" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-brands fa-github text-[11px]"></i> GitHub Repository</a></li>
           </ul>
         </div>
@@ -340,6 +281,24 @@
     </footer>
 
     <script>
+      const generatedText = "2026-10-04 02:58:15 UTC";
+      const observedText = "2026-10-03 22:30:00 EDT";
+      function utcMillis(text) {
+        if (!text) return NaN;
+        return Date.parse(text.replace(' UTC', 'Z').replace(' EDT', '-04:00').replace(' EST', '-05:00').replace(' ', 'T'));
+      }
+      function updateFreshness() {
+        const stamp = utcMillis(generatedText);
+        const observation = utcMillis(observedText);
+        const old = !Number.isFinite(stamp) || !Number.isFinite(observation) || Date.now() - stamp > 90*60000 || Date.now() - observation > 90*60000;
+        if (old) {
+          const notice = document.getElementById('data-freshness');
+          if (notice) notice.textContent = 'DATA STALE OR UNAVAILABLE — Flood safety cannot be confirmed. Last update: ' + generatedText;
+          document.querySelectorAll('[data-current-safety]').forEach(el => el.hidden = true);
+        }
+      }
+      updateFreshness();
+      setInterval(updateFreshness, 60000);
       // Mobile menu toggle
       const menuBtn = document.getElementById('mobile-menu-btn');
       const mobileMenu = document.getElementById('mobile-menu');

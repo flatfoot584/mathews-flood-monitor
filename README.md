@@ -1,142 +1,48 @@
-# Mathews County, Virginia Coastal Flood Prediction System 🌊
+# Mathews County Flood Monitor
 
-[![Update Mathews County Flood Monitor](https://github.com/flatfoot584/mathews-flood-monitor/actions/workflows/update_flood_monitor.yml/badge.svg)](https://github.com/flatfoot584/mathews-flood-monitor/actions/workflows/update_flood_monitor.yml)
+[Live dashboard](https://flatfoot584.github.io/mathews-flood-monitor/)
 
-A hyper-local, automated data collection pipeline, hybrid hydrodynamic–machine learning model, and real-time dashboard predicting coastal, tidal, and compound pluvial flooding for Mathews County, Virginia (Middle Peninsula, Mobjack Bay & Chesapeake Bay).
+The monitor combines Ware River gauge readings, NOAA tides/weather, NWS guidance,
+and modeled tidal/rainfall impacts to describe potential community flooding.
+The public portal includes live conditions, a forecast map/hydrograph, mobile
+subscription instructions, safety guidance, public data downloads, and methodology.
 
----
+Unknown or stale data must not imply dry roads. A fresh gauge and complete 48-hour
+water/wind/rain coverage are required before an ALL CLEAR. Never drive into floodwater.
+Live uncertainty bands are heuristic scenario ranges, not calibrated probabilities.
+Historical observed-weather benchmarks do not establish live forecast accuracy.
 
-## 📍 Geographic & Physical Context
+Existing community notifications remain on the current public ntfy.sh topic.
+The authenticated-topic migration is deferred; no account, reservation, or publishing
+token is required by this release. The public channel remains writable by others.
 
-Mathews County lies on Virginia’s Middle Peninsula, surrounded by the **Chesapeake Bay**, **Mobjack Bay** (fed by the East, North, Ware, and Severn Rivers), and the **Piankatank River**. With much of the populated topography below $5\text{ to }10\text{ ft}$ NAVD88, flooding occurs via **compound drivers**:
+## Public and private files
 
-* **Primary Ground-Truth Benchmark**: `37.420183, -76.406550` (Daniel Ave, Blackwater, Mathews County, VA) draining into Blackwater Creek and North River / Mobjack Bay.
-* **USGS 1-Meter LiDAR Elevation Validation**:
-  * Driveway Benchmark: **`2.761 ft NAVD88`** $\equiv$ **`4.401 ft MLLW`** (independently validates our empirical $4.40\text{ ft}$ regression threshold to within $0.01\text{ ft}$).
-  * Roadside Ditch Culvert: **`2.41 ft NAVD88`** $\equiv$ **`4.05 ft MLLW`** (matches the $3.99\text{ ft}$ ditch brim tipping point).
-  * Residence / Garage Pad: **`3.26 ft NAVD88`** $\equiv$ **`4.90 ft MLLW`** (matches the Tier 3 severe inundation mark).
+This repository contains runtime code, public automated gauge/forecast outputs,
+yearly numeric observer summaries, aggregate benchmark statistics, and website assets.
+Original observer logs, notebook images, internal notes/setup guides and private
+analysis material are retained outside this repository. Their names are ignored to
+prevent accidental re-addition. Deleting current files does not erase Git history.
 
-1. **Astronomical Tides**: Semi-diurnal cycles amplified by Spring Tides, King Tides, and Perigee.
-2. **Meteorological Surge (Wind Set-Up)**: Persistent winds from NNE, NE, E, and SE force water down Chesapeake Bay and pile it directly into Mobjack Bay.
-3. **Pluvial Backwater Entrapment**: Heavy rainfall cannot drain by gravity when tidal ditches are backed up by elevated bay stages.
-4. **Offshore Drain (W/SW Winds)**: Westerly winds blow water out of Mobjack Bay, acting as a mitigating force.
+GitHub Pages is built by `publish_site.py`, which copies only explicitly approved
+public files into a clean artifact. It excludes alert state, private data, internal
+documents, and arbitrary HTML files. Public help/about/science pages remain available.
 
----
+## Runtime
 
-## 📊 Core Ground-Truth & Empirical Findings
-
-Trained on a continuous human observation log recorded between **May 2021 and September 2026** (204 entries, 181 depth measurements across storms like Erin, Ian, Idalia, Ophelia, Helene, the October 2025 10-year record nor'easter, and the September 2026 twin nor'easters) paired with 285,000 6-minute USGS/NOAA Ware River gauge readings (`ground_truth_observations.csv`):
-
-* **Flooding Threshold**: **$3.99\text{ ft MLLW}$** ($\approx 2.35\text{ ft NAVD88}$) on the Ware River gauge (WRVV2 / USGS 01670180).
-  * Stage $< 4.0\text{ ft} \implies$ Water remains in marsh channels and drainage ditches ($0"$ depth).
-  * Stage $\ge 4.0\text{ ft} \implies$ Water breaches ditch banks and covers the property.
-* **Inundation Rate**: **$10.95\text{ inches of water per foot of river rise}$** ($\approx 1.1\text{ to }1.2\text{ in}$ per $0.10\text{ ft}$).
-* **Correlation**: $r = 0.923$ ($R^2 = 0.851$). Residual variance is explained by wind direction, wind duration, and barometric pressure drops.
-
-### Risk Severity Tiers
-* **Tier 0 (Safe / Normal)**: Stage $< 4.0\text{ ft} \to 0"$ flooding.
-* **Tier 1 (Nuisance / Ditch Full)**: Stage $4.0 - 4.3\text{ ft} \to 1" - 4"$ in low spots and culverts.
-* **Tier 2 (Moderate / Driveway Blocked)**: Stage $4.4 - 4.7\text{ ft} \to 5" - 8"$ on driveway (sedans blocked).
-* **Tier 3 (Severe / Property Submerged)**: Stage $\ge 4.8\text{ ft} \to 9" - 19"+$ across yard (do not enter flooded roads).
-
----
-
-## 🤖 Model Architecture & Performance
-
-```
-Stage 1: Ware River Stage Nowcast & 48-Hour Forecast
-  ├── Stage 1 Nowcast (0-6h): R² = 0.973, MAE = 1.5 in
-  │     └─ Features: Ware River stage + Yorktown winds + Windmill Point storm surge
-  └── Stage 1 Forecast (6-48h): R² = 0.721, MAE = 4.8 in
-        └─ Features: Astronomical predicted tide + Quadratic wind stress (NNE/NE/ENE/E)
-
-Stage 2: Hyper-Local Ground Inundation Model
-  ├── R² = 0.851, MAE = 1.25 in on 181 ground-truth observations (2021–2026)
-  └── Piecewise threshold linear model: Depth = 10.95 × (Stage - 3.99 ft)
-
-Compound Pluvial & Micro-Topography Engine (micro_topography.py)
-  ├── Models ditch backwater restriction: β = clip((Stage - 3.8) / 0.4, 0, 1)
-  ├── 5 Community dry-land sectors: Bayshore Swale (3.99'), Lower Blocks (4.15'), Daniel Spine (4.40'), Yards (4.60'), High Ridge (4.90')
-  ├── 8-Street LiDAR network: Bayshore, Daniel, Julian, Allview, River Rd, Hobday, Little, Bunny Rabbit
-  └── Vehicle Passability Matrix: Assesses the worst modeled road/street/driveway depth
-```
-
----
-
-## ☁️ Automated Cloud Architecture (GitHub Actions + Pages)
-
-The data pipeline and public website can run on GitHub Actions and Pages. Secure ntfy.sh topic reservation requires a paid plan; self-hosted ntfy has no software subscription. Scheduling is best effort:
-
-* **GitHub Actions (`.github/workflows/update_flood_monitor.yml`)**:
-  * Is scheduled every **30 minutes** via cron (and manual dispatch); actual runs can be delayed.
-  * Executes `ingest_realtime.py` (queries NOAA NWPS WRVV2, NOAA CO-OPS 8637689/8636580, NWS AKQ Wakefield).
-  * Executes `generate_dashboard.py` to create a standalone, mobile-responsive dashboard.
-  * Commits the latest JSON/CSV data files to git history.
-  * Deploys `index.html` to **GitHub Pages**.
-
----
-
-## 📁 Repository Structure
-
-```
-├── .github/workflows/
-│   └── update_flood_monitor.yml      # 30-minute automated ingestion & deployment workflow
-├── models/
-│   ├── model_weights_and_thresholds.json # Deployable zero-dependency model parameters
-│   └── *.pkl                             # Scikit-learn serialized models
-├── ingest_realtime.py                # Multi-sensor real-time ingestion & forecast pipeline
-├── micro_topography.py               # Compound pluvial & property elevation engine
-├── generate_dashboard.py             # Standalone interactive dashboard HTML generator
-├── check_alerts.py                   # CLI hazard bulletin & macOS desktop notification script
-├── train_predictive_models.py        # Model training & validation pipeline
-├── build_merged_training_dataset.py  # Historical multi-station dataset merger
-├── backfill_ware_river_history.py    # IEM HML API scraper for 2021-2024 Ware River stage
-├── ground_truth_observations.csv     # 204 ground-truth observer measurements (2021-2026)
-├── merged_hourly_training_dataset.csv # 32,833 continuous hourly aligned training rows
-├── latest_status.json                # Latest real-time status summary
-├── realtime_recent_observations.csv  # Rolling recent observations
-├── forecast_48h.csv                  # 48-hour forward hourly forecast
-├── flood_dashboard.html              # Standalone interactive dashboard
-├── index.html                        # GitHub Pages live dashboard & interactive map
-├── alerts.html                       # Dedicated mobile flood alerts & subscription guide
-├── about.html                        # Project history & handwritten notebook gallery
-├── guide.html                        # Flood risk tiers & plain-English glossary
-├── data.html                         # Storm comparison & historical dataset explorer
-├── AGENTS.md                         # Architecture guide & system prompt context
-├── FINDINGS_AND_DECISIONS.md         # Engineering logbook and physical discoveries
-└── BACKLOG.md                        # Long-term feature roadmap
-```
-
----
-
-## 🚀 Local Quickstart
-
-The entire operational pipeline uses the **Python Standard Library** with zero external pip dependencies:
+Python 3.11+ with timezone data is sufficient for collection and page generation.
 
 ```bash
-# 1. Fetch real-time data & compute forecast
-python3 ingest_realtime.py
-
-# 2. Check flood status and trigger desktop notification (macOS)
-python3 check_alerts.py --notify
-
-# 3. Generate and view interactive dashboard
-python3 generate_dashboard.py
-open flood_dashboard.html
-```
-
-## Safety, alert configuration, and checks
-
-See [ALERTING_SETUP.md](ALERTING_SETUP.md) for authenticated hosted/self-hosted publishing and independent health monitoring. Push defaults to disabled until the token and server-side ACLs are configured. Missing/stale data is explicitly unknown and cannot generate ALL CLEAR. The portal checks observation/update age even when cloud updates stop.
-
-Current warning tiers also consider rainfall and modeled community road depths; stage-only tiers above are historical reference thresholds. Do not enter floodwater regardless of vehicle clearance. Reported model scores use observed weather in historical holdouts and do not establish deployed 6–48-hour forecast accuracy. The live system uses NWPS guidance with heuristic local adjustments; its shaded band is an uncalibrated scenario range, not an 80% confidence interval.
-
-```sh
 python3 -m unittest discover -s tests -v
-python3 check_pipeline_health.py
-# Only when modifying the site's utility classes:
-npm ci --ignore-scripts
-npm run build:css
+python3 ingest_realtime.py
+python3 generate_dashboard.py
+python3 publish_site.py
 ```
 
-Operational Python uses the standard library. Node dependencies are needed only to rebuild the committed CSS. Frontend JavaScript is bundled locally, external styles are integrity-pinned, and generated pages include a Content Security Policy.
+The GitHub workflow separately dispatches eligible community alerts. Use
+`check_alerts.py --dry-run --ntfy` for local evaluation without sending messages.
+GitHub's requested 30-minute schedule remains best effort; timestamp-based freshness
+checks detect stale output. `check_pipeline_health.py` supports independent monitoring.
+
+Node is needed only to rebuild the committed stylesheet after template changes:
+`npm ci --ignore-scripts` followed by `npm run build:css`.

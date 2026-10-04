@@ -31,3 +31,27 @@ node_modules/
 .env
 .env.*
 _site/
+
+# Private source records and internal guides belong outside this checkout.
+private/
+_private/
+internal/
+AGENTS.md
+BACKLOG.md
+FINDINGS_AND_DECISIONS.md
+SCIENTIFIC_FINDINGS.md
+ALERTING_SETUP.md
+*MIGRATION_PLAN.md
+ground_truth_observations.csv
+raw_observer_data*.csv
+merged_hourly_training_dataset.csv
+Photos of observations/
+photos/
+generate_ground_truth.py
+generate_scientific_report.py
+train_predictive_models.py
+build_merged_training_dataset.py
+backfill_ware_river_history.py
+*.pem
+*.key
+*.tfstate*

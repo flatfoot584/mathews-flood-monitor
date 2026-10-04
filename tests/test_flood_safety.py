@@ -152,9 +152,10 @@ class FloodSafetyTests(unittest.TestCase):
         self.assertNotIn(attack, page)
         self.assertIn('\\u003c/script', page)
         notes = '" onmouseover="alert(1)'
-        table = dashboard.build_data_html(status, [{'observation_id':'1','raw_notes':notes}], [])
+        table = dashboard.build_data_html(status, [{'year':'2026','record_count':notes,'raw_notes':'PRIVATE_NOTE_SENTINEL'}], [])
         self.assertNotIn('title="'+notes+'"', table)
         self.assertIn('&quot; onmouseover=&quot;', table)
+        self.assertNotIn('PRIVATE_NOTE_SENTINEL',table)
 
     def test_csp_and_local_runtime_scripts(self):
         page = dashboard.build_index_html(fixture(), [], [])

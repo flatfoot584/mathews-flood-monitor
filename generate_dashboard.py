@@ -8,12 +8,12 @@ Generates a complete, modern, human-friendly multi-page web portal:
    Property Elevation Cross-Section, Vehicle Passability Matrix, and 48-Hour Hydrograph.
 2. alerts.html (& subscribe.html): Instant Mobile Alerts & Step-by-Step Setup Guide with QR code,
    push notification timelines, and privacy-first ntfy.sh integration.
-3. about.html: The Origin Story, Mom's Handwritten Observer Notebook Gallery (2021-2026),
+3. about.html: The Project History and Public Observation Summary (2021-2026),
    Discovery of the 3.99 ft Threshold, and Compound Pluvial Physics.
 4. guide.html: Visual Flood Severity Tiers (Tier 0 to Tier 3), Vehicle Water Depth Safety Guide,
    and Plain-English Coastal Definitions (MLLW vs NAVD88, Storm Surge Residual, Wind Set-Up).
 5. data.html: Major Storm Comparison (Erin, Oct 2025 Record Flood, Sep 2026 Nor'easters, Helene, Ian),
-   Searchable 204-Event Observer Dataset Explorer, and Direct Data Downloads.
+   Yearly Aggregated Observer Dataset Explorer, and Direct Data Downloads.
 
 Author: Antigravity Assistant for Mathews County Flood Prediction Project
 """
@@ -331,7 +331,7 @@ def build_shared_footer(status):
             <li><a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8637689" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA Yorktown USCG (8637689)</a></li>
             <li><a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8636580" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> NOAA Windmill Point (8636580)</a></li>
             <li><a href="models/scientific_evidence.json" target="_blank" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-code text-[10px]"></i> Scientific Evidence (JSON)</a></li>
-            <li><a href="SCIENTIFIC_FINDINGS.md" target="_blank" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-file-lines text-[10px]"></i> Academic Manuscript (MD)</a></li>
+            <li><a href="science.html" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-solid fa-file-lines text-[10px]"></i> Public Methodology</a></li>
             <li><a href="https://github.com/flatfoot584/mathews-flood-monitor" target="_blank" rel="noopener" class="hover:text-sky-400 transition flex items-center gap-1.5"><i class="fa-brands fa-github text-[11px]"></i> GitHub Repository</a></li>
           </ul>
         </div>
@@ -2070,76 +2070,10 @@ def build_about_html(status):
       </div>
     </section>
 
-    <!-- 2. Mom's Notebooks Gallery -->
-    <section class="space-y-6">
-      <div class="space-y-1">
-        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-camera text-sky-600"></i>
-          The Ground-Truth Observations (2021–2026)
-        </h2>
-        <p class="text-slate-600 text-sm">
-          Between May 2021 and September 2026, our family logged 204 individual storm events by hand, measuring water depths in inches and noting Ware River gauge stages and wind directions.
-        </p>
-      </div>
-
-      <!-- Photo Cards Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Photo Card 1: IMG_8049 (The Formula) -->
-        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition">
-          <div class="h-64 bg-slate-100 overflow-hidden relative">
-            <img src="photos/IMG_8049.jpeg" alt="Observer Handwritten Formula" class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300">
-            <div class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[11px] font-mono px-2 py-0.5 rounded backdrop-blur">IMG_8049.jpeg</div>
-          </div>
-          <div class="p-5 space-y-2">
-            <h3 class="font-bold text-slate-900 text-base">The Discovery Note: ".10 = 1 3/16th IN"</h3>
-            <p class="text-xs text-slate-600 leading-relaxed">
-              On this sticky note, mom recorded her empirical conversion: <strong>0.10 ft of river rise equals almost 1.25 inches of ground flood</strong>. Three years later, our rigorous linear regression proved her exact ratio: <strong>10.95 inches per foot (1.10" per 0.10')</strong>!
-            </p>
-          </div>
-        </div>
-
-        <!-- Photo Card 2: IMG_8050 (Notebook Page 1) -->
-        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition">
-          <div class="h-64 bg-slate-100 overflow-hidden relative">
-            <img src="photos/IMG_8050.jpeg" alt="Notebook Page 1" class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300">
-            <div class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[11px] font-mono px-2 py-0.5 rounded backdrop-blur">IMG_8050.jpeg</div>
-          </div>
-          <div class="p-5 space-y-2">
-            <h3 class="font-bold text-slate-900 text-base">Notebook Page 1: May 2021 to Jan 2022</h3>
-            <p class="text-xs text-slate-600 leading-relaxed">
-              Tracking early nor'easters, winter storms, and the May 2021 high water event (5.10 ft stage yielding 14.0" flood depth). Clear records of wind directions and speeds.
-            </p>
-          </div>
-        </div>
-
-        <!-- Photo Card 3: IMG_8051 (Hurricanes Ian & Earl) -->
-        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition">
-          <div class="h-64 bg-slate-100 overflow-hidden relative">
-            <img src="photos/IMG_8051.jpeg" alt="Notebook Page 2 - Hurricanes" class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300">
-            <div class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[11px] font-mono px-2 py-0.5 rounded backdrop-blur">IMG_8051.jpeg</div>
-          </div>
-          <div class="p-5 space-y-2">
-            <h3 class="font-bold text-slate-900 text-base">Page 2: Hurricane Earl & Hurricane Ian</h3>
-            <p class="text-xs text-slate-600 leading-relaxed">
-              Documenting Hurricane Earl (Sep 2022, 10" depth) and Hurricane Ian (Oct 2022, 7" depth). Demonstrates how wind direction dictated flood depth even when river stages were identical.
-            </p>
-          </div>
-        </div>
-
-        <!-- Photo Card 4: IMG_8054 (Tape Measure Verification) -->
-        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition">
-          <div class="h-64 bg-slate-100 overflow-hidden relative">
-            <img src="photos/IMG_8054.jpeg" alt="Physical Water Depth Measurement" class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300">
-            <div class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[11px] font-mono px-2 py-0.5 rounded backdrop-blur">IMG_8054.jpeg</div>
-          </div>
-          <div class="p-5 space-y-2">
-            <h3 class="font-bold text-slate-900 text-base">Direct Physical Verification</h3>
-            <p class="text-xs text-slate-600 leading-relaxed">
-              Every point in our training dataset was physically verified with yardsticks and tape measures at key reference spots on the driveway and yard.
-            </p>
-          </div>
-        </div>
-      </div>
+    <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-4">
+      <h2 class="text-2xl font-bold text-slate-900">Community observation archive</h2>
+      <p class="text-slate-600 leading-relaxed">Historical community observations inform the model. Original notebooks and individual observer records are retained privately. The Data page provides yearly numerical summaries, while the Science page explains aggregate benchmarks and their limitations.</p>
+      <a href="data.html" class="font-semibold text-sky-600">Explore the public historical summaries</a>
     </section>
 
     <!-- 3. Key Physical Breakthroughs -->
@@ -2418,17 +2352,7 @@ def build_data_html(status, ground_truth_rows, obs_rows):
     footer_html = build_shared_footer(status)
 
     # Notable storms list
-    notable_storms = [
-        {"name": "10-Yr Record Nor'easter", "badge": "10-Yr Record (19\")", "date": "Oct 12, 2025", "stage": "5.54 ft", "depth": "19.00\"", "wind": "NNE 24 mph (35 mph gusts)", "notes": "All-time 10-year property record (Karen/Coastal Low); 19\" flood submerged driveway and yard"},
-        {"name": "Twin Nor'easters (Storm 1 & 2)", "badge": "Twin Nor'easters (17.5\")", "date": "Sep 22–26, 2026", "stage": "5.38 ft", "depth": "17.50\"", "wind": "NE 22 mph / NNW 23 mph", "notes": "Compound back-to-back nor'easters; 17.5\" peak flood with multi-day surge stacking"},
-        {"name": "Late Autumn Nor'easter", "badge": "Major Flood (15\")", "date": "Nov 15, 2024", "stage": "5.27 ft", "depth": "15.00\"", "wind": "NNE 12.8 mph", "notes": "Severe nor'easter flood; 15\" water over property and access road"},
-        {"name": "Hurricane Erin", "badge": "Hurricane (13\")", "date": "Aug 21–22, 2025", "stage": "5.12 ft", "depth": "13.00\"", "wind": "NNE 18.3 mph (24.6 gusts)", "notes": "Severe tropical surge; rapid 13\" to 10.75\" drop in 30 min post-high tide"},
-        {"name": "September King Tide", "badge": "King Tide (14.5\")", "date": "Sep 21–23, 2024", "stage": "5.20 ft", "depth": "14.50\"", "wind": "SE 5–10 mph", "notes": "Perigean spring tide compound flooding; submerged road and lawn"},
-        {"name": "Winter Storm (Snow/Nor'easter)", "badge": "Winter Gale (11\")", "date": "Jan 3, 2022", "stage": "5.22 ft", "depth": "11.00\"", "wind": "N gale", "notes": "Blizzard surge stacking water into North River & Mobjack Bay"},
-        {"name": "Hurricane Helene", "badge": "Hurricane (9.75\")", "date": "Sep 27, 2024", "stage": "4.70 ft", "depth": "9.75\"", "wind": "SE 25.3 mph", "notes": "Rapid tropical surge backing up ditches; peak 9.75\" at 7:30 PM"},
-        {"name": "Hurricane Ophelia", "badge": "Tropical Storm (12\")", "date": "Sep 22–24, 2023", "stage": "5.00 ft", "depth": "12.00\"", "wind": "SE 20–30 mph", "notes": "Lunar perigee tropical surge and compound drainage block"},
-        {"name": "Hurricane Ian", "badge": "Hurricane (7\")", "date": "Sep 30 – Oct 3, 2022", "stage": "4.66 ft", "depth": "7.00\"", "wind": "N 12–24 mph", "notes": "Multi-day prolonged northerly wind set-up driving surge"}
-    ]
+    notable_storms = []
 
     storm_cards_html = ""
     for s in notable_storms:
@@ -2460,46 +2384,14 @@ def build_data_html(status, ground_truth_rows, obs_rows):
         </div>
         """
 
-    # Ground truth table rows (sorted newest first)
-    sorted_gt = sorted(ground_truth_rows, key=lambda x: int(x.get("observation_id", 0)), reverse=True)
+    # Only explicitly public yearly aggregates are interpolated. Raw notes/rows are ignored.
     table_rows_html = ""
-    for r in sorted_gt:
-        date_str = r.get("date", "")
-        stage_str = r.get("ware_river_stage_ft", "")
-        depth_str = r.get("flood_depth_in", "")
-        wind_dir = r.get("wind_direction", "")
-        wind_spd = r.get("wind_speed_mph", "")
-        wind_gust = r.get("wind_gust_mph", "")
-        wind_display = f"{wind_dir} {wind_spd}".strip() + (f" (g{wind_gust})" if wind_gust else "") if (wind_dir or wind_spd) else "—"
-        system = r.get("weather_system", "") or r.get("astronomical_event", "") or "—"
-        notes = r.get("raw_notes", "") or ""
-
-        try:
-            depth_val = float(depth_str) if depth_str else 0.0
-        except ValueError:
-            depth_val = 0.0
-
-        if depth_val >= 12.0:
-            depth_badge = f'<span class="font-bold text-rose-600">{depth_str}\"</span>'
-        elif depth_val >= 4.0:
-            depth_badge = f'<span class="font-bold text-orange-600">{depth_str}\"</span>'
-        elif depth_val > 0.0:
-            depth_badge = f'<span class="font-bold text-amber-600">{depth_str}\"</span>'
-        elif depth_str:
-            depth_badge = f'<span class="text-slate-400 font-mono">0\"</span>'
-        else:
-            depth_badge = f'<span class="text-slate-400 italic font-sans text-[11px]">in yard</span>'
-
-        table_rows_html += f"""
-        <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
-          <td class="px-3 py-2.5 font-mono text-slate-700 whitespace-nowrap">{date_str}</td>
-          <td class="px-3 py-2.5 font-mono font-bold text-sky-900">{stage_str + ' ft' if stage_str else '—'}</td>
-          <td class="px-3 py-2.5 font-mono">{depth_badge}</td>
-          <td class="px-3 py-2.5 text-slate-600 whitespace-nowrap">{wind_display}</td>
-          <td class="px-3 py-2.5 text-slate-700 font-medium">{system}</td>
-          <td class="px-3 py-2.5 text-slate-500 truncate max-w-sm" title="{notes}">{notes}</td>
-        </tr>
-        """
+    for r in sorted(ground_truth_rows, key=lambda x: x.get("year", ""), reverse=True):
+        if not str(r.get("year", "")).isdigit():
+            continue
+        values = [r.get(k, "—") for k in ("year", "record_count", "stage_min_ft", "stage_max_ft", "depth_mean_in", "depth_max_in")]
+        cells = "".join(f'<td class="px-3 py-2.5 font-mono text-slate-700">{v}</td>' for v in values)
+        table_rows_html += f'<tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">{cells}</tr>'
 
     return f"""<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
@@ -2521,7 +2413,7 @@ def build_data_html(status, ground_truth_rows, obs_rows):
 
   {navbar_html}
 
-  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 w-full">
+  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 min-w-0 w-full w-full">
 
     <!-- Hero Header -->
     <section class="space-y-3">
@@ -2532,23 +2424,13 @@ def build_data_html(status, ground_truth_rows, obs_rows):
         Historical Storm Archive & Data Center
       </h1>
       <p class="text-lg text-slate-600 leading-relaxed max-w-3xl">
-        Transparent open data access: browse 204 ground-truth observer measurements spanning 5 full years (2021 to 2026) and download our live automated datasets.
+        Browse yearly historical observation summaries and download the live automated gauge and forecast datasets. Individual observer records remain private.
       </p>
     </section>
 
-    <!-- 1. NOTABLE STORMS COMPARISON -->
-    <section class="space-y-4">
-      <div class="flex items-center justify-between">
-        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-hurricane text-sky-600"></i>
-          Major Storm Benchmark Events
-        </h2>
-        <span class="text-xs text-slate-500">2021–2026 Observed (5-Year Record)</span>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {storm_cards_html}
-      </div>
+    <section class="bg-white rounded-2xl p-6 border border-slate-200 space-y-3">
+      <h2 class="text-xl font-bold text-slate-900">Historical observation summaries</h2>
+      <p class="text-slate-600">Yearly statistics preserve the project's historical context without publishing individual observer records or notebook images. These are historical measurements, not an evaluation of today's forecast accuracy.</p>
     </section>
 
     <!-- 2. DATA DOWNLOAD CENTER -->
@@ -2559,7 +2441,7 @@ def build_data_html(status, ground_truth_rows, obs_rows):
           Download Raw Datasets
         </h2>
         <p class="text-xs sm:text-sm text-slate-500 mt-1">
-          All data generated by this project is public and freely accessible for researchers, neighbors, and planners.
+          These downloads contain public automated observations, forecasts, and yearly historical summaries. Original observer records and internal documents are not published.
         </p>
       </div>
 
@@ -2580,18 +2462,18 @@ def build_data_html(status, ground_truth_rows, obs_rows):
         </a>
 
         <!-- Download 2 -->
-        <a href="ground_truth_observations.csv" class="p-5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50/50 hover:border-sky-300 transition group flex flex-col justify-between">
+        <a href="observer_yearly_summary.csv" class="p-5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50/50 hover:border-sky-300 transition group flex flex-col justify-between">
           <div class="space-y-2">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-sky-700 uppercase">Ground Truth</span>
               <i class="fa-solid fa-download text-slate-400 group-hover:text-sky-600 transition"></i>
             </div>
-            <div class="font-bold text-slate-900 text-sm">ground_truth_observations.csv</div>
+            <div class="font-bold text-slate-900 text-sm">observer_yearly_summary.csv</div>
             <p class="text-xs text-slate-600 leading-relaxed">
-              The comprehensive 204 observer measurements transcribed from handwritten notes and continuous logs (2021–2026).
+              Yearly record counts and numerical stage/depth summaries; no individual records, notebook images, or free-text notes.
             </p>
           </div>
-          <div class="text-[11px] text-slate-400 font-mono pt-4">204 records &bull; Verified 2021–2026</div>
+          <div class="text-[11px] text-slate-400 font-mono pt-4">Yearly aggregates &bull; 2021–2026</div>
         </a>
 
         <!-- Download 3 -->
@@ -2615,11 +2497,11 @@ def build_data_html(status, ground_truth_rows, obs_rows):
     <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden space-y-4 p-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 class="text-xl font-bold text-slate-900">Ground-Truth Observation Explorer</h2>
-          <p class="text-xs sm:text-sm text-slate-500">Showing 204 human verification records across 5 years of storm seasons (sorted newest first).</p>
+          <h2 class="text-xl font-bold text-slate-900">Yearly Observation Summary</h2>
+          <p class="text-xs sm:text-sm text-slate-500">Yearly numeric aggregates, sorted newest first. Raw observer records are retained privately.</p>
         </div>
         <div class="text-xs text-slate-500 font-mono">
-          All 204 events recorded
+          Aggregate historical records
         </div>
       </div>
 
@@ -2627,12 +2509,12 @@ def build_data_html(status, ground_truth_rows, obs_rows):
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="sticky top-0 bg-slate-100 text-slate-700 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200 z-10 shadow-sm">
-              <th class="px-3 py-2.5">Date</th>
-              <th class="px-3 py-2.5">Ware River Stage</th>
-              <th class="px-3 py-2.5">Flood Depth</th>
-              <th class="px-3 py-2.5">Winds</th>
-              <th class="px-3 py-2.5">System / Event</th>
-              <th class="px-3 py-2.5">Observer Notes</th>
+              <th class="px-3 py-2.5">Year</th>
+              <th class="px-3 py-2.5">Record count</th>
+              <th class="px-3 py-2.5">Minimum stage (ft)</th>
+              <th class="px-3 py-2.5">Maximum stage (ft)</th>
+              <th class="px-3 py-2.5">Mean depth (in)</th>
+              <th class="px-3 py-2.5">Maximum depth (in)</th>
             </tr>
           </thead>
           <tbody>
@@ -2794,7 +2676,7 @@ def build_science_html(status, evidence=None):
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
   {navbar_html}
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 flex-1">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 flex-1 min-w-0 w-full">
 
     <!-- 0. HERO SECTION -->
     <section class="bg-gradient-to-br from-slate-900 via-slate-800 to-sky-950 text-white rounded-3xl p-6 sm:p-10 shadow-xl border border-slate-700/60 relative overflow-hidden">
@@ -2812,11 +2694,11 @@ def build_science_html(status, evidence=None):
           <a href="models/scientific_evidence.json" download class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs sm:text-sm shadow-md transition flex items-center gap-2">
             <i class="fa-solid fa-download"></i> Download JSON Evidence
           </a>
-          <a href="SCIENTIFIC_FINDINGS.md" target="_blank" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 font-semibold text-xs sm:text-sm transition flex items-center gap-2">
-            <i class="fa-solid fa-file-lines text-sky-400"></i> Read Academic Manuscript (MD)
+          <a href="models/scientific_evidence.json" target="_blank" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 font-semibold text-xs sm:text-sm transition flex items-center gap-2">
+            <i class="fa-solid fa-file-lines text-sky-400"></i> Download Aggregate Benchmarks
           </a>
-          <a href="ground_truth_observations.csv" download class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 font-semibold text-xs sm:text-sm transition flex items-center gap-2">
-            <i class="fa-solid fa-table text-emerald-400"></i> Ground-Truth CSV (204 Events)
+          <a href="observer_yearly_summary.csv" download class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 font-semibold text-xs sm:text-sm transition flex items-center gap-2">
+            <i class="fa-solid fa-table text-emerald-400"></i> Yearly Observation Summary
           </a>
         </div>
       </div>
@@ -3202,22 +3084,10 @@ def build_science_html(status, evidence=None):
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Reproduction Box -->
-        <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-3 flex flex-col justify-between">
-          <div class="space-y-2">
-            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <i class="fa-solid fa-terminal text-slate-600"></i> Automated Benchmark Re-execution
-            </h3>
-            <p class="text-xs text-slate-600 leading-relaxed">
-              When new handwritten observer entries or sensor records are added to <code class="bg-slate-200 px-1 py-0.5 rounded text-xs font-mono">ground_truth_observations.csv</code>, re-run the evidence pipeline to automatically regenerate parameter weights and statistical distributions:
-            </p>
-            <div class="bg-slate-900 text-sky-300 p-3 rounded-lg font-mono text-xs shadow-inner">
-              python generate_scientific_report.py
-            </div>
-          </div>
-          <div class="text-[11px] text-slate-500 italic">
-            Outputs synchronized to <code class="font-mono">models/scientific_evidence.json</code> &amp; <code class="font-mono">SCIENTIFIC_FINDINGS.md</code>.
-          </div>
+        <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-3">
+          <h3 class="text-sm font-bold text-slate-900">Benchmark interpretation</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">Historical benchmarks use archived observations. They do not establish accuracy or probability coverage for live forecasts. Raw observer records and internal analysis procedures are retained privately; public numerical summaries are available on the Data page.</p>
+          <a href="data.html" class="text-sky-600 font-semibold">View public data summaries</a>
         </div>
 
         <!-- BibTeX Box -->
@@ -3261,14 +3131,6 @@ def build_science_html(status, evidence=None):
       }});
     }}
 
-    // Mobile Menu Toggle
-    const mobileBtn = document.getElementById('mobile-menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-    if (mobileBtn && mobileMenu) {{
-      mobileBtn.addEventListener('click', () => {{
-        mobileMenu.classList.toggle('hidden');
-      }});
-    }}
   </script>
 </body>
 </html>
@@ -3282,7 +3144,7 @@ def main():
     parser.add_argument("--status-json", default="latest_status.json", help="Path to latest status JSON")
     parser.add_argument("--obs-csv", default="realtime_recent_observations.csv", help="Path to observations CSV")
     parser.add_argument("--fcst-csv", default="forecast_48h.csv", help="Path to forecast CSV")
-    parser.add_argument("--ground-truth", default="ground_truth_observations.csv", help="Path to ground truth CSV")
+    parser.add_argument("--ground-truth", default="observer_yearly_summary.csv", help="Path to public yearly aggregate CSV")
     args = parser.parse_args()
 
     status, obs_rows, fcst_rows, ground_truth_rows = load_data(
@@ -3309,7 +3171,7 @@ def main():
     about_html = build_about_html(status)
     with open("about.html", "w", encoding="utf-8") as f:
         f.write(about_html)
-    print("[+] Generated: about.html (The Story, Handwritten Notebooks & Physical Breakthroughs)")
+    print("[+] Generated: about.html (The Story, Public History & Physical Breakthroughs)")
 
     # 4. Build guide.html
     guide_html = build_guide_html(status)
@@ -3321,7 +3183,7 @@ def main():
     data_html = build_data_html(status, ground_truth_rows, obs_rows)
     with open("data.html", "w", encoding="utf-8") as f:
         f.write(data_html)
-    print("[+] Generated: data.html (Historical Storm Comparisons & Raw Data Downloads)")
+    print("[+] Generated: data.html (Historical Storm Comparisons & Public Data Downloads)")
 
     # 6. Build science.html
     evidence_path = os.path.join("models", "scientific_evidence.json")

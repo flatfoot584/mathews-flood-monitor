@@ -72,13 +72,7 @@ jobs:
             git push origin HEAD:main
           fi
       - name: Prepare Pages site
-        run: |
-          mkdir -p _site/models
-          cp *.html latest_status.json forecast_48h.csv realtime_recent_observations.csv archive_hourly_observations.csv ground_truth_observations.csv SCIENTIFIC_FINDINGS.md _site/
-          cp -R assets _site/assets
-          cp models/scientific_evidence.json models/model_weights_and_thresholds.json _site/models/
-          mkdir -p _site/photos
-          cp photos/*.jpeg _site/photos/
+        run: python3 publish_site.py
       - id: upload
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
