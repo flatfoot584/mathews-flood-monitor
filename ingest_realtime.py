@@ -498,10 +498,17 @@ def build_forecast_timeline(nwps_fcst, nws_fcst, yt_pred_fcst, wm_pred_fcst, qpf
         
         wind_spd = nws_item.get("wind_speed_mph")
         wind_dir = nws_item.get("wind_dir_deg")
+        # NWS legitimately omits direction for explicit 0 mph forecasts.
+        # Calm wind has a known zero vector, without inventing a bearing.
+        calm_wind = finite_number(wind_spd) and wind_spd == 0
+        weather_available = (bool(nws_item) and finite_number(wind_spd) and wind_spd >= 0
+                             and (calm_wind or finite_number(wind_dir)))
         along_bay = None
         cross_bay = None
         along_stress = 0.0
-        if wind_spd is not None and wind_dir is not None:
+        if calm_wind:
+            along_bay = cross_bay = 0.0
+        elif weather_available:
             bay_rad = math.radians(wind_dir - 20)
             along_bay = round(wind_spd * math.cos(bay_rad), 2)
             cross_bay = round(wind_spd * math.sin(bay_rad), 2)
@@ -558,7 +565,7 @@ def build_forecast_timeline(nwps_fcst, nws_fcst, yt_pred_fcst, wm_pred_fcst, qpf
         depth_q90 = micro_topography.evaluate_compound_inundation(stage_q90, rolling_rain_6h)["total_compound_depth_in"]
         
         timeline.append({
-            "weather_available": bool(nws_item) and finite_number(wind_spd) and finite_number(wind_dir),
+            "weather_available": weather_available,
             "precipitation_available": curr in qpf_map,
             "forecast_source": "nwps" if nwps_stage is not None else "tide_fallback" if yt_pred is not None else "unavailable",
             "timestamp_utc": curr.strftime("%Y-%m-%d %H:%M:%S UTC"),
@@ -588,7 +595,7 @@ def build_forecast_timeline(nwps_fcst, nws_fcst, yt_pred_fcst, wm_pred_fcst, qpf
             "sector_garage_depth_in": eval_res["sectors"]["garage_foundation"]["depth_in"],
             "nws_wind_speed_mph": wind_spd if wind_spd is not None else "",
             "nws_wind_dir_deg": wind_dir if wind_dir is not None else "",
-            "nws_wind_cardinal": nws_item.get("wind_dir_cardinal", ""),
+            "nws_wind_cardinal": "Calm" if calm_wind else nws_item.get("wind_dir_cardinal", ""),
             "along_bay_wind_mph": along_bay if along_bay is not None else "",
             "cross_bay_wind_mph": cross_bay if cross_bay is not None else "",
             "nws_short_forecast": nws_item.get("short_forecast", ""),

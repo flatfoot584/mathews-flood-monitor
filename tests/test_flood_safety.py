@@ -115,6 +115,48 @@ class FloodSafetyTests(unittest.TestCase):
         status = fixture(3.95, rain=6.0)
         self.assertGreater(status['forecast_48h_outlook']['peak_risk_tier'], 0)
 
+    def test_nws_explicit_calm_without_direction_has_complete_coverage(self):
+        now = datetime.now(timezone.utc)
+        hour = now.replace(minute=0, second=0, microsecond=0)
+        hours = [hour + timedelta(hours=i) for i in range(49)]
+        raw = {'properties': {'periods': [
+            {'startTime': h.isoformat(), 'windSpeed': '0 mph', 'windDirection': ''}
+            for h in hours]}}
+        with patch.object(ingest, 'fetch_json', return_value=raw):
+            wind = ingest.fetch_nws_hourly_forecast()
+        self.assertIsNone(wind[0]['wind_dir_deg'])
+        ingest.SOURCE_HEALTH.clear()
+        timeline = ingest.build_forecast_timeline(
+            [{'datetime_utc': h, 'forecast_stage_mllw_ft': 1.0} for h in hours],
+            wind, [], [], {h: 0.0 for h in hours})
+        for row in timeline:
+            self.assertTrue(row['weather_available'])
+            self.assertEqual(row['along_bay_wind_mph'], 0.0)
+            self.assertEqual(row['cross_bay_wind_mph'], 0.0)
+            self.assertEqual(row['nws_wind_cardinal'], 'Calm')
+            self.assertEqual(row['nws_wind_dir_deg'], '')
+        status = ingest.generate_latest_status(
+            ware_obs=[{'datetime_utc': now, 'stage_mllw_ft': 1.0}], fcst_timeline=timeline)
+        quality = assess_status(status)
+        self.assertEqual(quality['forecast_hours_available'], 48)
+        self.assertTrue(quality['alerts_all_clear_allowed'])
+
+    def test_nonzero_or_missing_speed_without_direction_stays_unknown(self):
+        hour = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
+        for speed in (5.0, None, -1.0, float('nan')):
+            wind = [{'datetime_utc': hour, 'wind_speed_mph': speed, 'wind_dir_deg': None}]
+            timeline = ingest.build_forecast_timeline(
+                [{'datetime_utc': hour, 'forecast_stage_mllw_ft': 1.0}], wind, [], [], {hour: 0.0})
+            self.assertFalse(timeline[0]['weather_available'])
+            self.assertEqual(timeline[0]['along_bay_wind_mph'], '')
+
+    def test_missing_wind_period_is_not_inferred_calm(self):
+        hour = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
+        timeline = ingest.build_forecast_timeline(
+            [{'datetime_utc': hour, 'forecast_stage_mllw_ft': 1.0}], [], [], [], {hour: 0.0})
+        self.assertFalse(timeline[0]['weather_available'])
+        self.assertEqual(timeline[0]['nws_wind_speed_mph'], '')
+
     def test_compound_scenario_bounds_enclose_central_estimate(self):
         status = fixture(4.3, rain=3.0)
         for row in status['forecast_hourly_timeline']:
