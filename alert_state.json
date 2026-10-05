@@ -1,11 +1,11 @@
 {
   "active_event": true,
   "last_notified_tier": 1,
-  "last_notified_peak_stage": 3.89,
-  "last_notified_peak_time": "2026-10-05 17:00:00 EDT",
-  "two_hour_warning_sent_for": "",
-  "last_alert_type": "new_crest_event",
-  "last_alert_timestamp_utc": "2026-10-04T22:18:20.296453+00:00",
-  "last_alert_timestamp_local": "2026-10-04 18:18:20 EDT",
+  "last_notified_peak_stage": 4.05,
+  "last_notified_peak_time": "2026-10-05 18:00:00 EDT",
+  "two_hour_warning_sent_for": "2026-10-05 18:00:00 EDT",
+  "last_alert_type": "imminent_crest_warning",
+  "last_alert_timestamp_utc": "2026-10-05T20:07:40.951287+00:00",
+  "last_alert_timestamp_local": "2026-10-05 16:07:40 EDT",
   "event_peak_time": "2026-10-05 17:00:00 EDT"
 }
