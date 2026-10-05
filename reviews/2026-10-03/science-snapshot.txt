@@ -1,0 +1,379 @@
+- banner:
+  - link " Mathews County Flood Monitor Middle Peninsula • Mobjack Bay, VA":
+    - /url: index.html
+    - generic: 
+    - generic: Mathews County Flood Monitor
+    - generic: Middle Peninsula • Mobjack Bay, VA
+  - navigation:
+    - link " Live Monitor":
+      - /url: index.html
+      - generic: 
+      - generic: Live Monitor
+    - link " Mobile Alerts":
+      - /url: alerts.html
+      - generic: 
+      - generic: Mobile Alerts
+    - link " Flood Map":
+      - /url: index.html#map-section
+      - generic: 
+      - generic: Flood Map
+    - link " About & History":
+      - /url: about.html
+      - generic: 
+      - generic: About & History
+    - link " Flood Guide & Tiers":
+      - /url: guide.html
+      - generic: 
+      - generic: Flood Guide & Tiers
+    - link " Storm Archive & Data":
+      - /url: data.html
+      - generic: 
+      - generic: Storm Archive & Data
+    - link " Science & Methodology":
+      - /url: science.html
+      - generic: 
+      - generic: Science & Methodology
+  - generic: "LIVE: No modeled inundation"
+  - text: 
+  - text:       
+- status: "Last update: 2026-10-03 23:30:39 EDT. Gauge observation: 2026-10-03 23:00:00 EDT. Check actual road conditions before travel. Mobile push alerts are enabled for subscribers."
+- main:
+  - generic: 
+  - text: PEER-REVIEW READY • OPEN SCIENCE • 5-YEAR EMPIRICAL RECORD
+  - heading "Scientific Methodology & Model Benchmarks" [level=1]
+  - paragraph: Empirical validation, machine learning hydrodynamics, USGS 3DEP 1-meter LiDAR altimetry ground-truth, and formal version changelog for coastal flooding in Mathews County, Virginia.
+  - link " Download JSON Evidence":
+    - /url: models/scientific_evidence.json
+    - generic: 
+    - text: Download JSON Evidence
+  - link " Download Aggregate Benchmarks":
+    - /url: models/scientific_evidence.json
+    - generic: 
+    - text: Download Aggregate Benchmarks
+  - link " Yearly Observation Summary":
+    - /url: observer_yearly_summary.csv
+    - generic: 
+    - text: Yearly Observation Summary
+  - heading " Key Empirical & Model Benchmarks" [level=2]:
+    - generic: 
+    - text: Key Empirical & Model Benchmarks
+  - paragraph: Quantitative metrics across 5.33 years of continuous storm observations and multi-sensor machine learning.
+  - generic: 5.33-Year Record
+  - generic: 
+  - generic: 204 Events
+  - paragraph: 181 paired depth records, May 2021 – Sep 2026 across 10 named storms.
+  - generic: Empirical Correlation
+  - generic: 
+  - generic: r = 0.9302
+  - paragraph: R² = 0.8652 (p < 10−15) on flooded events; r = 0.8898 overall.
+  - generic: LiDAR Culvert Match
+  - generic: 
+  - generic: Δ = 0.06 ft
+  - paragraph: Culvert invert 4.05' MLLW independently verifies 3.99' tipping point within 0.7".
+  - generic: Driveway Pad Match
+  - generic: 
+  - generic: Δ = 0.00 ft
+  - paragraph: USGS LiDAR 4.40' MLLW exactly matches Tier 2 moderate flood threshold.
+  - generic: Stage 1 Nowcast ML
+  - generic: 
+  - generic: R² = 0.9731
+  - paragraph: Holdout test MAE = 1.46" (0.12') using LightGBM + Wind Stress.
+  - generic: Stage 2 Local Model
+  - generic: 
+  - generic: MAE = 1.25"
+  - paragraph: R² = 0.8511, RMSE = 1.69" across 181 ground-truth storm events.
+  - heading " Two-Stage Machine Learning Predictive Architecture" [level=2]:
+    - generic: 
+    - text: Two-Stage Machine Learning Predictive Architecture
+  - paragraph: Decoupled estuarine hydrodynamic physics from hyper-local piecewise micro-topography.
+  - generic: Multi-Sensor Pipeline
+  - generic: "1"
+  - text: "Stage 1: Estuarine Hydrodynamic & Water Level Model"
+  - paragraph:
+    - text: Predicts the regional water level on the Ware River gauge (WRVV2) by synthesizing astronomical tide tables, quadratic wind stress vectors (τ
+    - subscript: w
+    - text: ∝ |U|U), barometric pressure tendencies (ΔP
+    - subscript: 3h
+    - text: ), rolling wind set-up memory (3h, 6h, 12h, 24h), and NOAA CBOFS hydrodynamic guidance.
+  - generic: "Hydrodynamic Formulation:"
+  - text: Stage
+  - subscript: pred
+  - text: (t) = Tide
+  - subscript: ast
+  - text: (t) + f
+  - subscript: GBM
+  - text: (τ
+  - subscript: wx
+  - text: ", τ"
+  - subscript: wy
+  - text: ", ΔP"
+  - subscript: 3h
+  - text: ", Memory"
+  - subscript: wind
+  - text: )
+  - generic: "2"
+  - text: "Stage 2: Hyper-Local Piecewise Inundation Model"
+  - paragraph: Translates the predicted or observed gauge stage into exact flood depth in inches on property benchmarks, driveway access corridors, and neighborhood roads using our empirically discovered 3.99 ft tipping point and 10.95 in/ft linear inundation gradient.
+  - generic: "Piecewise Inundation Law:"
+  - text: Depth(h) = max(0.0, 10.95 × Stage
+  - subscript: ft
+  - text: − 43.69) inches
+  - heading " Model Performance & Holdout Verification Matrix" [level=3]:
+    - generic: 
+    - text: Model Performance & Holdout Verification Matrix
+  - table:
+    - rowgroup:
+      - row "Model Component Target Variable Algorithm Training Horizon Holdout / Evaluation Set R² Score MAE RMSE":
+        - columnheader "Model Component"
+        - columnheader "Target Variable"
+        - columnheader "Algorithm"
+        - columnheader "Training Horizon"
+        - columnheader "Holdout / Evaluation Set"
+        - columnheader "R² Score"
+        - columnheader "MAE"
+        - columnheader "RMSE"
+    - rowgroup:
+      - row "Stage 1 (Nowcasting) Stage (ft MLLW) LightGBM + Ridge Blend 2021–2023 (32,833 hrs) 2024 Holdout Storms 0.9731 1.46\" (0.12') 1.92\" (0.16')":
+        - cell "Stage 1 (Nowcasting)"
+        - cell "Stage (ft MLLW)"
+        - cell "LightGBM + Ridge Blend"
+        - cell "2021–2023 (32,833 hrs)"
+        - cell "2024 Holdout Storms"
+        - cell "0.9731"
+        - cell "1.46\" (0.12')"
+        - cell "1.92\" (0.16')"
+      - row "Weather-Conditioned Hindcast Stage (ft MLLW) LightGBM (48h Lead) 2021–2023 hourly 2024 Holdout Storms 0.7209 4.74\" (0.40') 6.18\" (0.51')":
+        - cell "Weather-Conditioned Hindcast"
+        - cell "Stage (ft MLLW)"
+        - cell "LightGBM (48h Lead)"
+        - cell "2021–2023 hourly"
+        - cell "2024 Holdout Storms"
+        - cell "0.7209"
+        - cell "4.74\" (0.40')"
+        - cell "6.18\" (0.51')"
+      - row "Stage 2 (Hyper-Local Inundation) Flood Depth (in) Piecewise Linear Threshold 2021–2026 Continuous 181 Ground-Truth Events 0.8511 1.25\" 1.69\"":
+        - cell "Stage 2 (Hyper-Local Inundation)"
+        - cell "Flood Depth (in)"
+        - cell "Piecewise Linear Threshold"
+        - cell "2021–2026 Continuous"
+        - cell "181 Ground-Truth Events"
+        - cell "0.8511"
+        - cell "1.25\""
+        - cell "1.69\""
+  - heading " USGS 3DEP 1-Meter LiDAR Altimetry Ground-Truth Validation" [level=2]:
+    - generic: 
+    - text: USGS 3DEP 1-Meter LiDAR Altimetry Ground-Truth Validation
+  - paragraph: Federal airborne laser altimetry independently confirms handwritten empirical tipping points without parameter tuning.
+  - generic: "Datum Offset: NAVD88 + 1.64 ft = MLLW"
+  - heading " Physical Benchmark Features vs Empirical Model Thresholds" [level=3]:
+    - generic: 
+    - text: Physical Benchmark Features vs Empirical Model Thresholds
+  - table:
+    - rowgroup:
+      - row "Feature Name USGS LiDAR (NAVD88) USGS LiDAR (MLLW) Model Tipping Point (MLLW) Discrepancy (Δ) Hydrologic Significance":
+        - columnheader "Feature Name"
+        - columnheader "USGS LiDAR (NAVD88)"
+        - columnheader "USGS LiDAR (MLLW)"
+        - columnheader "Model Tipping Point (MLLW)"
+        - columnheader "Discrepancy (Δ)"
+        - columnheader "Hydrologic Significance"
+    - rowgroup:
+      - row "Roadside Ditch Culvert Invert (Drainage Tipping Point) 2.41 ft 4.05 ft 3.99 ft +0.06 ft (+0.7 in) Water breaches ditch culvert invert at 4.05' MLLW, matching empirical tipping point (3.99') within 0.7 inches.":
+        - cell "Roadside Ditch Culvert Invert (Drainage Tipping Point)"
+        - cell "2.41 ft"
+        - cell "4.05 ft"
+        - cell "3.99 ft"
+        - cell "+0.06 ft (+0.7 in)"
+        - cell "Water breaches ditch culvert invert at 4.05' MLLW, matching empirical tipping point (3.99') within 0.7 inches."
+      - 'row "Driveway Benchmark (Daniel Ave / Hobday Transect) 2.76 ft 4.40 ft 4.40 ft 0.00 ft (Exact match) Exact match to within 0.01 ft: water covers driveway pad at 4.40'' MLLW (Tier 2 moderate hazard threshold)."':
+        - cell "Driveway Benchmark (Daniel Ave / Hobday Transect)"
+        - cell "2.76 ft"
+        - cell "4.40 ft"
+        - cell "4.40 ft"
+        - cell "0.00 ft (Exact match)"
+        - 'cell "Exact match to within 0.01 ft: water covers driveway pad at 4.40'' MLLW (Tier 2 moderate hazard threshold)."'
+      - row "Blackwater Creek Marsh Margin (Tidal Wetland Margin) -1.09 ft 0.55 ft 0.55 ft 0.00 ft (Exact match) Regular high-tide wetland buffer; submerged twice daily during astronomical tides.":
+        - cell "Blackwater Creek Marsh Margin (Tidal Wetland Margin)"
+        - cell "-1.09 ft"
+        - cell "0.55 ft"
+        - cell "0.55 ft"
+        - cell "0.00 ft (Exact match)"
+        - cell "Regular high-tide wetland buffer; submerged twice daily during astronomical tides."
+      - 'row "Residential Finished Foundation / Garage Slab 3.26 ft 4.90 ft 4.80 ft +0.10 ft (+1.2 in) Tier 3 severe property hazard threshold: property impassable and foundation margin reached."':
+        - cell "Residential Finished Foundation / Garage Slab"
+        - cell "3.26 ft"
+        - cell "4.90 ft"
+        - cell "4.80 ft"
+        - cell "+0.10 ft (+1.2 in)"
+        - 'cell "Tier 3 severe property hazard threshold: property impassable and foundation margin reached."'
+  - heading " Community Street Network Invert Elevations (Vehicle Hazard Thresholds)" [level=3]:
+    - generic: 
+    - text: Community Street Network Invert Elevations (Vehicle Hazard Thresholds)
+  - table:
+    - rowgroup:
+      - row "Street Name Invert Elevation (NAVD88) Invert Elevation (MLLW) Inundation Sequence & Passability Risk":
+        - columnheader "Street Name"
+        - columnheader "Invert Elevation (NAVD88)"
+        - columnheader "Invert Elevation (MLLW)"
+        - columnheader "Inundation Sequence & Passability Risk"
+    - rowgroup:
+      - row "Bayshore Avenue 2.11 ft 3.75 ft Lowest waterfront dips flood first during spring tides":
+        - cell "Bayshore Avenue"
+        - cell "2.11 ft"
+        - cell "3.75 ft"
+        - cell "Lowest waterfront dips flood first during spring tides"
+      - row "Julian Street 2.14 ft 3.78 ft Southern culvert dip connects to marsh swale":
+        - cell "Julian Street"
+        - cell "2.14 ft"
+        - cell "3.78 ft"
+        - cell "Southern culvert dip connects to marsh swale"
+      - row "Daniel Avenue (Low Point) 2.24 ft 3.88 ft Road dip floods prior to driveway bench (4.40')":
+        - cell "Daniel Avenue (Low Point)"
+        - cell "2.24 ft"
+        - cell "3.88 ft"
+        - cell "Road dip floods prior to driveway bench (4.40')"
+      - row "Allview Street 2.49 ft 4.13 ft Shallow water across road above 4.13' MLLW":
+        - cell "Allview Street"
+        - cell "2.49 ft"
+        - cell "4.13 ft"
+        - cell "Shallow water across road above 4.13' MLLW"
+      - row "River Road 2.50 ft 4.14 ft Mid-section dip creates passability obstacle":
+        - cell "River Road"
+        - cell "2.50 ft"
+        - cell "4.14 ft"
+        - cell "Mid-section dip creates passability obstacle"
+      - row "Hobday Street 2.58 ft 4.22 ft Ditch overflow reaches roadway edge":
+        - cell "Hobday Street"
+        - cell "2.58 ft"
+        - cell "4.22 ft"
+        - cell "Ditch overflow reaches roadway edge"
+      - row "Little Avenue 2.59 ft 4.23 ft Culvert restriction during heavy precipitation":
+        - cell "Little Avenue"
+        - cell "2.59 ft"
+        - cell "4.23 ft"
+        - cell "Culvert restriction during heavy precipitation"
+      - row "Bunny Rabbit Lane 2.81 ft 4.45 ft Elevated western ridge; dry during nuisance events":
+        - cell "Bunny Rabbit Lane"
+        - cell "2.81 ft"
+        - cell "4.45 ft"
+        - cell "Elevated western ridge; dry during nuisance events"
+  - heading " Observational Dataset Characteristics & Statistical Moments" [level=2]:
+    - generic: 
+    - text: Observational Dataset Characteristics & Statistical Moments
+  - paragraph: Distribution analysis of 204 human verification records spanning May 2021 to September 2026.
+  - heading " Ware River Stage Moments (ft MLLW)" [level=3]:
+    - generic: 
+    - text: Ware River Stage Moments (ft MLLW)
+  - generic: Min
+  - generic: 3.40'
+  - generic: Median
+  - generic: 4.35'
+  - generic: Mean
+  - generic: 4.39'
+  - generic: Max
+  - generic: 5.54'
+  - generic: "IQR: [4.14', 4.61'] (Δ 0.47')"
+  - generic: σ = 0.38'
+  - heading " Measured Flood Depth Moments (inches)" [level=3]:
+    - generic: 
+    - text: Measured Flood Depth Moments (inches)
+  - generic: Min
+  - generic: 0.0"
+  - generic: Median
+  - generic: 3.0"
+  - generic: Mean
+  - generic: 4.3"
+  - generic: Max
+  - generic: 19.0"
+  - generic: "IQR: [0.25\", 7.0\"] (Δ 6.75\")"
+  - generic: σ = 4.37"
+  - generic: 
+  - strong: "Empirical Zero-Inundation Baseline Confirmation:"
+  - text: Exactly 44 observations were recorded when the Ware River gauge was below 4.00 ft MLLW (ranging from 3.40' to 3.98'). All 44 instances exhibited exactly
+  - strong: 0.0 inches
+  - text: of inundation on the yard and road, verifying zero false positive flood alerts below our physical 3.99 ft threshold.
+  - heading " Benchmark Storm Case Studies (Observed vs Model Predicted)" [level=2]:
+    - generic: 
+    - text: Benchmark Storm Case Studies (Observed vs Model Predicted)
+  - paragraph: Evaluation against 10 notable tropical cyclones, coastal lows, and king tide events across the 5-year record.
+  - generic: Evaluated via Piecewise Stage 2 Formula
+  - table:
+    - rowgroup:
+      - row "Storm / Event Stage (MLLW) Observed Depth Predicted Depth Residual Error Wind Forcing Hydrologic & Inundation Impact":
+        - columnheader "Storm / Event"
+        - columnheader "Stage (MLLW)"
+        - columnheader "Observed Depth"
+        - columnheader "Predicted Depth"
+        - columnheader "Residual Error"
+        - columnheader "Wind Forcing"
+        - columnheader "Hydrologic & Inundation Impact"
+    - rowgroup
+  - heading " Project Version Changelog & Revision History" [level=2]:
+    - generic: 
+    - text: Project Version Changelog & Revision History
+  - paragraph: Documented timeline of model upgrades, dataset expansions, and structural discoveries.
+  - complementary: Historical benchmark scores use observed weather, not issue-time forecasts. They do not validate deployed 6–48-hour forecast accuracy. Live bounds are uncalibrated scenarios.
+  - heading " Reproducibility, API Integration & Academic Citation" [level=2]:
+    - generic: 
+    - text: Reproducibility, API Integration & Academic Citation
+  - paragraph: All data collection scripts and statistical engines are reproducible and open-source.
+  - heading "Benchmark interpretation" [level=3]
+  - paragraph: Historical benchmarks use archived observations. They do not establish accuracy or probability coverage for live forecasts. Raw observer records and internal analysis procedures are retained privately; public numerical summaries are available on the Data page.
+  - link "View public data summaries":
+    - /url: data.html
+  - heading " BibTeX Academic Citation" [level=3]:
+    - generic: 
+    - text: BibTeX Academic Citation
+  - button " Copy":
+    - generic: 
+    - generic: Copy
+  - generic: "@misc{mathews_flood_prediction_2026, title={Hyper-Local Coastal Flood Prediction and Empirical Threshold Discovery in Mathews County, Virginia: A 5-Year Observational Benchmark (2021--2026)}, author={Hottinger, Howard and Contributors}, year={2026}, howpublished={{https://flatfoot584.github.io/mathews-flood-monitor/science.html}}, note={Ground-truth empirical dataset (N=204) and two-stage machine learning hydrodynamic model} }"
+- contentinfo:
+  - generic: 
+  - generic: Mathews County Coastal Flood Prediction System
+  - paragraph: An open science, hyper-local flood prediction pipeline and machine learning model built from 204 ground-truth storm observations (2021–2026), NOAA NWPS hydrodynamic water level guidance, and NOAA CO-OPS sensor networks across the Middle Peninsula of Virginia.
+  - generic: "Last Automated Cloud Sync: 2026-10-03 23:30:39 EDT (Scheduled every 30 minutes; delays are possible)"
+  - heading "Portal Navigation" [level=4]
+  - list:
+    - link "Live Dashboard & Forecast":
+      - /url: index.html
+    - link "Free Mobile Flood Alerts":
+      - /url: alerts.html
+    - link "Interactive Coastal Map":
+      - /url: index.html#map-section
+    - link "The Story & Handwritten Notes":
+      - /url: about.html
+    - link "Flood Tiers & Plain-English Guide":
+      - /url: guide.html
+    - link "Storm History & Data Archive":
+      - /url: data.html
+    - link "Science, Models & Changelog":
+      - /url: science.html
+  - heading "Data & Source Code" [level=4]
+  - list:
+    - link " NOAA NWPS Ware River (WRVV2)":
+      - /url: https://water.noaa.gov/gauges/WRVV2
+      - generic: 
+      - text: NOAA NWPS Ware River (WRVV2)
+    - link " NOAA Yorktown USCG (8637689)":
+      - /url: https://tidesandcurrents.noaa.gov/stationhome.html?id=8637689
+      - generic: 
+      - text: NOAA Yorktown USCG (8637689)
+    - link " NOAA Windmill Point (8636580)":
+      - /url: https://tidesandcurrents.noaa.gov/stationhome.html?id=8636580
+      - generic: 
+      - text: NOAA Windmill Point (8636580)
+    - link " Scientific Evidence (JSON)":
+      - /url: models/scientific_evidence.json
+      - generic: 
+      - text: Scientific Evidence (JSON)
+    - link " Public Methodology":
+      - /url: science.html
+      - generic: 
+      - text: Public Methodology
+    - link " GitHub Repository":
+      - /url: https://github.com/flatfoot584/mathews-flood-monitor
+      - generic: 
+      - text: GitHub Repository
+  - generic: © 2021–2026 Mathews County Flood Prediction Project • Public Community Resource
+  - generic: Empirical model calibrated to 3.99 ft MLLW flood tipping point. Not an official NWS evacuation order.

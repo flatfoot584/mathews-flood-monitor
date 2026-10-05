@@ -1,0 +1,130 @@
+- banner:
+  - link " Mathews County Flood Monitor Middle Peninsula • Mobjack Bay, VA":
+    - /url: index.html
+    - generic: 
+    - generic: Mathews County Flood Monitor
+    - generic: Middle Peninsula • Mobjack Bay, VA
+  - navigation:
+    - link " Live Monitor":
+      - /url: index.html
+      - generic: 
+      - generic: Live Monitor
+    - link " Mobile Alerts":
+      - /url: alerts.html
+      - generic: 
+      - generic: Mobile Alerts
+    - link " Flood Map":
+      - /url: index.html#map-section
+      - generic: 
+      - generic: Flood Map
+    - link " About & History":
+      - /url: about.html
+      - generic: 
+      - generic: About & History
+    - link " Flood Guide & Tiers":
+      - /url: guide.html
+      - generic: 
+      - generic: Flood Guide & Tiers
+    - link " Storm Archive & Data":
+      - /url: data.html
+      - generic: 
+      - generic: Storm Archive & Data
+    - link " Science & Methodology":
+      - /url: science.html
+      - generic: 
+      - generic: Science & Methodology
+  - generic: "LIVE: No modeled inundation"
+  - text: 
+  - text:       
+- status: "Last update: 2026-10-03 23:30:39 EDT. Gauge observation: 2026-10-03 23:00:00 EDT. Check actual road conditions before travel. Mobile push alerts are enabled for subscribers."
+- main:
+  - generic: 
+  - text: Project History & Science
+  - heading "From Handwritten Notebooks to a Predictive Flood Model" [level=1]
+  - paragraph: How 204 storm observations recorded with measuring tapes across 5 years in Mathews County, Virginia uncovered the mathematical tipping points of coastal compound flooding.
+  - generic: 
+  - heading "Why Regional Weather Reports Fail Mathews County" [level=2]
+  - paragraph: Mathews County is an almost sea-level peninsula surrounded by the Chesapeake Bay, Mobjack Bay, and the Piankatank River. Much of the land sits less than 5 to 10 feet above sea level.
+  - paragraph: When TV forecasts in Richmond or Norfolk announce a "Coastal Flood Warning," it offers almost zero practical value to a local homeowner. It doesn’t tell you whether the water will stay in the ditch or flood the driveway, what time high tide will block your car, or whether an SUV can get through.
+  - strong: "The Core Question:"
+  - text: "\"At exactly what river stage does the water breach our ditches, and how many inches of water does every additional tenth of a foot create?\""
+  - heading "Community observation archive" [level=2]
+  - paragraph: Historical community observations inform the model. Original notebooks and individual observer records are retained privately. The Data page provides yearly numerical summaries, while the Science page explains aggregate benchmarks and their limitations.
+  - link "Explore the public historical summaries":
+    - /url: data.html
+  - heading " The Three Physical Breakthroughs" [level=2]:
+    - generic: 
+    - text: The Three Physical Breakthroughs
+  - generic: 3.99 ft
+  - heading "1. The Tipping Point" [level=3]
+  - paragraph: Below 3.99 ft MLLW, water remains in ditches (0" flooding). Above 4.00 ft, ditch banks breach and water spreads across the driveway.
+  - generic: 10.95" / ft
+  - heading "2. The Inundation Slope" [level=3]
+  - paragraph: Every 0.10 ft of river rise yields 1.1 to 1.2 inches of water depth on the property ($r = 0.912$, $R^2 = 0.832$).
+  - generic: β Restriction
+  - heading "3. Compound Pluvial Physics" [level=3]
+  - paragraph: Heavy rainfall cannot drain by gravity when high bay water acts as a "cork in the ditch," trapping rain directly onto driveways.
+  - heading " Serverless Cloud Execution" [level=2]:
+    - generic: 
+    - text: Serverless Cloud Execution
+  - paragraph:
+    - text: This entire portal runs at
+    - strong: zero financial cost
+    - text: "using GitHub Actions. Every 30 minutes:"
+  - list:
+    - listitem: A cloud runner spins up and queries NOAA NWPS (Ware River WRVV2 6-min stage & 4-day forecast hydrograph).
+    - listitem: Fetches real-time winds and storm surge from Yorktown USCG and Windmill Point.
+    - listitem: Computes the Hybrid Hydrodynamic–ML stage forecast and micro-topography water depths.
+    - text: Appends verified hours to our permanent
+    - code: archive_hourly_observations.csv
+    - text: .
+    - listitem: Rebuilds and publishes this website on GitHub Pages.
+- contentinfo:
+  - generic: 
+  - generic: Mathews County Coastal Flood Prediction System
+  - paragraph: An open science, hyper-local flood prediction pipeline and machine learning model built from 204 ground-truth storm observations (2021–2026), NOAA NWPS hydrodynamic water level guidance, and NOAA CO-OPS sensor networks across the Middle Peninsula of Virginia.
+  - generic: "Last Automated Cloud Sync: 2026-10-03 23:30:39 EDT (Scheduled every 30 minutes; delays are possible)"
+  - heading "Portal Navigation" [level=4]
+  - list:
+    - link "Live Dashboard & Forecast":
+      - /url: index.html
+    - link "Free Mobile Flood Alerts":
+      - /url: alerts.html
+    - link "Interactive Coastal Map":
+      - /url: index.html#map-section
+    - link "The Story & Handwritten Notes":
+      - /url: about.html
+    - link "Flood Tiers & Plain-English Guide":
+      - /url: guide.html
+    - link "Storm History & Data Archive":
+      - /url: data.html
+    - link "Science, Models & Changelog":
+      - /url: science.html
+  - heading "Data & Source Code" [level=4]
+  - list:
+    - link " NOAA NWPS Ware River (WRVV2)":
+      - /url: https://water.noaa.gov/gauges/WRVV2
+      - generic: 
+      - text: NOAA NWPS Ware River (WRVV2)
+    - link " NOAA Yorktown USCG (8637689)":
+      - /url: https://tidesandcurrents.noaa.gov/stationhome.html?id=8637689
+      - generic: 
+      - text: NOAA Yorktown USCG (8637689)
+    - link " NOAA Windmill Point (8636580)":
+      - /url: https://tidesandcurrents.noaa.gov/stationhome.html?id=8636580
+      - generic: 
+      - text: NOAA Windmill Point (8636580)
+    - link " Scientific Evidence (JSON)":
+      - /url: models/scientific_evidence.json
+      - generic: 
+      - text: Scientific Evidence (JSON)
+    - link " Public Methodology":
+      - /url: science.html
+      - generic: 
+      - text: Public Methodology
+    - link " GitHub Repository":
+      - /url: https://github.com/flatfoot584/mathews-flood-monitor
+      - generic: 
+      - text: GitHub Repository
+  - generic: © 2021–2026 Mathews County Flood Prediction Project • Public Community Resource
+  - generic: Empirical model calibrated to 3.99 ft MLLW flood tipping point. Not an official NWS evacuation order.

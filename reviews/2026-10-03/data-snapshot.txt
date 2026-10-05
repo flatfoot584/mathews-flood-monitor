@@ -1,0 +1,175 @@
+- banner:
+  - link " Mathews County Flood Monitor Middle Peninsula • Mobjack Bay, VA":
+    - /url: index.html
+    - generic: 
+    - generic: Mathews County Flood Monitor
+    - generic: Middle Peninsula • Mobjack Bay, VA
+  - navigation:
+    - link " Live Monitor":
+      - /url: index.html
+      - generic: 
+      - generic: Live Monitor
+    - link " Mobile Alerts":
+      - /url: alerts.html
+      - generic: 
+      - generic: Mobile Alerts
+    - link " Flood Map":
+      - /url: index.html#map-section
+      - generic: 
+      - generic: Flood Map
+    - link " About & History":
+      - /url: about.html
+      - generic: 
+      - generic: About & History
+    - link " Flood Guide & Tiers":
+      - /url: guide.html
+      - generic: 
+      - generic: Flood Guide & Tiers
+    - link " Storm Archive & Data":
+      - /url: data.html
+      - generic: 
+      - generic: Storm Archive & Data
+    - link " Science & Methodology":
+      - /url: science.html
+      - generic: 
+      - generic: Science & Methodology
+  - generic: "LIVE: No modeled inundation"
+  - text: 
+  - text:       
+- status: "Last update: 2026-10-03 23:30:39 EDT. Gauge observation: 2026-10-03 23:00:00 EDT. Check actual road conditions before travel. Mobile push alerts are enabled for subscribers."
+- main:
+  - generic: 
+  - text: Storm History & Open Data
+  - heading "Historical Storm Archive & Data Center" [level=1]
+  - paragraph: Browse yearly historical observation summaries and download the live automated gauge and forecast datasets. Individual observer records remain private.
+  - heading "Historical observation summaries" [level=2]
+  - paragraph: Yearly statistics preserve the project's historical context without publishing individual observer records or notebook images. These are historical measurements, not an evaluation of today's forecast accuracy.
+  - heading " Download Raw Datasets" [level=2]:
+    - generic: 
+    - text: Download Raw Datasets
+  - paragraph: These downloads contain public automated observations, forecasts, and yearly historical summaries. Original observer records and internal documents are not published.
+  - link "Hourly Archive  archive_hourly_observations.csv Permanent cumulative hourly dataset appended every 30 minutes in the cloud. Updated every 30 mins":
+    - /url: archive_hourly_observations.csv
+    - generic: Hourly Archive
+    - generic: 
+    - generic: archive_hourly_observations.csv
+    - paragraph: Permanent cumulative hourly dataset appended every 30 minutes in the cloud.
+    - generic: Updated every 30 mins
+  - link "Ground Truth  observer_yearly_summary.csv Yearly record counts and numerical stage/depth summaries; no individual records, notebook images, or free-text notes. Yearly aggregates • 2021–2026":
+    - /url: observer_yearly_summary.csv
+    - generic: Ground Truth
+    - generic: 
+    - generic: observer_yearly_summary.csv
+    - paragraph: Yearly record counts and numerical stage/depth summaries; no individual records, notebook images, or free-text notes.
+    - generic: Yearly aggregates • 2021–2026
+  - link "JSON API  latest_status.json Real-time API JSON endpoint with current stage, sector elevations, passability, and 48h outlook. REST API • Live":
+    - /url: latest_status.json
+    - generic: JSON API
+    - generic: 
+    - generic: latest_status.json
+    - paragraph: Real-time API JSON endpoint with current stage, sector elevations, passability, and 48h outlook.
+    - generic: REST API • Live
+  - heading "Yearly Observation Summary" [level=2]
+  - paragraph: Yearly numeric aggregates, sorted newest first. Raw observer records are retained privately.
+  - generic: Aggregate historical records
+  - table:
+    - rowgroup:
+      - row "Year Record count Minimum stage (ft) Maximum stage (ft) Mean depth (in) Maximum depth (in)":
+        - columnheader "Year"
+        - columnheader "Record count"
+        - columnheader "Minimum stage (ft)"
+        - columnheader "Maximum stage (ft)"
+        - columnheader "Mean depth (in)"
+        - columnheader "Maximum depth (in)"
+    - rowgroup:
+      - row "2026 11 4.08 5.38 10.05 17.5":
+        - cell "2026"
+        - cell "11"
+        - cell "4.08"
+        - cell "5.38"
+        - cell "10.05"
+        - cell "17.5"
+      - row "2025 38 4.0 5.54 3.74 19.0":
+        - cell "2025"
+        - cell "38"
+        - cell "4.0"
+        - cell "5.54"
+        - cell "3.74"
+        - cell "19.0"
+      - row "2024 78 3.4 5.27 2.9 15.0":
+        - cell "2024"
+        - cell "78"
+        - cell "3.4"
+        - cell "5.27"
+        - cell "2.9"
+        - cell "15.0"
+      - row "2023 42 3.8 5.0 5.22 12.0":
+        - cell "2023"
+        - cell "42"
+        - cell "3.8"
+        - cell "5.0"
+        - cell "5.22"
+        - cell "12.0"
+      - row "2022 19 4.1 5.22 4.96 12.0":
+        - cell "2022"
+        - cell "19"
+        - cell "4.1"
+        - cell "5.22"
+        - cell "4.96"
+        - cell "12.0"
+      - row "2021 16 3.8 5.1 5.84 14.0":
+        - cell "2021"
+        - cell "16"
+        - cell "3.8"
+        - cell "5.1"
+        - cell "5.84"
+        - cell "14.0"
+- contentinfo:
+  - generic: 
+  - generic: Mathews County Coastal Flood Prediction System
+  - paragraph: An open science, hyper-local flood prediction pipeline and machine learning model built from 204 ground-truth storm observations (2021–2026), NOAA NWPS hydrodynamic water level guidance, and NOAA CO-OPS sensor networks across the Middle Peninsula of Virginia.
+  - generic: "Last Automated Cloud Sync: 2026-10-03 23:30:39 EDT (Scheduled every 30 minutes; delays are possible)"
+  - heading "Portal Navigation" [level=4]
+  - list:
+    - link "Live Dashboard & Forecast":
+      - /url: index.html
+    - link "Free Mobile Flood Alerts":
+      - /url: alerts.html
+    - link "Interactive Coastal Map":
+      - /url: index.html#map-section
+    - link "The Story & Handwritten Notes":
+      - /url: about.html
+    - link "Flood Tiers & Plain-English Guide":
+      - /url: guide.html
+    - link "Storm History & Data Archive":
+      - /url: data.html
+    - link "Science, Models & Changelog":
+      - /url: science.html
+  - heading "Data & Source Code" [level=4]
+  - list:
+    - link " NOAA NWPS Ware River (WRVV2)":
+      - /url: https://water.noaa.gov/gauges/WRVV2
+      - generic: 
+      - text: NOAA NWPS Ware River (WRVV2)
+    - link " NOAA Yorktown USCG (8637689)":
+      - /url: https://tidesandcurrents.noaa.gov/stationhome.html?id=8637689
+      - generic: 
+      - text: NOAA Yorktown USCG (8637689)
+    - link " NOAA Windmill Point (8636580)":
+      - /url: https://tidesandcurrents.noaa.gov/stationhome.html?id=8636580
+      - generic: 
+      - text: NOAA Windmill Point (8636580)
+    - link " Scientific Evidence (JSON)":
+      - /url: models/scientific_evidence.json
+      - generic: 
+      - text: Scientific Evidence (JSON)
+    - link " Public Methodology":
+      - /url: science.html
+      - generic: 
+      - text: Public Methodology
+    - link " GitHub Repository":
+      - /url: https://github.com/flatfoot584/mathews-flood-monitor
+      - generic: 
+      - text: GitHub Repository
+  - generic: © 2021–2026 Mathews County Flood Prediction Project • Public Community Resource
+  - generic: Empirical model calibrated to 3.99 ft MLLW flood tipping point. Not an official NWS evacuation order.

@@ -64,4 +64,58 @@ class FortTests(unittest.TestCase):
             self.assertIn('Official warnings',page)
         self.assertNotIn('100% Free Forever',dashboard.build_alerts_html(fixture()))
 
+    def test_operational_vs_nwps_evaluation_and_high_water(self):
+        status = fixture()
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / 'archive.csv'
+            score = Path(folder) / 'score.json'
+            verify.archive_and_verify(status, [], path, score)
+            with path.open() as stream:
+                rows = list(csv.DictReader(stream))
+            row1 = next(r for r in rows if r['lead_hours'] == '1')
+            valid_dt = verify.parse_timestamp(row1['valid_time_utc'])
+
+            # High-water storm event: observed stage 4.50 ft MLLW (>= 4.0 ft)
+            obs = [{'datetime_utc': valid_dt, 'stage_mllw_ft': 4.50}]
+            res = verify.archive_and_verify(status, obs, path, score)
+            r1 = res['results'][0]
+            self.assertEqual(r1['n'], 1)
+            self.assertEqual(r1['nwps_n'], 1)
+            self.assertAlmostEqual(r1['mae_ft'], 3.50)
+            self.assertAlmostEqual(r1['nwps_mae_ft'], 3.50)
+            self.assertEqual(r1['high_water_n'], 1)
+            self.assertEqual(r1['misses'], 1)
+            self.assertEqual(r1['nwps_misses'], 1)
+            self.assertEqual(r1['false_alarms'], 0)
+            self.assertIn('summary', res)
+            self.assertEqual(res['summary']['high_water_observations'], 1)
+
+            # Check resident UI rendering
+            status['live_verification'] = res
+            html = dashboard.resident_ui.monitoring(status)
+            self.assertIn('Raw NWPS MAE', html)
+            self.assertIn('Skill Δ', html)
+
+    def test_stoplight_panel_colors(self):
+        # Green: stage 2.30 ft (Tier 0 - good, no flooding)
+        s_green = fixture(2.30, 2.30)
+        html_green = dashboard.resident_ui.summary(s_green)
+        self.assertIn('stoplight-green', html_green)
+        self.assertIn('badge-green', html_green)
+        self.assertIn('Good · No Flooding', html_green)
+
+        # Yellow: stage 3.89 ft (Tier 1 - caution, some flooding)
+        s_yellow = fixture(3.89, 3.89)
+        html_yellow = dashboard.resident_ui.summary(s_yellow)
+        self.assertIn('stoplight-yellow', html_yellow)
+        self.assertIn('badge-yellow', html_yellow)
+        self.assertIn('Caution · Some Flooding', html_yellow)
+
+        # Red: stage 5.20 ft (Tier 3 - danger, severe flooding)
+        s_red = fixture(5.20, 5.20)
+        html_red = dashboard.resident_ui.summary(s_red)
+        self.assertIn('stoplight-red', html_red)
+        self.assertIn('badge-red', html_red)
+        self.assertIn('Danger · Severe Flooding', html_red)
+
 if __name__=='__main__':unittest.main()

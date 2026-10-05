@@ -1,55 +1,116 @@
 {
   "updated_at_utc": "2026-10-04T20:37:32+00:00",
   "issued_rows": 48,
+  "summary": {
+    "verified_rows": 17,
+    "nwps_verified_rows": 17,
+    "overall_operational_mae_ft": 0.3188,
+    "overall_nwps_mae_ft": 0.3488,
+    "overall_skill_delta_ft": 0.03,
+    "overall_skill_improvement_pct": 8.6,
+    "high_water_observations": 0,
+    "high_water_operational_misses": 0,
+    "high_water_nwps_misses": 0,
+    "high_water_operational_false_alarms": 0,
+    "high_water_nwps_false_alarms": 0
+  },
   "results": [
     {
       "lead_hours": 1,
       "n": 5,
       "mae_ft": 0.35,
+      "nwps_n": 5,
+      "nwps_mae_ft": 0.382,
+      "skill_delta_ft": 0.032,
+      "skill_improvement_pct": 8.4,
       "high_water_n": 0,
+      "high_water_mae_ft": null,
+      "nwps_high_water_mae_ft": null,
       "misses": 0,
-      "false_alarms": 0
+      "nwps_misses": 0,
+      "false_alarms": 0,
+      "nwps_false_alarms": 0
     },
     {
       "lead_hours": 3,
-      "n": 4,
-      "mae_ft": 0.22999999999999998,
+      "n": 5,
+      "mae_ft": 0.282,
+      "nwps_n": 5,
+      "nwps_mae_ft": 0.306,
+      "skill_delta_ft": 0.024,
+      "skill_improvement_pct": 7.8,
       "high_water_n": 0,
+      "high_water_mae_ft": null,
+      "nwps_high_water_mae_ft": null,
       "misses": 0,
-      "false_alarms": 0
+      "nwps_misses": 0,
+      "false_alarms": 0,
+      "nwps_false_alarms": 0
     },
     {
       "lead_hours": 6,
       "n": 4,
       "mae_ft": 0.25749999999999995,
+      "nwps_n": 4,
+      "nwps_mae_ft": 0.2849999999999999,
+      "skill_delta_ft": 0.0275,
+      "skill_improvement_pct": 9.6,
       "high_water_n": 0,
+      "high_water_mae_ft": null,
+      "nwps_high_water_mae_ft": null,
       "misses": 0,
-      "false_alarms": 0
+      "nwps_misses": 0,
+      "false_alarms": 0,
+      "nwps_false_alarms": 0
     },
     {
       "lead_hours": 12,
       "n": 3,
       "mae_ft": 0.41,
+      "nwps_n": 3,
+      "nwps_mae_ft": 0.4499999999999999,
+      "skill_delta_ft": 0.04,
+      "skill_improvement_pct": 8.9,
       "high_water_n": 0,
+      "high_water_mae_ft": null,
+      "nwps_high_water_mae_ft": null,
       "misses": 0,
-      "false_alarms": 0
+      "nwps_misses": 0,
+      "false_alarms": 0,
+      "nwps_false_alarms": 0
     },
     {
       "lead_hours": 24,
       "n": 0,
       "mae_ft": null,
+      "nwps_n": 0,
+      "nwps_mae_ft": null,
+      "skill_delta_ft": null,
+      "skill_improvement_pct": null,
       "high_water_n": 0,
+      "high_water_mae_ft": null,
+      "nwps_high_water_mae_ft": null,
       "misses": 0,
-      "false_alarms": 0
+      "nwps_misses": 0,
+      "false_alarms": 0,
+      "nwps_false_alarms": 0
     },
     {
       "lead_hours": 48,
       "n": 0,
       "mae_ft": null,
+      "nwps_n": 0,
+      "nwps_mae_ft": null,
+      "skill_delta_ft": null,
+      "skill_improvement_pct": null,
       "high_water_n": 0,
+      "high_water_mae_ft": null,
+      "nwps_high_water_mae_ft": null,
       "misses": 0,
-      "false_alarms": 0
+      "nwps_misses": 0,
+      "false_alarms": 0,
+      "nwps_false_alarms": 0
     }
   ],
-  "interpretation": "Prospective deployed guidance verification against Ware River; Nominal lead bins use the nearest forecast hour; actual_lead_hours records exact lead. Repeated issues are correlated. No independent local-depth validation. Fort Monroe remains observational until a paired candidate passes promotion gates."
+  "interpretation": "Prospective deployed guidance verification against Ware River comparing operational model with raw NOAA NWPS guidance. Nominal lead bins use the nearest forecast hour; actual_lead_hours records exact lead. Repeated issues are correlated across forecast horizons. High-water threshold is 4.00 ft MLLW. Fort Monroe remains observational until a paired candidate passes promotion gates."
 }

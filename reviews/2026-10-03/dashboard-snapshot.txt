@@ -1,0 +1,230 @@
+- banner:
+  - link " Mathews County Flood Monitor Middle Peninsula • Mobjack Bay, VA":
+    - /url: index.html
+    - generic: 
+    - generic: Mathews County Flood Monitor
+    - generic: Middle Peninsula • Mobjack Bay, VA
+  - text:       
+  - button "Toggle Navigation":
+    - generic: 
+  - text:       
+- status: "Last update: 2026-10-03 23:30:39 EDT. Gauge observation: 2026-10-03 23:00:00 EDT. Check actual road conditions before travel. Mobile push alerts are enabled for subscribers."
+- main:
+  - generic: 
+  - generic: Current Status • Tier 0 (No modeled inundation)
+  - heading "Nuisance Ditch Overflow Expected Around 18:00:00" [level=1]
+  - paragraph: Current water level is safe (1.46 ft), but peak tide is forecast to reach 3.79 ft. Ditch beds will overflow into low grassy spots.
+  - generic: Current Ware River Stage
+  - generic: 1.46 ft MLLW
+  - generic: (-0.18 ft NAVD88)
+  - generic: 48-Hour Peak Forecast
+  - generic: 3.79 ft at 18:00:00
+  - generic: "Inundation: 0.0\" (CAUTION — LOW-CLEARANCE HAZARDOUS)"
+  - generic: "Scenario range:"
+  - generic: 3.5' – 4.12'
+  - generic: 
+  - generic: Passenger Cars / Sedans
+  - generic: DO NOT ENTER FLOODED ROADS
+  - paragraph: Check actual conditions. Never drive into standing or moving floodwater.
+  - generic: 
+  - generic: SUVs & High-Clearance Trucks
+  - generic: DO NOT ENTER FLOODED ROADS
+  - paragraph: Check actual conditions. Never drive into standing or moving floodwater.
+  - generic: 
+  - generic: Recommended Action
+  - generic: Plan Around Flood Hazards
+  - paragraph: Move vehicles before flooding starts; do not enter floodwater.
+  - heading "Blackwater & Mobjack Bay Estates Real-Time Flood Map" [level=2]
+  - generic: Community Monitoring Zone
+  - paragraph:
+    - text: Hyper-local elevation monitoring enclosing
+    - strong: Daniel Ave, Bayshore Ave, River Rd, and connecting neighborhood streets
+    - text: ", calibrated to USGS 1-meter LiDAR on dry land."
+  - button " Community Area":
+    - generic: 
+    - text: Community Area
+  - button " Focus Benchmark":
+    - generic: 
+    - text: Focus Benchmark
+  - button " County View":
+    - generic: 
+    - text: County View
+  - button " Current (1.46 ft)":
+    - generic: 
+    - text: Current (1.46 ft)
+  - button " Peak 48h (3.79 ft)":
+    - generic: 
+    - text: Peak 48h (3.79 ft)
+  - button "Zoom in": +
+  - button "Zoom out": −
+  - button "Layers"
+  - link "Leaflet":
+    - /url: https://leafletjs.com
+    - text: Leaflet
+  - text: "| ©"
+  - link "OpenStreetMap":
+    - /url: https://www.openstreetmap.org/copyright
+  - text: contributors
+  - generic: Risk Severity Legend
+  - generic: 
+  - generic: Community Boundary
+  - generic: Safe / Dry (< 4.0')
+  - generic: Nuisance / Puddles (4.0-4.3')
+  - generic: Roads Flooded (4.4-4.7')
+  - generic: Severe / Impassable (≥ 4.8')
+  - generic: 
+  - text: Click any sensor pin or property polygon on the map to view detailed depths and sensor readings.
+  - generic: Basemap © OpenStreetMap & Esri (Zero API Key • Open GIS)
+  - heading " Community Elevation Profile & Street Passability" [level=2]:
+    - generic: 
+    - text: Community Elevation Profile & Street Passability
+  - paragraph: "Micro-topographical water encroachment across Mobjack Bay Estates & Blackwater Peninsula (Threshold: 3.99 ft MLLW = 2.35 ft NAVD88)."
+  - generic: "Ditch Tipping Point: 3.99' MLLW"
+  - generic: 
+  - text: "1. Bayshore Waterfront Ditches & Swales (Elev: 3.99' MLLW / 2.35' NAVD88)"
+  - generic: 0.0" Water (DRY)
+  - generic: 
+  - text: "2. Lower Residential Blocks — Allview / Hobday / Little Ave South (Elev: 4.15' MLLW / 2.51' NAVD88)"
+  - generic: 0.0" Water (DRY)
+  - generic: 
+  - text: "3. Daniel Ave Central Spine & Julian St — Primary Route (Elev: 4.40' MLLW / 2.76' NAVD88)"
+  - generic: 0.0" Water (DRY)
+  - generic: 
+  - text: "4. Upper Residential Grounds & Northern Lots (Elev: 4.60' MLLW / 2.96' NAVD88)"
+  - generic: 0.0" Water (DRY)
+  - generic: 
+  - text: "5. River Road North & Ridge High Ground Pads (Elev: 4.90' MLLW / 3.26' NAVD88)"
+  - generic: 0.0" Water (DRY)
+  - heading " Community Street Passability & LiDAR Invert Elevations" [level=3]:
+    - generic: 
+    - text: Community Street Passability & LiDAR Invert Elevations
+  - generic: Mobjack Bay Estates & Blackwater Road Network
+  - generic: Bayshore Avenue
+  - generic: Dry & Passable
+  - generic: "Invert: 3.75' MLLW (2.11' NAVD)"
+  - generic: 0.0" Water
+  - generic: Julian Street
+  - generic: Dry & Passable
+  - generic: "Invert: 3.78' MLLW (2.14' NAVD)"
+  - generic: 0.0" Water
+  - generic: Daniel Avenue
+  - generic: Dry & Passable
+  - generic: "Invert: 3.88' MLLW (2.24' NAVD)"
+  - generic: 0.0" Water
+  - generic: Allview Street
+  - generic: Dry & Passable
+  - generic: "Invert: 4.13' MLLW (2.49' NAVD)"
+  - generic: 0.0" Water
+  - generic: River Road
+  - generic: Dry & Passable
+  - generic: "Invert: 4.14' MLLW (2.5' NAVD)"
+  - generic: 0.0" Water
+  - generic: Hobday Street
+  - generic: Dry & Passable
+  - generic: "Invert: 4.22' MLLW (2.58' NAVD)"
+  - generic: 0.0" Water
+  - generic: Little Avenue
+  - generic: Dry & Passable
+  - generic: "Invert: 4.23' MLLW (2.59' NAVD)"
+  - generic: 0.0" Water
+  - generic: Bunny Rabbit Lane
+  - generic: Dry & Passable
+  - generic: "Invert: 4.45' MLLW (2.81' NAVD)"
+  - generic: 0.0" Water
+  - heading " 48-Hour Hybrid Forecast Hydrograph" [level=2]:
+    - generic: 
+    - text: 48-Hour Hybrid Forecast Hydrograph
+  - paragraph: NOAA NWPS CBOFS hydrodynamic water model blended with local wind stress ML bias correction, bay hydraulic slope, and quantile regression uncertainty.
+  - generic: Expected Stage
+  - generic: Uncalibrated Scenario Band
+  - generic: 3.99' Flood Threshold
+  - generic: 
+  - text: Shaded band is an uncalibrated scenario range. It is not a statistical confidence interval or a guaranteed worst case.
+  - generic: "Expected Peak: 3.79' (Scenario range: 3.5' to 4.12')"
+  - generic: Yorktown Winds
+  - generic: 
+  - generic: 7.83 mph
+  - generic: From NNE (17.0°)
+  - generic: "G: 9.62 mph"
+  - generic: Along-Bay Vector
+  - generic: 
+  - generic: 7.82 mph
+  - generic "Along-bay wind stress": Forcing water into Mobjack
+  - generic: Barometer
+  - generic: 
+  - generic: 1022.5 mb
+  - generic: Normal atmospheric pressure
+  - generic: North Bay Surge
+  - generic: 
+  - generic: +0.66 ft
+  - generic "Windmill Point (8636580)": Windmill Pt (8636580)
+  - generic: South Bay Surge
+  - generic: 
+  - generic: +0.73 ft
+  - generic "Sewells Point / Norfolk (8638610)": Sewells Pt (8638610)
+  - generic: Bay Hydraulic Slope
+  - generic: 
+  - generic: "-0.07 ft"
+  - generic "Equilibrium (Near-zero gradient across bay)": Equilibrium (46 mi)
+  - generic: 
+  - heading "Get Audible Flood Warnings on Your Phone" [level=3]
+  - generic: 100% Free Forever
+  - generic: Zero Accounts
+  - paragraph:
+    - text: Never get caught off guard by saltwater over Daniel Ave or Bayshore Ave. Push notifications sent
+    - strong: when fresh forecasts first indicate a flood hazard
+    - text: . Subscribe to our public alert topic.
+  - link " Set Up Free Mobile Alerts ":
+    - /url: alerts.html
+    - generic: 
+    - generic: Set Up Free Mobile Alerts
+    - generic: 
+- contentinfo:
+  - generic: 
+  - generic: Mathews County Coastal Flood Prediction System
+  - paragraph: An open science, hyper-local flood prediction pipeline and machine learning model built from 204 ground-truth storm observations (2021–2026), NOAA NWPS hydrodynamic water level guidance, and NOAA CO-OPS sensor networks across the Middle Peninsula of Virginia.
+  - generic: "Last Automated Cloud Sync: 2026-10-03 23:30:39 EDT (Scheduled every 30 minutes; delays are possible)"
+  - heading "Portal Navigation" [level=4]
+  - list:
+    - link "Live Dashboard & Forecast":
+      - /url: index.html
+    - link "Free Mobile Flood Alerts":
+      - /url: alerts.html
+    - link "Interactive Coastal Map":
+      - /url: index.html#map-section
+    - link "The Story & Handwritten Notes":
+      - /url: about.html
+    - link "Flood Tiers & Plain-English Guide":
+      - /url: guide.html
+    - link "Storm History & Data Archive":
+      - /url: data.html
+    - link "Science, Models & Changelog":
+      - /url: science.html
+  - heading "Data & Source Code" [level=4]
+  - list:
+    - link " NOAA NWPS Ware River (WRVV2)":
+      - /url: https://water.noaa.gov/gauges/WRVV2
+      - generic: 
+      - text: NOAA NWPS Ware River (WRVV2)
+    - link " NOAA Yorktown USCG (8637689)":
+      - /url: https://tidesandcurrents.noaa.gov/stationhome.html?id=8637689
+      - generic: 
+      - text: NOAA Yorktown USCG (8637689)
+    - link " NOAA Windmill Point (8636580)":
+      - /url: https://tidesandcurrents.noaa.gov/stationhome.html?id=8636580
+      - generic: 
+      - text: NOAA Windmill Point (8636580)
+    - link " Scientific Evidence (JSON)":
+      - /url: models/scientific_evidence.json
+      - generic: 
+      - text: Scientific Evidence (JSON)
+    - link " Public Methodology":
+      - /url: science.html
+      - generic: 
+      - text: Public Methodology
+    - link " GitHub Repository":
+      - /url: https://github.com/flatfoot584/mathews-flood-monitor
+      - generic: 
+      - text: GitHub Repository
+  - generic: © 2021–2026 Mathews County Flood Prediction Project • Public Community Resource
+  - generic: Empirical model calibrated to 3.99 ft MLLW flood tipping point. Not an official NWS evacuation order.

@@ -5,3 +5,37 @@
 @media(max-width:600px){.resident-intro p:not(.eyebrow){font-size:13px}.resident-card details{font-size:13px}.resident-card .eyebrow{font-size:11px}.resident-card p{margin:7px 0}.resident-value small{display:inline;margin-left:6px}.resident-card .resident-value{font-size:25px!important}.resident-intro h1{font-size:27px}main.space-y-8{padding-top:20px}.resident-grid{gap:12px}}
 
 .data-degraded{background:#fff7ed;border:1px solid #fdba74;color:#7c2d12}.freshness #stale-detail{flex-basis:100%;margin:0}.freshness #update-age{display:block}.freshness button{border:1px solid #94a3b8;border-radius:6px;padding:3px 8px;background:white}.estimate-age-note{display:block;background:#fff7ed;color:#7c2d12;border-left:4px solid #ea580c;padding:10px 14px;margin:0 0 16px;font-size:13px;line-height:1.5}.resident-grid>.estimate-age-note{grid-column:1/-1;margin-bottom:0}.outdated-estimate{border-color:#fdba74}
+
+/* Stoplight Configuration for Information Panels */
+.resident-card.stoplight-green{background:#f0fdf4;border:1.5px solid #86efac;border-top:6px solid #16a34a;box-shadow:0 4px 14px rgba(22,163,74,0.08)}
+.resident-card.stoplight-green h2,.resident-card.stoplight-green .resident-value{color:#14532d}
+.resident-card.stoplight-green .eyebrow{color:#166534}
+
+.resident-card.stoplight-yellow{background:#fefce8;border:1.5px solid #fde047;border-top:6px solid #ca8a04;box-shadow:0 4px 14px rgba(202,138,4,0.1)}
+.resident-card.stoplight-yellow h2,.resident-card.stoplight-yellow .resident-value{color:#713f12}
+.resident-card.stoplight-yellow .eyebrow{color:#854d0e}
+
+.resident-card.stoplight-red{background:#fef2f2;border:1.5px solid #fca5a5;border-top:6px solid #dc2626;box-shadow:0 4px 14px rgba(220,38,38,0.12)}
+.resident-card.stoplight-red h2,.resident-card.stoplight-red .resident-value{color:#7f1d1d}
+.resident-card.stoplight-red .eyebrow{color:#991b1b}
+
+.resident-card.stoplight-unknown{background:#f8fafc;border:1.5px solid #cbd5e1;border-top:6px solid #64748b;box-shadow:0 4px 14px rgba(100,116,139,0.06)}
+.resident-card.stoplight-unknown h2,.resident-card.stoplight-unknown .resident-value{color:#334155}
+.resident-card.stoplight-unknown .eyebrow{color:#475569}
+
+/* Stoplight Badge / Indicator Pill */
+.stoplight-badge{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:750;text-transform:uppercase;letter-spacing:.05em;padding:4px 11px;border-radius:9999px;margin-bottom:12px;width:fit-content;line-height:1.4}
+.stoplight-dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0}
+
+.stoplight-badge.badge-green{background:#dcfce7;color:#15803d;border:1px solid #86efac}
+.stoplight-badge.badge-green .stoplight-dot{background:#16a34a;box-shadow:0 0 0 2px rgba(22,163,74,0.25)}
+
+.stoplight-badge.badge-yellow{background:#fef9c3;color:#854d0e;border:1px solid #fde047}
+.stoplight-badge.badge-yellow .stoplight-dot{background:#ca8a04;box-shadow:0 0 0 2px rgba(202,138,4,0.25)}
+
+.stoplight-badge.badge-red{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.stoplight-badge.badge-red .stoplight-dot{background:#dc2626;box-shadow:0 0 0 2px rgba(220,38,38,0.25)}
+
+.stoplight-badge.badge-unknown{background:#f1f5f9;color:#475569;border:1px solid #cbd5e1}
+.stoplight-badge.badge-unknown .stoplight-dot{background:#64748b;box-shadow:0 0 0 2px rgba(100,116,139,0.25)}
+
