@@ -1,6 +1,6 @@
 {
-  "updated_at_utc": "2026-10-05T01:43:37+00:00",
-  "issued_rows": 72,
+  "updated_at_utc": "2026-10-05T02:16:37+00:00",
+  "issued_rows": 78,
   "summary": {
     "verified_rows": 27,
     "nwps_verified_rows": 27,
@@ -34,7 +34,7 @@
     {
       "lead_hours": 3,
       "n": 9,
-      "mae_ft": 0.3933333333333332,
+      "mae_ft": 0.39333333333333326,
       "nwps_n": 9,
       "nwps_mae_ft": 0.41555555555555546,
       "skill_delta_ft": 0.0222,
