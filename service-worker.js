@@ -1,6 +1,6 @@
 // Network first: never describe cached flood conditions as current.
-const CACHE='mathews-resident-v3';
-const SHELL=['./index.html','./alerts.html','./guide.html','./about.html','./assets/community.css','./assets/community.js','./assets/tailwind.css','./assets/chart.umd.min.js','./assets/leaflet.js','./assets/icon.svg'];
+const CACHE='mathews-resident-v4';
+const SHELL=['./index.html','./alerts.html','./guide.html','./about.html','./assets/community.css','./assets/community.js','./assets/tailwind.css','./assets/chart.umd.min.js','./assets/leaflet.js','./assets/leaflet.css','./assets/channel-qr.svg','./assets/icon.svg'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)));self.skipWaiting();});
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{

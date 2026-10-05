@@ -33,12 +33,15 @@ import urllib.error
 import urllib.parse
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
+import threading
+import concurrent.futures
 
 import micro_topography
 from runtime_safety import (assess_status, atomic_write_json, compound_risk_tier,
                             finite_number, is_recent, UNKNOWN_TIER)
 
 SOURCE_HEALTH = {}
+_HEALTH_LOCK = threading.Lock()
 FORECAST_ISSUED_AT = None
 
 # Timezone standard
@@ -110,7 +113,8 @@ def fetch_json(url, max_retries=3, backoff=2.0, timeout=15):
                 if not isinstance(payload, dict) or "error" in payload or payload.get("status", 200) in (400, 404, 500):
                     raise ValueError("API returned an error payload")
             stamp = datetime.now(timezone.utc).isoformat()
-            SOURCE_HEALTH[url] = {"available": True, "cached": False, "retrieved_at_utc": stamp}
+            with _HEALTH_LOCK:
+                SOURCE_HEALTH[url] = {"available": True, "cached": False, "retrieved_at_utc": stamp}
             try:
                 atomic_write_json(cache_file, {"retrieved_at_utc": stamp, "payload": payload})
             except OSError:
@@ -122,12 +126,14 @@ def fetch_json(url, max_retries=3, backoff=2.0, timeout=15):
     try:
         cached = json.loads(cache_file.read_text(encoding="utf-8"))
         fresh = is_recent(cached.get("retrieved_at_utc"))
-        SOURCE_HEALTH[url] = {"available": fresh, "cached": True,
-                              "retrieved_at_utc": cached.get("retrieved_at_utc")}
+        with _HEALTH_LOCK:
+            SOURCE_HEALTH[url] = {"available": fresh, "cached": True,
+                                  "retrieved_at_utc": cached.get("retrieved_at_utc")}
         print("[WARN] API unavailable; using a timestamped cached response.", file=sys.stderr)
         return cached["payload"]
     except (OSError, ValueError, KeyError):
-        SOURCE_HEALTH[url] = {"available": False, "cached": False}
+        with _HEALTH_LOCK:
+            SOURCE_HEALTH[url] = {"available": False, "cached": False}
         print("[WARN] API unavailable and no valid cached response exists.", file=sys.stderr)
         return None
 
@@ -958,52 +964,63 @@ def main():
     end_dt_utc = now_utc
     forward_end_utc = now_utc + timedelta(days=3)
 
-    log(f"[*] Querying real-time sensor networks for window: {begin_dt_utc.strftime('%Y-%m-%d %H:%M')} to {end_dt_utc.strftime('%Y-%m-%d %H:%M')} UTC")
+    log(f"[*] Querying real-time sensor networks (concurrent) for window: {begin_dt_utc.strftime('%Y-%m-%d %H:%M')} to {end_dt_utc.strftime('%Y-%m-%d %H:%M')} UTC")
 
-    # 1. Ware River WRVV2
-    log("[1/6] Fetching Ware River (WRVV2) observed stage...")
-    ware_obs = fetch_nwps_wrvv2_observed()
-    log(f"      -> Retrieved {len(ware_obs)} 6-min stage readings from NWPS.")
+    tasks = {
+        'ware_obs': lambda: fetch_nwps_wrvv2_observed(),
+        'ware_fcst': lambda: fetch_nwps_wrvv2_forecast(),
+        'yt_winds': lambda: fetch_coops_product("8637689", "wind", begin_dt_utc, end_dt_utc),
+        'yt_press': lambda: fetch_coops_product("8637689", "air_pressure", begin_dt_utc, end_dt_utc),
+        'yt_temps': lambda: fetch_coops_product("8637689", "air_temperature", begin_dt_utc, end_dt_utc),
+        'yt_water': lambda: fetch_coops_product("8637689", "water_level", begin_dt_utc, end_dt_utc),
+        'yt_preds_past': lambda: fetch_coops_product("8637689", "predictions", begin_dt_utc, end_dt_utc),
+        'yt_preds_future': lambda: fetch_coops_product("8637689", "predictions", now_utc, forward_end_utc),
+        'wm_water': lambda: fetch_coops_product("8636580", "water_level", begin_dt_utc, end_dt_utc),
+        'wm_preds_past': lambda: fetch_coops_product("8636580", "predictions", begin_dt_utc, end_dt_utc),
+        'wm_preds_future': lambda: fetch_coops_product("8636580", "predictions", now_utc, forward_end_utc),
+        'sw_water': lambda: fetch_coops_product("8638610", "water_level", begin_dt_utc, end_dt_utc),
+        'sw_preds_past': lambda: fetch_coops_product("8638610", "predictions", begin_dt_utc, end_dt_utc),
+        'sw_preds_future': lambda: fetch_coops_product("8638610", "predictions", now_utc, forward_end_utc),
+        'fort_obs': lambda: fetch_fort_monroe_observed(),
+        'nws_fcst': lambda: fetch_nws_hourly_forecast(),
+        'qpf_map': lambda: fetch_nws_qpf_map(),
+    }
 
-    log("[2/6] Fetching Ware River (WRVV2) stage forecast hydrograph...")
-    ware_fcst = fetch_nwps_wrvv2_forecast()
-    log(f"      -> Retrieved {len(ware_fcst)} forecast stage points.")
+    results = {}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
+        future_to_key = {executor.submit(func): key for key, func in tasks.items()}
+        for future in concurrent.futures.as_completed(future_to_key):
+            key = future_to_key[future]
+            try:
+                results[key] = future.result()
+            except Exception as ex:
+                log(f"[WARN] Error fetching {key}: {ex}")
+                results[key] = [] if key != 'qpf_map' else {}
 
-    # 2. Yorktown USCG (8637689)
-    log("[3/6] Fetching Yorktown USCG (8637689) wind, pressure, water level & tides...")
-    yt_winds = fetch_coops_product("8637689", "wind", begin_dt_utc, end_dt_utc)
-    yt_press = fetch_coops_product("8637689", "air_pressure", begin_dt_utc, end_dt_utc)
-    yt_temps = fetch_coops_product("8637689", "air_temperature", begin_dt_utc, end_dt_utc)
-    yt_water = fetch_coops_product("8637689", "water_level", begin_dt_utc, end_dt_utc)
-    yt_preds_past = fetch_coops_product("8637689", "predictions", begin_dt_utc, end_dt_utc)
-    yt_preds_future = fetch_coops_product("8637689", "predictions", now_utc, forward_end_utc)
+    ware_obs = results.get('ware_obs', [])
+    ware_fcst = results.get('ware_fcst', [])
+    yt_winds = results.get('yt_winds', [])
+    yt_press = results.get('yt_press', [])
+    yt_temps = results.get('yt_temps', [])
+    yt_water = results.get('yt_water', [])
+    yt_preds_past = results.get('yt_preds_past', [])
+    yt_preds_future = results.get('yt_preds_future', [])
+    wm_water = results.get('wm_water', [])
+    wm_preds_past = results.get('wm_preds_past', [])
+    wm_preds_future = results.get('wm_preds_future', [])
+    sw_water = results.get('sw_water', [])
+    sw_preds_past = results.get('sw_preds_past', [])
+    sw_preds_future = results.get('sw_preds_future', [])
+    fort_obs = results.get('fort_obs', [])
+    nws_fcst = results.get('nws_fcst', [])
+    qpf_map = results.get('qpf_map', {})
+
+    log(f"      -> Ware River obs: {len(ware_obs)}, fcst: {len(ware_fcst)}")
     log(f"      -> Yorktown winds: {len(yt_winds)}, baro: {len(yt_press)}, water: {len(yt_water)}, fwd tides: {len(yt_preds_future)}")
-
-    # 3. Windmill Point (8636580)
-    log("[4/7] Fetching Windmill Point (8636580) water level & tide predictions...")
-    wm_water = fetch_coops_product("8636580", "water_level", begin_dt_utc, end_dt_utc)
-    wm_preds_past = fetch_coops_product("8636580", "predictions", begin_dt_utc, end_dt_utc)
-    wm_preds_future = fetch_coops_product("8636580", "predictions", now_utc, forward_end_utc)
     log(f"      -> Windmill Pt water: {len(wm_water)}, verified: {len(wm_preds_past)}, fwd tides: {len(wm_preds_future)}")
-
-    # 4. Sewells Point (8638610) - Southern Chesapeake Bay Reference
-    log("[5/7] Fetching Sewells Point (8638610) water level & tide predictions (Southern Bay)...")
-    sw_water = fetch_coops_product("8638610", "water_level", begin_dt_utc, end_dt_utc)
-    sw_preds_past = fetch_coops_product("8638610", "predictions", begin_dt_utc, end_dt_utc)
-    sw_preds_future = fetch_coops_product("8638610", "predictions", now_utc, forward_end_utc)
     log(f"      -> Sewells Pt water: {len(sw_water)}, verified: {len(sw_preds_past)}, fwd tides: {len(sw_preds_future)}")
-
-    fort_obs = fetch_fort_monroe_observed()
-    log(f"      -> Fort Monroe evaluation sensor: {len(fort_obs)} observations")
-
-    # 5. NWS Grid Forecast & QPF Rain
-    log("[6/7] Fetching NWS AKQ hourly wind & weather forecast...")
-    nws_fcst = fetch_nws_hourly_forecast()
-    log(f"      -> Retrieved {len(nws_fcst)} hourly forecast intervals.")
-
-    log("[7/7] Fetching NWS AKQ quantitative precipitation forecast (QPF)...")
-    qpf_map = fetch_nws_qpf_map()
-    log(f"      -> Retrieved {len(qpf_map)} hourly QPF intervals.")
+    log(f"      -> Fort Monroe sensor: {len(fort_obs)} observations")
+    log(f"      -> NWS AKQ forecast: {len(nws_fcst)} intervals, QPF: {len(qpf_map)} intervals")
 
     # Data processing & alignment
     log("\n[*] Resampling & aligning recent observations on hourly timestamps...")

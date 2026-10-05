@@ -10,6 +10,7 @@ PUBLIC_FILES = (
     'archive_hourly_observations.csv', 'observer_yearly_summary.csv',
     'models/scientific_evidence.json', 'models/model_weights_and_thresholds.json',
     'assets/tailwind.css', 'assets/chart.umd.min.js', 'assets/leaflet.js',
+    'assets/leaflet.css', 'assets/channel-qr.svg',
     'assets/Chart.LICENSE.md', 'assets/Leaflet.LICENSE',
     'assets/community.css', 'assets/community.js', 'assets/icon.svg',
     'manifest.webmanifest', 'service-worker.js', 'issued_forecast_archive.csv',

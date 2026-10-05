@@ -227,7 +227,7 @@ def build_shared_footer(status):
 def build_index_html(status, obs_rows, fcst_rows):
     curr = status.get("current_conditions", {})
     outl = status.get("forecast_48h_outlook", {})
-    if status.get("display_only_fallback"):
+    if not fcst_rows or status.get("display_only_fallback"):
         fcst_rows = status.get("forecast_hourly_timeline", [])
 
     stage = display_value(curr.get("ware_river_stage_mllw_ft", "N/A"))
@@ -422,10 +422,33 @@ def build_index_html(status, obs_rows, fcst_rows):
     navbar_html = build_shared_navbar("live", status)
     footer_html = build_shared_footer(status)
 
-    # Embed data for charts and Leaflet
+    curr_data = status.get("current_conditions", {})
+    outl_data = status.get("forecast_48h_outlook", {})
+
+    slim_curr = {
+        "ware_river_stage_mllw_ft": curr_data.get("ware_river_stage_mllw_ft"),
+        "yorktown_wind_speed_mph": curr_data.get("yorktown_wind_speed_mph"),
+        "yorktown_wind_dir_cardinal": curr_data.get("yorktown_wind_dir_cardinal"),
+        "yorktown_baro_pressure_mb": curr_data.get("yorktown_baro_pressure_mb"),
+        "windmill_point_storm_surge_residual_ft": curr_data.get("windmill_point_storm_surge_residual_ft"),
+        "estimated_local_flood_depth_in": curr_data.get("estimated_local_flood_depth_in"),
+        "vehicle_passability": curr_data.get("vehicle_passability"),
+        "community_streets": {k: {"depth_in": v.get("depth_in"), "status": v.get("status"), "code": v.get("code")}
+                              for k, v in curr_data.get("community_streets", {}).items()}
+    }
+    slim_outl = {
+        "peak_forecast_stage_mllw_ft": outl_data.get("peak_forecast_stage_mllw_ft"),
+        "peak_hazard_time_local": outl_data.get("peak_hazard_time_local"),
+        "peak_forecast_stage_time_local": outl_data.get("peak_forecast_stage_time_local")
+    }
+
+    # Embed pruned data for charts and Leaflet (slims HTML significantly while preserving forecast tests)
     embedded_data_json = json.dumps({
-        "status": status,
-        "observations": obs_rows[-36:] if obs_rows else [],
+        "status": {
+            "current_conditions": slim_curr,
+            "forecast_48h_outlook": slim_outl,
+            "data_quality": status.get("data_quality", {})
+        },
         "forecast": fcst_rows[:48] if fcst_rows else []
     }).replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
 
@@ -445,7 +468,7 @@ def build_index_html(status, obs_rows, fcst_rows):
   <script src="assets/chart.umd.min.js"></script>
 
   <!-- Leaflet CSS & JS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
+  <link rel="stylesheet" href="assets/leaflet.css">
   <script src="assets/leaflet.js"></script>
 
   <style>
@@ -1143,7 +1166,8 @@ def build_index_html(status, obs_rows, fcst_rows):
       btnPeak.classList.remove('text-slate-600');
       btnCurrent.classList.remove('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
       btnCurrent.classList.add('text-slate-600');
-      const peakRow = (floodData.status.forecast_hourly_timeline || []).find(row => row.timestamp_local === outl.peak_hazard_time_local);
+      const timeline = floodData.status.forecast_hourly_timeline || floodData.forecast || [];
+      const peakRow = timeline.find(row => row.timestamp_local === outl.peak_hazard_time_local);
       renderCommunityMap(floodData.status.data_quality.forecast_available && peakRow ? Number(peakRow.forecast_stage_mllw_ft) : null, peakRow?.community_streets);
     }});
 
