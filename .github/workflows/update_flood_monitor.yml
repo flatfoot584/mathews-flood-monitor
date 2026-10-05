@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   update:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     permissions:
       contents: write
@@ -34,6 +34,7 @@ jobs:
       NTFY_ALERTS_ENABLED: 'true'
       NTFY_SERVER: ${{ vars.NTFY_SERVER || 'https://ntfy.sh' }}
       NTFY_TOPIC: ${{ vars.NTFY_TOPIC || 'mathews-flood-23128' }}
+      NODE_OPTIONS: '--no-deprecation'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -82,7 +83,7 @@ jobs:
   deploy:
     if: always() && needs.update.outputs.artifact_ready == 'true'
     needs: update
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
       pages: write
@@ -90,6 +91,8 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      NODE_OPTIONS: '--no-deprecation'
     steps:
       - name: Deploy portal
         id: deployment
