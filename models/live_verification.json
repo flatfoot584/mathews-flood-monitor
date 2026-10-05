@@ -1,19 +1,19 @@
 {
-  "updated_at_utc": "2026-10-04T22:18:19+00:00",
-  "issued_rows": 54,
+  "updated_at_utc": "2026-10-05T00:31:32+00:00",
+  "issued_rows": 60,
   "results": [
     {
       "lead_hours": 1,
-      "n": 5,
-      "mae_ft": 0.35,
+      "n": 9,
+      "mae_ft": 0.26999999999999996,
       "high_water_n": 0,
       "misses": 0,
       "false_alarms": 0
     },
     {
       "lead_hours": 3,
-      "n": 4,
-      "mae_ft": 0.22999999999999998,
+      "n": 7,
+      "mae_ft": 0.36285714285714266,
       "high_water_n": 0,
       "misses": 0,
       "false_alarms": 0
@@ -28,8 +28,8 @@
     },
     {
       "lead_hours": 12,
-      "n": 3,
-      "mae_ft": 0.41,
+      "n": 4,
+      "mae_ft": 0.4175,
       "high_water_n": 0,
       "misses": 0,
       "false_alarms": 0
