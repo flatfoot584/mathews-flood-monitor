@@ -1321,9 +1321,10 @@ def build_about_html(status):
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About & History — Mathews County Coastal Flood Prediction System</title>
-  <meta name="description" content="The story of how handwritten storm logs from 2021 to 2024 uncovered the 3.99 ft flood threshold in Mathews County, VA.">
+  <meta name="description" content="The story of the Mathews Flood Monitor: built on years of careful observation by Sandra Hottinger and created for Blackwater and Mobjack Bay Estates.">
   
   <link rel="stylesheet" href="assets/tailwind.css">
+  <link rel="stylesheet" href="assets/community.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g" crossorigin="anonymous">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
@@ -1336,57 +1337,131 @@ def build_about_html(status):
   {navbar_html}
 
   <main id="main-content" class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 w-full">
-    <section class="resident-card"><h2>A community observation project</h2><p>Howard Hottinger maintains this independent monitor. Family observations recorded since 2021 provide the local depth record. NOAA and USGS provide regional measurements and guidance. Original notes and notebook photographs are kept private.</p><p><a href="https://github.com/flatfoot584/mathews-flood-monitor/issues/new">Contact the maintainer or report a problem</a></p></section>
 
-    <!-- Hero Header -->
-    <section class="space-y-3">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-100 text-sky-800 text-xs font-bold uppercase tracking-wider">
-        <i class="fa-solid fa-book-open"></i> Project History & Science
+    <!-- Hero Header: Built on Years of Observation, Created for Our Community -->
+    <header class="space-y-4">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-100 text-sky-800 text-xs font-bold uppercase tracking-wider">
+        <i class="fa-solid fa-heart text-rose-500"></i> Community-Driven Coastal Science
       </div>
-      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-        From Handwritten Notebooks to a Predictive Flood Model
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+        Built on Years of Observation,<br class="hidden sm:inline"> Created for Our Community
       </h1>
-      <p class="text-lg text-slate-600 leading-relaxed max-w-3xl">
-        How 204 community observations recorded with measuring tapes across 5 years in Mathews County, Virginia uncovered the mathematical tipping points of coastal compound flooding.
+      <p class="text-xl sm:text-2xl font-semibold text-slate-800 leading-relaxed max-w-3xl">
+        The Mathews Flood Monitor began with a practical question: <span class="text-sky-700">What does a rising river gauge mean for the water outside our homes?</span>
       </p>
-    </section>
+      <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-3xl">
+        For residents of Blackwater and Mobjack Bay Estates, flooding can affect everyday life long before it becomes a major disaster. Water can fill roadside ditches, spread across driveways, and interrupt access through the neighborhood. Knowing that coastal flooding is possible is useful. Understanding how changing water levels may affect familiar places makes that information more meaningful.
+      </p>
+    </header>
 
-    <!-- 1. The Real-World Problem -->
-    <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-4">
-      <div class="flex items-center gap-3 text-sky-600">
-        <i class="fa-solid fa-compass text-2xl"></i>
-        <h2 class="text-xl sm:text-2xl font-bold text-slate-900">How local estimates supplement official warnings</h2>
+    <!-- Section 1: Sandra Hottinger’s Work Made This Possible -->
+    <section class="bg-gradient-to-br from-amber-50/70 via-white to-sky-50/40 rounded-2xl p-6 sm:p-10 border border-amber-200/80 shadow-sm space-y-6">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl shadow-xs shrink-0">
+          <i class="fa-solid fa-book-journal-whills"></i>
+        </div>
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-800">The Ground-Truth Foundation</span>
+          <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">Sandra Hottinger’s Work Made This Possible</h2>
+        </div>
       </div>
-      <p class="text-slate-700 leading-relaxed">
-        Mathews County is an almost sea-level peninsula surrounded by the Chesapeake Bay, Mobjack Bay, and the Piankatank River. Much of the land sits less than 5 to 10 feet above sea level.
-      </p>
-      <p class="text-slate-700 leading-relaxed">
-        Official coastal flood warnings describe regional hazards and should guide safety decisions. This community project adds estimates at local reference points and neighborhood streets, with uncertainties from drainage, rainfall, elevation and the remote Ware River gauge.
-      </p>
-      <div class="bg-sky-50 border-l-4 border-sky-500 p-4 rounded-r-xl text-sky-950 text-sm">
-        <strong>The Core Question:</strong> "At approximately what river stage does the water breach our ditches, and how many inches of water does every additional tenth of a foot create?"
+
+      <div class="space-y-4 text-slate-700 leading-relaxed text-base sm:text-lg">
+        <p>
+          Over the years, Sandra Hottinger took the time to study nearby river gauges and compare their readings with flooding she observed in the community. She meticulously kept written logs, recording water levels, local flood depths, weather conditions, and the circumstances surrounding individual events.
+        </p>
+
+        <!-- Pull-Quote / Highlight Block -->
+        <div class="my-6 p-5 sm:p-6 bg-white/95 border-l-4 border-amber-500 rounded-r-xl shadow-xs">
+          <p class="text-lg sm:text-xl font-semibold text-slate-900 italic leading-snug">
+            &ldquo;These records preserved something a distant gauge cannot measure on its own: what rising water actually looked like here.&rdquo;
+          </p>
+        </div>
+
+        <p>
+          By returning to the same problem across many tides, storms, and seasons, Sandra built a valuable record of the relationship between regional water levels and local flooding. Her observations helped reveal when water began spreading beyond the drainage system and how local depths changed as gauge readings rose.
+        </p>
+        <p>
+          That patient, consistent work provided the essential local evidence needed to develop this project’s hyperlocal flood model. Her handwritten records became a structured dataset that could be compared with historical gauge measurements and weather data, supporting statistical analysis and machine learning.
+        </p>
+        <div class="pt-3 border-t border-amber-200/60 font-medium text-slate-900">
+          Sandra’s observations are the foundation of this project. The technology builds on knowledge she gathered over years of paying close attention to this place.
+        </div>
       </div>
     </section>
 
-    <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-4">
-      <h2 class="text-2xl font-bold text-slate-900">Community observation archive</h2>
-      <p class="text-slate-600 leading-relaxed">Historical community observations inform the model. Original notebooks and individual observer records are retained privately. The Data page provides yearly numerical summaries, while the Science page explains aggregate benchmarks and their limitations.</p>
-      <a href="data.html" class="font-semibold text-sky-600">Explore the public historical summaries</a>
+    <!-- Section 2: Why the Mobjack Bay Area Is Vulnerable -->
+    <section class="bg-white rounded-2xl p-6 sm:p-10 border border-slate-200 shadow-sm space-y-6">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center text-xl shadow-xs shrink-0">
+          <i class="fa-solid fa-water"></i>
+        </div>
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Geographic &amp; Hydrologic Reality</span>
+          <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">Why the Mobjack Bay Area Is Vulnerable</h2>
+        </div>
+      </div>
+
+      <div class="space-y-4 text-slate-700 leading-relaxed text-base sm:text-lg">
+        <p>
+          Mobjack Bay lies along the western side of the Chesapeake Bay, with tidal rivers and creeks connecting its waters to surrounding communities. Around Blackwater and Mobjack Bay Estates, low elevations and gently sloping terrain leave some roads, yards, and drainage channels close to tidal water levels.
+        </p>
+        <p>
+          In this landscape, a relatively small rise in water can make a substantial difference on land. High tides raise the starting water level, while persistent onshore winds and coastal storms can push additional water toward the shoreline. Mathews County’s vulnerability to storm-driven tidal flooding is documented in the <a href="https://ccrm.vims.edu/gis_data_maps/ccrmp/mathews/Mathews_SMP.pdf" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:text-sky-800 font-semibold underline decoration-sky-300 underline-offset-2">Virginia Institute of Marine Science’s Shoreline Management Plan</a>.
+        </p>
+        <p>
+          Rain can add another layer to the problem. When receiving creeks and bay waters are already high, ditches may drain more slowly, allowing rainfall to collect in low areas. The resulting flooding reflects the combined effects of tides, wind, rainfall, and local terrain.
+        </p>
+      </div>
     </section>
 
-    <!-- 3. Key Physical Breakthroughs -->
+    <!-- Section 3: Turning Local Knowledge into Useful Guidance -->
+    <section class="bg-white rounded-2xl p-6 sm:p-10 border border-slate-200 shadow-sm space-y-6">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-xl shadow-xs shrink-0">
+          <i class="fa-solid fa-compass-drafting"></i>
+        </div>
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo-700">Hyper-Local Model Development</span>
+          <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">Turning Local Knowledge into Useful Guidance</h2>
+        </div>
+      </div>
+
+      <div class="space-y-4 text-slate-700 leading-relaxed text-base sm:text-lg">
+        <p>
+          Howard Hottinger developed and maintains this independent community monitor, combining Sandra’s observation record with NOAA and USGS measurements, forecast guidance, and local elevation information.
+        </p>
+        <p>
+          The purpose is to help residents understand developing conditions, anticipate possible neighborhood impacts, and prepare earlier. The monitor translates regional water-level information into estimates grounded in the community’s own experience.
+        </p>
+        <p>
+          Its current focus is Blackwater and Mobjack Bay Estates. Estimates carry uncertainty, and conditions can differ from one location to another. Residents should use this information alongside official National Weather Service warnings and local emergency instructions.
+        </p>
+        <div class="p-4 bg-indigo-50/70 border border-indigo-100 rounded-xl text-indigo-950 font-semibold flex items-center gap-3">
+          <i class="fa-solid fa-heart text-rose-500 text-lg shrink-0"></i>
+          <span>At its heart, this project is about making years of careful observation useful to the people who live here.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Physical Breakthroughs Discovered from the Logs -->
     <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
-      <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
-        <i class="fa-solid fa-atom text-sky-600"></i>
-        The Three Physical Breakthroughs
-      </h2>
+      <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-100 pb-3">
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-atom text-sky-600"></i>
+          Physical Breakthroughs Discovered from the Logs
+        </h2>
+        <a href="science.html" class="text-xs font-semibold text-sky-600 hover:text-sky-800 flex items-center gap-1">
+          View scientific benchmarks &amp; methodology <i class="fa-solid fa-arrow-right text-[10px]"></i>
+        </a>
+      </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
           <div class="text-sky-600 font-bold text-2xl font-mono">3.99 ft</div>
           <h3 class="font-bold text-slate-900 text-sm">1. The Tipping Point</h3>
           <p class="text-xs text-slate-600 leading-relaxed">
-            The historical depth relationship begins near 3.99 ft MLLW. Other low streets can flood earlier, and rainfall can cause ponding independently of tidal stage.
+            The historical depth relationship begins near 3.99 ft MLLW on the Ware River gauge, when roadside ditches fill and brim over into yards.
           </p>
         </div>
 
@@ -1394,7 +1469,7 @@ def build_about_html(status):
           <div class="text-sky-600 font-bold text-2xl font-mono">10.95" / ft</div>
           <h3 class="font-bold text-slate-900 text-sm">2. The Inundation Slope</h3>
           <p class="text-xs text-slate-600 leading-relaxed">
-            Every 0.10 ft of river rise yields 1.1 to 1.2 inches of water depth on the property in the historical record. See Science for metrics and the subsets used.
+            Every 0.10 ft of river rise yields approximately 1.1 to 1.2 inches of water depth on the property in the historical record.
           </p>
         </div>
 
@@ -1402,13 +1477,33 @@ def build_about_html(status):
           <div class="text-sky-600 font-bold text-2xl font-mono">&beta; Restriction</div>
           <h3 class="font-bold text-slate-900 text-sm">3. Compound Pluvial Physics</h3>
           <p class="text-xs text-slate-600 leading-relaxed">
-            Heavy rainfall cannot drain by gravity when high bay water acts as a "cork in the ditch," trapping rain directly onto driveways.
+            Heavy rainfall cannot drain by gravity when elevated bay tides cork ditch culverts, trapping rain directly on driveways.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- 4. How the Cloud Pipeline Works -->
+    <!-- Community Observation Privacy & Data Links -->
+    <section class="resident-card flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6">
+      <div class="space-y-1">
+        <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+          <i class="fa-solid fa-users text-sky-600"></i> Community Observations &amp; Privacy
+        </h3>
+        <p class="text-sm text-slate-600">
+          Historical observations inform the model. Original notebooks and observer logs remain strictly private. Summaries are published openly on our data page.
+        </p>
+      </div>
+      <div class="flex items-center gap-3 shrink-0">
+        <a href="data.html" class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-semibold shadow-xs transition">
+          Explore Historical Data
+        </a>
+        <a href="https://github.com/flatfoot584/mathews-flood-monitor/issues/new" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold shadow-xs transition">
+          Contact Maintainer
+        </a>
+      </div>
+    </section>
+
+    <!-- Automated Serverless Cloud Execution -->
     <section class="bg-slate-900 text-white rounded-2xl p-6 sm:p-8 space-y-4">
       <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2">
         <i class="fa-solid fa-cloud text-sky-400"></i>
@@ -1418,7 +1513,7 @@ def build_about_html(status):
         This entire portal runs at <strong>zero financial cost</strong> using GitHub Actions. Every 30 minutes:
       </p>
       <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
-        <li>A cloud runner spins up and queries NOAA NWPS (Ware River WRVV2 6-min stage & 4-day forecast hydrograph).</li>
+        <li>A cloud runner spins up and queries NOAA NWPS (Ware River WRVV2 6-min stage &amp; 4-day forecast hydrograph).</li>
         <li>Fetches real-time winds and storm surge from Yorktown USCG and Windmill Point.</li>
         <li>Computes NOAA guidance with empirical weather adjustments and estimated local water depths.</li>
         <li>Appends verified hours to our permanent <code class="bg-slate-800 text-sky-300 px-1 py-0.5 rounded">archive_hourly_observations.csv</code>.</li>
