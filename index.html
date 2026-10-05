@@ -28,7 +28,7 @@
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f172a"></head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased">
 
-  <link rel="stylesheet" href="assets/community.css?v=22ccd860a97c">
+  <link rel="stylesheet" href="assets/community.css?v=4ffe8b130109">
 <a class="skip-link" href="#main-content">Skip to content</a>
 <header class="community-header"><div class="community-header-inner"><a class="community-brand" href="index.html">Mathews Flood Monitor<small>Blackwater &amp; Mobjack Bay Estates, Virginia</small></a>
 <button id="mobile-menu-btn" aria-label="Toggle Navigation" aria-expanded="false" aria-controls="mobile-menu">Menu</button>
@@ -40,9 +40,9 @@
   <main id="main-content" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8 w-full">
 
     <section class="resident-intro"><p class="eyebrow">Blackwater &amp; Mobjack Bay Estates</p><h1>Your local flood outlook</h1><p>Independent community research using NOAA and USGS data.</p></section>
-<section data-current-safety class="resident-grid" aria-label="Current conditions and forecast"><article class="resident-card stoplight-green"><div class="stoplight-badge badge-green"><span class="stoplight-dot"></span> Good · No Flooding</div><p class="eyebrow" data-age-label data-last-label="Last Ware River observation">Now · Ware River observation</p><h2 data-age-label data-last-label="Last observation; current conditions unknown">No tidal inundation estimated</h2><p class="resident-value">2.07 ft <small>MLLW at the gauge</small></p><p>Observed Sun, Oct 4 at 9:45 PM EDT</p><p>Local reference estimate: <strong>0.0 in</strong></p><details><summary>Where &amp; what this measures</summary><p class="muted">Empirical low-point reference near Daniel Ave &amp; Julian St. No street inundation estimated. Estimates use tidal water levels; recent rainfall is not measured here.</p></details></article>
-<article class="resident-card stoplight-yellow"><div class="stoplight-badge badge-yellow"><span class="stoplight-dot"></span> Caution · Some Flooding</div><p class="eyebrow" data-age-label data-last-label="Last saved forecast · Model estimate">Next 48 hours · Model estimate</p><h2 data-age-label data-last-label="Last available forecast; check its dates">Flooding estimated in low spots</h2><p class="resident-value">3.89 ft <small>peak Ware River stage</small></p><p><strong>Mon, Oct 5 at 6:00 PM EDT</strong></p><details><summary>Depth &amp; uncertainty</summary><p>No inundation modeled at the local reference point. Low streets may still flood; see affected streets below.</p><p class="muted">Scenario range 3.6 to 4.2 ft. Uncalibrated; not a guaranteed upper bound.</p></details></article></section>
-<section data-current-safety class="resident-card stoplight-yellow"><div class="stoplight-badge badge-yellow"><span class="stoplight-dot"></span> Caution · Some Flooding</div><h2>Potentially affected streets</h2><p>Bayshore Avenue, Daniel Avenue, Julian Street</p><details><summary>Estimated timing &amp; duration</summary><p>First modeled street flooding: Mon, Oct 5 at 5:00 PM EDT. Last modeled flooded hour: Mon, Oct 5 at 6:00 PM EDT. 2 flooded hourly intervals, which may be separated. Receding estimates do not establish when roads will be safe.</p></details><h3>What to do</h3><p><strong>Plan before flooding starts; never enter floodwater.</strong> Map colors and model estimates do not verify road safety for any vehicle.</p><a class="resident-button" href="alerts.html">Set up mobile alerts</a> <a href="guide.html">Understand flood estimates</a></section><div data-official-feed><p>No active NWS alerts returned for this point at the displayed check time; this does not verify road safety. Checked Sun, Oct 4 at 10:16 PM EDT.</p><ul></ul></div><aside class="official-card"><strong>Official warnings &amp; emergency guidance</strong><p>This monitor provides local estimates. Check <a href="https://www.weather.gov/akq/">NWS Wakefield warnings</a> and <a href="https://www.mathewscountyva.gov/">Mathews County emergency information</a>. Call 911 for an immediate emergency. <a href="https://www.weather.gov/safety/flood-turn-around-dont-drown">Never drive into floodwater.</a></p></aside>
+<section data-current-safety class="resident-grid" aria-label="Current conditions and forecast"><article class="resident-card stoplight-green"><div class="stoplight-badge badge-green"><span class="stoplight-dot"></span> Good · No Flooding</div><p class="eyebrow" data-age-label data-last-label="Last Ware River observation">Now · Ware River observation</p><h2 data-age-label data-last-label="Last observation; current conditions unknown">No tidal inundation estimated</h2><p class="resident-value">2.07 ft <small>MLLW at the gauge</small></p><div class="stage-meter" aria-hidden="true" title="1.92' below ditch threshold"><div class="stage-meter-fill fill-green" style="width: 41%"></div><div class="stage-meter-threshold" style="left: 79.8%"></div></div><div class="stage-meter-labels"><span>0' Safe</span><span title="Ditch overflow threshold">3.99' Ditch Brim</span><span>5.0'+ Severe</span></div><p>Observed Sun, Oct 4 at 9:45 PM EDT</p><p>Local reference estimate: <strong>0.0 in</strong></p><details><summary>Where &amp; what this measures</summary><p class="muted">Empirical low-point reference near Daniel Ave &amp; Julian St. No street inundation estimated. Estimates use tidal water levels; recent rainfall is not measured here.</p></details></article>
+<article class="resident-card stoplight-yellow"><div class="stoplight-badge badge-yellow"><span class="stoplight-dot"></span> Caution · Some Flooding</div><p class="eyebrow" data-age-label data-last-label="Last saved forecast · Model estimate">Next 48 hours · Model estimate</p><h2 data-age-label data-last-label="Last available forecast; check its dates">Flooding estimated in low spots</h2><p class="resident-value">3.89 ft <small>peak Ware River stage</small></p><div class="stage-meter" aria-hidden="true" title="0.10' below ditch threshold"><div class="stage-meter-fill fill-yellow" style="width: 77%"></div><div class="stage-meter-threshold" style="left: 79.8%"></div></div><div class="stage-meter-labels"><span>0' Safe</span><span title="Ditch overflow threshold">3.99' Ditch Brim</span><span>5.0'+ Severe</span></div><p><strong>Mon, Oct 5 at 6:00 PM EDT</strong></p><details><summary>Depth &amp; uncertainty</summary><p>No inundation modeled at the local reference point. Low streets may still flood; see affected streets below.</p><p class="muted">Scenario range 3.6 to 4.2 ft. Uncalibrated; not a guaranteed upper bound.</p></details></article></section>
+<section data-current-safety class="resident-card stoplight-yellow"><div class="stoplight-badge badge-yellow"><span class="stoplight-dot"></span> Caution · Some Flooding</div><h2>Potentially affected streets</h2><p>Bayshore Avenue, Daniel Avenue, Julian Street</p><div class="street-chips"><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>Bayshore Avenue</span><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>Daniel Avenue</span><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>Julian Street</span></div><details><summary>Estimated timing &amp; duration</summary><p>First modeled street flooding: Mon, Oct 5 at 5:00 PM EDT. Last modeled flooded hour: Mon, Oct 5 at 6:00 PM EDT. 2 flooded hourly intervals, which may be separated. Receding estimates do not establish when roads will be safe.</p></details><h3>What to do</h3><p><strong>Plan before flooding starts; never enter floodwater.</strong> Map colors and model estimates do not verify road safety for any vehicle.</p><a class="resident-button" href="alerts.html">Set up mobile alerts</a> <a href="guide.html">Understand flood estimates</a></section><div data-official-feed><p>No active NWS alerts returned for this point at the displayed check time; this does not verify road safety. Checked Sun, Oct 4 at 10:16 PM EDT.</p><ul></ul></div><aside class="official-card"><strong>Official warnings &amp; emergency guidance</strong><p>This monitor provides local estimates. Check <a href="https://www.weather.gov/akq/">NWS Wakefield warnings</a> and <a href="https://www.mathewscountyva.gov/">Mathews County emergency information</a>. Call 911 for an immediate emergency. <a href="https://www.weather.gov/safety/flood-turn-around-dont-drown">Never drive into floodwater.</a></p></aside>
 
     <!-- 5. 48-HOUR HYDROGRAPH & ENVIRONMENTAL DRIVERS -->
     <section data-current-safety class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
@@ -156,27 +156,149 @@
       </div>
     </section>
 
-    <!-- 4. COMMUNITY ELEVATION PROFILE & STREET PASSABILITY -->
-    <details data-current-safety><summary>Estimated elevations &amp; street details</summary>
-    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+    <!-- 4. NEIGHBORHOOD STREET PASSABILITY MATRIX (DIRECTLY VISIBLE) -->
+    <section data-current-safety class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
         <div>
-          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-stairs text-sky-600"></i>
-            Estimated community elevations &amp; current tidal inundation
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-route text-sky-600"></i>
+            Neighborhood Street Passability Matrix
           </h2>
-          <p class="text-xs sm:text-sm text-slate-500">
-            Micro-topographical water encroachment across Mobjack Bay Estates &amp; Blackwater Peninsula (Threshold: 3.99 ft MLLW = 2.35 ft NAVD88).
+          <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+            Hyper-local USGS 1-meter LiDAR elevation thresholds across Mobjack Bay Estates &amp; Blackwater roads.
           </p>
         </div>
-        <div class="text-xs font-mono bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg self-start sm:self-auto font-medium">
+        <div class="text-xs font-mono bg-amber-50 text-amber-900 border border-amber-200/80 px-3 py-1.5 rounded-lg font-semibold self-start sm:self-auto shadow-xs">
           Ditch Tipping Point: 3.99' MLLW
         </div>
       </div>
 
-      <!-- Sector Progress Bars -->
-      <div class="space-y-3.5 pt-1">
-        <!-- Sector 1: Ditches -->
+      <!-- Street Cards Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        
+          <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-slate-300 shadow-xs transition">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-xs text-slate-900">Bayshore Avenue</span>
+              <span class="inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-800 border-emerald-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                No tidal flooding estimated
+              </span>
+            </div>
+            <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
+              <span class="text-[11px] text-slate-400">Invert: 3.75' MLLW</span>
+              <span class="font-bold text-slate-800 font-mono">0.0" Water</span>
+            </div>
+          </div>
+        
+          <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-slate-300 shadow-xs transition">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-xs text-slate-900">Julian Street</span>
+              <span class="inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-800 border-emerald-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                No tidal flooding estimated
+              </span>
+            </div>
+            <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
+              <span class="text-[11px] text-slate-400">Invert: 3.78' MLLW</span>
+              <span class="font-bold text-slate-800 font-mono">0.0" Water</span>
+            </div>
+          </div>
+        
+          <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-slate-300 shadow-xs transition">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-xs text-slate-900">Daniel Avenue</span>
+              <span class="inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-800 border-emerald-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                No tidal flooding estimated
+              </span>
+            </div>
+            <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
+              <span class="text-[11px] text-slate-400">Invert: 3.88' MLLW</span>
+              <span class="font-bold text-slate-800 font-mono">0.0" Water</span>
+            </div>
+          </div>
+        
+          <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-slate-300 shadow-xs transition">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-xs text-slate-900">Allview Street</span>
+              <span class="inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-800 border-emerald-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                No tidal flooding estimated
+              </span>
+            </div>
+            <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
+              <span class="text-[11px] text-slate-400">Invert: 4.13' MLLW</span>
+              <span class="font-bold text-slate-800 font-mono">0.0" Water</span>
+            </div>
+          </div>
+        
+          <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-slate-300 shadow-xs transition">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-xs text-slate-900">River Road</span>
+              <span class="inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-800 border-emerald-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                No tidal flooding estimated
+              </span>
+            </div>
+            <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
+              <span class="text-[11px] text-slate-400">Invert: 4.14' MLLW</span>
+              <span class="font-bold text-slate-800 font-mono">0.0" Water</span>
+            </div>
+          </div>
+        
+          <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-slate-300 shadow-xs transition">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-xs text-slate-900">Hobday Street</span>
+              <span class="inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-800 border-emerald-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                No tidal flooding estimated
+              </span>
+            </div>
+            <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
+              <span class="text-[11px] text-slate-400">Invert: 4.22' MLLW</span>
+              <span class="font-bold text-slate-800 font-mono">0.0" Water</span>
+            </div>
+          </div>
+        
+          <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-slate-300 shadow-xs transition">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-xs text-slate-900">Little Avenue</span>
+              <span class="inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-800 border-emerald-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                No tidal flooding estimated
+              </span>
+            </div>
+            <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
+              <span class="text-[11px] text-slate-400">Invert: 4.23' MLLW</span>
+              <span class="font-bold text-slate-800 font-mono">0.0" Water</span>
+            </div>
+          </div>
+        
+          <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-slate-300 shadow-xs transition">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-xs text-slate-900">Bunny Rabbit Lane</span>
+              <span class="inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-800 border-emerald-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                No tidal flooding estimated
+              </span>
+            </div>
+            <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
+              <span class="text-[11px] text-slate-400">Invert: 4.45' MLLW</span>
+              <span class="font-bold text-slate-800 font-mono">0.0" Water</span>
+            </div>
+          </div>
+        
+      </div>
+
+      <!-- Sector Progress Bars in Progressive Disclosure -->
+      <details class="pt-2 text-xs text-slate-600 border-t border-slate-100">
+        <summary class="font-bold text-sky-700 cursor-pointer hover:underline py-1 flex items-center gap-1.5">
+          <i class="fa-solid fa-stairs text-sky-600"></i>
+          <span>View Property Sector LiDAR Cross-Section (Ditches, Driveway, Lawn, Garage High Ground)</span>
+        </summary>
+        <div class="space-y-3.5 pt-3 mt-2">
+          
+      <div class="space-y-3 pt-1">
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
             <span class="text-slate-700 font-semibold"><i class="fa-solid fa-water text-sky-500 mr-1.5"></i> 1. Bayshore Waterfront Ditches &amp; Swales (Elev: 3.99' MLLW / 2.35' NAVD88)</span>
@@ -184,12 +306,10 @@
               0.0" Water (No tidal flooding estimated)
             </span>
           </div>
-          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-            <div class="bg-sky-500 h-full rounded-full transition-all" style="width: 2%"></div>
+          <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+            <div class="bg-slate-300 h-full rounded-full transition-all" style="width: 2%"></div>
           </div>
         </div>
-
-        <!-- Sector 2: Road Apron / Culvert -->
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
             <span class="text-slate-700 font-semibold"><i class="fa-solid fa-road text-amber-500 mr-1.5"></i> 2. Lower Residential Blocks — Allview / Hobday / Little Ave South (Elev: 4.15' MLLW / 2.51' NAVD88)</span>
@@ -197,12 +317,10 @@
               0.0" Water (No tidal flooding estimated)
             </span>
           </div>
-          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+          <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
             <div class="bg-emerald-500 h-full rounded-full transition-all" style="width: 2%"></div>
           </div>
         </div>
-
-        <!-- Sector 3: Main Driveway -->
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
             <span class="text-slate-700 font-semibold"><i class="fa-solid fa-car text-orange-500 mr-1.5"></i> 3. Daniel Ave Central Spine &amp; Julian St — Primary Route (Elev: 4.40' MLLW / 2.76' NAVD88)</span>
@@ -210,12 +328,10 @@
               0.0" Water (No tidal flooding estimated)
             </span>
           </div>
-          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+          <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
             <div class="bg-emerald-500 h-full rounded-full transition-all" style="width: 2%"></div>
           </div>
         </div>
-
-        <!-- Sector 4: Residential Lawn -->
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
             <span class="text-slate-700 font-semibold"><i class="fa-solid fa-tree text-emerald-600 mr-1.5"></i> 4. Upper Residential Grounds &amp; Northern Lots (Elev: 4.60' MLLW / 2.96' NAVD88)</span>
@@ -223,12 +339,10 @@
               0.0" Water (No tidal flooding estimated)
             </span>
           </div>
-          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+          <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
             <div class="bg-emerald-500 h-full rounded-full transition-all" style="width: 2%"></div>
           </div>
         </div>
-
-        <!-- Sector 5: Garage High Ground -->
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
             <span class="text-slate-700 font-semibold"><i class="fa-solid fa-house text-blue-600 mr-1.5"></i> 5. River Road North &amp; Ridge High Ground Pads (Elev: 4.90' MLLW / 3.26' NAVD88)</span>
@@ -236,232 +350,115 @@
               0.0" Water (No tidal flooding estimated)
             </span>
           </div>
-          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+          <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
             <div class="bg-emerald-500 h-full rounded-full transition-all" style="width: 2%"></div>
           </div>
         </div>
       </div>
-
-      <!-- Community Street Passability Board -->
-      <div class="pt-5 border-t border-slate-200">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-            <i class="fa-solid fa-route text-sky-600"></i>
-            Modeled street inundation &amp; elevation estimates
-          </h3>
-          <span class="text-xs text-slate-500">Mobjack Bay Estates &amp; Blackwater Road Network</span>
+    
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          
-          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 transition">
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="font-bold text-xs text-slate-900">Bayshore Avenue</span>
-              <span class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-800 border-emerald-200">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                No tidal flooding estimated
-              </span>
-            </div>
-            <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
-              <span class="text-[11px]">Invert: 3.75' MLLW (2.11' NAVD)</span>
-              <span class="font-bold text-slate-800 font-mono">0.0" Water</span>
-            </div>
-          </div>
-        
-          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 transition">
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="font-bold text-xs text-slate-900">Julian Street</span>
-              <span class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-800 border-emerald-200">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                No tidal flooding estimated
-              </span>
-            </div>
-            <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
-              <span class="text-[11px]">Invert: 3.78' MLLW (2.14' NAVD)</span>
-              <span class="font-bold text-slate-800 font-mono">0.0" Water</span>
-            </div>
-          </div>
-        
-          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 transition">
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="font-bold text-xs text-slate-900">Daniel Avenue</span>
-              <span class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-800 border-emerald-200">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                No tidal flooding estimated
-              </span>
-            </div>
-            <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
-              <span class="text-[11px]">Invert: 3.88' MLLW (2.24' NAVD)</span>
-              <span class="font-bold text-slate-800 font-mono">0.0" Water</span>
-            </div>
-          </div>
-        
-          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 transition">
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="font-bold text-xs text-slate-900">Allview Street</span>
-              <span class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-800 border-emerald-200">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                No tidal flooding estimated
-              </span>
-            </div>
-            <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
-              <span class="text-[11px]">Invert: 4.13' MLLW (2.49' NAVD)</span>
-              <span class="font-bold text-slate-800 font-mono">0.0" Water</span>
-            </div>
-          </div>
-        
-          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 transition">
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="font-bold text-xs text-slate-900">River Road</span>
-              <span class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-800 border-emerald-200">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                No tidal flooding estimated
-              </span>
-            </div>
-            <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
-              <span class="text-[11px]">Invert: 4.14' MLLW (2.5' NAVD)</span>
-              <span class="font-bold text-slate-800 font-mono">0.0" Water</span>
-            </div>
-          </div>
-        
-          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 transition">
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="font-bold text-xs text-slate-900">Hobday Street</span>
-              <span class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-800 border-emerald-200">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                No tidal flooding estimated
-              </span>
-            </div>
-            <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
-              <span class="text-[11px]">Invert: 4.22' MLLW (2.58' NAVD)</span>
-              <span class="font-bold text-slate-800 font-mono">0.0" Water</span>
-            </div>
-          </div>
-        
-          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 transition">
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="font-bold text-xs text-slate-900">Little Avenue</span>
-              <span class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-800 border-emerald-200">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                No tidal flooding estimated
-              </span>
-            </div>
-            <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
-              <span class="text-[11px]">Invert: 4.23' MLLW (2.59' NAVD)</span>
-              <span class="font-bold text-slate-800 font-mono">0.0" Water</span>
-            </div>
-          </div>
-        
-          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 transition">
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="font-bold text-xs text-slate-900">Bunny Rabbit Lane</span>
-              <span class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-800 border-emerald-200">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                No tidal flooding estimated
-              </span>
-            </div>
-            <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
-              <span class="text-[11px]">Invert: 4.45' MLLW (2.81' NAVD)</span>
-              <span class="font-bold text-slate-800 font-mono">0.0" Water</span>
-            </div>
-          </div>
-        
-        </div>
-      </div>
+      </details>
     </section>
 
-    </details>
+    <!-- 6. ENVIRONMENTAL SENSORS & PROSPECTIVE MODEL VERIFICATION -->
+    <details class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+      <summary class="text-base font-bold text-slate-900 cursor-pointer flex items-center justify-between">
+        <span class="flex items-center gap-2">
+          <i class="fa-solid fa-gauge-high text-sky-600"></i>
+          Regional Weather, Tidal Forcing &amp; Sensor Telemetry
+        </span>
+        <span class="text-xs font-semibold text-sky-600 hover:underline">Toggle Telemetry</span>
+      </summary>
+      <div class="pt-4 space-y-6">
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
+          <!-- Card 1: Yorktown Winds -->
+          <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+              <span>Yorktown Winds</span>
+              <i class="fa-solid fa-wind text-sky-500"></i>
+            </div>
+            <div class="text-2xl font-black text-slate-900 font-mono">
+              8.72 <span class="text-xs font-semibold text-slate-500">mph</span>
+            </div>
+            <div class="text-[11px] text-slate-600 flex items-center justify-between">
+              <span>From NNW (343.0&deg;)</span>
+              <span class="text-slate-400">G: 10.74 mph</span>
+            </div>
+          </div>
 
-    <section data-current-safety class="resident-card"><h2>Fort Monroe sensor &amp; forecast verification</h2><p><a href="https://waterdata.usgs.gov/monitoring-location/USGS-0204289994/">Fort Monroe USGS 0204289994 / FTMV2</a>: 0.5 ft NAVD88, observed Sun, Oct 4 at 9:24 PM EDT. Fresh observation.</p><p>Evaluation sensor: its measurements are being archived. It has not been promoted into the operational forecast. <a href="science.html">See the historical comparison and promotion criteria</a>.</p><details><summary>Prospective forecast-versus-observed scorecard (Operational vs. Raw NWPS)</summary><p>27 matched issued predictions. Scores compare the deployed water-level forecast and raw NOAA NWPS guidance with the Ware River gauge, not measurements of local road depth. Repeated forecast issues are correlated; storm skill continues accumulating across autumn 2026.</p><p class="muted">Overall verified accuracy: Operational model MAE = <strong>0.33 ft</strong> vs Raw NOAA NWPS MAE = <strong>0.36 ft</strong> across autumn 2026 events.</p><div class="table-scroll"><table><thead><tr><th scope="col">Lead</th><th scope="col">Verified</th><th scope="col">Model MAE</th><th scope="col">Raw NWPS MAE</th><th scope="col">Skill Δ</th><th scope="col">High-water (&ge; 4.0 ft)</th></tr></thead><tbody><tr><th scope="row">1 hours</th><td>9</td><td>0.27 ft</td><td>0.30 ft</td><td>+0.03 ft</td><td>0</td></tr><tr><th scope="row">3 hours</th><td>9</td><td>0.39 ft</td><td>0.42 ft</td><td>+0.02 ft</td><td>0</td></tr><tr><th scope="row">6 hours</th><td>5</td><td>0.26 ft</td><td>0.28 ft</td><td>+0.03 ft</td><td>0</td></tr><tr><th scope="row">12 hours</th><td>4</td><td>0.42 ft</td><td>0.45 ft</td><td>+0.04 ft</td><td>0</td></tr><tr><th scope="row">24 hours</th><td>0</td><td>—</td><td>—</td><td>—</td><td>0</td></tr><tr><th scope="row">48 hours</th><td>0</td><td>—</td><td>—</td><td>—</td><td>0</td></tr></tbody></table></div><a href="models/live_verification.json">Download prospective scores</a> · <a href="issued_forecast_archive.csv">Download issued forecast archive CSV</a></details></section>
+          <!-- Card 2: Along-Bay Wind Vector -->
+          <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+              <span>Along-Bay Vector</span>
+              <i class="fa-solid fa-compass text-blue-500"></i>
+            </div>
+            <div class="text-2xl font-black font-mono text-slate-900">
+              6.96 <span class="text-xs font-semibold text-slate-500">mph</span>
+            </div>
+            <div class="text-[11px] text-slate-500 truncate" title="Along-bay wind stress">
+              Forcing water into Mobjack
+            </div>
+          </div>
 
-    <!-- 6. REAL-TIME SENSOR NETWORK & BAY HYDRAULIC GRADIENT -->
-    <details><summary>Weather &amp; regional gauge details</summary>
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
-      <!-- Card 1: Yorktown Winds -->
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
-        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-          <span>Yorktown Winds</span>
-          <i class="fa-solid fa-wind text-sky-500"></i>
-        </div>
-        <div class="text-2xl font-black text-slate-900 font-mono">
-          8.72 <span class="text-xs font-semibold text-slate-500">mph</span>
-        </div>
-        <div class="text-[11px] text-slate-600 flex items-center justify-between">
-          <span>From NNW (343.0&deg;)</span>
-          <span class="text-slate-400">G: 10.74 mph</span>
-        </div>
+          <!-- Card 3: Barometric Pressure -->
+          <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+              <span>Barometer</span>
+              <i class="fa-solid fa-gauge-high text-indigo-500"></i>
+            </div>
+            <div class="text-2xl font-black text-slate-900 font-mono">
+              1018.3 <span class="text-xs font-semibold text-slate-500">mb</span>
+            </div>
+            <div class="text-[11px] text-slate-500 truncate">
+              Normal atmospheric pressure
+            </div>
+          </div>
+
+          <!-- Card 4: North Bay Surge (Windmill Point) -->
+          <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+              <span>North Bay Surge</span>
+              <i class="fa-solid fa-water-ladder text-cyan-500"></i>
+            </div>
+            <div class="text-2xl font-black font-mono text-amber-600">
+              +1.34 <span class="text-xs font-semibold text-slate-500">ft</span>
+            </div>
+            <div class="text-[11px] text-slate-500 truncate" title="Windmill Point (8636580)">
+              Windmill Pt (8636580)
+            </div>
+          </div>
+
+          <!-- Card 5: South Bay Surge (Sewells Point) -->
+          <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+              <span>South Bay Surge</span>
+              <i class="fa-solid fa-anchor text-blue-600"></i>
+            </div>
+            <div class="text-2xl font-black font-mono text-amber-600">
+              +1.24 <span class="text-xs font-semibold text-slate-500">ft</span>
+            </div>
+            <div class="text-[11px] text-slate-500 truncate" title="Sewells Point / Norfolk (8638610)">
+              Sewells Pt (8638610)
+            </div>
+          </div>
+
+          <!-- Card 6: Bay Hydraulic Slope -->
+          <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+              <span>Bay Hydraulic Slope</span>
+              <i class="fa-solid fa-arrows-left-right-to-line text-emerald-600"></i>
+            </div>
+            <div class="text-2xl font-black font-mono text-slate-900">
+              +0.1 <span class="text-xs font-semibold text-slate-500">ft</span>
+            </div>
+            <div class="text-[11px] text-slate-500 truncate" title="Equilibrium (Near-zero gradient across bay)">
+              Equilibrium (46 mi)
+            </div>
+          </div>
+        </section>
+
+        <section data-current-safety class="resident-card"><h2>Fort Monroe sensor &amp; forecast verification</h2><p><a href="https://waterdata.usgs.gov/monitoring-location/USGS-0204289994/">Fort Monroe USGS 0204289994 / FTMV2</a>: 0.5 ft NAVD88, observed Sun, Oct 4 at 9:24 PM EDT. Fresh observation.</p><p>Evaluation sensor: its measurements are being archived. It has not been promoted into the operational forecast. <a href="science.html">See the historical comparison and promotion criteria</a>.</p><details><summary>Prospective forecast-versus-observed scorecard (Operational vs. Raw NWPS)</summary><p>27 matched issued predictions. Scores compare the deployed water-level forecast and raw NOAA NWPS guidance with the Ware River gauge, not measurements of local road depth. Repeated forecast issues are correlated; storm skill continues accumulating across autumn 2026.</p><p class="muted">Overall verified accuracy: Operational model MAE = <strong>0.33 ft</strong> vs Raw NOAA NWPS MAE = <strong>0.36 ft</strong> across autumn 2026 events.</p><div class="table-scroll"><table><thead><tr><th scope="col">Lead</th><th scope="col">Verified</th><th scope="col">Model MAE</th><th scope="col">Raw NWPS MAE</th><th scope="col">Skill Δ</th><th scope="col">High-water (&ge; 4.0 ft)</th></tr></thead><tbody><tr><th scope="row">1 hours</th><td>9</td><td>0.27 ft</td><td>0.30 ft</td><td>+0.03 ft</td><td>0</td></tr><tr><th scope="row">3 hours</th><td>9</td><td>0.39 ft</td><td>0.42 ft</td><td>+0.02 ft</td><td>0</td></tr><tr><th scope="row">6 hours</th><td>5</td><td>0.26 ft</td><td>0.28 ft</td><td>+0.03 ft</td><td>0</td></tr><tr><th scope="row">12 hours</th><td>4</td><td>0.42 ft</td><td>0.45 ft</td><td>+0.04 ft</td><td>0</td></tr><tr><th scope="row">24 hours</th><td>0</td><td>—</td><td>—</td><td>—</td><td>0</td></tr><tr><th scope="row">48 hours</th><td>0</td><td>—</td><td>—</td><td>—</td><td>0</td></tr></tbody></table></div><a href="models/live_verification.json">Download prospective scores</a> · <a href="issued_forecast_archive.csv">Download issued forecast archive CSV</a></details></section>
       </div>
-
-      <!-- Card 2: Along-Bay Wind Vector -->
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
-        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-          <span>Along-Bay Vector</span>
-          <i class="fa-solid fa-compass text-blue-500"></i>
-        </div>
-        <div class="text-2xl font-black font-mono text-slate-900">
-          6.96 <span class="text-xs font-semibold text-slate-500">mph</span>
-        </div>
-        <div class="text-[11px] text-slate-500 truncate" title="Along-bay wind stress">
-          Forcing water into Mobjack
-        </div>
-      </div>
-
-      <!-- Card 3: Barometric Pressure -->
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
-        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-          <span>Barometer</span>
-          <i class="fa-solid fa-gauge-high text-indigo-500"></i>
-        </div>
-        <div class="text-2xl font-black text-slate-900 font-mono">
-          1018.3 <span class="text-xs font-semibold text-slate-500">mb</span>
-        </div>
-        <div class="text-[11px] text-slate-500 truncate">
-          Normal atmospheric pressure
-        </div>
-      </div>
-
-      <!-- Card 4: North Bay Surge (Windmill Point) -->
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
-        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-          <span>North Bay Surge</span>
-          <i class="fa-solid fa-water-ladder text-cyan-500"></i>
-        </div>
-        <div class="text-2xl font-black font-mono text-amber-600">
-          +1.34 <span class="text-xs font-semibold text-slate-500">ft</span>
-        </div>
-        <div class="text-[11px] text-slate-500 truncate" title="Windmill Point (8636580)">
-          Windmill Pt (8636580)
-        </div>
-      </div>
-
-      <!-- Card 5: South Bay Surge (Sewells Point) -->
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
-        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-          <span>South Bay Surge</span>
-          <i class="fa-solid fa-anchor text-blue-600"></i>
-        </div>
-        <div class="text-2xl font-black font-mono text-amber-600">
-          +1.24 <span class="text-xs font-semibold text-slate-500">ft</span>
-        </div>
-        <div class="text-[11px] text-slate-500 truncate" title="Sewells Point / Norfolk (8638610)">
-          Sewells Pt (8638610)
-        </div>
-      </div>
-
-      <!-- Card 6: Bay Hydraulic Slope -->
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
-        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-          <span>Bay Hydraulic Slope</span>
-          <i class="fa-solid fa-arrows-left-right-to-line text-emerald-600"></i>
-        </div>
-        <div class="text-2xl font-black font-mono text-slate-900">
-          +0.1 <span class="text-xs font-semibold text-slate-500">ft</span>
-        </div>
-        <div class="text-[11px] text-slate-500 truncate" title="Equilibrium (Near-zero gradient across bay)">
-          Equilibrium (46 mi)
-        </div>
-      </div>
-    </section>
-
     </details>
 
     <!-- 7. REAL-TIME MOBILE FLOOD ALERTS CALLOUT -->

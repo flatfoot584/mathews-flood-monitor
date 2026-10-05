@@ -264,20 +264,105 @@ def build_index_html(status, obs_rows, fcst_rows):
                   "bg-orange-500" if st_code == "ORANGE" else "bg-red-600"
                   
         street_cards_html += f"""
-          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 transition">
+          <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-slate-300 shadow-xs transition">
             <div class="flex items-center justify-between mb-1.5">
               <span class="font-bold text-xs text-slate-900">{st_name}</span>
-              <span class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border {badge_cls}">
+              <span class="inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full border {badge_cls}">
                 <span class="w-1.5 h-1.5 rounded-full {dot_cls}"></span>
                 {st_info.get("status", "Dry")}
               </span>
             </div>
             <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
-              <span class="text-[11px]">Invert: {st_inv_mllw}' MLLW ({st_inv_navd}' NAVD)</span>
+              <span class="text-[11px] text-slate-400">Invert: {st_inv_mllw}' MLLW</span>
               <span class="font-bold text-slate-800 font-mono">{st_depth}" Water</span>
             </div>
           </div>
         """
+
+    ditch_depth = sectors.get('ditches', {}).get('depth_in', 0)
+    ditch_depth_str = ditch_depth if ditch_depth is not None else 'Unknown'
+    ditch_status = sectors.get('ditches', {}).get('status', 'DRY')
+    ditch_w = min(100, max(2, int((ditch_depth or 0) * 15)))
+
+    road_depth = sectors.get('road_apron', {}).get('depth_in', 0)
+    road_depth_str = road_depth if road_depth is not None else 'Unknown'
+    road_status = sectors.get('road_apron', {}).get('status', 'DRY')
+    road_w = min(100, max(2, int((road_depth or 0) * 15)))
+
+    drive_depth = sectors.get('main_driveway', {}).get('depth_in', 0)
+    drive_depth_str = drive_depth if drive_depth is not None else 'Unknown'
+    drive_status = sectors.get('main_driveway', {}).get('status', 'DRY')
+    drive_w = min(100, max(2, int((drive_depth or 0) * 15)))
+
+    lawn_depth = sectors.get('yard_lawn', {}).get('depth_in', 0)
+    lawn_depth_str = lawn_depth if lawn_depth is not None else 'Unknown'
+    lawn_status = sectors.get('yard_lawn', {}).get('status', 'DRY')
+    lawn_w = min(100, max(2, int((lawn_depth or 0) * 15)))
+
+    garage_depth = sectors.get('garage_foundation', {}).get('depth_in', 0)
+    garage_depth_str = garage_depth if garage_depth is not None else 'Unknown'
+    garage_status = sectors.get('garage_foundation', {}).get('status', 'SAFE')
+    garage_w = min(100, max(2, int((garage_depth or 0) * 15)))
+
+    sector_bars_html = f"""
+      <div class="space-y-3 pt-1">
+        <div>
+          <div class="flex justify-between text-xs font-medium mb-1">
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-water text-sky-500 mr-1.5"></i> 1. Bayshore Waterfront Ditches &amp; Swales (Elev: 3.99' MLLW / 2.35' NAVD88)</span>
+            <span class="font-mono font-semibold {'text-sky-700 font-bold' if (ditch_depth or 0) > 0 else 'text-slate-400'}">
+              {ditch_depth_str}" Water ({ditch_status})
+            </span>
+          </div>
+          <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+            <div class="{'bg-sky-500' if (ditch_depth or 0) > 0 else 'bg-slate-300'} h-full rounded-full transition-all" style="width: {ditch_w}%"></div>
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between text-xs font-medium mb-1">
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-road text-amber-500 mr-1.5"></i> 2. Lower Residential Blocks — Allview / Hobday / Little Ave South (Elev: 4.15' MLLW / 2.51' NAVD88)</span>
+            <span class="font-mono font-semibold {'text-amber-700 font-bold' if (road_depth or 0) > 0 else 'text-emerald-700'}">
+              {road_depth_str}" Water ({road_status})
+            </span>
+          </div>
+          <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+            <div class="{'bg-amber-500' if (road_depth or 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {road_w}%"></div>
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between text-xs font-medium mb-1">
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-car text-orange-500 mr-1.5"></i> 3. Daniel Ave Central Spine &amp; Julian St — Primary Route (Elev: 4.40' MLLW / 2.76' NAVD88)</span>
+            <span class="font-mono font-semibold {'text-orange-700 font-bold' if (drive_depth or 0) > 0 else 'text-emerald-700 font-bold'}">
+              {drive_depth_str}" Water ({drive_status})
+            </span>
+          </div>
+          <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+            <div class="{'bg-orange-500' if (drive_depth or 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {drive_w}%"></div>
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between text-xs font-medium mb-1">
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-tree text-emerald-600 mr-1.5"></i> 4. Upper Residential Grounds &amp; Northern Lots (Elev: 4.60' MLLW / 2.96' NAVD88)</span>
+            <span class="font-mono font-semibold {'text-red-700 font-bold' if (lawn_depth or 0) > 0 else 'text-emerald-700'}">
+              {lawn_depth_str}" Water ({lawn_status})
+            </span>
+          </div>
+          <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+            <div class="{'bg-red-500' if (lawn_depth or 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {lawn_w}%"></div>
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between text-xs font-medium mb-1">
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-house text-blue-600 mr-1.5"></i> 5. River Road North &amp; Ridge High Ground Pads (Elev: 4.90' MLLW / 3.26' NAVD88)</span>
+            <span class="font-mono font-semibold {'text-red-700 font-bold' if (garage_depth or 0) > 0 else 'text-emerald-700'}">
+              {garage_depth_str}" Water ({garage_status})
+            </span>
+          </div>
+          <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+            <div class="{'bg-red-600' if (garage_depth or 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {garage_w}%"></div>
+          </div>
+        </div>
+      </div>
+    """
 
     wind_spd = display_value(curr.get("yorktown_wind_speed_mph", "N/A"))
     wind_dir = display_value(curr.get("yorktown_wind_dir_cardinal", "N/A"))
@@ -491,200 +576,139 @@ def build_index_html(status, obs_rows, fcst_rows):
       </div>
     </section>
 
-    <!-- 4. COMMUNITY ELEVATION PROFILE & STREET PASSABILITY -->
-    <details data-current-safety><summary>Estimated elevations &amp; street details</summary>
-    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+    <!-- 4. NEIGHBORHOOD STREET PASSABILITY MATRIX (DIRECTLY VISIBLE) -->
+    <section data-current-safety class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
         <div>
-          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-stairs text-sky-600"></i>
-            Estimated community elevations &amp; current tidal inundation
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-route text-sky-600"></i>
+            Neighborhood Street Passability Matrix
           </h2>
-          <p class="text-xs sm:text-sm text-slate-500">
-            Micro-topographical water encroachment across Mobjack Bay Estates &amp; Blackwater Peninsula (Threshold: 3.99 ft MLLW = 2.35 ft NAVD88).
+          <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+            Hyper-local USGS 1-meter LiDAR elevation thresholds across Mobjack Bay Estates &amp; Blackwater roads.
           </p>
         </div>
-        <div class="text-xs font-mono bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg self-start sm:self-auto font-medium">
+        <div class="text-xs font-mono bg-amber-50 text-amber-900 border border-amber-200/80 px-3 py-1.5 rounded-lg font-semibold self-start sm:self-auto shadow-xs">
           Ditch Tipping Point: 3.99' MLLW
         </div>
       </div>
 
-      <!-- Sector Progress Bars -->
-      <div class="space-y-3.5 pt-1">
-        <!-- Sector 1: Ditches -->
-        <div>
-          <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-water text-sky-500 mr-1.5"></i> 1. Bayshore Waterfront Ditches &amp; Swales (Elev: 3.99' MLLW / 2.35' NAVD88)</span>
-            <span class="font-mono font-semibold {'text-sky-700' if (sectors.get('ditches', {}).get('depth_in', 0) or 0) > 0 else 'text-slate-400'}">
-              {sectors.get('ditches', {}).get('depth_in', 0) if sectors.get('ditches', {}).get('depth_in', 0) is not None else 'Unknown'}" Water ({sectors.get('ditches', {}).get('status', 'DRY')})
-            </span>
-          </div>
-          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-            <div class="bg-sky-500 h-full rounded-full transition-all" style="width: {min(100, max(2, int((sectors.get('ditches', {}).get('depth_in', 0) or 0) * 15)))}%"></div>
-          </div>
-        </div>
-
-        <!-- Sector 2: Road Apron / Culvert -->
-        <div>
-          <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-road text-amber-500 mr-1.5"></i> 2. Lower Residential Blocks — Allview / Hobday / Little Ave South (Elev: 4.15' MLLW / 2.51' NAVD88)</span>
-            <span class="font-mono font-semibold {'text-amber-700' if (sectors.get('road_apron', {}).get('depth_in', 0) or 0) > 0 else 'text-emerald-700'}">
-              {sectors.get('road_apron', {}).get('depth_in', 0) if sectors.get('road_apron', {}).get('depth_in', 0) is not None else 'Unknown'}" Water ({sectors.get('road_apron', {}).get('status', 'DRY')})
-            </span>
-          </div>
-          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-            <div class="{'bg-amber-500' if (sectors.get('road_apron', {}).get('depth_in', 0) or 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {min(100, max(2, int((sectors.get('road_apron', {}).get('depth_in', 0) or 0) * 15)))}%"></div>
-          </div>
-        </div>
-
-        <!-- Sector 3: Main Driveway -->
-        <div>
-          <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-car text-orange-500 mr-1.5"></i> 3. Daniel Ave Central Spine &amp; Julian St — Primary Route (Elev: 4.40' MLLW / 2.76' NAVD88)</span>
-            <span class="font-mono font-semibold {'text-orange-700 font-bold' if (sectors.get('main_driveway', {}).get('depth_in', 0) or 0) > 0 else 'text-emerald-700 font-bold'}">
-              {sectors.get('main_driveway', {}).get('depth_in', 0) if sectors.get('main_driveway', {}).get('depth_in', 0) is not None else 'Unknown'}" Water ({sectors.get('main_driveway', {}).get('status', 'DRY')})
-            </span>
-          </div>
-          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-            <div class="{'bg-orange-500' if (sectors.get('main_driveway', {}).get('depth_in', 0) or 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {min(100, max(2, int((sectors.get('main_driveway', {}).get('depth_in', 0) or 0) * 15)))}%"></div>
-          </div>
-        </div>
-
-        <!-- Sector 4: Residential Lawn -->
-        <div>
-          <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-tree text-emerald-600 mr-1.5"></i> 4. Upper Residential Grounds &amp; Northern Lots (Elev: 4.60' MLLW / 2.96' NAVD88)</span>
-            <span class="font-mono font-semibold {'text-red-700 font-bold' if (sectors.get('yard_lawn', {}).get('depth_in', 0) or 0) > 0 else 'text-emerald-700'}">
-              {sectors.get('yard_lawn', {}).get('depth_in', 0) if sectors.get('yard_lawn', {}).get('depth_in', 0) is not None else 'Unknown'}" Water ({sectors.get('yard_lawn', {}).get('status', 'DRY')})
-            </span>
-          </div>
-          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-            <div class="{'bg-red-500' if (sectors.get('yard_lawn', {}).get('depth_in', 0) or 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {min(100, max(2, int((sectors.get('yard_lawn', {}).get('depth_in', 0) or 0) * 15)))}%"></div>
-          </div>
-        </div>
-
-        <!-- Sector 5: Garage High Ground -->
-        <div>
-          <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-house text-blue-600 mr-1.5"></i> 5. River Road North &amp; Ridge High Ground Pads (Elev: 4.90' MLLW / 3.26' NAVD88)</span>
-            <span class="font-mono font-semibold {'text-red-700 font-bold' if (sectors.get('garage_foundation', {}).get('depth_in', 0) or 0) > 0 else 'text-emerald-700'}">
-              {sectors.get('garage_foundation', {}).get('depth_in', 0) if sectors.get('garage_foundation', {}).get('depth_in', 0) is not None else 'Unknown'}" Water ({sectors.get('garage_foundation', {}).get('status', 'SAFE')})
-            </span>
-          </div>
-          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-            <div class="{'bg-red-600' if (sectors.get('garage_foundation', {}).get('depth_in', 0) or 0) > 0 else 'bg-emerald-500'} h-full rounded-full transition-all" style="width: {min(100, max(2, int((sectors.get('garage_foundation', {}).get('depth_in', 0) or 0) * 15)))}%"></div>
-          </div>
-        </div>
+      <!-- Street Cards Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        {street_cards_html}
       </div>
 
-      <!-- Community Street Passability Board -->
-      <div class="pt-5 border-t border-slate-200">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-            <i class="fa-solid fa-route text-sky-600"></i>
-            Modeled street inundation &amp; elevation estimates
-          </h3>
-          <span class="text-xs text-slate-500">Mobjack Bay Estates &amp; Blackwater Road Network</span>
+      <!-- Sector Progress Bars in Progressive Disclosure -->
+      <details class="pt-2 text-xs text-slate-600 border-t border-slate-100">
+        <summary class="font-bold text-sky-700 cursor-pointer hover:underline py-1 flex items-center gap-1.5">
+          <i class="fa-solid fa-stairs text-sky-600"></i>
+          <span>View Property Sector LiDAR Cross-Section (Ditches, Driveway, Lawn, Garage High Ground)</span>
+        </summary>
+        <div class="space-y-3.5 pt-3 mt-2">
+          {sector_bars_html}
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {street_cards_html}
-        </div>
-      </div>
+      </details>
     </section>
 
-    </details>
+    <!-- 6. ENVIRONMENTAL SENSORS & PROSPECTIVE MODEL VERIFICATION -->
+    <details class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+      <summary class="text-base font-bold text-slate-900 cursor-pointer flex items-center justify-between">
+        <span class="flex items-center gap-2">
+          <i class="fa-solid fa-gauge-high text-sky-600"></i>
+          Regional Weather, Tidal Forcing &amp; Sensor Telemetry
+        </span>
+        <span class="text-xs font-semibold text-sky-600 hover:underline">Toggle Telemetry</span>
+      </summary>
+      <div class="pt-4 space-y-6">
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
+          <!-- Card 1: Yorktown Winds -->
+          <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+              <span>Yorktown Winds</span>
+              <i class="fa-solid fa-wind text-sky-500"></i>
+            </div>
+            <div class="text-2xl font-black text-slate-900 font-mono">
+              {wind_spd} <span class="text-xs font-semibold text-slate-500">mph</span>
+            </div>
+            <div class="text-[11px] text-slate-600 flex items-center justify-between">
+              <span>From {wind_dir} ({wind_deg}&deg;)</span>
+              <span class="text-slate-400">G: {wind_gst} mph</span>
+            </div>
+          </div>
 
-    {resident_ui.monitoring(status)}
+          <!-- Card 2: Along-Bay Wind Vector -->
+          <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+              <span>Along-Bay Vector</span>
+              <i class="fa-solid fa-compass text-blue-500"></i>
+            </div>
+            <div class="text-2xl font-black font-mono {'text-amber-600' if (along_bay if finite_number(along_bay) else 0) > 10 else 'text-slate-900'}">
+              {along_bay} <span class="text-xs font-semibold text-slate-500">mph</span>
+            </div>
+            <div class="text-[11px] text-slate-500 truncate" title="Along-bay wind stress">
+              {'Data unavailable' if not finite_number(along_bay) else 'Forcing water into Mobjack' if along_bay > 0 else 'Blowing water out to Atlantic'}
+            </div>
+          </div>
 
-    <!-- 6. REAL-TIME SENSOR NETWORK & BAY HYDRAULIC GRADIENT -->
-    <details><summary>Weather &amp; regional gauge details</summary>
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
-      <!-- Card 1: Yorktown Winds -->
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
-        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-          <span>Yorktown Winds</span>
-          <i class="fa-solid fa-wind text-sky-500"></i>
-        </div>
-        <div class="text-2xl font-black text-slate-900 font-mono">
-          {wind_spd} <span class="text-xs font-semibold text-slate-500">mph</span>
-        </div>
-        <div class="text-[11px] text-slate-600 flex items-center justify-between">
-          <span>From {wind_dir} ({wind_deg}&deg;)</span>
-          <span class="text-slate-400">G: {wind_gst} mph</span>
-        </div>
+          <!-- Card 3: Barometric Pressure -->
+          <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+              <span>Barometer</span>
+              <i class="fa-solid fa-gauge-high text-indigo-500"></i>
+            </div>
+            <div class="text-2xl font-black text-slate-900 font-mono">
+              {baro} <span class="text-xs font-semibold text-slate-500">mb</span>
+            </div>
+            <div class="text-[11px] text-slate-500 truncate">
+              {'Data unavailable' if not finite_number(baro) else 'Low pressure (water rising)' if baro < 1010 else 'Normal atmospheric pressure'}
+            </div>
+          </div>
+
+          <!-- Card 4: North Bay Surge (Windmill Point) -->
+          <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+              <span>North Bay Surge</span>
+              <i class="fa-solid fa-water-ladder text-cyan-500"></i>
+            </div>
+            <div class="text-2xl font-black font-mono {'text-amber-600' if (surge if finite_number(surge) else 0) > 1.0 else 'text-slate-900'}">
+              +{surge} <span class="text-xs font-semibold text-slate-500">ft</span>
+            </div>
+            <div class="text-[11px] text-slate-500 truncate" title="Windmill Point (8636580)">
+              Windmill Pt (8636580)
+            </div>
+          </div>
+
+          <!-- Card 5: South Bay Surge (Sewells Point) -->
+          <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+              <span>South Bay Surge</span>
+              <i class="fa-solid fa-anchor text-blue-600"></i>
+            </div>
+            <div class="text-2xl font-black font-mono {'text-amber-600' if (sw_surge if finite_number(sw_surge) else 0) > 1.0 else 'text-slate-900'}">
+              +{sw_surge} <span class="text-xs font-semibold text-slate-500">ft</span>
+            </div>
+            <div class="text-[11px] text-slate-500 truncate" title="Sewells Point / Norfolk (8638610)">
+              Sewells Pt (8638610)
+            </div>
+          </div>
+
+          <!-- Card 6: Bay Hydraulic Slope -->
+          <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+              <span>Bay Hydraulic Slope</span>
+              <i class="fa-solid fa-arrows-left-right-to-line text-emerald-600"></i>
+            </div>
+            <div class="text-2xl font-black font-mono {'text-amber-600' if (bay_grad if finite_number(bay_grad) else 0) >= 0.20 else 'text-slate-900'}">
+              {'+' if (bay_grad if finite_number(bay_grad) else 0) > 0 else ''}{bay_grad} <span class="text-xs font-semibold text-slate-500">ft</span>
+            </div>
+            <div class="text-[11px] text-slate-500 truncate" title="{bay_dir}">
+              {'South Inflow Head' if (bay_grad if finite_number(bay_grad) else 0) >= 0.20 else ('North Gradient' if (bay_grad if finite_number(bay_grad) else 0) <= -0.20 else 'Equilibrium')} (46 mi)
+            </div>
+          </div>
+        </section>
+
+        {resident_ui.monitoring(status)}
       </div>
-
-      <!-- Card 2: Along-Bay Wind Vector -->
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
-        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-          <span>Along-Bay Vector</span>
-          <i class="fa-solid fa-compass text-blue-500"></i>
-        </div>
-        <div class="text-2xl font-black font-mono {'text-amber-600' if (along_bay if finite_number(along_bay) else 0) > 10 else 'text-slate-900'}">
-          {along_bay} <span class="text-xs font-semibold text-slate-500">mph</span>
-        </div>
-        <div class="text-[11px] text-slate-500 truncate" title="Along-bay wind stress">
-          {'Data unavailable' if not finite_number(along_bay) else 'Forcing water into Mobjack' if along_bay > 0 else 'Blowing water out to Atlantic'}
-        </div>
-      </div>
-
-      <!-- Card 3: Barometric Pressure -->
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
-        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-          <span>Barometer</span>
-          <i class="fa-solid fa-gauge-high text-indigo-500"></i>
-        </div>
-        <div class="text-2xl font-black text-slate-900 font-mono">
-          {baro} <span class="text-xs font-semibold text-slate-500">mb</span>
-        </div>
-        <div class="text-[11px] text-slate-500 truncate">
-          {'Data unavailable' if not finite_number(baro) else 'Low pressure (water rising)' if baro < 1010 else 'Normal atmospheric pressure'}
-        </div>
-      </div>
-
-      <!-- Card 4: North Bay Surge (Windmill Point) -->
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
-        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-          <span>North Bay Surge</span>
-          <i class="fa-solid fa-water-ladder text-cyan-500"></i>
-        </div>
-        <div class="text-2xl font-black font-mono {'text-amber-600' if (surge if finite_number(surge) else 0) > 1.0 else 'text-slate-900'}">
-          +{surge} <span class="text-xs font-semibold text-slate-500">ft</span>
-        </div>
-        <div class="text-[11px] text-slate-500 truncate" title="Windmill Point (8636580)">
-          Windmill Pt (8636580)
-        </div>
-      </div>
-
-      <!-- Card 5: South Bay Surge (Sewells Point) -->
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
-        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-          <span>South Bay Surge</span>
-          <i class="fa-solid fa-anchor text-blue-600"></i>
-        </div>
-        <div class="text-2xl font-black font-mono {'text-amber-600' if (sw_surge if finite_number(sw_surge) else 0) > 1.0 else 'text-slate-900'}">
-          +{sw_surge} <span class="text-xs font-semibold text-slate-500">ft</span>
-        </div>
-        <div class="text-[11px] text-slate-500 truncate" title="Sewells Point / Norfolk (8638610)">
-          Sewells Pt (8638610)
-        </div>
-      </div>
-
-      <!-- Card 6: Bay Hydraulic Slope -->
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
-        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-          <span>Bay Hydraulic Slope</span>
-          <i class="fa-solid fa-arrows-left-right-to-line text-emerald-600"></i>
-        </div>
-        <div class="text-2xl font-black font-mono {'text-amber-600' if (bay_grad if finite_number(bay_grad) else 0) >= 0.20 else 'text-slate-900'}">
-          {'+' if (bay_grad if finite_number(bay_grad) else 0) > 0 else ''}{bay_grad} <span class="text-xs font-semibold text-slate-500">ft</span>
-        </div>
-        <div class="text-[11px] text-slate-500 truncate" title="{bay_dir}">
-          {'South Inflow Head' if (bay_grad if finite_number(bay_grad) else 0) >= 0.20 else ('North Gradient' if (bay_grad if finite_number(bay_grad) else 0) <= -0.20 else 'Equilibrium')} (46 mi)
-        </div>
-      </div>
-    </section>
-
     </details>
 
     <!-- 7. REAL-TIME MOBILE FLOOD ALERTS CALLOUT -->
