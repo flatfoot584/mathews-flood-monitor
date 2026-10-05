@@ -1,6 +1,6 @@
 {
-  "updated_at_utc": "2026-10-05T01:13:25+00:00",
-  "issued_rows": 66,
+  "updated_at_utc": "2026-10-05T01:43:37+00:00",
+  "issued_rows": 72,
   "results": [
     {
       "lead_hours": 1,
@@ -12,8 +12,8 @@
     },
     {
       "lead_hours": 3,
-      "n": 7,
-      "mae_ft": 0.36285714285714266,
+      "n": 8,
+      "mae_ft": 0.38124999999999987,
       "high_water_n": 0,
       "misses": 0,
       "false_alarms": 0
