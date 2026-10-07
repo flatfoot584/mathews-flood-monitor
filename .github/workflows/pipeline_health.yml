@@ -27,7 +27,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       NTFY_SERVER: ${{ vars.NTFY_SERVER || 'https://ntfy.sh' }}
       NTFY_TOPIC: ${{ vars.NTFY_TOPIC || 'mathews-flood-23128' }}
-      NTFY_HEALTH_TOPIC: ${{ vars.NTFY_HEALTH_TOPIC }}
+      NTFY_HEALTH_TOPIC: ${{ vars.NTFY_HEALTH_TOPIC || 'mathews-flood-ops-23128' }}
     steps:
       # Never run this behind the collection pipeline's regression checks.
       # Always check trusted main, not the workflow_run event's arbitrary SHA.

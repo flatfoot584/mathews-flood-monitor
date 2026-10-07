@@ -22,6 +22,7 @@ WORKFLOW = 'update_flood_monitor.yml'
 STATE_BRANCH = 'monitor-health-state'
 STATE_FILE = 'pipeline_health_state.json'
 REMINDER_HOURS = 6
+DEFAULT_HEALTH_TOPIC = 'mathews-flood-ops-23128'
 
 
 def read_json(url, token=None, method='GET', payload=None):
@@ -167,7 +168,7 @@ def main():
         path = Path(args.state_file)
         state = json.loads(path.read_text()) if path.exists() else {}
         save = lambda value: atomic_write_json(path, value)
-    topic = os.getenv('NTFY_HEALTH_TOPIC') or os.getenv('NTFY_TOPIC', DEFAULT_NTFY_TOPIC)
+    topic = os.getenv('NTFY_HEALTH_TOPIC') or DEFAULT_HEALTH_TOPIC
     notify_transition(health, state, save, topic, dry_run=args.dry_run)
     # Attempt a refresh only for scheduler gaps, never loop on failing code or
     # create parallel updates. The run-history timestamp supplies a cooldown.

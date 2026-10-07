@@ -122,6 +122,19 @@ class HealthTests(unittest.TestCase):
         self.assertIn("cache:'no-cache'", worker)
         self.assertIn("ignoreSearch:event.request.mode==='navigate'", worker)
 
+    def test_health_topic_is_separate_from_weather_alert_channel(self):
+        workflow = Path('.github/workflows/pipeline_health.yml').read_text()
+        self.assertEqual(health.DEFAULT_HEALTH_TOPIC, 'mathews-flood-ops-23128')
+        self.assertNotEqual(health.DEFAULT_HEALTH_TOPIC, health.DEFAULT_NTFY_TOPIC)
+        self.assertIn("NTFY_HEALTH_TOPIC: ${{ vars.NTFY_HEALTH_TOPIC || 'mathews-flood-ops-23128' }}", workflow)
+        # Verify resolution with and without env override
+        with patch.dict('os.environ', {}, clear=True):
+            resolved = health.os.getenv('NTFY_HEALTH_TOPIC') or health.DEFAULT_HEALTH_TOPIC
+            self.assertEqual(resolved, 'mathews-flood-ops-23128')
+        with patch.dict('os.environ', {'NTFY_HEALTH_TOPIC': 'custom-ops-channel'}, clear=True):
+            resolved = health.os.getenv('NTFY_HEALTH_TOPIC') or health.DEFAULT_HEALTH_TOPIC
+            self.assertEqual(resolved, 'custom-ops-channel')
+
 
 if __name__ == '__main__':
     unittest.main()
