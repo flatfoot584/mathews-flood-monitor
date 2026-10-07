@@ -178,7 +178,7 @@ class HealthTests(unittest.TestCase):
     def test_update_workflow_concurrency_and_deploy_guard(self):
         wf = Path('.github/workflows/update_flood_monitor.yml').read_text()
         self.assertIn('cancel-in-progress: true', wf)
-        self.assertIn("if: !cancelled() && needs.update.outputs.artifact_ready == 'true'", wf)
+        self.assertIn("if: ${{ !cancelled() && needs.update.outputs.artifact_ready == 'true' }}", wf)
 
 
 if __name__ == '__main__':
