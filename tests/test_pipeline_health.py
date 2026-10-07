@@ -135,6 +135,52 @@ class HealthTests(unittest.TestCase):
             resolved = health.os.getenv('NTFY_HEALTH_TOPIC') or health.DEFAULT_HEALTH_TOPIC
             self.assertEqual(resolved, 'custom-ops-channel')
 
+    def test_classify_identifies_stalled_run_with_id_and_age(self):
+        status = fixture()
+        status['status_generated_at_utc'] = (self.now - timedelta(hours=3)).isoformat()
+        stalled = {
+            'id': 123456789,
+            'status': 'waiting',
+            'created_at': (self.now - timedelta(minutes=75)).isoformat(),
+            'html_url': 'https://github.com/flatfoot584/mathews-flood-monitor/actions/runs/123456789'
+        }
+        res = health.classify(status, latest_run=stalled, now=self.now, stalled_run=stalled)
+        self.assertEqual(res['kind'], 'overdue')
+        self.assertEqual(res['key'], 'pipeline_stalled')
+        self.assertIn('123456789', res['detail'])
+        self.assertIn('75 minutes', res['detail'])
+        self.assertEqual(res['url'], 'https://github.com/flatfoot584/mathews-flood-monitor/actions/runs/123456789')
+
+    def test_cancel_stalled_run_attempts_force_cancel_then_cancel(self):
+        class MockStore:
+            def __init__(self, fail_first=False):
+                self.calls = []
+                self.fail_first = fail_first
+            def api(self, path, method='GET', payload=None):
+                self.calls.append((path, method))
+                if self.fail_first and 'force-cancel' in path:
+                    raise RuntimeError('force-cancel not supported')
+                return {}
+
+        store1 = MockStore(fail_first=False)
+        self.assertTrue(health.cancel_stalled_run(store1, 999))
+        self.assertEqual(store1.calls, [('/actions/runs/999/force-cancel', 'POST')])
+
+        store2 = MockStore(fail_first=True)
+        self.assertTrue(health.cancel_stalled_run(store2, 888))
+        self.assertEqual(store2.calls, [
+            ('/actions/runs/888/force-cancel', 'POST'),
+            ('/actions/runs/888/cancel', 'POST')
+        ])
+
+        self.assertFalse(health.cancel_stalled_run(store1, None))
+
+    def test_update_workflow_concurrency_and_deploy_guard(self):
+        wf = Path('.github/workflows/update_flood_monitor.yml').read_text()
+        self.assertIn('cancel-in-progress: true', wf)
+        self.assertIn("if: !cancelled() && needs.update.outputs.artifact_ready == 'true'", wf)
+
 
 if __name__ == '__main__':
     unittest.main()
+

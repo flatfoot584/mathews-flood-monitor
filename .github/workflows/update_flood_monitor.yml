@@ -19,7 +19,7 @@ permissions:
 
 concurrency:
   group: flood-pipeline
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   update:
@@ -81,7 +81,7 @@ jobs:
           echo 'Required alert delivery/configuration failed. Portal artifact was still prepared.'
           exit 1
   deploy:
-    if: always() && needs.update.outputs.artifact_ready == 'true'
+    if: !cancelled() && needs.update.outputs.artifact_ready == 'true'
     needs: update
     runs-on: ubuntu-24.04
     timeout-minutes: 5

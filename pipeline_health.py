@@ -41,7 +41,7 @@ def read_json(url, token=None, method='GET', payload=None):
         return json.loads(content) if content else {}
 
 
-def classify(status, latest_run=None, failed_steps=(), now=None):
+def classify(status, latest_run=None, failed_steps=(), now=None, stalled_run=None):
     """Return diagnostic categories plus concrete, bounded next actions."""
     now = now or datetime.now(timezone.utc)
     run = latest_run or {}
@@ -64,9 +64,20 @@ def classify(status, latest_run=None, failed_steps=(), now=None):
     age = (now - generated).total_seconds() / 60 if generated else None
     if age is None or age > 90 or age < -5:
         detail = ('Website update age: %.0f minutes. ' % age) if age is not None else 'Website update timestamp missing. '
-        detail += ('A pipeline run is queued or running; wait for its result. ' if run.get('status') in ('queued', 'in_progress', 'waiting', 'pending', 'requested') else
-                   'Scheduled updates are overdue. GitHub schedules can be delayed; manually run the update workflow if needed. ')
-        return {'kind': 'overdue', 'key': 'overdue', 'detail': detail + 'Last saved forecasts remain available with age warnings.', 'url': link}
+        if stalled_run:
+            s_created = parse_timestamp(stalled_run.get('created_at'))
+            s_age = (now - s_created).total_seconds() / 60 if s_created else 0
+            detail += ('A pipeline run has stalled (ID %s, status: %s, age: %.0f minutes). ' %
+                       (stalled_run.get('id', 'unknown'), stalled_run.get('status', 'unknown'), s_age))
+            key = 'pipeline_stalled'
+            link = stalled_run.get('html_url') or link
+        elif run.get('status') in ('queued', 'in_progress', 'waiting', 'pending', 'requested'):
+            detail += 'A pipeline run is queued or running; wait for its result. '
+            key = 'overdue'
+        else:
+            detail += 'Scheduled updates are overdue. GitHub schedules can be delayed; manually run the update workflow if needed. '
+            key = 'overdue'
+        return {'kind': 'overdue', 'key': key, 'detail': detail + 'Last saved forecasts remain available with age warnings.', 'url': link}
     kind = 'gauge_stale' if not quality['current_available'] else 'forecast_incomplete'
     return {'kind': kind, 'key': kind, 'detail': ' '.join(quality['reasons']) +
             ' Check the collection run and upstream NOAA/NWS services. Optional Fort Monroe or warning-feed failures do not stop the existing flood channel.', 'url': link}
@@ -135,6 +146,18 @@ class GitHubState:
         self.sha = result['content']['sha']
 
 
+def cancel_stalled_run(store, run_id):
+    if not run_id:
+        return False
+    for endpoint in ('force-cancel', 'cancel'):
+        try:
+            store.api('/actions/runs/' + str(run_id) + '/' + endpoint, 'POST')
+            return True
+        except Exception:
+            pass
+    return False
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--github-state', action='store_true')
@@ -145,8 +168,16 @@ def main():
     repository = os.getenv('GITHUB_REPOSITORY', 'flatfoot584/mathews-flood-monitor')
     token = os.getenv('GH_TOKEN') or os.getenv('GITHUB_TOKEN')
     store = GitHubState(repository, token)
-    runs = store.api('/actions/workflows/' + WORKFLOW + '/runs?branch=main&per_page=1')['workflow_runs']
+    now = datetime.now(timezone.utc)
+    runs = store.api('/actions/workflows/' + WORKFLOW + '/runs?branch=main&per_page=5')['workflow_runs']
     latest = runs[0] if runs else {}
+    stalled_run = None
+    for r in runs:
+        if r.get('status') in ('queued', 'in_progress', 'waiting', 'pending', 'requested'):
+            r_created = parse_timestamp(r.get('created_at'))
+            if r_created and (now - r_created).total_seconds() > 45 * 60:
+                stalled_run = r
+                break
     failed_steps = []
     if latest.get('conclusion') in ('failure', 'timed_out', 'cancelled', 'action_required'):
         jobs = store.api('/actions/runs/' + str(latest['id']) + '/jobs')['jobs']
@@ -154,11 +185,11 @@ def main():
             steps = [s['name'] for s in job.get('steps', []) if s.get('conclusion') in ('failure', 'timed_out', 'cancelled')]
             failed_steps.extend(steps or ([job['name']] if job.get('conclusion') == 'failure' else []))
     try:
-        stamp = int(datetime.now(timezone.utc).timestamp())
+        stamp = int(now.timestamp())
         status = read_json(PUBLIC_PORTAL_URL + 'latest_status.json?health=' + str(stamp))
     except (OSError, ValueError):
         status = None
-    health = classify(status, latest, failed_steps)
+    health = classify(status, latest, failed_steps, now=now, stalled_run=stalled_run)
     print(json.dumps(health, indent=2))
     if args.github_state:
         if not token:
@@ -169,18 +200,26 @@ def main():
         state = json.loads(path.read_text()) if path.exists() else {}
         save = lambda value: atomic_write_json(path, value)
     topic = os.getenv('NTFY_HEALTH_TOPIC') or DEFAULT_HEALTH_TOPIC
-    notify_transition(health, state, save, topic, dry_run=args.dry_run)
-    # Attempt a refresh only for scheduler gaps, never loop on failing code or
+    notify_transition(health, state, save, topic, now=now, dry_run=args.dry_run)
+    # Attempt a refresh only for scheduler gaps or stalled runs, never loop on failing code or
     # create parallel updates. The run-history timestamp supplies a cooldown.
     created = parse_timestamp(latest.get('created_at'))
-    minutes = (datetime.now(timezone.utc) - created).total_seconds() / 60 if created else 1e6
-    if (args.retry_overdue and health['kind'] == 'overdue' and minutes > 90
-            and latest.get('status') not in ('queued', 'in_progress', 'waiting', 'pending', 'requested')):
-        if args.dry_run:
-            print('DRY-RUN: would request an overdue pipeline refresh.')
-        else:
-            store.api('/actions/workflows/' + WORKFLOW + '/dispatches', 'POST', {'ref': 'main'})
-            print('Requested an overdue pipeline refresh.')
+    minutes = (now - created).total_seconds() / 60 if created else 1e6
+    if args.retry_overdue and health['kind'] == 'overdue':
+        if stalled_run:
+            run_id = stalled_run.get('id')
+            if args.dry_run:
+                print('DRY-RUN: would cancel stalled pipeline run %s and request a refresh.' % run_id)
+            else:
+                cancel_stalled_run(store, run_id)
+                store.api('/actions/workflows/' + WORKFLOW + '/dispatches', 'POST', {'ref': 'main'})
+                print('Cleared stalled pipeline run %s and requested an overdue refresh.' % run_id)
+        elif minutes > 90 and latest.get('status') not in ('queued', 'in_progress', 'waiting', 'pending', 'requested'):
+            if args.dry_run:
+                print('DRY-RUN: would request an overdue pipeline refresh.')
+            else:
+                store.api('/actions/workflows/' + WORKFLOW + '/dispatches', 'POST', {'ref': 'main'})
+                print('Requested an overdue pipeline refresh.')
 
 
 if __name__ == '__main__':
