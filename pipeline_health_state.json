@@ -1,4 +1,4 @@
 {
-  "key": "pipeline_failed:Fetch timestamped observations and forecasts",
-  "notified_at_utc": "2026-10-07T14:46:36.761308+00:00"
+  "key": "gauge_stale",
+  "notified_at_utc": "2026-10-07T14:49:00.026616+00:00"
 }
