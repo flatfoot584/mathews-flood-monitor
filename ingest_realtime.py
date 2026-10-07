@@ -1113,7 +1113,9 @@ def main():
     log("-" * 72)
     log("MICRO-TOPOGRAPHY SECTOR STATUS:")
     for k, v in curr["site_sectors"].items():
-        log(f"  • {v['name']:<36}: {v['depth_in']:>4.1f}\" [{v['status']}]")
+        depth_val = v.get("depth_in")
+        depth_str = f"{depth_val:>4.1f}\"" if depth_val is not None else " N/A "
+        log(f"  • {v['name']:<36}: {depth_str} [{v['status']}]")
     log("-" * 72)
     log("48-HOUR HAZARD OUTLOOK:")
     log(f"  Peak Hybrid Stage: {outl['peak_forecast_stage_mllw_ft']} ft at {outl['peak_forecast_stage_time_local']}")
