@@ -1,4 +1,4 @@
 {
-  "key": "healthy",
-  "notified_at_utc": "2026-10-07T13:53:00.855572+00:00"
+  "key": "pipeline_failed:Fetch timestamped observations and forecasts",
+  "notified_at_utc": "2026-10-07T14:46:36.761308+00:00"
 }
