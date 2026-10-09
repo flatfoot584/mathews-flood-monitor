@@ -1,11 +1,11 @@
 {
   "active_event": true,
   "last_notified_tier": 3,
-  "last_notified_peak_stage": 4.38,
-  "last_notified_peak_time": "2026-10-11 09:00:00 EDT",
+  "last_notified_peak_stage": 4.89,
+  "last_notified_peak_time": "2026-10-11 10:00:00 EDT",
   "two_hour_warning_sent_for": "",
-  "last_alert_type": "advance_warning",
-  "last_alert_timestamp_utc": "2026-10-09T13:35:05.546146+00:00",
-  "last_alert_timestamp_local": "2026-10-09 09:35:05 EDT",
+  "last_alert_type": "forecast_escalation",
+  "last_alert_timestamp_utc": "2026-10-09T19:26:21.118554+00:00",
+  "last_alert_timestamp_local": "2026-10-09 15:26:20 EDT",
   "event_peak_time": "2026-10-11 09:00:00 EDT"
 }
