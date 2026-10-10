@@ -239,75 +239,6 @@ def street_picker(status):
     options = ''.join(f'<option value="{e(n)}">{e(n)}</option>' for n in names)
     return f'''<section class="resident-card street-picker-card" aria-label="Street flood lookup"><h2>Will my street flood?</h2><p class="muted">Pick your street for a plain-English forecast.</p><label class="street-picker-label" for="street-picker">Choose your street</label><select id="street-picker" class="street-picker-select"><option value="">— Select a street —</option>{options}</select><div id="street-result" class="street-result" aria-live="polite"></div><script type="application/json" id="street-forecast">{payload}</script></section>'''
 
-def story_timeline(status):
-    timeline = status.get('forecast_hourly_timeline', []) or []
-    gen = status.get('status_generated_at_utc')
-    first, peak, last = _flood_timing(status)
-    ditch_first = None
-    for r in timeline:
-        d = r.get('sector_ditches_depth_in')
-        if finite_number(d) and d > 0:
-            ditch_first = r
-            break
-    steps = []
-    if ditch_first:
-        steps.append(('\U0001F319', f"{rel_when(ditch_first.get('timestamp_local'), gen)} — ditches full",
-                      'Water fills roadside ditches and low swales.'))
-    if first and (not ditch_first or ditch_first.get('timestamp_local') != first.get('timestamp_local')):
-        steps.append(('\U0001F30A', f"{rel_when(first.get('timestamp_local'), gen)} — water on your street",
-                      'First modeled street flooding. Move cars before this.'))
-    if peak:
-        streets = peak.get('community_streets', {}) or {}
-        worst = max(((i.get('depth_in') if finite_number(i.get('depth_in')) else 0, str(n))
-                     for n, i in streets.items()), default=(0, None))
-        worst_txt = f", about {worst[0]:.0f} in on {worst[1]}" if worst[1] and worst[0] > 0 else ""
-        steps.append(('\U0001F6A8', f"{rel_when(peak.get('timestamp_local'), gen)} — worst of it{worst_txt}",
-                      'Highest water in this forecast. Never drive through floodwater.'))
-    if last and (not peak or last.get('timestamp_local') != peak.get('timestamp_local')):
-        steps.append(('\U0001F4C9', f"{rel_when(last.get('timestamp_local'), gen)} — receding",
-                      'Water is falling, but roads may still be unsafe.'))
-    if not steps:
-        steps.append(('✅', 'No flooding expected in the next 48 hours',
-                      'Water stays in ditches and marsh channels.'))
-    items = ''.join(
-        f'<li><span class="story-emoji" aria-hidden="true">{em}</span>'
-        f'<div><strong>{e(title)}</strong><p>{e(sub)}</p></div></li>'
-        for em, title, sub in steps)
-    return f'''<section class="resident-card" aria-label="Flood story timeline"><h2>How this unfolds</h2><ol class="story-timeline">{items}</ol></section>'''
-
-def action_checklist(status):
-    worst = _worst_tier(status)
-    first, _, _ = _flood_timing(status)
-    move_by = ''
-    if first:
-        dt = parse_timestamp(str(first.get('timestamp_local')))
-        if dt:
-            move_by = f" before {short_when((dt - timedelta(hours=1)).isoformat())}"
-    if worst >= 2:
-        items = ["Move vehicles to high ground NOW",
-                 "Do not drive through floodwater — turn around",
-                 "Charge phones and prepare for power outages",
-                 "Check on elderly neighbors"]
-    elif worst == 1:
-        items = [f"Move cars to high ground{move_by}",
-                 "Charge phones and devices",
-                 "Check on elderly neighbors",
-                 "Keep watching updates — conditions can change"]
-    elif worst == 0:
-        items = ["Know your street's flood threshold — try the street picker above",
-                 "Save the alerts page to your home screen",
-                 "No action needed right now"]
-    else:
-        items = ["Conditions can't be confirmed — check official forecasts",
-                 "Avoid driving through standing water"]
-    day = (parse_timestamp(str(status.get('status_generated_at_utc'))) or datetime.now(timezone.utc)).astimezone(EASTERN).strftime('%Y-%m-%d')
-    key = f"flood-checklist-t{worst}-{day}"
-    lis = ''.join(f'<li><label><input type="checkbox" data-idx="{i}"> <span>{e(t)}</span></label></li>'
-                  for i, t in enumerate(items))
-    return (f'''<section class="resident-card checklist-card" aria-label="Action checklist">'''
-            f'''<h2>What should I do right now?</h2>'''
-            f'''<ul class="action-checklist" data-checklist-key="{e(key)}">{lis}</ul></section>''')
-
 def summary(status):
     curr=status.get('last_available_current_conditions') or status.get('current_conditions',{});out=status.get('forecast_48h_outlook',{});q=status['data_quality']
     timeline=status.get('forecast_hourly_timeline',[])
@@ -421,8 +352,6 @@ def summary(status):
 <article class="resident-card {next_sl['class']}">{next_sl['badge']}<p class="eyebrow" data-age-label data-last-label="Last saved forecast · Model estimate">Next 48 hours · Model estimate</p><h2 data-age-label data-last-label="Last available forecast; check its dates">{e(next_label)}</h2><p class="resident-value">{number(peak,' ft',2)} <small>peak Ware River stage</small></p>{next_meter}<p><strong>{e(when(out.get('peak_forecast_stage_time_local')))}</strong></p><details><summary>Depth &amp; uncertainty</summary><p>{e(depth_description)}</p><p class="muted">{jargon('scenario-range','Scenario range')} {number(out.get('peak_forecast_stage_q10_ft'))} to {number(out.get('peak_forecast_stage_q90_ft'))} ft. Uncalibrated; not a guaranteed upper bound.</p>{anchor_html}</details></article></section>
 {street_picker(status)}
 <section data-current-safety class="resident-card {streets_sl['class']}">{streets_sl['badge']}<h2>Potentially affected streets</h2><p>{e(streets)}</p>{chips_html}{action_window_html}{high_ground_html}{compound_html}<details><summary>Estimated timing &amp; duration</summary><p>{e(timing)}</p></details><h3>What to do</h3><p><strong>{e(action)}</strong> Map colors and model estimates do not verify road safety for any vehicle.</p><a class="resident-button" href="alerts.html">Set up mobile alerts</a> <a href="guide.html">Understand flood estimates</a></section>
-{story_timeline(status)}
-{action_checklist(status)}
 {official(status)}'''
 
 def forecast_table(status):

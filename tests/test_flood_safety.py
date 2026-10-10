@@ -634,16 +634,10 @@ class ResidentUxTests(unittest.TestCase):
         self.assertIn('url=alerts.html', html_out)
         self.assertIn('Continue to mobile alerts setup', html_out)
 
-    def test_story_timeline_present_when_flooding(self):
+    def test_story_timeline_removed(self):
         page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])
-        self.assertIn('story-timeline', page)
-        self.assertIn('How this unfolds', page)
-        self.assertIn('worst of it', page)
-
-    def test_story_timeline_calm_when_no_flooding(self):
-        page = dashboard.build_index_html(fixture(), [], [])
-        self.assertIn('story-timeline', page)
-        self.assertIn('No flooding expected in the next 48 hours', page)
+        self.assertNotIn('story-timeline', page)
+        self.assertNotIn('How this unfolds', page)
 
     def test_fridge_card_removed(self):
         page = dashboard.build_index_html(fixture(), [], [])
@@ -668,13 +662,10 @@ class ResidentUxTests(unittest.TestCase):
         calm = dashboard.build_index_html(fixture(), [], [])
         self.assertIn('No flooding expected in the next 48 hours.', calm)
 
-    def test_action_checklist_present(self):
+    def test_action_checklist_removed(self):
         page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])
-        self.assertIn('action-checklist', page)
-        self.assertIn('data-checklist-key=', page)
-        self.assertIn('What should I do right now?', page)
-        calm = dashboard.build_index_html(fixture(), [], [])
-        self.assertIn('street picker above', calm)
+        self.assertNotIn('action-checklist', page)
+        self.assertNotIn('What should I do right now?', page)
 
     def test_alerts_page_one_tap_signup(self):
         page = dashboard.build_alerts_html(fixture())
