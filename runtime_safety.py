@@ -1,4 +1,5 @@
 """Shared data validity, risk, and atomic persistence helpers (standard library only)."""
+import csv
 import json
 import math
 import os
@@ -9,6 +10,15 @@ from zoneinfo import ZoneInfo
 UNKNOWN_TIER = -1
 MAX_DATA_AGE_MINUTES = 90
 EASTERN = ZoneInfo("America/New_York")
+
+# Forecast completeness policy: a 48-hour outlook is usable when at least this
+# many hours carry water, wind, and rainfall guidance, and no missing hour sits
+# near high water where it could hide a flood peak.
+FORECAST_WINDOW_HOURS = 48
+MIN_FORECAST_COMPLETE_HOURS = 44
+ACTION_STAGE_FT = 4.0
+GAP_HAZARD_MARGIN_FT = 0.3
+GAP_NEIGHBORHOOD_HOURS = 3
 
 
 def finite_number(value):
@@ -40,6 +50,34 @@ def is_recent(value, now=None, max_minutes=MAX_DATA_AGE_MINUTES):
     return parsed is not None and -5 <= (now - parsed).total_seconds() / 60 <= max_minutes
 
 
+def _gaps_hide_hazard(timeline, start):
+    """True when a missing forecast hour sits near high water and could hide a flood peak.
+
+    A handful of missing hours is tolerable only when the surrounding guidance is
+    safely below the action stage. If any hour within GAP_NEIGHBORHOOD_HOURS of a
+    gap shows stage within GAP_HAZARD_MARGIN_FT of the action stage, the gap is
+    treated as potentially hiding a flood crest.
+    """
+    stage_by_hour = {}
+    for row in timeline:
+        stamp = parse_timestamp(row.get("timestamp_utc"))
+        stage = row.get("forecast_stage_mllw_ft")
+        if stamp is None or not finite_number(stage):
+            continue
+        hour = stamp.astimezone(timezone.utc).replace(minute=0, second=0, microsecond=0)
+        if start <= hour < start + timedelta(hours=FORECAST_WINDOW_HOURS):
+            stage_by_hour[hour] = stage
+    for offset in range(FORECAST_WINDOW_HOURS):
+        hour = start + timedelta(hours=offset)
+        if hour in stage_by_hour:
+            continue
+        nearby = [s for h, s in stage_by_hour.items()
+                  if abs((h - hour).total_seconds()) <= GAP_NEIGHBORHOOD_HOURS * 3600]
+        if nearby and max(nearby) >= ACTION_STAGE_FT - GAP_HAZARD_MARGIN_FT:
+            return True
+    return False
+
+
 def assess_status(status, now=None):
     """Recheck timestamps at use time; never infer healthy data from tier zero."""
     now = now or datetime.now(timezone.utc)
@@ -61,7 +99,9 @@ def assess_status(status, now=None):
             if row.get("weather_available") is True and row.get("precipitation_available") is True:
                 valid_hours.add(hour)
     recent_generation = is_recent(generated, now)
-    forecast_ok = recent_generation and len(valid_hours) == 48
+    complete_enough = len(valid_hours) >= MIN_FORECAST_COMPLETE_HOURS
+    gaps_hide_hazard = _gaps_hide_hazard(timeline, start)
+    forecast_ok = recent_generation and complete_enough and not gaps_hide_hazard
     source_health = status.get("source_health", {})
     if any(v.get("required") and not v.get("available") for v in source_health.values()):
         forecast_ok = False
@@ -70,7 +110,13 @@ def assess_status(status, now=None):
         reasons.append("Current gauge observation is missing or older than 90 minutes.")
     if not recent_generation:
         reasons.append("Pipeline update is missing or older than 90 minutes.")
-    if not forecast_ok:
+    if not complete_enough:
+        reasons.append(
+            f"Only {len(valid_hours)} of {FORECAST_WINDOW_HOURS} forecast hours carry complete "
+            f"water, wind, and rainfall guidance (need {MIN_FORECAST_COMPLETE_HOURS}).")
+    elif gaps_hide_hazard:
+        reasons.append("Missing forecast hours sit near high water; a flood peak could be hidden.")
+    if not forecast_ok and complete_enough and not gaps_hide_hazard:
         reasons.append("A complete fresh 48-hour water, wind, and rainfall forecast is unavailable.")
     return {
         "current_available": current_ok,
@@ -108,6 +154,28 @@ def atomic_write_json(path, payload):
         with os.fdopen(fd, "w", encoding="utf-8") as stream:
             json.dump(payload, stream, indent=2, allow_nan=False)
             stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+
+
+def atomic_write_csv(path, rows, fieldnames):
+    """Replace a CSV file atomically via temp file + rename.
+
+    A crash mid-write can never leave a truncated archive behind; readers
+    always see either the old or the new complete file.
+    """
+    parent = os.path.dirname(os.path.abspath(path))
+    os.makedirs(parent, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix=".pending-", suffix=".csv", dir=parent)
+    try:
+        with os.fdopen(fd, "w", newline="", encoding="utf-8") as stream:
+            writer = csv.DictWriter(stream, fieldnames=fieldnames, restval="", extrasaction="ignore")
+            writer.writeheader()
+            writer.writerows(rows)
             stream.flush()
             os.fsync(stream.fileno())
         os.replace(temporary, path)
