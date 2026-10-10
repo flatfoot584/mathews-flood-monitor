@@ -273,7 +273,7 @@ def build_index_html(status, obs_rows, fcst_rows):
               </span>
             </div>
             <div class="flex items-baseline justify-between text-xs text-slate-500 font-mono">
-              <span class="text-[11px] text-slate-400">Invert: {st_inv_mllw}' MLLW</span>
+              <span class="text-[11px] text-slate-400">Elev: {st_inv_mllw}' MLLW</span>
               <span class="font-bold text-slate-800 font-mono">{st_depth}" Water</span>
             </div>
           </div>
@@ -477,21 +477,6 @@ def build_index_html(status, obs_rows, fcst_rows):
     .font-mono {{ font-family: 'JetBrains Mono', monospace; }}
     #flood-map {{ height: 500px; z-index: 10; }}
     .leaflet-popup-content-wrapper {{ border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15); }}
-    .street-map-label {{
-      background: rgba(15, 23, 42, 0.90);
-      color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.45);
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      padding: 1px 5px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.35);
-      white-space: nowrap;
-      pointer-events: none;
-    }}
-    .street-map-label::before {{ display: none !important; }}
-    .leaflet-tooltip-pane .leaflet-tooltip {{ border: none; background: transparent; box-shadow: none; }}
   </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased">
@@ -625,6 +610,10 @@ def build_index_html(status, obs_rows, fcst_rows):
           <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
             Hyper-local USGS 1-meter LiDAR elevation thresholds across Mobjack Bay Estates &amp; Blackwater roads.
           </p>
+          <div class="mt-2.5 text-xs text-slate-600 bg-sky-50/80 border border-sky-200/80 rounded-xl p-2.5 flex items-start gap-2">
+            <i class="fa-solid fa-circle-info text-sky-600 mt-0.5 shrink-0"></i>
+            <span><strong>Road Surface vs. Roadside Ditches:</strong> Modeled street depths reflect water on the traveled roadway and key access dips. Roadside ditch culverts sit 5–8 inches lower than paved road crowns and front yards, which is why roadside ditches fill with water well before roads or yards are covered.</span>
+          </div>
         </div>
         <div class="text-xs font-mono bg-amber-50 text-amber-900 border border-amber-200/80 px-3 py-1.5 rounded-lg font-semibold self-start sm:self-auto shadow-xs">
           Ditch Tipping Point: 3.99' MLLW
@@ -1046,14 +1035,21 @@ def build_index_html(status, obs_rows, fcst_rows):
           [37.419515, -76.409495], [37.420186, -76.409627]
         ]
       }},
-      "River Rd": {{
+      "River Rd (at Daniel Ave)": {{
         fullName: "River Road (at Daniel Ave)",
         elev: 3.59,
-        desc: "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88). Mid/north section rises toward ridge.",
+        desc: "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first.",
         coords: [
-          [37.420183, -76.406550], [37.420375, -76.406297], [37.420803, -76.406602],
-          [37.421278, -76.406765], [37.421438, -76.406817], [37.421918, -76.407001],
-          [37.421975, -76.407028]
+          [37.420183, -76.406550], [37.420375, -76.406297], [37.420803, -76.406602]
+        ]
+      }},
+      "River Rd (North Ridge)": {{
+        fullName: "River Road (North Ridge)",
+        elev: 4.53,
+        desc: "Elevated northern ridge road (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides.",
+        coords: [
+          [37.420803, -76.406602], [37.421278, -76.406765], [37.421438, -76.406817],
+          [37.421918, -76.407001], [37.421975, -76.407028]
         ]
       }},
       "Hobday St": {{
@@ -1200,19 +1196,13 @@ def build_index_html(status, obs_rows, fcst_rows):
           lineJoin: 'round'
         }}).addTo(map);
 
-        line.bindTooltip(stName, {{
-          permanent: true,
-          direction: 'center',
-          className: 'street-map-label'
-        }});
-
         line.bindPopup(`
           <div class="p-1.5 space-y-1">
             <div class="font-bold text-sm text-slate-900 flex items-center gap-1.5">
               <i class="fa-solid fa-road text-slate-500"></i> ${{escapeHTML(fullTitle)}}
             </div>
             <div class="text-xs text-slate-600">${{escapeHTML(stData.desc)}}</div>
-            <div class="text-xs font-mono text-slate-500">Street Invert: ${{stData.elev}}' MLLW (${{(stData.elev - 1.64).toFixed(2)}}' NAVD88)</div>
+            <div class="text-xs font-mono text-slate-500">Elevation: ${{stData.elev}}' MLLW (${{(stData.elev - 1.64).toFixed(2)}}' NAVD88)</div>
             <div class="text-xs font-bold pt-1 border-t border-slate-100" style="color: ${{stColor}}">Live Passability: ${{stStatus}}</div>
           </div>
         `);

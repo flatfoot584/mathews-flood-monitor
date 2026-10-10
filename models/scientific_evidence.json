@@ -126,10 +126,16 @@
       "risk_note": "Southern dip near waterfront begins ponding at 3.82' MLLW"
     },
     {
-      "street": "Daniel Avenue (Low Point)",
+      "street": "Daniel Avenue (Travel Crown)",
+      "invert_navd88_ft": 2.76,
+      "invert_mllw_ft": 4.40,
+      "risk_note": "Primary community travel crown & Observation Benchmark (4.40' MLLW); sedans blocked above 4 inches"
+    },
+    {
+      "street": "Daniel Avenue (Roadside Ditch Dip)",
       "invert_navd88_ft": 2.24,
       "invert_mllw_ft": 3.88,
-      "risk_note": "Road dip floods prior to driveway bench (4.40')"
+      "risk_note": "Roadside ditch dip floods prior to driveway benchmark (4.40')"
     },
     {
       "street": "Allview Street",
@@ -142,6 +148,12 @@
       "invert_navd88_ft": 1.95,
       "invert_mllw_ft": 3.59,
       "risk_note": "Intersection dip at Daniel Ave is ~2 inches lower than Bayshore; floods first at 3.59' MLLW"
+    },
+    {
+      "street": "River Road (North Ridge)",
+      "invert_navd88_ft": 2.89,
+      "invert_mllw_ft": 4.53,
+      "risk_note": "Elevated northern ridge road (4.53' MLLW); remains passable during moderate tides"
     },
     {
       "street": "Matthews Street",

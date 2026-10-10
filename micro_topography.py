@@ -47,11 +47,12 @@ COMMUNITY_STREET_PROFILES = {
         "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
     },
     "Daniel Avenue": {
-        "invert_mllw_ft": 3.88,
-        "invert_navd88_ft": 2.24,
+        "invert_mllw_ft": 4.40,
+        "invert_navd88_ft": 2.76,
+        "ditch_mllw_ft": 3.88,
         "high_mllw_ft": 4.61,
         "benchmark_mllw_ft": 4.40,
-        "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+        "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
     },
     "Allview Street": {
         "invert_mllw_ft": 4.13,
@@ -59,11 +60,17 @@ COMMUNITY_STREET_PROFILES = {
         "high_mllw_ft": 4.25,
         "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
     },
-    "River Road": {
+    "River Road (at Daniel Ave)": {
         "invert_mllw_ft": 3.59,
         "invert_navd88_ft": 1.95,
-        "high_mllw_ft": 4.53,
-        "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+        "high_mllw_ft": 4.14,
+        "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+    },
+    "River Road (North Ridge)": {
+        "invert_mllw_ft": 4.53,
+        "invert_navd88_ft": 2.89,
+        "high_mllw_ft": 4.65,
+        "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
     },
     "Hobday Street": {
         "invert_mllw_ft": 4.22,
