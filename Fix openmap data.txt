@@ -1,0 +1,23 @@
+2. Fix the Upstream OpenStreetMap Database (Permanent Worldwide Fix)
+
+OpenStreetMap is an open, community-edited world map (similar to Wikipedia). Anyone can update it:
+
+Open OpenStreetMap.org
+ in your web browser.
+Sign up for a free account (or log in) and click the "Edit" button at the top (this launches the built-in iD web editor).
+Click directly on each street:
+Click on the road labeled "Little Avenue" 
+→
+→ In the left panel, change Name to New Little Street.
+Click on the unnamed road connecting Bayshore Ave and River Rd 
+→
+→ In the left panel, set Name to Mobjack Street (and verify Feature Type is Minor/Unclassified Road or Residential Road).
+Click on "Matthew Lane" 
+→
+→ In the left panel, change Name to Matthews Street.
+Click "Save" in the top-right corner.
+In the changeset comment box, enter something like:
+"Corrected street names in Mobjack Bay Estates (New Little St, Mobjack St, Matthews St) per local signage and Mathews County E-911 records."
+Click "Upload".
+
+Once saved, the OpenStreetMap database updates immediately, and the standard OSM tile layers usually re-render and refresh within a few hours to a couple of days.
