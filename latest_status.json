@@ -1,122 +1,122 @@
 {
-  "status_generated_at_local": "2026-10-09 21:19:37 EDT",
-  "status_generated_at_utc": "2026-10-10 01:19:37 UTC",
+  "status_generated_at_local": "2026-10-09 22:05:10 EDT",
+  "status_generated_at_utc": "2026-10-10 02:05:10 UTC",
   "source_health": {
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261007%2023:19&end_date=20261010%2001:19&station=8637689&product=air_temperature&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:05&end_date=20261010%2002:05&station=8637689&product=air_temperature&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:36.134849+00:00",
+      "retrieved_at_utc": "2026-10-10T02:05:06.400136+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:05&end_date=20261010%2002:05&station=8637689&product=air_pressure&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:05:06.409310+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:05&end_date=20261010%2002:05&station=8637689&product=wind&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:05:06.419767+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:05&end_date=20261010%2002:05&station=8637689&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:05:06.439870+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:05&end_date=20261010%2002:05&station=8637689&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:05:06.574664+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:05&end_date=20261010%2002:05&station=8636580&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:05:06.582975+00:00",
       "required": false
     },
     "https://api.water.noaa.gov/nwps/v1/gauges/WRVV2/stageflow/forecast": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:36.141125+00:00",
+      "retrieved_at_utc": "2026-10-10T02:05:06.597746+00:00",
       "required": true
     },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261007%2023:19&end_date=20261010%2001:19&station=8637689&product=air_pressure&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:05&end_date=20261010%2002:05&station=8636580&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:36.164785+00:00",
+      "retrieved_at_utc": "2026-10-10T02:05:06.599914+00:00",
       "required": false
     },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261007%2023:19&end_date=20261010%2001:19&station=8637689&product=wind&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261010%2002:05&end_date=20261013%2002:05&station=8637689&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:36.175134+00:00",
+      "retrieved_at_utc": "2026-10-10T02:05:06.629335+00:00",
       "required": false
     },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261007%2023:19&end_date=20261010%2001:19&station=8637689&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:05&end_date=20261010%2002:05&station=8638610&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:36.217551+00:00",
+      "retrieved_at_utc": "2026-10-10T02:05:06.744939+00:00",
       "required": false
     },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261010%2001:19&end_date=20261013%2001:19&station=8637689&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261010%2002:05&end_date=20261013%2002:05&station=8636580&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:36.348386+00:00",
+      "retrieved_at_utc": "2026-10-10T02:05:06.746072+00:00",
       "required": false
     },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261010%2001:19&end_date=20261013%2001:19&station=8636580&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261010%2002:05&end_date=20261013%2002:05&station=8638610&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:36.370077+00:00",
+      "retrieved_at_utc": "2026-10-10T02:05:06.761286+00:00",
       "required": false
     },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261007%2023:19&end_date=20261010%2001:19&station=8636580&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:05&end_date=20261010%2002:05&station=8638610&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:36.378575+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261007%2023:19&end_date=20261010%2001:19&station=8636580&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:36.387727+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261007%2023:19&end_date=20261010%2001:19&station=8637689&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:36.391834+00:00",
-      "required": false
-    },
-    "https://api.water.noaa.gov/nwps/v1/gauges/WRVV2/stageflow/observed": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:36.574870+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261007%2023:19&end_date=20261010%2001:19&station=8638610&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:36.585570+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261007%2023:19&end_date=20261010%2001:19&station=8638610&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:36.602781+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261010%2001:19&end_date=20261013%2001:19&station=8638610&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:36.616459+00:00",
+      "retrieved_at_utc": "2026-10-10T02:05:06.767174+00:00",
       "required": false
     },
     "https://api.weather.gov/gridpoints/AKQ/80,76": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:36.813698+00:00",
+      "retrieved_at_utc": "2026-10-10T02:05:06.921961+00:00",
       "required": true
     },
-    "https://api.weather.gov/gridpoints/AKQ/80,76/forecast/hourly": {
+    "https://api.water.noaa.gov/nwps/v1/gauges/WRVV2/stageflow/observed": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:36.859726+00:00",
-      "required": true
+      "retrieved_at_utc": "2026-10-10T02:05:07.303490+00:00",
+      "required": false
     },
     "https://api.water.noaa.gov/nwps/v1/gauges/FTMV2/stageflow/observed": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:36.999843+00:00",
+      "retrieved_at_utc": "2026-10-10T02:05:07.356388+00:00",
       "required": false
+    },
+    "https://api.weather.gov/gridpoints/AKQ/80,76/forecast/hourly": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:05:10.161337+00:00",
+      "required": true
     },
     "https://api.weather.gov/alerts/active?point=37.420183,-76.406550": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-10T01:19:37.389740+00:00"
+      "retrieved_at_utc": "2026-10-10T02:05:13.360625+00:00"
     }
   },
   "alerting_enabled": true,
   "forecast_method": "NWPS guidance with heuristic local adjustments; scenario bounds are not calibrated confidence intervals",
   "system_location": "Mathews County, Virginia (Ware River / Mobjack Bay Basin)",
   "current_conditions": {
-    "observation_timestamp_local": "2026-10-09 20:45:00 EDT",
-    "ware_river_stage_mllw_ft": 3.16,
-    "ware_river_stage_navd88_ft": 1.52,
+    "observation_timestamp_local": "2026-10-09 21:45:00 EDT",
+    "ware_river_stage_mllw_ft": 2.92,
+    "ware_river_stage_navd88_ft": 1.28,
     "action_stage_threshold_ft": 4.0,
     "flood_inundation_threshold_ft": 3.99,
     "estimated_local_flood_depth_in": 0.0,
@@ -138,7 +138,7 @@
         "is_submerged": false
       },
       "road_apron": {
-        "name": "Lower Residential Blocks (Allview / Hobday / Little Ave South)",
+        "name": "Lower Residential Blocks (Allview / Hobday / New Little St South)",
         "invert_mllw_ft": 4.15,
         "invert_navd88_ft": 2.51,
         "depth_in": 0.0,
@@ -162,7 +162,7 @@
         "is_submerged": false
       },
       "garage_foundation": {
-        "name": "River Road North & Ridge High Ground Pads",
+        "name": "Ridge High Ground Pads & Northern Home Footprints",
         "invert_mllw_ft": 4.9,
         "invert_navd88_ft": 3.26,
         "depth_in": 0.0,
@@ -189,6 +189,15 @@
         "code": "GREEN",
         "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
       },
+      "Mobjack Street": {
+        "name": "Mobjack Street",
+        "invert_mllw_ft": 3.82,
+        "invert_navd88_ft": 2.18,
+        "depth_in": 0.0,
+        "status": "No tidal flooding estimated",
+        "code": "GREEN",
+        "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+      },
       "Daniel Avenue": {
         "name": "Daniel Avenue",
         "invert_mllw_ft": 3.88,
@@ -209,12 +218,12 @@
       },
       "River Road": {
         "name": "River Road",
-        "invert_mllw_ft": 4.14,
-        "invert_navd88_ft": 2.5,
+        "invert_mllw_ft": 3.59,
+        "invert_navd88_ft": 1.95,
         "depth_in": 0.0,
         "status": "No tidal flooding estimated",
         "code": "GREEN",
-        "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+        "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
       },
       "Hobday Street": {
         "name": "Hobday Street",
@@ -225,14 +234,23 @@
         "code": "GREEN",
         "description": "Interior cross street between Daniel Ave and Bayshore Ave."
       },
-      "Little Avenue": {
-        "name": "Little Avenue",
+      "New Little Street": {
+        "name": "New Little Street",
         "invert_mllw_ft": 4.23,
         "invert_navd88_ft": 2.59,
         "depth_in": 0.0,
         "status": "No tidal flooding estimated",
         "code": "GREEN",
         "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+      },
+      "Matthews Street": {
+        "name": "Matthews Street",
+        "invert_mllw_ft": 3.75,
+        "invert_navd88_ft": 2.11,
+        "depth_in": 0.0,
+        "status": "No tidal flooding estimated",
+        "code": "GREEN",
+        "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
       },
       "Bunny Rabbit Lane": {
         "name": "Bunny Rabbit Lane",
@@ -244,21 +262,21 @@
         "description": "Western community boundary lane. Elevated ridge terrain."
       }
     },
-    "yorktown_wind_speed_mph": 1.35,
-    "yorktown_wind_dir_deg": 33.0,
-    "yorktown_wind_dir_cardinal": "NNE",
-    "yorktown_wind_gust_mph": 1.8,
-    "along_bay_wind_vector_mph": 1.32,
-    "cross_bay_wind_vector_mph": 0.3,
-    "yorktown_baro_pressure_mb": 1024.6,
-    "yorktown_air_temp_f": 67.3,
-    "yorktown_water_level_mllw_ft": 3.084,
-    "yorktown_storm_surge_residual_ft": 0.23,
-    "windmill_point_water_level_mllw_ft": 1.814,
-    "windmill_point_storm_surge_residual_ft": 0.47,
-    "sewells_point_water_level_mllw_ft": 3.186,
-    "sewells_point_pred_tide_ft": 2.938,
-    "sewells_point_storm_surge_residual_ft": 0.25,
+    "yorktown_wind_speed_mph": 0.67,
+    "yorktown_wind_dir_deg": 6.0,
+    "yorktown_wind_dir_cardinal": "N",
+    "yorktown_wind_gust_mph": 1.35,
+    "along_bay_wind_vector_mph": 0.65,
+    "cross_bay_wind_vector_mph": -0.16,
+    "yorktown_baro_pressure_mb": 1024.8,
+    "yorktown_air_temp_f": 68.2,
+    "yorktown_water_level_mllw_ft": 2.972,
+    "yorktown_storm_surge_residual_ft": 0.21,
+    "windmill_point_water_level_mllw_ft": 1.939,
+    "windmill_point_storm_surge_residual_ft": 0.45,
+    "sewells_point_water_level_mllw_ft": 3.081,
+    "sewells_point_pred_tide_ft": 2.825,
+    "sewells_point_storm_surge_residual_ft": 0.23,
     "bay_hydraulic_gradient_ft": 0.22,
     "bay_hydraulic_slope_ft_per_mile": 0.00476,
     "bay_hydraulic_pressure_direction": "Southward Inflow Head (North Bay surge forcing water into Mobjack Bay)"
@@ -287,125 +305,11 @@
       "weather_available": true,
       "precipitation_available": true,
       "forecast_source": "nwps",
-      "timestamp_utc": "2026-10-10 01:00:00 UTC",
-      "timestamp_local": "2026-10-09 21:00:00 EDT",
-      "forecast_stage_q10_ft": 2.92,
-      "forecast_stage_mllw_ft": 3.1,
-      "forecast_stage_q90_ft": 3.32,
-      "nwps_raw_stage_ft": 3.1,
-      "compound_flood_depth_q10_in": 0.0,
-      "compound_flood_depth_in": 0.0,
-      "compound_flood_depth_q90_in": 0.0,
-      "tidal_depth_in": 0.0,
-      "pluvial_trapped_depth_in": 0.0,
-      "rain_forecast_hourly_in": 0.0,
-      "rain_rolling_6h_in": 0.0,
-      "bay_hydraulic_gradient_ft": -0.1,
-      "risk_tier": 0,
-      "risk_label": "Tier 0 (No modeled inundation)",
-      "community_streets": {
-        "Bayshore Avenue": {
-          "name": "Bayshore Avenue",
-          "invert_mllw_ft": 3.75,
-          "invert_navd88_ft": 2.11,
-          "depth_in": 0.0,
-          "status": "No tidal flooding estimated",
-          "code": "GREEN",
-          "description": "Southern waterfront roadway. West and east dips flood first."
-        },
-        "Julian Street": {
-          "name": "Julian Street",
-          "invert_mllw_ft": 3.78,
-          "invert_navd88_ft": 2.14,
-          "depth_in": 0.0,
-          "status": "No tidal flooding estimated",
-          "code": "GREEN",
-          "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
-        },
-        "Daniel Avenue": {
-          "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
-          "depth_in": 0.0,
-          "status": "No tidal flooding estimated",
-          "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
-        },
-        "Allview Street": {
-          "name": "Allview Street",
-          "invert_mllw_ft": 4.13,
-          "invert_navd88_ft": 2.49,
-          "depth_in": 0.0,
-          "status": "No tidal flooding estimated",
-          "code": "GREEN",
-          "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
-        },
-        "River Road": {
-          "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
-          "depth_in": 0.0,
-          "status": "No tidal flooding estimated",
-          "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
-        },
-        "Hobday Street": {
-          "name": "Hobday Street",
-          "invert_mllw_ft": 4.22,
-          "invert_navd88_ft": 2.58,
-          "depth_in": 0.0,
-          "status": "No tidal flooding estimated",
-          "code": "GREEN",
-          "description": "Interior cross street between Daniel Ave and Bayshore Ave."
-        },
-        "Little Avenue": {
-          "name": "Little Avenue",
-          "invert_mllw_ft": 4.23,
-          "invert_navd88_ft": 2.59,
-          "depth_in": 0.0,
-          "status": "No tidal flooding estimated",
-          "code": "GREEN",
-          "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
-        },
-        "Bunny Rabbit Lane": {
-          "name": "Bunny Rabbit Lane",
-          "invert_mllw_ft": 4.45,
-          "invert_navd88_ft": 2.81,
-          "depth_in": 0.0,
-          "status": "No tidal flooding estimated",
-          "code": "GREEN",
-          "description": "Western community boundary lane. Elevated ridge terrain."
-        }
-      },
-      "vehicle_passability_code": "GREEN",
-      "vehicle_passability": "NO INUNDATION ESTIMATED",
-      "vehicle_passability_desc": "No modeled standing water on community streets or driveway. Check actual conditions before travel.",
-      "sector_ditches_depth_in": 0.0,
-      "sector_road_depth_in": 0.0,
-      "sector_driveway_depth_in": 0.0,
-      "sector_yard_depth_in": 0.0,
-      "sector_garage_depth_in": 0.0,
-      "nws_wind_speed_mph": 1.0,
-      "nws_wind_dir_deg": 90.0,
-      "nws_wind_cardinal": "E",
-      "along_bay_wind_mph": 0.34,
-      "cross_bay_wind_mph": 0.94,
-      "nws_short_forecast": "Mostly Cloudy",
-      "nws_temp_f": 64,
-      "nws_pop_pct": 0,
-      "yorktown_pred_tide_ft": 2.765,
-      "windmill_pred_tide_ft": 1.49,
-      "sewells_pred_tide_ft": 2.851
-    },
-    {
-      "weather_available": true,
-      "precipitation_available": true,
-      "forecast_source": "nwps",
       "timestamp_utc": "2026-10-10 02:00:00 UTC",
       "timestamp_local": "2026-10-09 22:00:00 EDT",
-      "forecast_stage_q10_ft": 2.6,
+      "forecast_stage_q10_ft": 2.62,
       "forecast_stage_mllw_ft": 2.8,
-      "forecast_stage_q90_ft": 3.04,
+      "forecast_stage_q90_ft": 3.02,
       "nwps_raw_stage_ft": 2.8,
       "compound_flood_depth_q10_in": 0.0,
       "compound_flood_depth_in": 0.0,
@@ -436,6 +340,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -456,12 +369,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -472,14 +385,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -550,6 +472,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -570,12 +501,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -586,14 +517,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -631,9 +571,9 @@
       "forecast_source": "nwps",
       "timestamp_utc": "2026-10-10 04:00:00 UTC",
       "timestamp_local": "2026-10-10 00:00:00 EDT",
-      "forecast_stage_q10_ft": 1.4,
+      "forecast_stage_q10_ft": 1.41,
       "forecast_stage_mllw_ft": 1.61,
-      "forecast_stage_q90_ft": 1.86,
+      "forecast_stage_q90_ft": 1.85,
       "nwps_raw_stage_ft": 1.6,
       "compound_flood_depth_q10_in": 0.0,
       "compound_flood_depth_in": 0.0,
@@ -664,6 +604,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -684,12 +633,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -700,14 +649,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -778,6 +736,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -798,12 +765,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -814,14 +781,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -859,9 +835,9 @@
       "forecast_source": "nwps",
       "timestamp_utc": "2026-10-10 06:00:00 UTC",
       "timestamp_local": "2026-10-10 02:00:00 EDT",
-      "forecast_stage_q10_ft": 0.39,
+      "forecast_stage_q10_ft": 0.4,
       "forecast_stage_mllw_ft": 0.61,
-      "forecast_stage_q90_ft": 0.87,
+      "forecast_stage_q90_ft": 0.86,
       "nwps_raw_stage_ft": 0.6,
       "compound_flood_depth_q10_in": 0.0,
       "compound_flood_depth_in": 0.0,
@@ -892,6 +868,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -912,12 +897,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -928,14 +913,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -1006,6 +1000,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -1026,12 +1029,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -1042,14 +1045,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -1120,6 +1132,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -1140,12 +1161,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -1156,14 +1177,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -1201,9 +1231,9 @@
       "forecast_source": "nwps",
       "timestamp_utc": "2026-10-10 09:00:00 UTC",
       "timestamp_local": "2026-10-10 05:00:00 EDT",
-      "forecast_stage_q10_ft": 0.99,
+      "forecast_stage_q10_ft": 1.0,
       "forecast_stage_mllw_ft": 1.22,
-      "forecast_stage_q90_ft": 1.49,
+      "forecast_stage_q90_ft": 1.48,
       "nwps_raw_stage_ft": 1.2,
       "compound_flood_depth_q10_in": 0.0,
       "compound_flood_depth_in": 0.0,
@@ -1234,6 +1264,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -1254,12 +1293,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -1270,14 +1309,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -1348,6 +1396,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -1368,12 +1425,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -1384,14 +1441,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -1462,6 +1528,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -1482,12 +1557,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -1498,14 +1573,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -1576,6 +1660,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -1596,12 +1689,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -1612,14 +1705,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -1657,9 +1759,9 @@
       "forecast_source": "nwps",
       "timestamp_utc": "2026-10-10 13:00:00 UTC",
       "timestamp_local": "2026-10-10 09:00:00 EDT",
-      "forecast_stage_q10_ft": 3.29,
+      "forecast_stage_q10_ft": 3.3,
       "forecast_stage_mllw_ft": 3.53,
-      "forecast_stage_q90_ft": 3.81,
+      "forecast_stage_q90_ft": 3.8,
       "nwps_raw_stage_ft": 3.5,
       "compound_flood_depth_q10_in": 0.0,
       "compound_flood_depth_in": 0.0,
@@ -1690,6 +1792,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -1710,12 +1821,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -1726,14 +1837,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -1758,7 +1878,7 @@
       "nws_wind_cardinal": "E",
       "along_bay_wind_mph": 2.05,
       "cross_bay_wind_mph": 5.64,
-      "nws_short_forecast": "Cloudy",
+      "nws_short_forecast": "Mostly Cloudy",
       "nws_temp_f": 65,
       "nws_pop_pct": 1,
       "yorktown_pred_tide_ft": 3.149,
@@ -1783,8 +1903,8 @@
       "rain_forecast_hourly_in": 0.0,
       "rain_rolling_6h_in": 0.0,
       "bay_hydraulic_gradient_ft": -0.06,
-      "risk_tier": 0,
-      "risk_label": "Tier 0 (No modeled inundation)",
+      "risk_tier": 1,
+      "risk_label": "Tier 1 (Nuisance / Low spots wet)",
       "community_streets": {
         "Bayshore Avenue": {
           "name": "Bayshore Avenue",
@@ -1803,6 +1923,15 @@
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
+        },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
@@ -1824,12 +1953,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
-          "depth_in": 0.0,
-          "status": "No tidal flooding estimated",
-          "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
+          "depth_in": 0.6,
+          "status": "Puddles & Ditch Full (0.6\")",
+          "code": "YELLOW",
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -1840,14 +1969,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -1859,9 +1997,9 @@
           "description": "Western community boundary lane. Elevated ridge terrain."
         }
       },
-      "vehicle_passability_code": "GREEN",
-      "vehicle_passability": "NO INUNDATION ESTIMATED",
-      "vehicle_passability_desc": "No modeled standing water on community streets or driveway. Check actual conditions before travel.",
+      "vehicle_passability_code": "YELLOW",
+      "vehicle_passability": "LOW-SPOT FLOODING ESTIMATED",
+      "vehicle_passability_desc": "Standing water on an access route. Avoid flooded roads; depth and road condition may differ from estimates.",
       "sector_ditches_depth_in": 0.0,
       "sector_road_depth_in": 0.0,
       "sector_driveway_depth_in": 0.0,
@@ -1918,6 +2056,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -1938,12 +2085,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -1954,14 +2101,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -2032,6 +2188,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -2052,12 +2217,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -2068,14 +2233,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -2100,7 +2274,7 @@
       "nws_wind_cardinal": "E",
       "along_bay_wind_mph": 3.08,
       "cross_bay_wind_mph": 8.46,
-      "nws_short_forecast": "Mostly Cloudy",
+      "nws_short_forecast": "Cloudy",
       "nws_temp_f": 70,
       "nws_pop_pct": 3,
       "yorktown_pred_tide_ft": 1.727,
@@ -2113,9 +2287,9 @@
       "forecast_source": "nwps",
       "timestamp_utc": "2026-10-10 17:00:00 UTC",
       "timestamp_local": "2026-10-10 13:00:00 EDT",
-      "forecast_stage_q10_ft": 1.8,
+      "forecast_stage_q10_ft": 1.81,
       "forecast_stage_mllw_ft": 2.05,
-      "forecast_stage_q90_ft": 2.34,
+      "forecast_stage_q90_ft": 2.33,
       "nwps_raw_stage_ft": 2.0,
       "compound_flood_depth_q10_in": 0.0,
       "compound_flood_depth_in": 0.0,
@@ -2146,6 +2320,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -2166,12 +2349,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -2182,14 +2365,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -2260,6 +2452,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -2280,12 +2481,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -2296,14 +2497,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -2328,7 +2538,7 @@
       "nws_wind_cardinal": "E",
       "along_bay_wind_mph": 3.42,
       "cross_bay_wind_mph": 9.4,
-      "nws_short_forecast": "Mostly Cloudy",
+      "nws_short_forecast": "Cloudy",
       "nws_temp_f": 70,
       "nws_pop_pct": 3,
       "yorktown_pred_tide_ft": 0.601,
@@ -2374,6 +2584,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -2394,12 +2613,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -2410,14 +2629,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -2488,6 +2716,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -2508,12 +2745,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -2524,14 +2761,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -2602,6 +2848,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -2622,12 +2877,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -2638,14 +2893,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -2716,6 +2980,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -2736,12 +3009,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -2752,14 +3025,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -2797,9 +3079,9 @@
       "forecast_source": "nwps",
       "timestamp_utc": "2026-10-10 23:00:00 UTC",
       "timestamp_local": "2026-10-10 19:00:00 EDT",
-      "forecast_stage_q10_ft": 1.68,
+      "forecast_stage_q10_ft": 1.69,
       "forecast_stage_mllw_ft": 1.94,
-      "forecast_stage_q90_ft": 2.24,
+      "forecast_stage_q90_ft": 2.23,
       "nwps_raw_stage_ft": 1.9,
       "compound_flood_depth_q10_in": 0.0,
       "compound_flood_depth_in": 0.0,
@@ -2830,6 +3112,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -2850,12 +3141,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -2866,14 +3157,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -2944,6 +3244,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -2964,12 +3273,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -2980,14 +3289,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -3058,6 +3376,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -3078,12 +3405,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -3094,14 +3421,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -3172,6 +3508,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -3192,12 +3537,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -3208,14 +3553,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -3286,6 +3640,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -3306,12 +3669,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -3322,14 +3685,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -3400,6 +3772,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -3420,12 +3801,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -3436,14 +3817,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -3481,9 +3871,9 @@
       "forecast_source": "nwps",
       "timestamp_utc": "2026-10-11 05:00:00 UTC",
       "timestamp_local": "2026-10-11 01:00:00 EDT",
-      "forecast_stage_q10_ft": 1.79,
+      "forecast_stage_q10_ft": 1.8,
       "forecast_stage_mllw_ft": 2.06,
-      "forecast_stage_q90_ft": 2.37,
+      "forecast_stage_q90_ft": 2.36,
       "nwps_raw_stage_ft": 2.0,
       "compound_flood_depth_q10_in": 0.0,
       "compound_flood_depth_in": 0.0,
@@ -3514,6 +3904,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -3534,12 +3933,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -3550,14 +3949,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -3628,6 +4036,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -3648,12 +4065,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -3664,14 +4081,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -3742,6 +4168,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -3762,12 +4197,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -3778,14 +4213,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -3856,6 +4300,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -3876,12 +4329,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -3892,14 +4345,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -3970,6 +4432,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -3990,12 +4461,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -4006,14 +4477,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -4084,6 +4564,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -4104,12 +4593,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -4120,14 +4609,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -4198,6 +4696,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -4218,12 +4725,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -4234,14 +4741,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -4312,6 +4828,15 @@
           "code": "YELLOW",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.8,
+          "status": "Puddles & Ditch Full (0.8\")",
+          "code": "YELLOW",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -4332,12 +4857,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
-          "depth_in": 0.15,
-          "status": "Rain Ponding (0.15\")",
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
+          "depth_in": 3.4,
+          "status": "Puddles & Ditch Full (3.4\")",
           "code": "YELLOW",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -4348,14 +4873,23 @@
           "code": "YELLOW",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.15,
           "status": "Rain Ponding (0.15\")",
           "code": "YELLOW",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 1.6,
+          "status": "Puddles & Ditch Full (1.6\")",
+          "code": "YELLOW",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -4426,6 +4960,15 @@
           "code": "RED",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 10.4,
+          "status": "Impassable Deep Water (10.4\")",
+          "code": "RED",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -4446,12 +4989,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
-          "depth_in": 6.8,
-          "status": "Flooding estimated (6.8\")",
-          "code": "ORANGE",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
+          "depth_in": 13.0,
+          "status": "Impassable Deep Water (13.0\")",
+          "code": "RED",
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -4462,14 +5005,23 @@
           "code": "ORANGE",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 5.8,
           "status": "Flooding estimated (5.8\")",
           "code": "ORANGE",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 11.2,
+          "status": "Impassable Deep Water (11.2\")",
+          "code": "RED",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -4540,6 +5092,15 @@
           "code": "RED",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 12.8,
+          "status": "Impassable Deep Water (12.8\")",
+          "code": "RED",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -4560,12 +5121,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
-          "depth_in": 9.2,
-          "status": "Impassable Deep Water (9.2\")",
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
+          "depth_in": 15.4,
+          "status": "Impassable Deep Water (15.4\")",
           "code": "RED",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -4576,14 +5137,23 @@
           "code": "RED",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 8.2,
           "status": "Impassable Deep Water (8.2\")",
           "code": "RED",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 13.6,
+          "status": "Impassable Deep Water (13.6\")",
+          "code": "RED",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -4654,6 +5224,15 @@
           "code": "RED",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 10.5,
+          "status": "Impassable Deep Water (10.5\")",
+          "code": "RED",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -4674,12 +5253,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
-          "depth_in": 6.9,
-          "status": "Flooding estimated (6.9\")",
-          "code": "ORANGE",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
+          "depth_in": 13.0,
+          "status": "Impassable Deep Water (13.0\")",
+          "code": "RED",
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -4690,14 +5269,23 @@
           "code": "ORANGE",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 5.9,
           "status": "Flooding estimated (5.9\")",
           "code": "ORANGE",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 11.2,
+          "status": "Impassable Deep Water (11.2\")",
+          "code": "RED",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -4747,8 +5335,8 @@
       "rain_forecast_hourly_in": 0.10666666666666667,
       "rain_rolling_6h_in": 0.62,
       "bay_hydraulic_gradient_ft": -0.16,
-      "risk_tier": 2,
-      "risk_label": "Tier 2 (Moderate / Roads flooded)",
+      "risk_tier": 3,
+      "risk_label": "Tier 3 (Severe / Travel hazardous)",
       "community_streets": {
         "Bayshore Avenue": {
           "name": "Bayshore Avenue",
@@ -4767,6 +5355,15 @@
           "status": "Flooding estimated (6.6\")",
           "code": "ORANGE",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
+        },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 6.1,
+          "status": "Flooding estimated (6.1\")",
+          "code": "ORANGE",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
@@ -4788,12 +5385,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
-          "depth_in": 2.6,
-          "status": "Puddles & Ditch Full (2.6\")",
-          "code": "YELLOW",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
+          "depth_in": 8.7,
+          "status": "Impassable Deep Water (8.7\")",
+          "code": "RED",
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -4804,14 +5401,23 @@
           "code": "YELLOW",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 1.5,
           "status": "Puddles & Ditch Full (1.5\")",
           "code": "YELLOW",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 6.9,
+          "status": "Flooding estimated (6.9\")",
+          "code": "ORANGE",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -4823,9 +5429,9 @@
           "description": "Western community boundary lane. Elevated ridge terrain."
         }
       },
-      "vehicle_passability_code": "ORANGE",
-      "vehicle_passability": "FLOODED ACCESS ROUTES \u2014 DO NOT DRIVE",
-      "vehicle_passability_desc": "Access routes have modeled flooding. Do not drive into standing water. Move vehicles before flooding begins.",
+      "vehicle_passability_code": "RED",
+      "vehicle_passability": "DEEP FLOODING ESTIMATED \u2014 DO NOT ENTER",
+      "vehicle_passability_desc": "Deep modeled water on an access route. Do not enter flooded roads, regardless of vehicle clearance.",
       "sector_ditches_depth_in": 4.2,
       "sector_road_depth_in": 2.4,
       "sector_driveway_depth_in": 0.0,
@@ -4861,8 +5467,8 @@
       "rain_forecast_hourly_in": 0.10666666666666667,
       "rain_rolling_6h_in": 0.64,
       "bay_hydraulic_gradient_ft": -0.11,
-      "risk_tier": 0,
-      "risk_label": "Tier 0 (No modeled inundation)",
+      "risk_tier": 1,
+      "risk_label": "Tier 1 (Nuisance / Low spots wet)",
       "community_streets": {
         "Bayshore Avenue": {
           "name": "Bayshore Avenue",
@@ -4881,6 +5487,15 @@
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
+        },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
@@ -4902,12 +5517,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
-          "depth_in": 0.0,
-          "status": "No tidal flooding estimated",
-          "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
+          "depth_in": 1.2,
+          "status": "Puddles & Ditch Full (1.2\")",
+          "code": "YELLOW",
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -4918,14 +5533,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -4937,9 +5561,9 @@
           "description": "Western community boundary lane. Elevated ridge terrain."
         }
       },
-      "vehicle_passability_code": "GREEN",
-      "vehicle_passability": "NO INUNDATION ESTIMATED",
-      "vehicle_passability_desc": "No modeled standing water on community streets or driveway. Check actual conditions before travel.",
+      "vehicle_passability_code": "YELLOW",
+      "vehicle_passability": "LOW-SPOT FLOODING ESTIMATED",
+      "vehicle_passability_desc": "Standing water on an access route. Avoid flooded roads; depth and road condition may differ from estimates.",
       "sector_ditches_depth_in": 0.0,
       "sector_road_depth_in": 0.0,
       "sector_driveway_depth_in": 0.0,
@@ -4996,6 +5620,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -5016,12 +5649,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -5032,14 +5665,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -5077,9 +5719,9 @@
       "forecast_source": "nwps",
       "timestamp_utc": "2026-10-11 19:00:00 UTC",
       "timestamp_local": "2026-10-11 15:00:00 EDT",
-      "forecast_stage_q10_ft": 1.13,
+      "forecast_stage_q10_ft": 1.14,
       "forecast_stage_mllw_ft": 1.42,
-      "forecast_stage_q90_ft": 1.75,
+      "forecast_stage_q90_ft": 1.74,
       "nwps_raw_stage_ft": 1.5,
       "compound_flood_depth_q10_in": 0.0,
       "compound_flood_depth_in": 0.0,
@@ -5110,6 +5752,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -5130,12 +5781,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -5146,14 +5797,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -5224,6 +5884,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -5244,12 +5913,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -5260,14 +5929,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -5338,6 +6016,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -5358,12 +6045,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -5374,14 +6061,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -5452,6 +6148,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -5472,12 +6177,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -5488,14 +6193,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -5566,6 +6280,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -5586,12 +6309,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -5602,14 +6325,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -5680,6 +6412,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -5700,12 +6441,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -5716,14 +6457,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -5794,6 +6544,15 @@
           "code": "GREEN",
           "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
         },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
           "invert_mllw_ft": 3.88,
@@ -5814,12 +6573,12 @@
         },
         "River Road": {
           "name": "River Road",
-          "invert_mllw_ft": 4.14,
-          "invert_navd88_ft": 2.5,
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -5830,14 +6589,23 @@
           "code": "GREEN",
           "description": "Interior cross street between Daniel Ave and Bayshore Ave."
         },
-        "Little Avenue": {
-          "name": "Little Avenue",
+        "New Little Street": {
+          "name": "New Little Street",
           "invert_mllw_ft": 4.23,
           "invert_navd88_ft": 2.59,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
           "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
         },
         "Bunny Rabbit Lane": {
           "name": "Bunny Rabbit Lane",
@@ -5868,6 +6636,138 @@
       "yorktown_pred_tide_ft": 2.585,
       "windmill_pred_tide_ft": 1.095,
       "sewells_pred_tide_ft": 2.748
+    },
+    {
+      "weather_available": true,
+      "precipitation_available": true,
+      "forecast_source": "nwps",
+      "timestamp_utc": "2026-10-12 02:00:00 UTC",
+      "timestamp_local": "2026-10-11 22:00:00 EDT",
+      "forecast_stage_q10_ft": 3.0,
+      "forecast_stage_mllw_ft": 3.29,
+      "forecast_stage_q90_ft": 3.62,
+      "nwps_raw_stage_ft": 3.4,
+      "compound_flood_depth_q10_in": 0.0,
+      "compound_flood_depth_in": 0.0,
+      "compound_flood_depth_q90_in": 0.0,
+      "tidal_depth_in": 0.0,
+      "pluvial_trapped_depth_in": 0.0,
+      "rain_forecast_hourly_in": 0.006666666666666667,
+      "rain_rolling_6h_in": 0.07,
+      "bay_hydraulic_gradient_ft": -0.23,
+      "risk_tier": 0,
+      "risk_label": "Tier 0 (No modeled inundation)",
+      "community_streets": {
+        "Bayshore Avenue": {
+          "name": "Bayshore Avenue",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Southern waterfront roadway. West and east dips flood first."
+        },
+        "Julian Street": {
+          "name": "Julian Street",
+          "invert_mllw_ft": 3.78,
+          "invert_navd88_ft": 2.14,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
+        },
+        "Mobjack Street": {
+          "name": "Mobjack Street",
+          "invert_mllw_ft": 3.82,
+          "invert_navd88_ft": 2.18,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+        },
+        "Daniel Avenue": {
+          "name": "Daniel Avenue",
+          "invert_mllw_ft": 3.88,
+          "invert_navd88_ft": 2.24,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+        },
+        "Allview Street": {
+          "name": "Allview Street",
+          "invert_mllw_ft": 4.13,
+          "invert_navd88_ft": 2.49,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
+        },
+        "River Road": {
+          "name": "River Road",
+          "invert_mllw_ft": 3.59,
+          "invert_navd88_ft": 1.95,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+        },
+        "Hobday Street": {
+          "name": "Hobday Street",
+          "invert_mllw_ft": 4.22,
+          "invert_navd88_ft": 2.58,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Interior cross street between Daniel Ave and Bayshore Ave."
+        },
+        "New Little Street": {
+          "name": "New Little Street",
+          "invert_mllw_ft": 4.23,
+          "invert_navd88_ft": 2.59,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+        },
+        "Matthews Street": {
+          "name": "Matthews Street",
+          "invert_mllw_ft": 3.75,
+          "invert_navd88_ft": 2.11,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
+        },
+        "Bunny Rabbit Lane": {
+          "name": "Bunny Rabbit Lane",
+          "invert_mllw_ft": 4.45,
+          "invert_navd88_ft": 2.81,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "Western community boundary lane. Elevated ridge terrain."
+        }
+      },
+      "vehicle_passability_code": "GREEN",
+      "vehicle_passability": "NO INUNDATION ESTIMATED",
+      "vehicle_passability_desc": "No modeled standing water on community streets or driveway. Check actual conditions before travel.",
+      "sector_ditches_depth_in": 0.0,
+      "sector_road_depth_in": 0.0,
+      "sector_driveway_depth_in": 0.0,
+      "sector_yard_depth_in": 0.0,
+      "sector_garage_depth_in": 0.0,
+      "nws_wind_speed_mph": 7.0,
+      "nws_wind_dir_deg": 180.0,
+      "nws_wind_cardinal": "S",
+      "along_bay_wind_mph": -6.58,
+      "cross_bay_wind_mph": 2.39,
+      "nws_short_forecast": "Showers And Thunderstorms Likely",
+      "nws_temp_f": 72,
+      "nws_pop_pct": 57,
+      "yorktown_pred_tide_ft": 2.652,
+      "windmill_pred_tide_ft": 1.356,
+      "sewells_pred_tide_ft": 2.769
     }
   ],
   "data_quality": {
@@ -5882,7 +6782,7 @@
   },
   "official_nws_alerts": {
     "available": true,
-    "retrieved_at_utc": "2026-10-10T01:19:37.389740+00:00",
+    "retrieved_at_utc": "2026-10-10T02:05:13.360625+00:00",
     "alerts": [],
     "source": "https://www.weather.gov/akq/"
   },
@@ -5890,22 +6790,22 @@
   "fort_monroe": {
     "station": "FTMV2 / USGS 0204289994",
     "role": "evaluation_only",
-    "observation_time_utc": "2026-10-10T00:36:00+00:00",
-    "received_at_utc": "2026-10-10T00:55:33Z",
-    "elevation_navd88_ft": 1.55,
-    "water_level_mllw_ft": 3.25,
+    "observation_time_utc": "2026-10-10T01:36:00+00:00",
+    "received_at_utc": "2026-10-10T01:55:44Z",
+    "elevation_navd88_ft": 1.46,
+    "water_level_mllw_ft": 3.16,
     "datum_offset_ft": -1.7,
     "fresh": true,
     "model_promoted": false
   },
   "live_verification": {
-    "updated_at_utc": "2026-10-10T01:19:37+00:00",
-    "issued_rows": 456,
+    "updated_at_utc": "2026-10-10T02:05:10+00:00",
+    "issued_rows": 462,
     "summary": {
-      "verified_rows": 414,
-      "nwps_verified_rows": 414,
-      "overall_operational_mae_ft": 0.3138,
-      "overall_nwps_mae_ft": 0.3152,
+      "verified_rows": 416,
+      "nwps_verified_rows": 416,
+      "overall_operational_mae_ft": 0.3126,
+      "overall_nwps_mae_ft": 0.3139,
       "overall_skill_delta_ft": 0.0013,
       "overall_skill_improvement_pct": 0.4,
       "high_water_observations": 0,
@@ -5949,11 +6849,11 @@
       },
       {
         "lead_hours": 6,
-        "n": 71,
-        "mae_ft": 0.30478873239436616,
-        "nwps_n": 71,
-        "nwps_mae_ft": 0.30352112676056336,
-        "skill_delta_ft": -0.0013,
+        "n": 73,
+        "mae_ft": 0.29780821917808215,
+        "nwps_n": 73,
+        "nwps_mae_ft": 0.29657534246575334,
+        "skill_delta_ft": -0.0012,
         "skill_improvement_pct": -0.4,
         "high_water_n": 0,
         "high_water_mae_ft": null,
