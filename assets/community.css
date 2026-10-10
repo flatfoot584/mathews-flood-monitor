@@ -914,7 +914,7 @@ code {
   }
 }
 
-/* ============ UX improvements: dial, picker, jargon, timeline, checklist ============ */
+/* ============ UX improvements: dial, picker, jargon ============ */
 
 /* Status dial: one full-width banner above the fold */
 .status-dial { border-radius: 16px; border: 2px solid; padding: 18px 20px; margin: 0 0 4px; }
@@ -945,22 +945,6 @@ code {
 .street-result-card { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 12px; padding: 14px 16px; }
 .street-result-card strong { font-size: 1.05rem; }
 .street-result-card p { margin: 6px 0 0; }
-
-/* Story timeline */
-.story-timeline { list-style: none; margin: 12px 0 0; padding: 0; }
-.story-timeline li { display: flex; gap: 12px; padding: 10px 0; border-left: 3px solid #e2e8f0; padding-left: 16px;
-  margin-left: 8px; position: relative; }
-.story-timeline li::before { content: ""; position: absolute; left: -8px; top: 16px; width: 13px; height: 13px;
-  border-radius: 50%; background: #0ea5e9; border: 2px solid #fff; box-shadow: 0 0 0 2px #bae6fd; }
-.story-timeline .story-emoji { font-size: 1.4rem; line-height: 1.2; }
-.story-timeline strong { display: block; font-size: 0.98rem; }
-.story-timeline p { margin: 2px 0 0; font-size: 0.88rem; color: #475569; }
-
-/* Action checklist */
-.action-checklist { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
-.action-checklist li label { display: flex; gap: 10px; align-items: flex-start; background: #f8fafc;
-  border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; cursor: pointer; font-size: 0.95rem; }
-.action-checklist input[type="checkbox"] { width: 20px; height: 20px; margin-top: 1px; flex-shrink: 0; accent-color: #0284c7; }
 
 /* Signup hero */
 .signup-hero .step-num { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px;

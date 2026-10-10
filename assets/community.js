@@ -92,19 +92,6 @@
     card.appendChild(p);streetRes.appendChild(card);
   });
 
-  /* --- Action checklist: persist per tier+day --- */
-  document.querySelectorAll('.action-checklist').forEach(list=>{
-    const key=list.dataset.checklistKey;if(!key)return;
-    let saved={};try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch{saved={};}
-    list.querySelectorAll('input[type=checkbox]').forEach(box=>{
-      if(saved[box.dataset.idx])box.checked=true;
-      box.addEventListener('change',()=>{
-        let cur={};try{cur=JSON.parse(localStorage.getItem(key)||'{}');}catch{cur={};}
-        cur[box.dataset.idx]=box.checked;try{localStorage.setItem(key,JSON.stringify(cur));}catch{}
-      });
-    });
-  });
-
   /* --- Audio briefing --- */
   const audioBtn=document.getElementById('audio-briefing-btn'),audioStop=document.getElementById('audio-stop-btn');
   audioBtn?.addEventListener('click',()=>{
