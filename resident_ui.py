@@ -208,6 +208,8 @@ def evidence_section():
         summary_note = ''
         if sumry.get('overall_operational_mae_ft') is not None and sumry.get('overall_nwps_mae_ft') is not None:
             summary_note = f'<p><strong>Overall Autumn 2026 Verification:</strong> Operational Model MAE = {sumry["overall_operational_mae_ft"]:.3f} ft vs Raw NOAA NWPS MAE = {sumry["overall_nwps_mae_ft"]:.3f} ft (Operational skill improvement: {sumry.get("overall_skill_improvement_pct", 0):+.1f}% across {sumry.get("verified_rows", 0)} verified issues).</p>'
+        if sumry.get('high_water_caveat'):
+            summary_note += f'<p class="muted">{e(sumry["high_water_caveat"])}</p>'
         card2 = f'''<section class="resident-card"><h2>Prospective Verification: Operational Model vs. Raw NOAA NWPS</h2><p>Durable issue-time validation archived in <code>issued_forecast_archive.csv</code> across autumn 2026. Gauges paired against verified Ware River stage (WRVV2). High-water events track threshold breaches (&ge; 4.00 ft MLLW).</p>{summary_note}<div class="table-scroll"><table><thead><tr><th>Lead time</th><th>Verified (N)</th><th>Operational MAE</th><th>Raw NWPS MAE</th><th>Skill Δ (Improvement)</th><th>High-water (&ge; 4.0 ft)</th></tr></thead><tbody>{''.join(vrows)}</tbody></table></div><p><a href="models/live_verification.json">Download live verification JSON</a> · <a href="issued_forecast_archive.csv">Download complete issued forecast archive CSV</a></p></section>'''
 
     return card1 + card2
@@ -251,6 +253,8 @@ def monitoring(status):
         op_all=number(summary['overall_operational_mae_ft'],' ft',2)
         nwps_all=number(summary['overall_nwps_mae_ft'],' ft',2)
         overall_comp=f'<p class="muted">Overall verified accuracy: Operational model MAE = <strong>{op_all}</strong> vs Raw NOAA NWPS MAE = <strong>{nwps_all}</strong> across autumn 2026 events.</p>'
+    if summary.get('high_water_caveat'):
+        overall_comp+=f'<p class="muted">{e(summary["high_water_caveat"])}</p>'
     return f'''<section data-current-safety class="resident-card"><h2>Fort Monroe sensor &amp; forecast verification</h2><p><a href="https://waterdata.usgs.gov/monitoring-location/USGS-0204289994/">Fort Monroe USGS 0204289994 / FTMV2</a>: {number(fort.get('elevation_navd88_ft'),' ft NAVD88')}, observed {e(when(fort.get('observation_time_utc')))}. {'Fresh observation' if fort.get('fresh') else 'Missing or stale observation'}.</p><p>Evaluation sensor: its measurements are being archived. It has not been promoted into the operational forecast. <a href="science.html">See the historical comparison and promotion criteria</a>.</p><details><summary>Prospective forecast-versus-observed scorecard (Operational vs. Raw NWPS)</summary><p>{verified} matched issued predictions. Scores compare the deployed water-level forecast and raw NOAA NWPS guidance with the Ware River gauge, not measurements of local road depth. Repeated forecast issues are correlated; storm skill continues accumulating across autumn 2026.</p>{overall_comp}<div class="table-scroll"><table><thead><tr><th scope="col">Lead</th><th scope="col">Verified</th><th scope="col">Model MAE</th><th scope="col">Raw NWPS MAE</th><th scope="col">Skill Δ</th><th scope="col">High-water (&ge; 4.0 ft)</th></tr></thead><tbody>{rows_html}</tbody></table></div><a href="models/live_verification.json">Download prospective scores</a> · <a href="issued_forecast_archive.csv">Download issued forecast archive CSV</a></details></section>'''
 
 def reporting():

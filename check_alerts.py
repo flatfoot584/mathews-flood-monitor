@@ -35,6 +35,16 @@ EASTERN_TZ = ZoneInfo("America/New_York")
 DEFAULT_NTFY_TOPIC = "mathews-flood-23128"
 PUBLIC_PORTAL_URL = "https://flatfoot584.github.io/mathews-flood-monitor/"
 
+# Alert state-machine tuning.
+TIER_QUIET_MINUTES = 90       # suppress repeat tier-change alerts inside this window (tier 3 always alerts)
+STAGE_ESCALATION_FT = 0.25     # forecast peak rising this much re-alerts
+STAGE_MAJOR_JUMP_FT = 0.5      # ...a jump this big bypasses the quiet period
+RISE_ALERT_FT_PER_HR = 0.5     # 3-hour rise rate that triggers an early warning
+RISE_ALERT_MIN_STAGE_FT = 3.0  # ...once water is already meaningfully elevated (below Tier 1)
+RISE_ALERT_RESET_FT_PER_HR = 0.25
+CREST_WARN_MIN_HOURS = -0.25   # still warn if a run lands just past the crest
+CREST_WARN_MAX_HOURS = 2.5
+
 def parse_local_time(ts_str):
     """Parse explicit EST/EDT offsets without ambiguity during DST changes."""
     return parse_timestamp(ts_str)
@@ -113,6 +123,12 @@ def format_alert_message(status):
         lines.append("PROPERTY SECTOR ELEVATION STATUS:")
         for k, s in sectors.items():
             lines.append(f"  • {s.get('name', k):<36}: {str(s.get('depth_in') if s.get('depth_in') is not None else 'Unknown'):>4}\" [{s.get('status', 'N/A')}]")
+    flags = status.get("data_quality_flags", [])
+    if flags:
+        lines.append("-" * 72)
+        lines.append("DATA QUALITY NOTES:")
+        for flag in flags:
+            lines.append(f"  • {flag}")
     lines.append("-" * 72)
     
     # Practical guidance
@@ -216,7 +232,11 @@ def load_alert_state(state_file):
         "two_hour_warning_sent_for": "",
         "last_alert_type": "none",
         "last_alert_timestamp_utc": "",
-        "last_alert_timestamp_local": ""
+        "last_alert_timestamp_local": "",
+        "last_tier_change_utc": "",
+        "pending_tier": None,
+        "pending_escalation_tier": None,
+        "rise_alert_active": False
     }
 
 def save_alert_state(state_file, state):
@@ -254,6 +274,17 @@ def evaluate_and_dispatch_alerts(status, state_file, topic=DEFAULT_NTFY_TOPIC, f
     now_dt = datetime.now(EASTERN_TZ)
     peak_dt = parse_local_time(peak_time_str)
 
+    # Rapid water-level rise is an early warning even before Tier 1. It never
+    # consumes the tier state machine.
+    trend = curr.get("stage_trend_3h_ft_per_hr")
+    stage_now = curr.get("ware_river_stage_mllw_ft")
+    if state.get("rise_alert_active") and (not finite_number(trend) or trend < RISE_ALERT_RESET_FT_PER_HR):
+        state["rise_alert_active"] = False
+    rise_fire = (quality["current_available"]
+                 and finite_number(trend) and trend >= RISE_ALERT_FT_PER_HR
+                 and finite_number(stage_now) and stage_now >= RISE_ALERT_MIN_STAGE_FT
+                 and not state.get("rise_alert_active"))
+
     hours_to_peak = None
     if peak_dt:
         hours_to_peak = (peak_dt - now_dt).total_seconds() / 3600.0
@@ -285,8 +316,20 @@ def evaluate_and_dispatch_alerts(status, state_file, topic=DEFAULT_NTFY_TOPIC, f
             state["last_notified_peak_time"] = ""
             state["event_peak_time"] = ""
             state["two_hour_warning_sent_for"] = ""
+            state["rise_alert_active"] = False
+        elif rise_fire:
+            # Early warning at Tier 0: water climbing fast toward the action stage.
+            send_alert = True
+            alert_type = "rapid_rise_warning"
+            priority = "high"
+            tags = "warning,chart_with_upwards_trend"
+            title = "Mathews Flood Alert: water rising fast"
+            body_lines.append(f"Ware River rising {trend:.2f} ft/hr; now {stage_now} ft MLLW.")
+            body_lines.append("Action: prepare to move vehicles; flooding may develop before the next high tide.")
+            state["rise_alert_active"] = True
         else:
             print(f"[ntfy] Normal conditions (Tier 0). No notification sent.")
+            save_alert_state(state_file, state)
             return False
 
     # Case 2: Active or Upcoming Flood Event (Tier 1+)
@@ -305,6 +348,13 @@ def evaluate_and_dispatch_alerts(status, state_file, topic=DEFAULT_NTFY_TOPIC, f
             tags = "rotating_light,sos,car"
             tier_name = "Tier 3 (SEVERE INUNDATION HAZARD)"
 
+        last_change = parse_timestamp(state.get("last_tier_change_utc"))
+        quiet = (last_change is not None
+                 and (now_dt - last_change).total_seconds() < TIER_QUIET_MINUTES * 60)
+        notified_peak_dt = parse_local_time(state.get("event_peak_time") or state.get("last_notified_peak_time"))
+        new_crest = (peak_dt and notified_peak_dt
+                     and abs((peak_dt - notified_peak_dt).total_seconds()) > 4 * 3600)
+
         # Check conditions for triggering
         if force:
             send_alert = True
@@ -313,52 +363,107 @@ def evaluate_and_dispatch_alerts(status, state_file, topic=DEFAULT_NTFY_TOPIC, f
             # New flood event detected; lead time depends on fresh guidance
             send_alert = True
             alert_type = "advance_warning"
-        elif (peak_dt and parse_local_time(state.get("event_peak_time") or state.get("last_notified_peak_time"))
-              and abs((peak_dt - parse_local_time(state.get("event_peak_time") or state["last_notified_peak_time"])).total_seconds()) > 4 * 3600):
+        elif new_crest:
             # A different tidal crest; tolerate revisions to this event's peak.
             send_alert = True
             alert_type = "new_crest_event"
         elif max_tier > state.get("last_notified_tier", 0):
-            # Tier escalated (e.g. from Tier 1 to Tier 2)
-            send_alert = True
-            alert_type = "tier_escalation"
-        elif peak_stage >= state.get("last_notified_peak_stage", 0.0) + 0.25:
+            # Tier escalated. Tier 3 always alerts immediately; smaller moves
+            # inside the quiet period are deferred to avoid flapping on boundary
+            # oscillations, then sent once the window expires if still elevated.
+            if max_tier >= 3 or not quiet:
+                send_alert = True
+                alert_type = "tier_escalation"
+            else:
+                state["pending_escalation_tier"] = max_tier
+                print(f"[ntfy] Tier escalation to Tier {max_tier} inside quiet period; deferred.")
+        elif max_tier < state.get("last_notified_tier", 0):
+            # Tier de-escalated: announce only after the lower tier is confirmed
+            # on a second consecutive evaluation, so boundary wobble doesn't spam.
+            if state.get("pending_tier") == max_tier:
+                send_alert = True
+                alert_type = "tier_deescalation"
+                priority = "low"
+                tags = "white_check_mark"
+            else:
+                state["pending_tier"] = max_tier
+                print(f"[ntfy] Tier de-escalation to Tier {max_tier} awaiting confirmation.")
+        elif peak_stage >= state.get("last_notified_peak_stage", 0.0) + STAGE_ESCALATION_FT:
             # Stage forecast jumped by 0.25+ ft (3+ inches)
-            send_alert = True
-            alert_type = "forecast_escalation"
-        elif (hours_to_peak is not None and 0.5 <= hours_to_peak <= 2.5 
+            jump = peak_stage - state.get("last_notified_peak_stage", 0.0)
+            if max_tier >= 3 or jump >= STAGE_MAJOR_JUMP_FT or not quiet:
+                send_alert = True
+                alert_type = "forecast_escalation"
+            else:
+                print("[ntfy] Forecast escalation inside quiet period; deferred.")
+        elif (hours_to_peak is not None and CREST_WARN_MIN_HOURS <= hours_to_peak <= CREST_WARN_MAX_HOURS
               and not state.get("two_hour_warning_sent_for")):
-            # 2-hour pre-crest immediate window reminder
+            # 2-hour pre-crest immediate window reminder. Fires even just past
+            # the crest in case a pipeline cycle was missed.
             send_alert = True
             alert_type = "imminent_crest_warning"
             state["two_hour_warning_sent_for"] = peak_time_str
+        elif (not quiet and state.get("pending_escalation_tier")
+              and max_tier >= state["pending_escalation_tier"]):
+            # Deferred escalation from inside the quiet period; still elevated.
+            send_alert = True
+            alert_type = "tier_escalation"
+
+        # Rapid rise during an active event (Tier 0 is handled in Case 1).
+        if not send_alert and rise_fire:
+            send_alert = True
+            alert_type = "rapid_rise_warning"
+            priority = "high"
+            tags = "warning,chart_with_upwards_trend"
 
         if send_alert:
             if alert_type == "imminent_crest_warning":
                 title = f"Mathews Flood Alert: High Tide in ~2 Hours ({peak_depth} in)"
+            elif alert_type == "tier_deescalation":
+                title = f"Mathews Flood Monitor: advisory downgraded to {tier_name}"
+            elif alert_type == "rapid_rise_warning":
+                title = "Mathews Flood Alert: water rising fast"
             elif alert_type in ("tier_escalation", "forecast_escalation"):
                 title = f"Mathews Flood WARNING ESCALATED: {tier_name}"
             else:
                 title = f"Mathews Coastal Flood Advisory: {tier_name}"
 
             # Compose concise lockscreen-friendly body
-            body_lines.append(f"Predicted Crest: {peak_depth}\" water at {peak_time_str}")
-            body_lines.append(f"Ware River Stage: {peak_stage} ft MLLW (Threshold: 4.0 ft)")
-            body_lines.append(f"Travel Impact: {peak_pass}")
-            if max_tier >= 2:
-                body_lines.append("Action: Move vehicles to verified dry high ground before flooding starts. Never enter floodwater.")
+            if alert_type == "tier_deescalation":
+                body_lines.append(f"Hazard reduced to {tier_name}.")
+                body_lines.append(f"Ware River Stage: {curr.get('ware_river_stage_mllw_ft')} ft MLLW.")
+                body_lines.append("Action: conditions improving, but do not enter standing water.")
+            elif alert_type == "rapid_rise_warning":
+                body_lines.append(f"Ware River rising {trend:.2f} ft/hr; now {stage_now} ft MLLW.")
+                body_lines.append("Action: prepare to move vehicles; flooding may develop before the next high tide.")
             else:
-                body_lines.append("Action: Water ponding in low spots. Do not drive into flooded roads.")
+                body_lines.append(f"Predicted Crest: {peak_depth}\" water at {peak_time_str}")
+                body_lines.append(f"Ware River Stage: {peak_stage} ft MLLW (Threshold: 4.0 ft)")
+                body_lines.append(f"Travel Impact: {peak_pass}")
+                if max_tier >= 2:
+                    body_lines.append("Action: Move vehicles to verified dry high ground before flooding starts. Never enter floodwater.")
+                else:
+                    body_lines.append("Action: Water ponding in low spots. Do not drive into flooded roads.")
 
-            if not state.get("active_event") or alert_type == "new_crest_event":
-                state["event_peak_time"] = peak_time_str
-                state["two_hour_warning_sent_for"] = ""
-            state["active_event"] = True
-            state["last_notified_tier"] = max_tier
-            state["last_notified_peak_stage"] = peak_stage
-            state["last_notified_peak_time"] = peak_time_str
+            if alert_type == "rapid_rise_warning":
+                # Early warning only; it must not consume the tier state machine.
+                state["rise_alert_active"] = True
+            else:
+                if not state.get("active_event") or alert_type == "new_crest_event":
+                    state["event_peak_time"] = peak_time_str
+                    state["two_hour_warning_sent_for"] = ""
+                state["active_event"] = True
+                state["last_notified_tier"] = max_tier
+                state["last_notified_peak_stage"] = peak_stage
+                state["last_notified_peak_time"] = peak_time_str
+                if alert_type in ("advance_warning", "new_crest_event",
+                                  "tier_escalation", "tier_deescalation"):
+                    state["last_tier_change_utc"] = now_dt.isoformat()
+                state["pending_tier"] = None
+                state["pending_escalation_tier"] = None
         else:
-            print(f"[ntfy] Flood event active ({tier_name}), but alert already sent for this crest ({peak_time_str}). Skipping to prevent spam.")
+            print(f"[ntfy] Flood event active ({tier_name}), no new alert conditions; state saved.")
+            save_alert_state(state_file, state)
             return False
 
     # Dispatch notification
@@ -413,7 +518,7 @@ def main():
     parser.add_argument("--test-ntfy", action="store_true", help="Send a test notification to verify phone reception")
     parser.add_argument("--force-ntfy", action="store_true", help="Force send notification regardless of prior state")
     parser.add_argument("--dry-run", action="store_true", help="Evaluate conditions without sending HTTP request")
-    parser.add_argument("--min-tier", type=int, default=1, help="Minimum tier required to trigger alert output (default: 1)")
+    parser.add_argument("--min-tier", type=int, default=1, help="Minimum tier required to print the bulletin to stdout (display only; does not affect ntfy dispatch)")
     parser.add_argument("--always-print", action="store_true", help="Always print bulletin even if Tier 0 (Normal)")
     parser.add_argument("--notify", action="store_true", help="Send native macOS desktop notification when alert triggered")
     args = parser.parse_args()
