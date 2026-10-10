@@ -645,13 +645,10 @@ class ResidentUxTests(unittest.TestCase):
         self.assertIn('story-timeline', page)
         self.assertIn('No flooding expected in the next 48 hours', page)
 
-    def test_fridge_card_present(self):
+    def test_fridge_card_removed(self):
         page = dashboard.build_index_html(fixture(), [], [])
-        self.assertIn('fridge-card', page)
-        self.assertIn('id="print-fridge"', page)
-        self.assertIn('call 911', page)
-        css = Path('assets/community.css').read_text()
-        self.assertIn('@media print', css)
+        self.assertNotIn('fridge-card', page)
+        self.assertNotIn('print-fridge', page)
 
     def test_audio_briefing_embedded(self):
         page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])

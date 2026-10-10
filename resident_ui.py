@@ -308,43 +308,6 @@ def action_checklist(status):
             f'''<h2>What should I do right now?</h2>'''
             f'''<ul class="action-checklist" data-checklist-key="{e(key)}">{lis}</ul></section>''')
 
-def fridge_card(status):
-    worst = _worst_tier(status)
-    first, peak, _ = _flood_timing(status)
-    gen = status.get('status_generated_at_utc')
-    sentence = _TIER_SENTENCES.get(worst, _TIER_SENTENCES[-1])
-    if first:
-        timing = "First street flooding " + rel_when(first.get('timestamp_local'), gen) + "."
-    else:
-        timing = "No street flooding expected in the next 48 hours."
-    peak_txt = 'Unknown'
-    if peak:
-        pd = peak.get('compound_flood_depth_in')
-        if finite_number(pd):
-            peak_txt = rel_when(peak.get('timestamp_local'), gen) + " (%.0f in at the reference point)" % pd
-        else:
-            peak_txt = rel_when(peak.get('timestamp_local'), gen)
-    action = ("Move vehicles to high ground before flooding starts. Never enter floodwater."
-              if worst >= 1 else "No action needed. Check back for updates.")
-    legend = ''.join(
-        '<span><i class="tier-dot tier-%d"></i>Tier %d - %s</span>' % (i, i, label)
-        for i, label in ((0, 'Normal'), (1, 'Low spots'), (2, 'Roads blocked'), (3, 'Severe')))
-    return (
-        '<section class="resident-card fridge-card" aria-label="Printable flood card">'
-        '<div class="fridge-head"><h2>Mathews Flood Monitor - Fridge Card</h2>'
-        '<button type="button" id="print-fridge" class="resident-button no-print">Print this card</button></div>'
-        '<p class="fridge-status"><strong>' + e(sentence) + '</strong></p>'
-        '<ul class="fridge-facts">'
-        '<li><strong>First flooding:</strong> ' + e(timing) + '</li>'
-        '<li><strong>Peak:</strong> ' + e(peak_txt) + '</li>'
-        '<li><strong>Do now:</strong> ' + e(action) + '</li>'
-        '<li><strong>Emergency:</strong> call 911</li>'
-        '</ul>'
-        '<div class="fridge-legend">' + legend + '</div>'
-        '<p class="fridge-foot muted">Estimates from NOAA/USGS data. Not a road-safety guarantee.</p>'
-        '</section>'
-    )
-
 def summary(status):
     curr=status.get('last_available_current_conditions') or status.get('current_conditions',{});out=status.get('forecast_48h_outlook',{});q=status['data_quality']
     timeline=status.get('forecast_hourly_timeline',[])
@@ -460,7 +423,6 @@ def summary(status):
 <section data-current-safety class="resident-card {streets_sl['class']}">{streets_sl['badge']}<h2>Potentially affected streets</h2><p>{e(streets)}</p>{chips_html}{action_window_html}{high_ground_html}{compound_html}<details><summary>Estimated timing &amp; duration</summary><p>{e(timing)}</p></details><h3>What to do</h3><p><strong>{e(action)}</strong> Map colors and model estimates do not verify road safety for any vehicle.</p><a class="resident-button" href="alerts.html">Set up mobile alerts</a> <a href="guide.html">Understand flood estimates</a></section>
 {story_timeline(status)}
 {action_checklist(status)}
-{fridge_card(status)}
 {official(status)}'''
 
 def forecast_table(status):
