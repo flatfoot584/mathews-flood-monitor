@@ -1,4 +1,4 @@
 {
-  "key": "healthy",
-  "notified_at_utc": "2026-10-10T05:28:56.745929+00:00"
+  "key": "pipeline_failed:Regression checks",
+  "notified_at_utc": "2026-10-10T05:44:46.284565+00:00"
 }
