@@ -376,6 +376,10 @@ def build_index_html(status, obs_rows, fcst_rows):
     bay_grad = display_value(curr.get("bay_hydraulic_gradient_ft", "N/A"))
     bay_slope = display_value(curr.get("bay_hydraulic_slope_ft_per_mile", "N/A"))
     bay_dir = curr.get("bay_hydraulic_pressure_direction", "N/A")
+    fort_info = status.get("fort_monroe", {})
+    fort_elev = display_value(fort_info.get("elevation_navd88_ft", "N/A"))
+    fort_mllw = display_value(fort_info.get("water_level_mllw_ft", "N/A"))
+    fort_fresh = fort_info.get("fresh", False)
 
     peak_stage = display_value(outl.get("peak_forecast_stage_mllw_ft", "N/A"))
     peak_stage_q10 = display_value(outl.get("peak_forecast_stage_q10_ft", "N/A"))
@@ -431,10 +435,16 @@ def build_index_html(status, obs_rows, fcst_rows):
         "yorktown_wind_dir_cardinal": curr_data.get("yorktown_wind_dir_cardinal"),
         "yorktown_baro_pressure_mb": curr_data.get("yorktown_baro_pressure_mb"),
         "windmill_point_storm_surge_residual_ft": curr_data.get("windmill_point_storm_surge_residual_ft"),
+        "sewells_point_storm_surge_residual_ft": curr_data.get("sewells_point_storm_surge_residual_ft"),
         "estimated_local_flood_depth_in": curr_data.get("estimated_local_flood_depth_in"),
         "vehicle_passability": curr_data.get("vehicle_passability"),
         "community_streets": {k: {"depth_in": v.get("depth_in"), "status": v.get("status"), "code": v.get("code")}
                               for k, v in curr_data.get("community_streets", {}).items()}
+    }
+    slim_fort = {
+        "elevation_navd88_ft": fort_info.get("elevation_navd88_ft"),
+        "water_level_mllw_ft": fort_info.get("water_level_mllw_ft"),
+        "fresh": fort_fresh
     }
     slim_outl = {
         "peak_forecast_stage_mllw_ft": outl_data.get("peak_forecast_stage_mllw_ft"),
@@ -447,7 +457,8 @@ def build_index_html(status, obs_rows, fcst_rows):
         "status": {
             "current_conditions": slim_curr,
             "forecast_48h_outlook": slim_outl,
-            "data_quality": status.get("data_quality", {})
+            "data_quality": status.get("data_quality", {}),
+            "fort_monroe": slim_fort
         },
         "forecast": fcst_rows[:48] if fcst_rows else []
     }).replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
@@ -647,7 +658,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         <span class="text-xs font-semibold text-sky-600 hover:underline">Toggle Telemetry</span>
       </summary>
       <div class="pt-4 space-y-6">
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-3.5">
           <!-- Card 1: Yorktown Winds -->
           <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5">
             <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
@@ -732,6 +743,20 @@ def build_index_html(status, obs_rows, fcst_rows):
               {'South Inflow Head' if (bay_grad if finite_number(bay_grad) else 0) >= 0.20 else ('North Gradient' if (bay_grad if finite_number(bay_grad) else 0) <= -0.20 else 'Equilibrium')} (46 mi)
             </div>
           </div>
+
+          <!-- Card 7: Fort Monroe Evaluation Sensor -->
+          <div class="bg-purple-50/50 p-4 sm:p-5 rounded-xl border border-purple-200/80 shadow-xs space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-semibold text-purple-700 uppercase tracking-wider">
+              <span>Fort Monroe Evaluation</span>
+              <i class="fa-solid fa-flask text-purple-600"></i>
+            </div>
+            <div class="text-2xl font-black text-slate-900 font-mono">
+              {fort_elev} <span class="text-xs font-semibold text-slate-500">ft NAVD</span>
+            </div>
+            <div class="text-[11px] text-slate-500 truncate" title="FTMV2 / USGS 0204289994: Candidate evaluation sensor">
+              {fort_mllw} ft MLLW &bull; {'Live Ingested' if fort_fresh else 'Evaluation'}
+            </div>
+          </div>
         </section>
 
         {resident_ui.monitoring(status)}
@@ -778,6 +803,7 @@ def build_index_html(status, obs_rows, fcst_rows):
     const escapeHTML = value => String(value ?? 'Unknown').replace(/[&<>"']/g, ch => ({{'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}}[ch]));
     const floodData = JSON.parse(document.getElementById('flood-data').textContent);
     const curr = floodData.status.current_conditions || {{}};
+    const fort = floodData.status.fort_monroe || {{}};
     const outl = floodData.status.forecast_48h_outlook || {{}};
     const fcst = floodData.forecast || [];
 
@@ -865,6 +891,40 @@ def build_index_html(status, obs_rows, fcst_rows):
         <div class="font-bold text-sm text-slate-900">Windmill Point (8636580)</div>
         <div class="text-xs text-slate-600">Northern Bay Storm Surge Reference</div>
         <div class="text-sm font-bold text-slate-900 font-mono">+${{curr.windmill_point_storm_surge_residual_ft ?? 'Unknown'}} ft Surge Residual</div>
+      </div>
+    `);
+
+    const sewellsMarker = L.circleMarker([36.9467, -76.3300], {{
+      radius: 8,
+      fillColor: '#2563eb',
+      color: '#ffffff',
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 0.85
+    }}).addTo(map);
+    sewellsMarker.bindPopup(`
+      <div class="p-1 space-y-1">
+        <div class="font-bold text-sm text-slate-900">Sewells Point / Norfolk (8638610)</div>
+        <div class="text-xs text-slate-600">Southern Bay Storm Surge Reference</div>
+        <div class="text-sm font-bold text-slate-900 font-mono">+${{curr.sewells_point_storm_surge_residual_ft ?? 'Unknown'}} ft Surge Residual</div>
+        <div class="text-[11px] text-slate-500">Paired with Windmill Pt across 46.2 mi for hydraulic slope</div>
+      </div>
+    `);
+
+    const fortMarker = L.circleMarker([37.0042, -76.3006], {{
+      radius: 8,
+      fillColor: '#8b5cf6',
+      color: '#ffffff',
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 0.85
+    }}).addTo(map);
+    fortMarker.bindPopup(`
+      <div class="p-1 space-y-1">
+        <div class="font-bold text-sm text-slate-900">Fort Monroe (FTMV2 / USGS 0204289994)</div>
+        <div class="text-xs text-purple-700 font-semibold">Candidate Evaluation Sensor</div>
+        <div class="text-sm font-bold text-slate-900 font-mono">${{fort.elevation_navd88_ft ?? 'N/A'}} ft NAVD88 (${{fort.water_level_mllw_ft ?? 'N/A'}} ft MLLW)</div>
+        <div class="text-[11px] text-slate-500">Live measurements archived for prospective model validation.</div>
       </div>
     `);
 
@@ -1286,7 +1346,7 @@ def build_index_html(status, obs_rows, fcst_rows):
           btnZoomProp.classList.remove('bg-white', 'shadow-sm', 'font-semibold', 'text-slate-900');
           btnZoomProp.classList.add('text-slate-600');
         }}
-        map.flyTo([37.385, -76.435], 11, {{ duration: 1.2 }});
+        map.flyTo([37.28, -76.38], 10, {{ duration: 1.2 }});
       }});
     }}
 
