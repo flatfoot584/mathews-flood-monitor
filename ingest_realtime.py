@@ -37,8 +37,9 @@ import threading
 import concurrent.futures
 
 import micro_topography
-from runtime_safety import (assess_status, atomic_write_json, compound_risk_tier,
+from runtime_safety import (assess_status, atomic_write_csv, atomic_write_json, compound_risk_tier,
                             finite_number, is_recent, UNKNOWN_TIER)
+from forecast_verification import archive_and_verify
 
 SOURCE_HEALTH = {}
 _HEALTH_LOCK = threading.Lock()
@@ -129,6 +130,11 @@ def fetch_json(url, max_retries=3, backoff=2.0, timeout=15):
         with _HEALTH_LOCK:
             SOURCE_HEALTH[url] = {"available": fresh, "cached": True,
                                   "retrieved_at_utc": cached.get("retrieved_at_utc")}
+        if not fresh:
+            # Never serve a stale cached response as live data. Outages are
+            # handled explicitly (preserve_last_forecast) with clear labeling.
+            print("[WARN] API unavailable and cached response is stale; treating as unavailable.", file=sys.stderr)
+            return None
         print("[WARN] API unavailable; using a timestamped cached response.", file=sys.stderr)
         return cached["payload"]
     except (OSError, ValueError, KeyError):
@@ -275,16 +281,24 @@ def fetch_coops_product(station, product, begin_dt_utc, end_dt_utc, datum="mllw"
         t_str = item.get("t")
         if not t_str:
             continue
-        dt_utc = datetime.strptime(t_str, "%Y-%m-%d %H:%M").replace(tzinfo=timezone.utc)
+        try:
+            dt_utc = datetime.strptime(t_str, "%Y-%m-%d %H:%M").replace(tzinfo=timezone.utc)
+        except (ValueError, TypeError):
+            # One malformed record must never kill the whole feed.
+            continue
         rec = {"datetime_utc": dt_utc}
-        
+
         if product == "wind":
             try:
-                rec["wind_speed_mph"] = round(float(item.get("s", 0)) * 1.15078, 2)
-                rec["wind_dir_deg"] = round(float(item.get("d", 0)), 1)
+                speed_raw = item.get("s")
+                if speed_raw in (None, ""):
+                    continue  # never fabricate calm from a missing reading
+                rec["wind_speed_mph"] = round(float(speed_raw) * 1.15078, 2)
+                dir_raw = item.get("d")
+                rec["wind_dir_deg"] = round(float(dir_raw), 1) if dir_raw not in (None, "") else None
                 gust_str = item.get("g")
-                rec["wind_gust_mph"] = round(float(gust_str) * 1.15078, 2) if gust_str else rec["wind_speed_mph"]
-            except ValueError:
+                rec["wind_gust_mph"] = round(float(gust_str) * 1.15078, 2) if gust_str not in (None, "") else rec["wind_speed_mph"]
+            except (ValueError, TypeError):
                 continue
         elif product == "air_pressure":
             try:
@@ -321,7 +335,11 @@ def fetch_nws_hourly_forecast():
         start_str = p.get("startTime")
         if not start_str:
             continue
-        dt = datetime.fromisoformat(start_str)
+        try:
+            dt = datetime.fromisoformat(start_str)
+        except (ValueError, TypeError):
+            # One malformed period must never kill the whole forecast.
+            continue
         dt_utc = dt.astimezone(timezone.utc)
         
         # Parse wind speed
@@ -406,7 +424,8 @@ def aggregate_hourly_observations(ware_obs, yt_winds, yt_press, yt_temps, yt_wat
         if hr_dt not in yt_wind_grouped:
             yt_wind_grouped[hr_dt] = {"speeds": [], "dirs": [], "gusts": []}
         yt_wind_grouped[hr_dt]["speeds"].append(r["wind_speed_mph"])
-        yt_wind_grouped[hr_dt]["dirs"].append(r["wind_dir_deg"])
+        if r.get("wind_dir_deg") is not None:
+            yt_wind_grouped[hr_dt]["dirs"].append(r["wind_dir_deg"])
         yt_wind_grouped[hr_dt]["gusts"].append(r["wind_gust_mph"])
         
     yt_press_grouped = group_by_hour(yt_press, "baro_mb")
@@ -669,6 +688,30 @@ def build_forecast_timeline(nwps_fcst, nws_fcst, yt_pred_fcst, wm_pred_fcst, qpf
         
     return timeline
 
+def stage_trend_ft_per_hr(ware_obs, now_utc, window_hours=3):
+    """Robust water-level rise rate over the trailing window.
+
+    Compares the mean of the second half of the window against the first half,
+    which is stabler than endpoints on noisy 6-minute gauge data. Returns None
+    when there are too few readings to trust.
+    """
+    if not ware_obs:
+        return None
+    cutoff = now_utc - timedelta(hours=window_hours)
+    pts = [(r["datetime_utc"], r["stage_mllw_ft"]) for r in ware_obs
+           if isinstance(r.get("datetime_utc"), datetime) and finite_number(r.get("stage_mllw_ft"))
+           and r["datetime_utc"] >= cutoff]
+    if len(pts) < 4:
+        return None
+    pts.sort()
+    mid = cutoff + timedelta(hours=window_hours / 2)
+    early = [s for t, s in pts if t <= mid]
+    late = [s for t, s in pts if t > mid]
+    if not early or not late:
+        return None
+    return round((sum(late) / len(late) - sum(early) / len(early)) / (window_hours / 2), 3)
+
+
 def generate_latest_status(
     ware_obs=None,
     yt_winds=None,
@@ -722,6 +765,15 @@ def generate_latest_status(
         
     yt_surge = matched_surge(yt_water, yt_preds)
 
+    data_quality_flags = []
+    if (yt_surge is not None and wm_surge is not None
+            and abs(yt_surge - wm_surge) > 0.75):
+        # Nearby gauges disagreeing on surge is a data-quality signal, not a
+        # forecast input: flag it for the bulletin instead of silently trusting one.
+        data_quality_flags.append(
+            f"Yorktown and Windmill Point surge residuals disagree by "
+            f"{abs(yt_surge - wm_surge):.2f} ft; treat water-level readings cautiously.")
+
     w_spd = latest_wind.get("wind_speed_mph") if latest_wind else None
     w_dir = latest_wind.get("wind_dir_deg") if latest_wind else None
     along_bay = None
@@ -773,10 +825,12 @@ def generate_latest_status(
         "alerting_enabled": os.getenv("NTFY_ALERTS_ENABLED", "false").lower() == "true",
         "forecast_method": "NWPS guidance with heuristic local adjustments; scenario bounds are not calibrated confidence intervals",
         "system_location": "Mathews County, Virginia (Ware River / Mobjack Bay Basin)",
+        "data_quality_flags": data_quality_flags,
         "current_conditions": {
             "observation_timestamp_local": current_stage_time,
             "ware_river_stage_mllw_ft": current_stage,
             "ware_river_stage_navd88_ft": round(current_stage + DATUM_OFFSET_NAVD88_MLLW, 2) if current_stage is not None else None,
+            "stage_trend_3h_ft_per_hr": stage_trend_ft_per_hr(ware_obs, now_utc),
             "action_stage_threshold_ft": 4.00,
             "flood_inundation_threshold_ft": FLOOD_STAGE_THRESHOLD,
             "estimated_local_flood_depth_in": current_eval["total_compound_depth_in"],
@@ -907,19 +961,14 @@ def update_archive_observations(archive_path, hourly_obs):
             
     if (added > 0 or updated > 0 or not os.path.exists(archive_path)) and headers:
         existing_rows.sort(key=lambda r: r.get("timestamp_utc", ""))
-        with open(archive_path, "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=headers, restval="", extrasaction="ignore")
-            writer.writeheader()
-            writer.writerows(existing_rows)
-            
+        # Atomic replace: a crash mid-write can never leave a truncated archive.
+        atomic_write_csv(archive_path, existing_rows, headers)
+
     return added, len(existing_rows)
 
 def write_csv(filepath, rows, fieldnames):
-    """Write list of dictionaries to CSV safely."""
-    with open(filepath, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames, restval="", extrasaction="ignore")
-        writer.writeheader()
-        writer.writerows(rows)
+    """Write list of dictionaries to CSV atomically."""
+    atomic_write_csv(filepath, rows, fieldnames)
 
 def preserve_last_forecast(status, path):
     """Keep original forecast dates on total outages; never use fallback for alerts."""
@@ -1068,8 +1117,12 @@ def main():
         "datum_offset_ft": -1.70, "fresh": is_recent(ft.isoformat()) if ft else False,
         "model_promoted": False,
     }
-    from forecast_verification import archive_and_verify
-    status_summary["live_verification"] = archive_and_verify(status_summary, ware_obs)
+    try:
+        status_summary["live_verification"] = archive_and_verify(status_summary, ware_obs)
+    except Exception as ex:
+        # Verification is advisory: it must never abort ingest, dashboard, or alerts.
+        log(f"[WARN] Forecast verification failed ({ex}); continuing without updated scores.")
+        status_summary["live_verification"] = {"error": str(ex)[:200], "degraded": True}
 
     # Write files
     log(f"\n[*] Writing outputs:")
