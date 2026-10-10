@@ -40,6 +40,12 @@ COMMUNITY_STREET_PROFILES = {
         "high_mllw_ft": 4.36,
         "description": "Connects Daniel Ave to Bayshore Ave. Southern culvert dips to 3.78 ft."
     },
+    "Mobjack Street": {
+        "invert_mllw_ft": 3.82,
+        "invert_navd88_ft": 2.18,
+        "high_mllw_ft": 4.38,
+        "description": "Connects Daniel Ave / River Rd to Bayshore Ave. South end dips near waterfront."
+    },
     "Daniel Avenue": {
         "invert_mllw_ft": 3.88,
         "invert_navd88_ft": 2.24,
@@ -54,10 +60,10 @@ COMMUNITY_STREET_PROFILES = {
         "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
     },
     "River Road": {
-        "invert_mllw_ft": 4.14,
-        "invert_navd88_ft": 2.50,
+        "invert_mllw_ft": 3.59,
+        "invert_navd88_ft": 1.95,
         "high_mllw_ft": 4.53,
-        "description": "North shoreline access road. Mid-section swale dips to 4.14 ft."
+        "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
     },
     "Hobday Street": {
         "invert_mllw_ft": 4.22,
@@ -65,11 +71,17 @@ COMMUNITY_STREET_PROFILES = {
         "high_mllw_ft": 4.30,
         "description": "Interior cross street between Daniel Ave and Bayshore Ave."
     },
-    "Little Avenue": {
+    "New Little Street": {
         "invert_mllw_ft": 4.23,
         "invert_navd88_ft": 2.59,
         "high_mllw_ft": 4.61,
         "description": "Interior cross street. Rises towards Daniel Ave northern ridge."
+    },
+    "Matthews Street": {
+        "invert_mllw_ft": 3.75,
+        "invert_navd88_ft": 2.11,
+        "high_mllw_ft": 4.60,
+        "description": "North residential access off Daniel Ave. Entrance dips to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88)."
     },
     "Bunny Rabbit Lane": {
         "invert_mllw_ft": 4.45,
@@ -91,7 +103,7 @@ SECTOR_PROFILES = {
         "description": "Low drainage swales and ditch culvert inverts. Floods first at 3.99 ft."
     },
     "road_apron": {
-        "name": "Lower Residential Blocks (Allview / Hobday / Little Ave South)",
+        "name": "Lower Residential Blocks (Allview / Hobday / New Little St South)",
         "invert_mllw_ft": 4.15,
         "bank_mllw_ft": 4.39,
         "description": "Southern residential blocks and lower cross streets (1 to 4 inches puddling)."
@@ -109,10 +121,10 @@ SECTOR_PROFILES = {
         "description": "Open yards and north property interiors. Avoid flooded roads in any vehicle."
     },
     "garage_foundation": {
-        "name": "River Road North & Ridge High Ground Pads",
+        "name": "Ridge High Ground Pads & Northern Home Footprints",
         "invert_mllw_ft": 4.90,
         "bank_mllw_ft": 99.0,
-        "description": "Elevated building footprint and highest community ground."
+        "description": "Elevated building footprint and highest community ground (north of River Road ridge)."
     }
 }
 

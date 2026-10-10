@@ -2,7 +2,7 @@
 <html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src &#x27;self&#x27;; script-src &#x27;self&#x27; &#x27;unsafe-hashes&#x27; &#x27;sha256-KjPmYGsO3yfcs6SiPFnwWeVpeCZ1GraCeiwo+vqsFl8=&#x27; &#x27;sha256-KO8pIZdwk2QYaUi7dHrYM4uoO/2dOGF7CzIHECeMLko=&#x27; &#x27;sha256-5l0c95bn3P4133Pk5xlEVTUyjsSHZ36Z9s2c8kRk1Ug=&#x27;; style-src &#x27;self&#x27; &#x27;unsafe-inline&#x27; https://cdnjs.cloudflare.com https://unpkg.com https://fonts.googleapis.com; font-src &#x27;self&#x27; https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src &#x27;self&#x27; data: https://tile.openstreetmap.org https://server.arcgisonline.com https://api.qrserver.com https://unpkg.com; connect-src &#x27;self&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;; frame-src &#x27;none&#x27;">
+  <meta http-equiv="Content-Security-Policy" content="default-src &#x27;self&#x27;; script-src &#x27;self&#x27; &#x27;unsafe-hashes&#x27; &#x27;sha256-KjPmYGsO3yfcs6SiPFnwWeVpeCZ1GraCeiwo+vqsFl8=&#x27; &#x27;sha256-KO8pIZdwk2QYaUi7dHrYM4uoO/2dOGF7CzIHECeMLko=&#x27; &#x27;sha256-tldsw8ZcdfBUgOa+YuUsi562Z2OesBPchvZRBg1AI6M=&#x27;; style-src &#x27;self&#x27; &#x27;unsafe-inline&#x27; https://cdnjs.cloudflare.com https://unpkg.com https://fonts.googleapis.com; font-src &#x27;self&#x27; https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src &#x27;self&#x27; data: https://tile.openstreetmap.org https://server.arcgisonline.com https://api.qrserver.com https://unpkg.com; connect-src &#x27;self&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;; frame-src &#x27;none&#x27;">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mathews County, VA Coastal Flood Monitor & Forecast</title>
   <meta name="description" content="Hyper-local real-time coastal flood prediction, interactive map, and 48-hour hydrograph for Mathews County, VA.">
@@ -24,6 +24,21 @@
     .font-mono { font-family: 'JetBrains Mono', monospace; }
     #flood-map { height: 500px; z-index: 10; }
     .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15); }
+    .street-map-label {
+      background: rgba(15, 23, 42, 0.90);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      padding: 1px 5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.35);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .street-map-label::before { display: none !important; }
+    .leaflet-tooltip-pane .leaflet-tooltip { border: none; background: transparent; box-shadow: none; }
   </style>
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f172a"></head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased">
@@ -42,7 +57,7 @@
     <section class="resident-intro"><p class="eyebrow">Blackwater &amp; Mobjack Bay Estates</p><h1>Your local flood outlook</h1><p>Independent community research using NOAA and USGS data.</p></section>
 <section data-current-safety class="resident-grid" aria-label="Current conditions and forecast"><article class="resident-card stoplight-green"><div class="stoplight-badge badge-green"><span class="stoplight-dot"></span> Good · No Flooding</div><p class="eyebrow" data-age-label data-last-label="Last Ware River observation">Now · Ware River observation</p><h2 data-age-label data-last-label="Last observation; current conditions unknown">No tidal inundation estimated</h2><p class="resident-value">3.16 ft <small>MLLW at the gauge</small></p><div class="stage-meter" aria-hidden="true" title="0.83' below ditch threshold"><div class="stage-meter-fill fill-green" style="width: 63%"></div><div class="stage-meter-threshold" style="left: 79.8%"></div></div><div class="stage-meter-labels"><span>0' Safe</span><span title="Ditch overflow threshold">3.99' Ditch Brim</span><span>5.0'+ Severe</span></div><p>Observed Fri, Oct 9 at 8:45 PM EDT</p><p>Local reference estimate: <strong>0.0 in</strong></p><details><summary>Where &amp; what this measures</summary><p class="muted">Empirical low-point reference near Daniel Ave &amp; Julian St. No street inundation estimated. Estimates use tidal water levels; recent rainfall is not measured here.</p></details></article>
 <article class="resident-card stoplight-red"><div class="stoplight-badge badge-red"><span class="stoplight-dot"></span> Danger · Severe Flooding — Extreme Caution</div><p class="eyebrow" data-age-label data-last-label="Last saved forecast · Model estimate">Next 48 hours · Model estimate</p><h2 data-age-label data-last-label="Last available forecast; check its dates">Severe flooding estimated · Extreme caution</h2><p class="resident-value">4.89 ft <small>peak Ware River stage</small></p><div class="stage-meter" aria-hidden="true" title="0.90' above ditch threshold"><div class="stage-meter-fill fill-red" style="width: 97%"></div><div class="stage-meter-threshold" style="left: 79.8%"></div></div><div class="stage-meter-labels"><span>0' Safe</span><span title="Ditch overflow threshold">3.99' Ditch Brim</span><span>5.0'+ Severe</span></div><p><strong>Sun, Oct 11 at 10:00 AM EDT</strong></p><details><summary>Depth &amp; uncertainty</summary><p>Peak local reference depth: 10.7 in, at Sun, Oct 11 at 10:00 AM EDT. Street depths vary.</p><p class="muted">Scenario range 4.6 to 5.2 ft. Uncalibrated; not a guaranteed upper bound.</p></details></article></section>
-<section data-current-safety class="resident-card stoplight-red"><div class="stoplight-badge badge-red"><span class="stoplight-dot"></span> Danger · Severe Flooding — Extreme Caution</div><h2>Potentially affected streets</h2><p>Allview Street, Bayshore Avenue, Bunny Rabbit Lane, Daniel Avenue, Hobday Street, Julian Street, Little Avenue, River Road</p><div class="street-chips"><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>Allview Street (~9.3" peak)</span><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>Bayshore Avenue (~13.6" peak)</span><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>Bunny Rabbit Lane (~5.7" peak)</span><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>Daniel Avenue (~12.1" peak)</span><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>Hobday Street (~8.3" peak)</span><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>Julian Street (~13.2" peak)</span><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>Little Avenue (~8.2" peak)</span><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>River Road (~9.2" peak)</span></div><div class="action-window-box"><div class="action-window-header"><i class="fa-solid fa-clock mr-1.5"></i>Property Protection Action Window</div><div class="action-window-body"><p><strong>First street inundation:</strong> Sun, Oct 11 at 8:00 AM EDT</p><p><strong>Expected peak crest:</strong> Sun, Oct 11 at 10:00 AM EDT (4.89 ft MLLW)</p><p><strong>Recommended Action:</strong> Relocate passenger vehicles to elevated ground at least 1 hour before first street flooding.</p></div></div><div class="high-ground-callout"><strong><i class="fa-solid fa-square-parking mr-1"></i> Neighborhood High-Ground Reference:</strong> <span><strong>Bunny Rabbit Ln</strong> (4.45' MLLW) and <strong>home/garage elevation pads</strong> (4.90' MLLW) sit 0.5–1.1 ft above lower roads (Bayshore Ave 3.75', Julian St 3.78', Daniel Ave 3.88'). Relocate vehicles to high ground before ditch brim overflow.</span></div><div class="compound-warning-callout"><strong><i class="fa-solid fa-cloud-showers-water mr-1"></i> Compound Drainage Alert:</strong> <span>High tidal water (&ge; 3.99' MLLW) blocks gravity drainage through roadside culverts into Blackwater Creek. Heavy rainfall will pool in yards and ditches before high tide crests.</span></div><details><summary>Estimated timing &amp; duration</summary><p>First modeled street flooding: Sun, Oct 11 at 8:00 AM EDT. Last modeled flooded hour: Sun, Oct 11 at 12:00 PM EDT. 5 flooded hourly intervals, which may be separated. Receding estimates do not establish when roads will be safe.</p></details><h3>What to do</h3><p><strong>Plan before flooding starts; never enter floodwater.</strong> Map colors and model estimates do not verify road safety for any vehicle.</p><a class="resident-button" href="alerts.html">Set up mobile alerts</a> <a href="guide.html">Understand flood estimates</a></section><div data-official-feed><p>No active NWS alerts returned for this point at the displayed check time; this does not verify road safety. Checked Fri, Oct 9 at 9:19 PM EDT.</p><ul></ul></div><aside class="official-card"><strong>Official warnings &amp; emergency guidance</strong><p>This monitor provides local estimates. Check <a href="https://www.weather.gov/akq/">NWS Wakefield warnings</a> and <a href="https://www.mathewscountyva.gov/">Mathews County emergency information</a>. Call 911 for an immediate emergency. <a href="https://www.weather.gov/safety/flood-turn-around-dont-drown">Never drive into floodwater.</a></p></aside>
+<section data-current-safety class="resident-card stoplight-red"><div class="stoplight-badge badge-red"><span class="stoplight-dot"></span> Danger · Severe Flooding — Extreme Caution</div><h2>Potentially affected streets</h2><p>Allview Street, Bayshore Avenue, Bunny Rabbit Lane, Daniel Avenue, Hobday Street, Julian Street, Little Avenue, River Road</p><div class="street-chips"><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>Allview Street (~9.3" peak)</span><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>Bayshore Avenue (~13.6" peak)</span><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>Bunny Rabbit Lane (~5.7" peak)</span><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>Daniel Avenue (~12.1" peak)</span><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>Hobday Street (~8.3" peak)</span><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>Julian Street (~13.2" peak)</span><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>Little Avenue (~8.2" peak)</span><span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>River Road (~9.2" peak)</span></div><div class="action-window-box"><div class="action-window-header"><i class="fa-solid fa-clock mr-1.5"></i>Property Protection Action Window</div><div class="action-window-body"><p><strong>First street inundation:</strong> Sun, Oct 11 at 8:00 AM EDT</p><p><strong>Expected peak crest:</strong> Sun, Oct 11 at 10:00 AM EDT (4.89 ft MLLW)</p><p><strong>Recommended Action:</strong> Relocate passenger vehicles to elevated ground at least 1 hour before first street flooding.</p></div></div><div class="high-ground-callout"><strong><i class="fa-solid fa-square-parking mr-1"></i> Neighborhood High-Ground Reference:</strong> <span><strong>Bunny Rabbit Ln</strong> (4.45' MLLW) and <strong>home/garage elevation pads</strong> (4.90' MLLW) sit 0.5–1.3 ft above lower roads (River Rd at Daniel Ave 3.59', Bayshore Ave 3.75', Matthews St 3.75', Julian St 3.78', Mobjack St 3.82', Daniel Ave 3.88'). Relocate vehicles to high ground before ditch brim overflow.</span></div><div class="compound-warning-callout"><strong><i class="fa-solid fa-cloud-showers-water mr-1"></i> Compound Drainage Alert:</strong> <span>High tidal water (&ge; 3.99' MLLW) blocks gravity drainage through roadside culverts into Blackwater Creek. Heavy rainfall will pool in yards and ditches before high tide crests.</span></div><details><summary>Estimated timing &amp; duration</summary><p>First modeled street flooding: Sun, Oct 11 at 8:00 AM EDT. Last modeled flooded hour: Sun, Oct 11 at 12:00 PM EDT. 5 flooded hourly intervals, which may be separated. Receding estimates do not establish when roads will be safe.</p></details><h3>What to do</h3><p><strong>Plan before flooding starts; never enter floodwater.</strong> Map colors and model estimates do not verify road safety for any vehicle.</p><a class="resident-button" href="alerts.html">Set up mobile alerts</a> <a href="guide.html">Understand flood estimates</a></section><div data-official-feed><p>No active NWS alerts returned for this point at the displayed check time; this does not verify road safety. Checked Fri, Oct 9 at 9:19 PM EDT.</p><ul></ul></div><aside class="official-card"><strong>Official warnings &amp; emergency guidance</strong><p>This monitor provides local estimates. Check <a href="https://www.weather.gov/akq/">NWS Wakefield warnings</a> and <a href="https://www.mathewscountyva.gov/">Mathews County emergency information</a>. Call 911 for an immediate emergency. <a href="https://www.weather.gov/safety/flood-turn-around-dont-drown">Never drive into floodwater.</a></p></aside>
 
     <!-- 5. 48-HOUR HYDROGRAPH & ENVIRONMENTAL DRIVERS -->
     <section data-current-safety class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
@@ -312,7 +327,7 @@
         </div>
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-road text-amber-500 mr-1.5"></i> 2. Lower Residential Blocks — Allview / Hobday / Little Ave South (Elev: 4.15' MLLW / 2.51' NAVD88)</span>
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-road text-amber-500 mr-1.5"></i> 2. Lower Residential Blocks — Allview / Hobday / New Little St South (Elev: 4.15' MLLW / 2.51' NAVD88)</span>
             <span class="font-mono font-semibold text-emerald-700">
               0.0" Water (No tidal flooding estimated)
             </span>
@@ -345,7 +360,7 @@
         </div>
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-house text-blue-600 mr-1.5"></i> 5. River Road North &amp; Ridge High Ground Pads (Elev: 4.90' MLLW / 3.26' NAVD88)</span>
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-house text-blue-600 mr-1.5"></i> 5. Ridge High Ground Pads &amp; Northern Home Footprints (Elev: 4.90' MLLW / 3.26' NAVD88)</span>
             <span class="font-mono font-semibold text-emerald-700">
               0.0" Water (No tidal flooding estimated)
             </span>
@@ -519,6 +534,11 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    const esriImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19,
+      attribution: 'Tiles &copy; Esri, Maxar, Earthstar Geographics, USDA FSA, USGS, Aerogrid, IGN, IGP, and the GIS User Community'
+    });
+
     const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 19,
       attribution: 'Tiles &copy; Esri &mdash; USGS, NOAA'
@@ -532,6 +552,7 @@
     // Add basemap layer control
     L.control.layers({
       "OpenStreetMap (Streets & Water)": osmLayer,
+      "High-Res Satellite (Esri Imagery)": esriImagery,
       "Esri Topographic": esriTopo,
       "Esri Marine / Ocean": esriOcean
     }, null, { position: 'topright' }).addTo(map);
@@ -664,7 +685,7 @@
         ]
       },
       {
-        name: "Lower Residential Blocks (Allview / Hobday / Little Ave South)",
+        name: "Lower Residential Blocks (Allview / Hobday / New Little St South)",
         elev: 4.15,
         desc: "Southern residential parcels and lower cross street dips (1 to 4 inches standing water).",
         coords: [
@@ -691,9 +712,9 @@
         ]
       },
       {
-        name: "River Road North & Ridge High Ground Pads",
+        name: "Ridge High Ground Pads & Northern Home Footprints",
         elev: 4.90,
-        desc: "Elevated building footprint and highest ground along River Road. Flooding may occur; actual access must be checked.",
+        desc: "Elevated building footprint and highest ground along community ridge north of River Road. Safe from moderate tides.",
         coords: [
           [37.4222, -76.4075], [37.4222, -76.4070], [37.422058, -76.406547],
           [37.421872, -76.406392], [37.421717, -76.406211], [37.421448, -76.406030],
@@ -703,18 +724,38 @@
       }
     ];
 
-    // 3. Community Street Network Centerlines (Loaded directly from OSM)
+    // 3. Community Street Network Centerlines with Verified Street Names & On-Map Labels
     const communityStreetData = {
-      "Bayshore Avenue": {
+      "Bayshore Ave": {
+        fullName: "Bayshore Avenue",
         elev: 3.75,
-        desc: "Waterfront road. West & east dips flood first.",
+        desc: "Southern waterfront roadway. West & east dips flood first.",
         coords: [
           [37.418612, -76.405419], [37.41858, -76.405771], [37.418556, -76.406277],
           [37.418525, -76.406948], [37.41852, -76.406995], [37.418469, -76.407802],
           [37.418451, -76.408076], [37.418417, -76.408605], [37.418403, -76.409227]
         ]
       },
-      "Daniel Avenue": {
+      "Julian St": {
+        fullName: "Julian Street",
+        elev: 3.78,
+        desc: "Connecting street between Daniel Ave and Bayshore Ave.",
+        coords: [
+          [37.420307, -76.407368], [37.419501, -76.407203], [37.419026, -76.407095],
+          [37.41852, -76.406995]
+        ]
+      },
+      "Mobjack St": {
+        fullName: "Mobjack Street",
+        elev: 3.82,
+        desc: "Eastern connector between Daniel Ave/River Rd and Bayshore Ave.",
+        coords: [
+          [37.420142, -76.405689], [37.420096, -76.405699], [37.420036, -76.405699],
+          [37.419961, -76.405691], [37.418612, -76.405419]
+        ]
+      },
+      "Daniel Ave": {
+        fullName: "Daniel Avenue",
         elev: 4.40,
         desc: "Main community spine. Primary Observation Benchmark at 4.40 ft.",
         coords: [
@@ -725,31 +766,27 @@
           [37.420186, -76.409627], [37.420128, -76.410866], [37.42012, -76.411600]
         ]
       },
-      "Julian Street": {
-        elev: 3.78,
-        desc: "Connecting street between Daniel Ave and Bayshore Ave.",
-        coords: [
-          [37.420307, -76.407368], [37.419501, -76.407203], [37.419026, -76.407095],
-          [37.41852, -76.406995]
-        ]
-      },
-      "Allview Street": {
+      "Allview St": {
+        fullName: "Allview Street",
         elev: 4.13,
-        desc: "Western interior cross street.",
+        desc: "Western interior cross street. Shallow puddling above 4.13 ft.",
         coords: [
           [37.418403, -76.409227], [37.418605, -76.409328], [37.419033, -76.409405],
           [37.419515, -76.409495], [37.420186, -76.409627]
         ]
       },
-      "River Road": {
-        elev: 4.14,
-        desc: "Northern shoreline access road.",
+      "River Rd": {
+        fullName: "River Road (at Daniel Ave)",
+        elev: 3.59,
+        desc: "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88). Mid/north section rises toward ridge.",
         coords: [
-          [37.420375, -76.406297], [37.420803, -76.406602], [37.421278, -76.406765],
-          [37.421438, -76.406817], [37.421918, -76.407001], [37.421975, -76.407028]
+          [37.420183, -76.406550], [37.420375, -76.406297], [37.420803, -76.406602],
+          [37.421278, -76.406765], [37.421438, -76.406817], [37.421918, -76.407001],
+          [37.421975, -76.407028]
         ]
       },
-      "Hobday Street": {
+      "Hobday St": {
+        fullName: "Hobday Street",
         elev: 4.22,
         desc: "Interior cross street between Daniel Ave & Bayshore Ave.",
         coords: [
@@ -757,15 +794,25 @@
           [37.418841, -76.407868], [37.418469, -76.407802]
         ]
       },
-      "Little Avenue": {
+      "New Little St": {
+        fullName: "New Little Street",
         elev: 4.23,
-        desc: "Interior cross street rising towards Daniel Ave.",
+        desc: "Interior cross street rising towards Daniel Ave northern ridge.",
         coords: [
           [37.420215, -76.408918], [37.419698, -76.408835], [37.419093, -76.408721],
           [37.418767, -76.40865], [37.418417, -76.408605]
         ]
       },
-      "Bunny Rabbit Lane": {
+      "Matthews St": {
+        fullName: "Matthews Street",
+        elev: 3.75,
+        desc: "North residential access off Daniel Ave. Dips at entrance to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88).",
+        coords: [
+          [37.420307, -76.407368], [37.420319, -76.40717], [37.419648, -76.407127]
+        ]
+      },
+      "Bunny Rabbit Ln": {
+        fullName: "Bunny Rabbit Lane",
         elev: 4.45,
         desc: "Western community boundary road on elevated ridge.",
         coords: [
@@ -827,8 +874,29 @@
         zoneLayers.push(poly);
       });
 
-      // 2. Render Street Corridors
+      // 2. Render Street Corridors with Permanent On-Map Labels
+      const normName = s => String(s || '').toLowerCase()
+        .replace(/(ave|avenue)/g, 'ave')
+        .replace(/(st|street)/g, 'st')
+        .replace(/(rd|road)/g, 'rd')
+        .replace(/(ln|lane)/g, 'ln')
+        .trim();
+
+      const lookupAssessment = (shortName, fullName) => {
+        if (!streetAssessment) return null;
+        if (streetAssessment[shortName]) return streetAssessment[shortName];
+        if (fullName && streetAssessment[fullName]) return streetAssessment[fullName];
+        const target1 = normName(shortName);
+        const target2 = normName(fullName);
+        for (const [k, v] of Object.entries(streetAssessment)) {
+          const kn = normName(k);
+          if (kn === target1 || kn === target2) return v;
+        }
+        return null;
+      };
+
       for (const [stName, stData] of Object.entries(communityStreetData)) {
+        const fullTitle = stData.fullName || stName;
         let stColor = '#059669'; // Emerald
         let stDepth = 0;
         let stStatus = unknownStage ? 'Unknown — data unavailable' : 'No modeled tidal inundation';
@@ -848,8 +916,8 @@
           }
         }
 
-        if (streetAssessment && streetAssessment[stName]) {
-          const assessment = streetAssessment[stName];
+        const assessment = lookupAssessment(stName, stData.fullName);
+        if (assessment) {
           stDepth = assessment.depth_in;
           stStatus = escapeHTML(assessment.status);
           stColor = ({ GREEN: '#059669', YELLOW: '#d97706', ORANGE: '#ea580c', RED: '#dc2626', UNKNOWN: '#64748b' })[assessment.code] || '#64748b';
@@ -861,12 +929,18 @@
           lineJoin: 'round'
         }).addTo(map);
 
+        line.bindTooltip(stName, {
+          permanent: true,
+          direction: 'center',
+          className: 'street-map-label'
+        });
+
         line.bindPopup(`
           <div class="p-1.5 space-y-1">
             <div class="font-bold text-sm text-slate-900 flex items-center gap-1.5">
-              <i class="fa-solid fa-road text-slate-500"></i> ${stName}
+              <i class="fa-solid fa-road text-slate-500"></i> ${escapeHTML(fullTitle)}
             </div>
-            <div class="text-xs text-slate-600">${stData.desc}</div>
+            <div class="text-xs text-slate-600">${escapeHTML(stData.desc)}</div>
             <div class="text-xs font-mono text-slate-500">Street Invert: ${stData.elev}' MLLW (${(stData.elev - 1.64).toFixed(2)}' NAVD88)</div>
             <div class="text-xs font-bold pt-1 border-t border-slate-100" style="color: ${stColor}">Live Passability: ${stStatus}</div>
           </div>

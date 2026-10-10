@@ -319,7 +319,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         </div>
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-road text-amber-500 mr-1.5"></i> 2. Lower Residential Blocks — Allview / Hobday / Little Ave South (Elev: 4.15' MLLW / 2.51' NAVD88)</span>
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-road text-amber-500 mr-1.5"></i> 2. Lower Residential Blocks — Allview / Hobday / New Little St South (Elev: 4.15' MLLW / 2.51' NAVD88)</span>
             <span class="font-mono font-semibold {'text-amber-700 font-bold' if (road_depth or 0) > 0 else 'text-emerald-700'}">
               {road_depth_str}" Water ({road_status})
             </span>
@@ -352,7 +352,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         </div>
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-house text-blue-600 mr-1.5"></i> 5. River Road North &amp; Ridge High Ground Pads (Elev: 4.90' MLLW / 3.26' NAVD88)</span>
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-house text-blue-600 mr-1.5"></i> 5. Ridge High Ground Pads &amp; Northern Home Footprints (Elev: 4.90' MLLW / 3.26' NAVD88)</span>
             <span class="font-mono font-semibold {'text-red-700 font-bold' if (garage_depth or 0) > 0 else 'text-emerald-700'}">
               {garage_depth_str}" Water ({garage_status})
             </span>
@@ -477,6 +477,21 @@ def build_index_html(status, obs_rows, fcst_rows):
     .font-mono {{ font-family: 'JetBrains Mono', monospace; }}
     #flood-map {{ height: 500px; z-index: 10; }}
     .leaflet-popup-content-wrapper {{ border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15); }}
+    .street-map-label {{
+      background: rgba(15, 23, 42, 0.90);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      padding: 1px 5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.35);
+      white-space: nowrap;
+      pointer-events: none;
+    }}
+    .street-map-label::before {{ display: none !important; }}
+    .leaflet-tooltip-pane .leaflet-tooltip {{ border: none; background: transparent; box-shadow: none; }}
   </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased">
@@ -790,6 +805,11 @@ def build_index_html(status, obs_rows, fcst_rows):
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
     }}).addTo(map);
 
+    const esriImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{{z}}/{{y}}/{{x}}', {{
+      maxZoom: 19,
+      attribution: 'Tiles &copy; Esri, Maxar, Earthstar Geographics, USDA FSA, USGS, Aerogrid, IGN, IGP, and the GIS User Community'
+    }});
+
     const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{{z}}/{{y}}/{{x}}', {{
       maxZoom: 19,
       attribution: 'Tiles &copy; Esri &mdash; USGS, NOAA'
@@ -803,6 +823,7 @@ def build_index_html(status, obs_rows, fcst_rows):
     // Add basemap layer control
     L.control.layers({{
       "OpenStreetMap (Streets & Water)": osmLayer,
+      "High-Res Satellite (Esri Imagery)": esriImagery,
       "Esri Topographic": esriTopo,
       "Esri Marine / Ocean": esriOcean
     }}, null, {{ position: 'topright' }}).addTo(map);
@@ -935,7 +956,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         ]
       }},
       {{
-        name: "Lower Residential Blocks (Allview / Hobday / Little Ave South)",
+        name: "Lower Residential Blocks (Allview / Hobday / New Little St South)",
         elev: 4.15,
         desc: "Southern residential parcels and lower cross street dips (1 to 4 inches standing water).",
         coords: [
@@ -962,9 +983,9 @@ def build_index_html(status, obs_rows, fcst_rows):
         ]
       }},
       {{
-        name: "River Road North & Ridge High Ground Pads",
+        name: "Ridge High Ground Pads & Northern Home Footprints",
         elev: 4.90,
-        desc: "Elevated building footprint and highest ground along River Road. Flooding may occur; actual access must be checked.",
+        desc: "Elevated building footprint and highest ground along community ridge north of River Road. Safe from moderate tides.",
         coords: [
           [37.4222, -76.4075], [37.4222, -76.4070], [37.422058, -76.406547],
           [37.421872, -76.406392], [37.421717, -76.406211], [37.421448, -76.406030],
@@ -974,18 +995,38 @@ def build_index_html(status, obs_rows, fcst_rows):
       }}
     ];
 
-    // 3. Community Street Network Centerlines (Loaded directly from OSM)
+    // 3. Community Street Network Centerlines with Verified Street Names & On-Map Labels
     const communityStreetData = {{
-      "Bayshore Avenue": {{
+      "Bayshore Ave": {{
+        fullName: "Bayshore Avenue",
         elev: 3.75,
-        desc: "Waterfront road. West & east dips flood first.",
+        desc: "Southern waterfront roadway. West & east dips flood first.",
         coords: [
           [37.418612, -76.405419], [37.41858, -76.405771], [37.418556, -76.406277],
           [37.418525, -76.406948], [37.41852, -76.406995], [37.418469, -76.407802],
           [37.418451, -76.408076], [37.418417, -76.408605], [37.418403, -76.409227]
         ]
       }},
-      "Daniel Avenue": {{
+      "Julian St": {{
+        fullName: "Julian Street",
+        elev: 3.78,
+        desc: "Connecting street between Daniel Ave and Bayshore Ave.",
+        coords: [
+          [37.420307, -76.407368], [37.419501, -76.407203], [37.419026, -76.407095],
+          [37.41852, -76.406995]
+        ]
+      }},
+      "Mobjack St": {{
+        fullName: "Mobjack Street",
+        elev: 3.82,
+        desc: "Eastern connector between Daniel Ave/River Rd and Bayshore Ave.",
+        coords: [
+          [37.420142, -76.405689], [37.420096, -76.405699], [37.420036, -76.405699],
+          [37.419961, -76.405691], [37.418612, -76.405419]
+        ]
+      }},
+      "Daniel Ave": {{
+        fullName: "Daniel Avenue",
         elev: 4.40,
         desc: "Main community spine. Primary Observation Benchmark at 4.40 ft.",
         coords: [
@@ -996,31 +1037,27 @@ def build_index_html(status, obs_rows, fcst_rows):
           [37.420186, -76.409627], [37.420128, -76.410866], [37.42012, -76.411600]
         ]
       }},
-      "Julian Street": {{
-        elev: 3.78,
-        desc: "Connecting street between Daniel Ave and Bayshore Ave.",
-        coords: [
-          [37.420307, -76.407368], [37.419501, -76.407203], [37.419026, -76.407095],
-          [37.41852, -76.406995]
-        ]
-      }},
-      "Allview Street": {{
+      "Allview St": {{
+        fullName: "Allview Street",
         elev: 4.13,
-        desc: "Western interior cross street.",
+        desc: "Western interior cross street. Shallow puddling above 4.13 ft.",
         coords: [
           [37.418403, -76.409227], [37.418605, -76.409328], [37.419033, -76.409405],
           [37.419515, -76.409495], [37.420186, -76.409627]
         ]
       }},
-      "River Road": {{
-        elev: 4.14,
-        desc: "Northern shoreline access road.",
+      "River Rd": {{
+        fullName: "River Road (at Daniel Ave)",
+        elev: 3.59,
+        desc: "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88). Mid/north section rises toward ridge.",
         coords: [
-          [37.420375, -76.406297], [37.420803, -76.406602], [37.421278, -76.406765],
-          [37.421438, -76.406817], [37.421918, -76.407001], [37.421975, -76.407028]
+          [37.420183, -76.406550], [37.420375, -76.406297], [37.420803, -76.406602],
+          [37.421278, -76.406765], [37.421438, -76.406817], [37.421918, -76.407001],
+          [37.421975, -76.407028]
         ]
       }},
-      "Hobday Street": {{
+      "Hobday St": {{
+        fullName: "Hobday Street",
         elev: 4.22,
         desc: "Interior cross street between Daniel Ave & Bayshore Ave.",
         coords: [
@@ -1028,15 +1065,25 @@ def build_index_html(status, obs_rows, fcst_rows):
           [37.418841, -76.407868], [37.418469, -76.407802]
         ]
       }},
-      "Little Avenue": {{
+      "New Little St": {{
+        fullName: "New Little Street",
         elev: 4.23,
-        desc: "Interior cross street rising towards Daniel Ave.",
+        desc: "Interior cross street rising towards Daniel Ave northern ridge.",
         coords: [
           [37.420215, -76.408918], [37.419698, -76.408835], [37.419093, -76.408721],
           [37.418767, -76.40865], [37.418417, -76.408605]
         ]
       }},
-      "Bunny Rabbit Lane": {{
+      "Matthews St": {{
+        fullName: "Matthews Street",
+        elev: 3.75,
+        desc: "North residential access off Daniel Ave. Dips at entrance to match Bayshore flood levels (3.75' MLLW / 2.11' NAVD88).",
+        coords: [
+          [37.420307, -76.407368], [37.420319, -76.40717], [37.419648, -76.407127]
+        ]
+      }},
+      "Bunny Rabbit Ln": {{
+        fullName: "Bunny Rabbit Lane",
         elev: 4.45,
         desc: "Western community boundary road on elevated ridge.",
         coords: [
@@ -1098,8 +1145,29 @@ def build_index_html(status, obs_rows, fcst_rows):
         zoneLayers.push(poly);
       }});
 
-      // 2. Render Street Corridors
+      // 2. Render Street Corridors with Permanent On-Map Labels
+      const normName = s => String(s || '').toLowerCase()
+        .replace(/\b(ave|avenue)\b/g, 'ave')
+        .replace(/\b(st|street)\b/g, 'st')
+        .replace(/\b(rd|road)\b/g, 'rd')
+        .replace(/\b(ln|lane)\b/g, 'ln')
+        .trim();
+
+      const lookupAssessment = (shortName, fullName) => {{
+        if (!streetAssessment) return null;
+        if (streetAssessment[shortName]) return streetAssessment[shortName];
+        if (fullName && streetAssessment[fullName]) return streetAssessment[fullName];
+        const target1 = normName(shortName);
+        const target2 = normName(fullName);
+        for (const [k, v] of Object.entries(streetAssessment)) {{
+          const kn = normName(k);
+          if (kn === target1 || kn === target2) return v;
+        }}
+        return null;
+      }};
+
       for (const [stName, stData] of Object.entries(communityStreetData)) {{
+        const fullTitle = stData.fullName || stName;
         let stColor = '#059669'; // Emerald
         let stDepth = 0;
         let stStatus = unknownStage ? 'Unknown — data unavailable' : 'No modeled tidal inundation';
@@ -1119,8 +1187,8 @@ def build_index_html(status, obs_rows, fcst_rows):
           }}
         }}
 
-        if (streetAssessment && streetAssessment[stName]) {{
-          const assessment = streetAssessment[stName];
+        const assessment = lookupAssessment(stName, stData.fullName);
+        if (assessment) {{
           stDepth = assessment.depth_in;
           stStatus = escapeHTML(assessment.status);
           stColor = ({{ GREEN: '#059669', YELLOW: '#d97706', ORANGE: '#ea580c', RED: '#dc2626', UNKNOWN: '#64748b' }})[assessment.code] || '#64748b';
@@ -1132,12 +1200,18 @@ def build_index_html(status, obs_rows, fcst_rows):
           lineJoin: 'round'
         }}).addTo(map);
 
+        line.bindTooltip(stName, {{
+          permanent: true,
+          direction: 'center',
+          className: 'street-map-label'
+        }});
+
         line.bindPopup(`
           <div class="p-1.5 space-y-1">
             <div class="font-bold text-sm text-slate-900 flex items-center gap-1.5">
-              <i class="fa-solid fa-road text-slate-500"></i> ${{stName}}
+              <i class="fa-solid fa-road text-slate-500"></i> ${{escapeHTML(fullTitle)}}
             </div>
-            <div class="text-xs text-slate-600">${{stData.desc}}</div>
+            <div class="text-xs text-slate-600">${{escapeHTML(stData.desc)}}</div>
             <div class="text-xs font-mono text-slate-500">Street Invert: ${{stData.elev}}' MLLW (${{(stData.elev - 1.64).toFixed(2)}}' NAVD88)</div>
             <div class="text-xs font-bold pt-1 border-t border-slate-100" style="color: ${{stColor}}">Live Passability: ${{stStatus}}</div>
           </div>

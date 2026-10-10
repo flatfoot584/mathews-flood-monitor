@@ -120,6 +120,12 @@
       "risk_note": "Southern culvert dip connects to marsh swale"
     },
     {
+      "street": "Mobjack Street",
+      "invert_navd88_ft": 2.18,
+      "invert_mllw_ft": 3.82,
+      "risk_note": "Southern dip near waterfront begins ponding at 3.82' MLLW"
+    },
+    {
       "street": "Daniel Avenue (Low Point)",
       "invert_navd88_ft": 2.24,
       "invert_mllw_ft": 3.88,
@@ -132,10 +138,16 @@
       "risk_note": "Shallow water across road above 4.13' MLLW"
     },
     {
-      "street": "River Road",
-      "invert_navd88_ft": 2.5,
-      "invert_mllw_ft": 4.14,
-      "risk_note": "Mid-section dip creates passability obstacle"
+      "street": "River Road (at Daniel Ave)",
+      "invert_navd88_ft": 1.95,
+      "invert_mllw_ft": 3.59,
+      "risk_note": "Intersection dip at Daniel Ave is ~2 inches lower than Bayshore; floods first at 3.59' MLLW"
+    },
+    {
+      "street": "Matthews Street",
+      "invert_navd88_ft": 2.11,
+      "invert_mllw_ft": 3.75,
+      "risk_note": "North residential access off Daniel Ave; entrance dips to match Bayshore flood levels (3.75' MLLW)"
     },
     {
       "street": "Hobday Street",
@@ -144,7 +156,7 @@
       "risk_note": "Ditch overflow reaches roadway edge"
     },
     {
-      "street": "Little Avenue",
+      "street": "New Little Street",
       "invert_navd88_ft": 2.59,
       "invert_mllw_ft": 4.23,
       "risk_note": "Culvert restriction during heavy precipitation"
