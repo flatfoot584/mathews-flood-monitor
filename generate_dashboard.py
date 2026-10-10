@@ -989,19 +989,19 @@ def build_index_html(status, obs_rows, fcst_rows):
       </div>
     `);
 
-    // 2. Community Micro-Topography Land Elevation Zones (100% on Dry Land — Zero in Water)
+    // 2. Community Micro-Topography Land Elevation Zones (100% on Dry Land — Seamless Tiling, Zero Gaps, Zero in Water)
     const communityZones = [
       {{
         name: "Bayshore Waterfront Ditches & Shoreline Swales",
         elev: 3.99,
         desc: "Lowest swales and roadside ditch culverts along Bayshore Ave. First to overflow at 3.99 ft.",
         coords: [
-          [37.4184, -76.4111], [37.4184, -76.4092], [37.4185, -76.4073],
+          [37.4184, -76.4116], [37.4184, -76.4092], [37.4185, -76.4073],
           [37.4186, -76.4054], [37.4186, -76.4047], [37.4187, -76.4038],
           [37.418608, -76.403204], [37.418547, -76.404976], [37.418421, -76.405516],
           [37.418280, -76.406629], [37.418290, -76.407025], [37.418132, -76.408074],
           [37.418147, -76.409089], [37.418186, -76.409639], [37.417983, -76.410625],
-          [37.418111, -76.411128]
+          [37.418111, -76.411128], [37.4181, -76.4116], [37.4184, -76.4116]
         ]
       }},
       {{
@@ -1009,8 +1009,9 @@ def build_index_html(status, obs_rows, fcst_rows):
         elev: 4.15,
         desc: "Southern residential parcels and lower cross street dips (1 to 4 inches standing water).",
         coords: [
-          [37.4194, -76.4111], [37.4194, -76.4068], [37.4186, -76.4054],
-          [37.4185, -76.4073], [37.4184, -76.4092], [37.4184, -76.4111]
+          [37.4194, -76.4116], [37.4194, -76.4054],
+          [37.4186, -76.4054], [37.4185, -76.4073], [37.4184, -76.4092],
+          [37.4184, -76.4116]
         ]
       }},
       {{
@@ -1018,8 +1019,11 @@ def build_index_html(status, obs_rows, fcst_rows):
         elev: 4.40,
         desc: "Primary community artery & Observation Benchmark. Sedans blocked when water exceeds 4 inches.",
         coords: [
-          [37.4206, -76.4116], [37.4206, -76.4068], [37.4201, -76.4050],
-          [37.4194, -76.4045], [37.4194, -76.4068], [37.4194, -76.4116]
+          [37.4206, -76.4116], [37.4206, -76.4070], [37.420658, -76.405830],
+          [37.420328, -76.405371], [37.419700, -76.404220], [37.419409, -76.404346],
+          [37.418845, -76.404211], [37.418608, -76.403204],
+          [37.4187, -76.4038], [37.4186, -76.4047], [37.4186, -76.4054],
+          [37.4194, -76.4054], [37.4194, -76.4116]
         ]
       }},
       {{
@@ -1027,8 +1031,8 @@ def build_index_html(status, obs_rows, fcst_rows):
         elev: 4.60,
         desc: "Elevated residential lawns and northern lots along Daniel Ave. Do not enter flooded roads, regardless of vehicle clearance.",
         coords: [
-          [37.4223, -76.4116], [37.4223, -76.4075], [37.4206, -76.4075],
-          [37.4206, -76.4116]
+          [37.4223, -76.4116], [37.4223, -76.4095], [37.4222, -76.4070],
+          [37.4206, -76.4070], [37.4206, -76.4116]
         ]
       }},
       {{
@@ -1036,10 +1040,11 @@ def build_index_html(status, obs_rows, fcst_rows):
         elev: 4.90,
         desc: "Elevated building footprint and highest ground along community ridge north of River Road. Safe from moderate tides.",
         coords: [
-          [37.4222, -76.4075], [37.4222, -76.4070], [37.422058, -76.406547],
+          [37.4222, -76.4070],
+          [37.422202, -76.407005], [37.422168, -76.406812], [37.422058, -76.406547],
           [37.421872, -76.406392], [37.421717, -76.406211], [37.421448, -76.406030],
-          [37.421186, -76.406132], [37.420658, -76.405830], [37.4206, -76.4068],
-          [37.4206, -76.4075]
+          [37.421186, -76.406132], [37.420658, -76.405830],
+          [37.4206, -76.4070]
         ]
       }}
     ];

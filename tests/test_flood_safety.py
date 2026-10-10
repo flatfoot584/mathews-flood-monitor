@@ -104,6 +104,31 @@ class FloodSafetyTests(unittest.TestCase):
         self.assertIn('never enter floodwater', page)
         self.assertNotIn('Ground clearance adequate for current and peak tides.', page)
 
+    def test_community_zones_seamless_tiling_no_gaps(self):
+        """Verify micro-topography prediction zones tile the community perimeter with 0 gaps and 0 overlaps."""
+        page = dashboard.build_index_html(fixture(), [], [])
+        import re
+        m_perim = re.search(r'const communityPerimeterCoords = \[([\s\S]*?)\];', page)
+        self.assertIsNotNone(m_perim)
+        p_pts = [[float(x), float(y)] for x, y in re.findall(r'\[([0-9.-]+),\s*([0-9.-]+)\]', m_perim.group(1))]
+
+        m_zones = re.search(r'const communityZones = \[([\s\S]*?)\];\s*// 3\.', page)
+        self.assertIsNotNone(m_zones)
+        zone_matches = re.findall(r'coords:\s*\[([\s\S]*?)\]\s*\}', m_zones.group(1))
+        self.assertEqual(len(zone_matches), 5)
+
+        def poly_area(pts):
+            n = len(pts)
+            area = 0.0
+            for i in range(n):
+                j = (i + 1) % n
+                area += pts[i][1] * pts[j][0] - pts[j][1] * pts[i][0]
+            return abs(area) / 2.0
+
+        p_area = poly_area(p_pts)
+        sum_zone_areas = sum(poly_area([[float(x), float(y)] for x, y in re.findall(r'\[([0-9.-]+),\s*([0-9.-]+)\]', zm)]) for zm in zone_matches)
+        self.assertAlmostEqual(p_area, sum_zone_areas, places=9)
+
     def test_rain_flooded_road_blocks_sedans_and_escalates(self):
         status = fixture(4.3, rain=3.0)
         row = status['forecast_hourly_timeline'][0]
