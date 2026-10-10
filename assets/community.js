@@ -117,9 +117,6 @@
   });
   audioStop?.addEventListener('click',()=>{window.speechSynthesis?.cancel();audioStop.hidden=true;});
 
-  /* --- Fridge card print --- */
-  document.getElementById('print-fridge')?.addEventListener('click',()=>window.print());
-
   /* --- Live countdown to first street flooding --- */
   function tickCountdown(){
     document.querySelectorAll('[data-first-flood-utc]').forEach(el=>{
