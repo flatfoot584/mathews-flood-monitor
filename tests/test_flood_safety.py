@@ -586,5 +586,117 @@ class PublisherTests(unittest.TestCase):
         self.assertNotIn('secret-test-token',output.getvalue())
 
 
+class ResidentUxTests(unittest.TestCase):
+    """Regression tests for the resident-facing UX improvements."""
+
+    def _street_forecast_data(self, page):
+        import re
+        m = re.search(r'<script type="application/json" id="street-forecast">(.*?)</script>', page, re.S)
+        self.assertIsNotNone(m, "street forecast JSON embed missing")
+        return json.loads(m.group(1))
+
+    def test_street_picker_forecast_json(self):
+        page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])
+        data = self._street_forecast_data(page)
+        self.assertEqual(len(data), 11)
+        julian = data.get('Julian Street')
+        self.assertIsNotNone(julian)
+        self.assertGreater(julian['peak_depth_in'], 0)
+        self.assertIsNotNone(julian['first_flood'])
+        self.assertIsNotNone(julian['peak_time'])
+        self.assertIsNotNone(julian['move_by'])
+        self.assertIn('id="street-picker"', page)
+        self.assertIn('Will my street flood?', page)
+
+    def test_street_picker_no_flooding(self):
+        page = dashboard.build_index_html(fixture(), [], [])
+        data = self._street_forecast_data(page)
+        for name, info in data.items():
+            self.assertEqual(info['peak_depth_in'], 0, name)
+            self.assertIsNone(info['first_flood'], name)
+
+    def test_jargon_dict_covers_wrapped_terms(self):
+        import re
+        js = Path('assets/community.js').read_text()
+        m = re.search(r'const JARGON=\{([^}]*)\}', js, re.S)
+        self.assertIsNotNone(m, "JARGON dictionary missing from community.js")
+        defined = set(re.findall(r"'([^']+)':", m.group(1)))
+        for required in ('mllw', 'navd88', 'scenario-range', 'surge-residual',
+                         'hydraulic-gradient', 'action-stage', 'crest', 'backwater'):
+            self.assertIn(required, defined)
+        page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])
+        wrapped = set(re.findall(r'data-jargon="([^"]+)"', page))
+        self.assertTrue(wrapped, "no jargon spans wrapped on the index page")
+        self.assertLessEqual(wrapped, defined, f"wrapped terms missing definitions: {wrapped - defined}")
+
+    def test_subscribe_redirects_to_alerts(self):
+        html_out = dashboard.build_subscribe_redirect()
+        self.assertIn('url=alerts.html', html_out)
+        self.assertIn('Continue to mobile alerts setup', html_out)
+
+    def test_story_timeline_present_when_flooding(self):
+        page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])
+        self.assertIn('story-timeline', page)
+        self.assertIn('How this unfolds', page)
+        self.assertIn('worst of it', page)
+
+    def test_story_timeline_calm_when_no_flooding(self):
+        page = dashboard.build_index_html(fixture(), [], [])
+        self.assertIn('story-timeline', page)
+        self.assertIn('No flooding expected in the next 48 hours', page)
+
+    def test_fridge_card_present(self):
+        page = dashboard.build_index_html(fixture(), [], [])
+        self.assertIn('fridge-card', page)
+        self.assertIn('id="print-fridge"', page)
+        self.assertIn('call 911', page)
+        css = Path('assets/community.css').read_text()
+        self.assertIn('@media print', css)
+
+    def test_audio_briefing_embedded(self):
+        page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])
+        self.assertIn('id="audio-briefing-btn"', page)
+        self.assertIn('data-script=', page)
+        import re
+        m = re.search(r'data-script="([^"]+)"', page)
+        self.assertIsNotNone(m)
+        import html as html_lib
+        script = html_lib.unescape(m.group(1))
+        self.assertIn('Ware River', script)
+
+    def test_status_dial_present(self):
+        page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])
+        self.assertIn('status-dial', page)
+        self.assertIn('Flood status summary', page)
+        calm = dashboard.build_index_html(fixture(), [], [])
+        self.assertIn('No flooding expected in the next 48 hours.', calm)
+
+    def test_action_checklist_present(self):
+        page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])
+        self.assertIn('action-checklist', page)
+        self.assertIn('data-checklist-key=', page)
+        self.assertIn('What should I do right now?', page)
+        calm = dashboard.build_index_html(fixture(), [], [])
+        self.assertIn('street picker above', calm)
+
+    def test_alerts_page_one_tap_signup(self):
+        page = dashboard.build_alerts_html(fixture())
+        self.assertIn('channel-qr.svg', page)
+        self.assertIn('Scan to subscribe', page)
+        self.assertIn('Install the ntfy app', page)
+        self.assertIn('id="copy-topic"', page)
+        self.assertIn('Troubleshooting', page)
+        self.assertIn('data-freshness', page)
+        self.assertIn('assets/community.js', page)
+
+    def test_flood_anchor_record_breaker(self):
+        page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])
+        self.assertIn('highest water since records began', page)
+
+    def test_flood_anchor_historical_reference(self):
+        page = dashboard.build_index_html(fixture(), [], [])
+        self.assertIn('highest on record here was', page)
+
+
 if __name__=='__main__':
     unittest.main()

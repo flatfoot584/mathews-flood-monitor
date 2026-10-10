@@ -1,8 +1,12 @@
 """Resident-facing components shared by the static portal (no external services)."""
+import csv
 import html, json
 from pathlib import Path
-from datetime import timezone
+from datetime import datetime, timezone, timedelta
+from zoneinfo import ZoneInfo
 from runtime_safety import parse_timestamp, finite_number
+
+EASTERN = ZoneInfo('America/New_York')
 
 def e(value): return html.escape(str(value if value is not None else 'Unavailable'),quote=True)
 def number(value, unit='', precision=1):
@@ -10,8 +14,48 @@ def number(value, unit='', precision=1):
 def when(value):
     dt=parse_timestamp(str(value))
     if not dt:return 'Unavailable'
-    from zoneinfo import ZoneInfo
-    return dt.astimezone(ZoneInfo('America/New_York')).strftime('%a, %b %-d at %-I:%M %p %Z')
+    return dt.astimezone(EASTERN).strftime('%a, %b %-d at %-I:%M %p %Z')
+def short_when(value):
+    """Compact day/time for cards: 'Sat 10AM'."""
+    dt=parse_timestamp(str(value))
+    if not dt:return 'Unknown time'
+    return dt.astimezone(EASTERN).strftime('%a %-I%p')
+def rel_when(value, ref=None):
+    """Plain-language relative time: 'Tonight 8pm', 'Tomorrow morning 10am', 'Sat afternoon 2pm'."""
+    dt=parse_timestamp(str(value))
+    if not dt:return 'Unknown time'
+    dt=dt.astimezone(EASTERN)
+    ref=(parse_timestamp(str(ref)) or datetime.now(timezone.utc)).astimezone(EASTERN)
+    hour=dt.hour
+    tod='overnight' if hour<5 else 'morning' if hour<12 else 'afternoon' if hour<17 else 'evening'
+    tstr=dt.strftime('%-I%p').lower()
+    days=(dt.date()-ref.date()).days
+    if days<=0:
+        return f'Tonight {tstr}' if hour>=17 else f'Today {tstr}'
+    if days==1:
+        return f'Tomorrow {tstr}' if tod == 'overnight' else f'Tomorrow {tod} {tstr}'
+    weekday = dt.strftime('%a')
+    return f'{weekday} {tstr}' if tod == 'overnight' else f'{weekday} {tod} {tstr}'
+
+def jargon(term, text):
+    """Wrap display text in a tap-to-explain span. `term` must be a fixed key from the JS dictionary."""
+    return f'<span class="jargon" data-jargon="{term}">{text}</span>'
+
+def flood_anchor():
+    """Highest Ware River stage on record in the local archive. Returns (ft, timestamp_local) or (None, None)."""
+    try:
+        best_ft, best_ts = None, None
+        with open('archive_hourly_observations.csv', newline='', encoding='utf-8') as f:
+            for row in csv.DictReader(f):
+                try:
+                    v = float(row.get('ware_river_stage_mllw_ft') or '')
+                except (ValueError, TypeError):
+                    continue
+                if best_ft is None or v > best_ft:
+                    best_ft, best_ts = v, row.get('timestamp_local')
+        return best_ft, best_ts
+    except OSError:
+        return None, None
 
 def navbar(active,status):
     curr=status.get('current_conditions',{});quality=status['data_quality']
@@ -72,6 +116,234 @@ def stoplight_meta(tier, is_available=True):
         'badge': '<div class="stoplight-badge badge-red"><span class="stoplight-dot"></span> Danger · Severe Flooding — Extreme Caution</div>',
         'color': 'red'
     }
+
+def _flood_timing(status):
+    """(first_flood_row, peak_row, last_flood_row) from the forecast timeline."""
+    timeline = status.get('forecast_hourly_timeline', []) or []
+    def row_wet(r):
+        streets = r.get('community_streets', {}) or {}
+        return any(finite_number(i.get('depth_in')) and i['depth_in'] > 0 for i in streets.values())
+    wet = [r for r in timeline if row_wet(r)]
+    first = wet[0] if wet else None
+    last = wet[-1] if wet else None
+    peak, best = None, -1
+    for r in timeline:
+        d = r.get('compound_flood_depth_in')
+        if finite_number(d) and d > best:
+            best, peak = d, r
+    if best <= 0:
+        peak = None
+    return first, peak, last
+
+def _worst_tier(status):
+    curr = status.get('current_conditions', {})
+    out = status.get('forecast_48h_outlook', {})
+    tiers = [t for t in (curr.get('flood_risk_tier'), out.get('peak_risk_tier')) if finite_number(t) and t >= 0]
+    return max(tiers) if tiers else -1
+
+_TIER_SENTENCES = {
+    -1: "We can't confirm flood conditions right now — check official forecasts and actual conditions.",
+    0: "No flooding expected in the next 48 hours.",
+    1: "Some street flooding expected — water in low spots and ditches.",
+    2: "Moderate flooding expected — move cars to high ground before high tide.",
+    3: "Severe flooding expected — move cars to high ground as soon as possible.",
+}
+
+def audio_script(status):
+    curr = status.get('current_conditions', {})
+    out = status.get('forecast_48h_outlook', {})
+    gen = parse_timestamp(str(status.get('status_generated_at_utc'))) or datetime.now(timezone.utc)
+    gen_et = gen.astimezone(EASTERN)
+    greeting = 'Good morning' if 5 <= gen_et.hour < 12 else 'Good afternoon' if gen_et.hour < 18 else 'Good evening'
+    stage = curr.get('ware_river_stage_mllw_ft')
+    tier = curr.get('flood_risk_tier')
+    peak_tier = out.get('peak_risk_tier')
+    peak = out.get('peak_forecast_stage_mllw_ft')
+    peak_time = out.get('peak_hazard_time_local') or out.get('peak_forecast_stage_time_local')
+    first, _, _ = _flood_timing(status)
+    if not finite_number(stage):
+        s1 = f"{greeting}. Current water levels are unavailable."
+    elif finite_number(tier) and tier > 0:
+        s1 = f"{greeting}. The Ware River is at {stage:.1f} feet, with flooding estimated right now."
+    else:
+        s1 = f"{greeting}. The Ware River is at {stage:.1f} feet. No flooding right now."
+    if finite_number(peak_tier) and peak_tier > 0 and peak_time and finite_number(peak):
+        s2 = f"Flooding is expected {rel_when(peak_time, gen)}, peaking around {short_when(peak_time)} at {peak:.1f} feet."
+    elif finite_number(peak_tier) and peak_tier > 0:
+        s2 = "Some flooding is expected in the next 48 hours."
+    else:
+        s2 = "No flooding is expected in the next 48 hours."
+    if first:
+        move_by = parse_timestamp(str(first.get('timestamp_local')))
+        s3 = f"Move cars to high ground before {short_when((move_by - timedelta(hours=1)).isoformat())}." if move_by else "Move cars to high ground before flooding starts."
+    elif finite_number(peak_tier) and peak_tier >= 2:
+        s3 = "Move vehicles to high ground now, and never drive through floodwater."
+    else:
+        s3 = "No action needed right now. Check back for updates."
+    return f"{s1} {s2} {s3}"
+
+def audio_briefing(status):
+    return f'''<div class="audio-briefing"><button type="button" id="audio-briefing-btn" class="resident-button" data-script="{e(audio_script(status))}">&#128266; Listen to today's outlook</button> <button type="button" id="audio-stop-btn" class="resident-button" hidden>Stop</button></div>'''
+
+def status_dial(status):
+    worst = _worst_tier(status)
+    meta = stoplight_meta(worst, worst >= 0)
+    first, _, _ = _flood_timing(status)
+    countdown = ''
+    if first:
+        ref = parse_timestamp(str(status.get('status_generated_at_utc'))) or datetime.now(timezone.utc)
+        fdt = parse_timestamp(str(first.get('timestamp_utc')))
+        if fdt:
+            hrs = (fdt - ref).total_seconds() / 3600
+            fallback = (f"First street flooding in about {max(1, int(round(hrs)))} hours"
+                        if hrs > 0 else "Street flooding may be happening now — check conditions")
+            countdown = (f'<p class="status-countdown" data-first-flood-utc="{e(fdt.isoformat())}">'
+                         f'{e(fallback)}</p>')
+    return (f'''<section class="status-dial {meta['class']}" aria-label="Flood status summary">{meta['badge']}'''
+            f'''<h2>{e(_TIER_SENTENCES.get(worst, _TIER_SENTENCES[-1]))}</h2>{countdown}{audio_briefing(status)}</section>''')
+
+def street_picker(status):
+    timeline = status.get('forecast_hourly_timeline', []) or []
+    names = set()
+    curr_streets = (status.get('current_conditions', {}) or {}).get('community_streets', {}) or {}
+    names.update(str(k) for k in curr_streets.keys())
+    for row in timeline:
+        for k in (row.get('community_streets', {}) or {}):
+            names.add(str(k))
+    names = sorted(names)
+    if not names:
+        return ''
+    data = {}
+    for name in names:
+        first = peak_d = peak_t = None
+        for row in timeline:
+            item = (row.get('community_streets', {}) or {}).get(name, {})
+            d = item.get('depth_in')
+            if finite_number(d) and d > 0:
+                if first is None:
+                    first = row.get('timestamp_local')
+                if peak_d is None or d > peak_d:
+                    peak_d, peak_t = d, row.get('timestamp_local')
+        move_by = None
+        if first:
+            dt = parse_timestamp(str(first))
+            if dt:
+                move_by = short_when((dt - timedelta(hours=1)).isoformat())
+        data[name] = {
+            'first_flood': short_when(first) if first else None,
+            'peak_depth_in': round(peak_d, 1) if peak_d is not None else 0,
+            'peak_time': short_when(peak_t) if peak_t else None,
+            'move_by': move_by,
+        }
+    payload = json.dumps(data).replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
+    options = ''.join(f'<option value="{e(n)}">{e(n)}</option>' for n in names)
+    return f'''<section class="resident-card street-picker-card" aria-label="Street flood lookup"><h2>Will my street flood?</h2><p class="muted">Pick your street for a plain-English forecast.</p><label class="street-picker-label" for="street-picker">Choose your street</label><select id="street-picker" class="street-picker-select"><option value="">— Select a street —</option>{options}</select><div id="street-result" class="street-result" aria-live="polite"></div><script type="application/json" id="street-forecast">{payload}</script></section>'''
+
+def story_timeline(status):
+    timeline = status.get('forecast_hourly_timeline', []) or []
+    gen = status.get('status_generated_at_utc')
+    first, peak, last = _flood_timing(status)
+    ditch_first = None
+    for r in timeline:
+        d = r.get('sector_ditches_depth_in')
+        if finite_number(d) and d > 0:
+            ditch_first = r
+            break
+    steps = []
+    if ditch_first:
+        steps.append(('\U0001F319', f"{rel_when(ditch_first.get('timestamp_local'), gen)} — ditches full",
+                      'Water fills roadside ditches and low swales.'))
+    if first and (not ditch_first or ditch_first.get('timestamp_local') != first.get('timestamp_local')):
+        steps.append(('\U0001F30A', f"{rel_when(first.get('timestamp_local'), gen)} — water on your street",
+                      'First modeled street flooding. Move cars before this.'))
+    if peak:
+        streets = peak.get('community_streets', {}) or {}
+        worst = max(((i.get('depth_in') if finite_number(i.get('depth_in')) else 0, str(n))
+                     for n, i in streets.items()), default=(0, None))
+        worst_txt = f", about {worst[0]:.0f} in on {worst[1]}" if worst[1] and worst[0] > 0 else ""
+        steps.append(('\U0001F6A8', f"{rel_when(peak.get('timestamp_local'), gen)} — worst of it{worst_txt}",
+                      'Highest water in this forecast. Never drive through floodwater.'))
+    if last and (not peak or last.get('timestamp_local') != peak.get('timestamp_local')):
+        steps.append(('\U0001F4C9', f"{rel_when(last.get('timestamp_local'), gen)} — receding",
+                      'Water is falling, but roads may still be unsafe.'))
+    if not steps:
+        steps.append(('✅', 'No flooding expected in the next 48 hours',
+                      'Water stays in ditches and marsh channels.'))
+    items = ''.join(
+        f'<li><span class="story-emoji" aria-hidden="true">{em}</span>'
+        f'<div><strong>{e(title)}</strong><p>{e(sub)}</p></div></li>'
+        for em, title, sub in steps)
+    return f'''<section class="resident-card" aria-label="Flood story timeline"><h2>How this unfolds</h2><ol class="story-timeline">{items}</ol></section>'''
+
+def action_checklist(status):
+    worst = _worst_tier(status)
+    first, _, _ = _flood_timing(status)
+    move_by = ''
+    if first:
+        dt = parse_timestamp(str(first.get('timestamp_local')))
+        if dt:
+            move_by = f" before {short_when((dt - timedelta(hours=1)).isoformat())}"
+    if worst >= 2:
+        items = ["Move vehicles to high ground NOW",
+                 "Do not drive through floodwater — turn around",
+                 "Charge phones and prepare for power outages",
+                 "Check on elderly neighbors"]
+    elif worst == 1:
+        items = [f"Move cars to high ground{move_by}",
+                 "Charge phones and devices",
+                 "Check on elderly neighbors",
+                 "Keep watching updates — conditions can change"]
+    elif worst == 0:
+        items = ["Know your street's flood threshold — try the street picker above",
+                 "Save the alerts page to your home screen",
+                 "No action needed right now"]
+    else:
+        items = ["Conditions can't be confirmed — check official forecasts",
+                 "Avoid driving through standing water"]
+    day = (parse_timestamp(str(status.get('status_generated_at_utc'))) or datetime.now(timezone.utc)).astimezone(EASTERN).strftime('%Y-%m-%d')
+    key = f"flood-checklist-t{worst}-{day}"
+    lis = ''.join(f'<li><label><input type="checkbox" data-idx="{i}"> <span>{e(t)}</span></label></li>'
+                  for i, t in enumerate(items))
+    return (f'''<section class="resident-card checklist-card" aria-label="Action checklist">'''
+            f'''<h2>What should I do right now?</h2>'''
+            f'''<ul class="action-checklist" data-checklist-key="{e(key)}">{lis}</ul></section>''')
+
+def fridge_card(status):
+    worst = _worst_tier(status)
+    first, peak, _ = _flood_timing(status)
+    gen = status.get('status_generated_at_utc')
+    sentence = _TIER_SENTENCES.get(worst, _TIER_SENTENCES[-1])
+    if first:
+        timing = "First street flooding " + rel_when(first.get('timestamp_local'), gen) + "."
+    else:
+        timing = "No street flooding expected in the next 48 hours."
+    peak_txt = 'Unknown'
+    if peak:
+        pd = peak.get('compound_flood_depth_in')
+        if finite_number(pd):
+            peak_txt = rel_when(peak.get('timestamp_local'), gen) + " (%.0f in at the reference point)" % pd
+        else:
+            peak_txt = rel_when(peak.get('timestamp_local'), gen)
+    action = ("Move vehicles to high ground before flooding starts. Never enter floodwater."
+              if worst >= 1 else "No action needed. Check back for updates.")
+    legend = ''.join(
+        '<span><i class="tier-dot tier-%d"></i>Tier %d - %s</span>' % (i, i, label)
+        for i, label in ((0, 'Normal'), (1, 'Low spots'), (2, 'Roads blocked'), (3, 'Severe')))
+    return (
+        '<section class="resident-card fridge-card" aria-label="Printable flood card">'
+        '<div class="fridge-head"><h2>Mathews Flood Monitor - Fridge Card</h2>'
+        '<button type="button" id="print-fridge" class="resident-button no-print">Print this card</button></div>'
+        '<p class="fridge-status"><strong>' + e(sentence) + '</strong></p>'
+        '<ul class="fridge-facts">'
+        '<li><strong>First flooding:</strong> ' + e(timing) + '</li>'
+        '<li><strong>Peak:</strong> ' + e(peak_txt) + '</li>'
+        '<li><strong>Do now:</strong> ' + e(action) + '</li>'
+        '<li><strong>Emergency:</strong> call 911</li>'
+        '</ul>'
+        '<div class="fridge-legend">' + legend + '</div>'
+        '<p class="fridge-foot muted">Estimates from NOAA/USGS data. Not a road-safety guarantee.</p>'
+        '</section>'
+    )
 
 def summary(status):
     curr=status.get('last_available_current_conditions') or status.get('current_conditions',{});out=status.get('forecast_48h_outlook',{});q=status['data_quality']
@@ -159,6 +431,16 @@ def summary(status):
         chips.append(f'<span class="street-chip chip-yellow"><span class="stoplight-dot" style="background:#ca8a04"></span>{e(st)}{depth_txt}</span>')
     chips_html = f'<div class="street-chips">{"".join(chips)}</div>' if chips else ''
 
+    hist_ft, hist_ts = flood_anchor()
+    anchor_html = ''
+    if finite_number(hist_ft) and hist_ts:
+        if finite_number(peak) and peak >= hist_ft:
+            anchor_html = (f'<p class="muted">This would be the highest water since records began '
+                           f'({hist_ft:.2f} ft on {e(short_when(hist_ts))}).</p>')
+        else:
+            anchor_html = (f'<p class="muted">For comparison, the highest on record here was '
+                           f'{hist_ft:.2f} ft on {e(short_when(hist_ts))}.</p>')
+
     action_window_html = ''
     if flooding:
         first_time_str = when(flooding[0].get('timestamp_local'))
@@ -171,9 +453,15 @@ def summary(status):
     compound_html = '''<div class="compound-warning-callout"><strong><i class="fa-solid fa-cloud-showers-water mr-1"></i> Compound Drainage Alert:</strong> <span>High tidal water (&ge; 3.99' MLLW) blocks gravity drainage through roadside culverts into Blackwater Creek. Heavy rainfall will pool in yards and ditches before high tide crests.</span></div>''' if compound_rain else ''
 
     return f'''<section class="resident-intro"><p class="eyebrow">Blackwater &amp; Mobjack Bay Estates</p><h1>Your local flood outlook</h1><p>Independent community research using NOAA and USGS data.</p></section>
-<section data-current-safety class="resident-grid" aria-label="Current conditions and forecast"><article class="resident-card {now_sl['class']}">{now_sl['badge']}<p class="eyebrow" data-age-label data-last-label="Last Ware River observation">Now · Ware River observation</p><h2 data-age-label data-last-label="Last observation; current conditions unknown">{e(now_label)}</h2><p class="resident-value">{number(curr.get('ware_river_stage_mllw_ft'),' ft',2)} <small>MLLW at the gauge</small></p>{now_meter}<p>Observed {e(when(curr.get('observation_timestamp_local')))}</p><p>Local reference estimate: <strong>{number(curr.get('estimated_local_flood_depth_in'),' in')}</strong></p><details><summary>Where &amp; what this measures</summary><p class="muted">Empirical low-point reference near Daniel Ave &amp; Julian St. {e(nowwet)}. Estimates use tidal water levels; recent rainfall is not measured here.</p></details></article>
-<article class="resident-card {next_sl['class']}">{next_sl['badge']}<p class="eyebrow" data-age-label data-last-label="Last saved forecast · Model estimate">Next 48 hours · Model estimate</p><h2 data-age-label data-last-label="Last available forecast; check its dates">{e(next_label)}</h2><p class="resident-value">{number(peak,' ft',2)} <small>peak Ware River stage</small></p>{next_meter}<p><strong>{e(when(out.get('peak_forecast_stage_time_local')))}</strong></p><details><summary>Depth &amp; uncertainty</summary><p>{e(depth_description)}</p><p class="muted">Scenario range {number(out.get('peak_forecast_stage_q10_ft'))} to {number(out.get('peak_forecast_stage_q90_ft'))} ft. Uncalibrated; not a guaranteed upper bound.</p></details></article></section>
-<section data-current-safety class="resident-card {streets_sl['class']}">{streets_sl['badge']}<h2>Potentially affected streets</h2><p>{e(streets)}</p>{chips_html}{action_window_html}{high_ground_html}{compound_html}<details><summary>Estimated timing &amp; duration</summary><p>{e(timing)}</p></details><h3>What to do</h3><p><strong>{e(action)}</strong> Map colors and model estimates do not verify road safety for any vehicle.</p><a class="resident-button" href="alerts.html">Set up mobile alerts</a> <a href="guide.html">Understand flood estimates</a></section>{official(status)}'''
+{status_dial(status)}
+<section data-current-safety class="resident-grid" aria-label="Current conditions and forecast"><article class="resident-card {now_sl['class']}">{now_sl['badge']}<p class="eyebrow" data-age-label data-last-label="Last Ware River observation">Now · Ware River observation</p><h2 data-age-label data-last-label="Last observation; current conditions unknown">{e(now_label)}</h2><p class="resident-value">{number(curr.get('ware_river_stage_mllw_ft'),' ft',2)} <small>{jargon('mllw','MLLW')} at the gauge</small></p>{now_meter}<p>Observed {e(when(curr.get('observation_timestamp_local')))}</p><p>Local reference estimate: <strong>{number(curr.get('estimated_local_flood_depth_in'),' in')}</strong></p><details><summary>Where &amp; what this measures</summary><p class="muted">Empirical low-point reference near Daniel Ave &amp; Julian St. {e(nowwet)}. Estimates use tidal water levels; recent rainfall is not measured here.</p></details></article>
+<article class="resident-card {next_sl['class']}">{next_sl['badge']}<p class="eyebrow" data-age-label data-last-label="Last saved forecast · Model estimate">Next 48 hours · Model estimate</p><h2 data-age-label data-last-label="Last available forecast; check its dates">{e(next_label)}</h2><p class="resident-value">{number(peak,' ft',2)} <small>peak Ware River stage</small></p>{next_meter}<p><strong>{e(when(out.get('peak_forecast_stage_time_local')))}</strong></p><details><summary>Depth &amp; uncertainty</summary><p>{e(depth_description)}</p><p class="muted">{jargon('scenario-range','Scenario range')} {number(out.get('peak_forecast_stage_q10_ft'))} to {number(out.get('peak_forecast_stage_q90_ft'))} ft. Uncalibrated; not a guaranteed upper bound.</p>{anchor_html}</details></article></section>
+{street_picker(status)}
+<section data-current-safety class="resident-card {streets_sl['class']}">{streets_sl['badge']}<h2>Potentially affected streets</h2><p>{e(streets)}</p>{chips_html}{action_window_html}{high_ground_html}{compound_html}<details><summary>Estimated timing &amp; duration</summary><p>{e(timing)}</p></details><h3>What to do</h3><p><strong>{e(action)}</strong> Map colors and model estimates do not verify road safety for any vehicle.</p><a class="resident-button" href="alerts.html">Set up mobile alerts</a> <a href="guide.html">Understand flood estimates</a></section>
+{story_timeline(status)}
+{action_checklist(status)}
+{fridge_card(status)}
+{official(status)}'''
 
 def forecast_table(status):
     rows=[]
@@ -216,20 +504,11 @@ def evidence_section():
 
 def alerts(status,server,topic):
     url=e(server+'/'+topic); t=e(topic)
-    devices = [
-        ('iPhone & iPad', 'fa-brands fa-apple', 'https://apps.apple.com/app/ntfy/id1625396347', 'In Settings, allow ntfy notifications, sounds and banners. Focus and silent settings can suppress sound.'),
-        ('Android', 'fa-brands fa-android', 'https://play.google.com/store/apps/details?id=io.heckel.ntfy', 'Allow ntfy notifications. If delivery is delayed, review battery restrictions for the app.'),
-        ('Browser & Desktop', 'fa-solid fa-desktop', server+'/'+topic, 'Open the channel, choose Subscribe, and allow notifications. Browser and operating-system support vary; use the mobile app for your phone.')
-    ]
-    cards=[]
-    for name,icon,link,description in devices:
-        mobile = name != 'Browser & Desktop'
-        steps = f'<li><a href="{e(link)}" target="_blank" rel="noopener">Install the ntfy app</a>.</li><li>Open ntfy, add a subscription on {e(server)}, and enter topic <code>{t}</code>.</li><li>Tap Subscribe. {e(description)}</li>' if mobile else f'<li><a href="{url}" target="_blank" rel="noopener">Open the web channel</a>.</li><li>{e(description)}</li>'
-        cards.append(f'<details class="resident-card device" open><summary><i class="{icon} mr-2"></i>{name}</summary><ol>{steps}</ol></details>')
-    return f'''<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mobile alerts | Mathews Flood Monitor</title><link rel="stylesheet" href="assets/tailwind.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g" crossorigin="anonymous"><link rel="stylesheet" href="assets/community.css"></head><body>{navbar('alerts',status)}<main id="main-content" class="resident-main"><section class="resident-intro"><p class="eyebrow">Community flood alerts</p><h1>Set up alerts on your device</h1><p>Choose your device, subscribe to the existing channel, then check notification settings.</p></section><div class="device-grid">{''.join(cards)}</div>
-<section class="resident-card"><h2>Your community channel</h2><p>Server: <code>{e(server)}</code><br>Topic: <code>{t}</code></p><button class="resident-button" id="copy-topic" data-topic="{t}"><i class="fa-regular fa-copy mr-1"></i>Copy topic</button> <a href="{url}" target="_blank" rel="noopener" class="resident-button" style="background:#0f172a"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Open channel</a><p id="copy-feedback" role="status"></p><details><summary>Open with a QR code</summary><div style="padding:16px 0"><img width="180" height="180" alt="QR code opening the community ntfy channel" src="assets/channel-qr.svg" style="border-radius:12px;border:1px solid #e2e8f0;box-shadow:0 4px 12px rgba(0,0,0,0.06);background:#ffffff;padding:8px"></div><p>Scan with your phone camera to open the topic in ntfy. Complete subscription and notification setup to receive alerts.</p></details></section>
-<section class="resident-card"><h2>Verify setup on your own device</h2><ol><li>Confirm the topic appears in your subscription list.</li><li>Check your operating system's ntfy notification permissions and sound settings.</li><li>Use a separate personal test topic to verify delivery to your device. Do not publish tests to the community channel.</li></ol><p>Seeing messages in a feed does not confirm background push delivery. No test is broadcast by this page.</p></section>
-<section class="resident-card"><h2>What to expect</h2><p>The pipeline is scheduled about every 30 minutes and sends initial hazard, escalation, crest reminder, and modeled hazard-ended notifications with duplicate suppression. Technical pipeline errors, code regressions, and data health notices are routed to a separate maintenance channel (<code>mathews-flood-ops-23128</code>) so this community channel remains focused strictly on severe flood advisories and warnings.</p><p>GitHub schedules and notification delivery may be delayed. Old forecasts remain visible with dates and age warnings. A recovery notice does not confirm that roads are clear. Do not rely on an alert as your sole warning source.</p><p>The project currently charges no subscription fee. ntfy is open-source; service terms and availability can change. The existing public topic requires no account and is writable by others, so verify unusual messages against the dashboard and official warnings.</p><p>Sound, overnight delivery, battery use and wake behavior depend on your device, connection, app and settings. Remove the topic from ntfy to unsubscribe.</p></section>{official(status)}</main>{footer(status)}</body></html>'''
+    return f'''<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mobile alerts | Mathews Flood Monitor</title><link rel="stylesheet" href="assets/tailwind.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g" crossorigin="anonymous"><link rel="stylesheet" href="assets/community.css"></head><body>{navbar('alerts',status)}<main id="main-content" class="resident-main"><section class="resident-intro"><p class="eyebrow">Community flood alerts</p><h1>Get flood warnings on your phone</h1><p>Two steps. About a minute.</p></section>
+<section class="resident-card signup-hero"><h2><span class="step-num">1</span> Install the ntfy app</h2><div class="store-buttons"><a class="resident-button" href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener"><i class="fa-brands fa-apple mr-1"></i>iPhone &amp; iPad</a> <a class="resident-button" href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener"><i class="fa-brands fa-android mr-1"></i>Android</a></div></section>
+<section class="resident-card signup-hero"><h2><span class="step-num">2</span> Scan to subscribe</h2><div class="qr-hero"><img width="200" height="200" alt="QR code opening the community flood alert channel" src="assets/channel-qr.svg"><p>Point your phone camera at the code, open the link, then tap <strong>Subscribe</strong> in ntfy.</p></div><p>Or subscribe manually — topic: <code>{t}</code></p><button class="resident-button" id="copy-topic" data-topic="{t}"><i class="fa-regular fa-copy mr-1"></i>Copy topic</button> <a href="{url}" target="_blank" rel="noopener" class="resident-button" style="background:#0f172a"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Open channel</a><p id="copy-feedback" role="status"></p></section>
+<section class="resident-card"><h2>What you'll get</h2><p>Flood advisories, escalation warnings, crest reminders, and all-clear notices for Blackwater &amp; Mobjack Bay Estates. The pipeline checks about every 30 minutes. GitHub schedules and delivery can be delayed — don't rely on an alert as your only warning.</p></section>
+<details class="resident-card"><summary><strong>Troubleshooting &amp; details</strong></summary><div class="troubleshoot-body"><h3>Not getting alerts?</h3><ul><li><strong>iPhone/iPad:</strong> In Settings, allow ntfy notifications, sounds, and banners. Focus and silent settings can suppress sound.</li><li><strong>Android:</strong> Allow ntfy notifications. If delivery is delayed, check battery restrictions for the app.</li><li><strong>Desktop browser:</strong> <a href="{url}" target="_blank" rel="noopener">Open the web channel</a>, choose Subscribe, and allow notifications. Browser and OS support vary — use the mobile app for your phone.</li><li>Confirm the topic appears in your ntfy subscription list.</li><li>To verify delivery, use a separate personal test topic. Do not publish tests to the community channel — seeing messages in a feed does not confirm background push delivery.</li></ul><h3>Good to know</h3><ul><li>Technical pipeline errors and data-health notices go to a separate maintenance channel (<code>mathews-flood-ops-23128</code>), so this channel stays focused on flood advisories.</li><li>The existing public topic requires no account and is writable by others — verify unusual messages against the dashboard and official warnings.</li><li>ntfy is open-source; service terms and availability can change. No subscription fee is charged by this project.</li><li>Remove the topic from ntfy to unsubscribe.</li></ul></div></details>{official(status)}</main>{footer(status)}</body></html>'''
 
 def monitoring(status):
     fort=status.get('fort_monroe',{})
