@@ -1,122 +1,122 @@
 {
-  "status_generated_at_local": "2026-10-09 22:07:27 EDT",
-  "status_generated_at_utc": "2026-10-10 02:07:27 UTC",
+  "status_generated_at_local": "2026-10-09 22:29:03 EDT",
+  "status_generated_at_utc": "2026-10-10 02:29:03 UTC",
   "source_health": {
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:07&end_date=20261010%2002:07&station=8637689&product=wind&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:12.303218+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:07&end_date=20261010%2002:07&station=8637689&product=air_temperature&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:12.314457+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:07&end_date=20261010%2002:07&station=8637689&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:12.340660+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:07&end_date=20261010%2002:07&station=8637689&product=air_pressure&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:12.347006+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:07&end_date=20261010%2002:07&station=8637689&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:12.407765+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:07&end_date=20261010%2002:07&station=8636580&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:12.457586+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261010%2002:07&end_date=20261013%2002:07&station=8637689&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:12.459959+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261010%2002:07&end_date=20261013%2002:07&station=8636580&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:12.480545+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:07&end_date=20261010%2002:07&station=8636580&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:12.502539+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:07&end_date=20261010%2002:07&station=8638610&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:12.570717+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:07&end_date=20261010%2002:07&station=8638610&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:12.579314+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261010%2002:07&end_date=20261013%2002:07&station=8638610&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:12.580987+00:00",
-      "required": false
-    },
-    "https://api.water.noaa.gov/nwps/v1/gauges/FTMV2/stageflow/observed": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:12.804827+00:00",
-      "required": false
-    },
     "https://api.water.noaa.gov/nwps/v1/gauges/WRVV2/stageflow/forecast": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:12.938751+00:00",
+      "retrieved_at_utc": "2026-10-10T02:29:01.779816+00:00",
       "required": true
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:29&end_date=20261010%2002:29&station=8637689&product=air_temperature&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:29:01.854394+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:29&end_date=20261010%2002:29&station=8637689&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:29:01.865266+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:29&end_date=20261010%2002:29&station=8637689&product=air_pressure&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:29:01.895877+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:29&end_date=20261010%2002:29&station=8637689&product=wind&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:29:01.912261+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:29&end_date=20261010%2002:29&station=8637689&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:29:02.067132+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:29&end_date=20261010%2002:29&station=8636580&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:29:02.127349+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261010%2002:29&end_date=20261013%2002:29&station=8637689&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:29:02.150371+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:29&end_date=20261010%2002:29&station=8636580&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:29:02.180360+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261010%2002:29&end_date=20261013%2002:29&station=8636580&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:29:02.203755+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:29&end_date=20261010%2002:29&station=8638610&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:29:02.373643+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261008%2000:29&end_date=20261010%2002:29&station=8638610&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:29:02.406164+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261010%2002:29&end_date=20261013%2002:29&station=8638610&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:29:02.413789+00:00",
+      "required": false
     },
     "https://api.water.noaa.gov/nwps/v1/gauges/WRVV2/stageflow/observed": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:13.052268+00:00",
+      "retrieved_at_utc": "2026-10-10T02:29:02.427591+00:00",
       "required": false
     },
     "https://api.weather.gov/gridpoints/AKQ/80,76/forecast/hourly": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:13.833312+00:00",
+      "retrieved_at_utc": "2026-10-10T02:29:02.630359+00:00",
       "required": true
     },
     "https://api.weather.gov/gridpoints/AKQ/80,76": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:27.197236+00:00",
+      "retrieved_at_utc": "2026-10-10T02:29:02.668636+00:00",
       "required": true
+    },
+    "https://api.water.noaa.gov/nwps/v1/gauges/FTMV2/stageflow/observed": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-10T02:29:03.164816+00:00",
+      "required": false
     },
     "https://api.weather.gov/alerts/active?point=37.420183,-76.406550": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-10T02:07:27.764660+00:00"
+      "retrieved_at_utc": "2026-10-10T02:29:03.443856+00:00"
     }
   },
   "alerting_enabled": true,
   "forecast_method": "NWPS guidance with heuristic local adjustments; scenario bounds are not calibrated confidence intervals",
   "system_location": "Mathews County, Virginia (Ware River / Mobjack Bay Basin)",
   "current_conditions": {
-    "observation_timestamp_local": "2026-10-09 21:45:00 EDT",
-    "ware_river_stage_mllw_ft": 2.92,
-    "ware_river_stage_navd88_ft": 1.28,
+    "observation_timestamp_local": "2026-10-09 22:05:00 EDT",
+    "ware_river_stage_mllw_ft": 2.76,
+    "ware_river_stage_navd88_ft": 1.12,
     "action_stage_threshold_ft": 4.0,
     "flood_inundation_threshold_ft": 3.99,
     "estimated_local_flood_depth_in": 0.0,
@@ -200,12 +200,12 @@
       },
       "Daniel Avenue": {
         "name": "Daniel Avenue",
-        "invert_mllw_ft": 3.88,
-        "invert_navd88_ft": 2.24,
+        "invert_mllw_ft": 4.4,
+        "invert_navd88_ft": 2.76,
         "depth_in": 0.0,
         "status": "No tidal flooding estimated",
         "code": "GREEN",
-        "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+        "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
       },
       "Allview Street": {
         "name": "Allview Street",
@@ -216,14 +216,23 @@
         "code": "GREEN",
         "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
       },
-      "River Road": {
-        "name": "River Road",
+      "River Road (at Daniel Ave)": {
+        "name": "River Road (at Daniel Ave)",
         "invert_mllw_ft": 3.59,
         "invert_navd88_ft": 1.95,
         "depth_in": 0.0,
         "status": "No tidal flooding estimated",
         "code": "GREEN",
-        "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+        "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+      },
+      "River Road (North Ridge)": {
+        "name": "River Road (North Ridge)",
+        "invert_mllw_ft": 4.53,
+        "invert_navd88_ft": 2.89,
+        "depth_in": 0.0,
+        "status": "No tidal flooding estimated",
+        "code": "GREEN",
+        "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
       },
       "Hobday Street": {
         "name": "Hobday Street",
@@ -262,24 +271,24 @@
         "description": "Western community boundary lane. Elevated ridge terrain."
       }
     },
-    "yorktown_wind_speed_mph": 0.0,
-    "yorktown_wind_dir_deg": 349.0,
-    "yorktown_wind_dir_cardinal": "N",
-    "yorktown_wind_gust_mph": 1.35,
-    "along_bay_wind_vector_mph": 0.0,
-    "cross_bay_wind_vector_mph": -0.0,
+    "yorktown_wind_speed_mph": 3.58,
+    "yorktown_wind_dir_deg": 53.0,
+    "yorktown_wind_dir_cardinal": "NE",
+    "yorktown_wind_gust_mph": 4.03,
+    "along_bay_wind_vector_mph": 3.0,
+    "cross_bay_wind_vector_mph": 1.95,
     "yorktown_baro_pressure_mb": 1024.8,
     "yorktown_air_temp_f": 68.0,
-    "yorktown_water_level_mllw_ft": 2.949,
-    "yorktown_storm_surge_residual_ft": 0.21,
-    "windmill_point_water_level_mllw_ft": 1.942,
-    "windmill_point_storm_surge_residual_ft": 0.44,
-    "sewells_point_water_level_mllw_ft": 3.054,
-    "sewells_point_pred_tide_ft": 2.797,
+    "yorktown_water_level_mllw_ft": 2.854,
+    "yorktown_storm_surge_residual_ft": 0.2,
+    "windmill_point_water_level_mllw_ft": 1.955,
+    "windmill_point_storm_surge_residual_ft": 0.41,
+    "sewells_point_water_level_mllw_ft": 2.966,
+    "sewells_point_pred_tide_ft": 2.694,
     "sewells_point_storm_surge_residual_ft": 0.23,
-    "bay_hydraulic_gradient_ft": 0.21,
-    "bay_hydraulic_slope_ft_per_mile": 0.00455,
-    "bay_hydraulic_pressure_direction": "Southward Inflow Head (North Bay surge forcing water into Mobjack Bay)"
+    "bay_hydraulic_gradient_ft": 0.18,
+    "bay_hydraulic_slope_ft_per_mile": 0.0039,
+    "bay_hydraulic_pressure_direction": "Equilibrium (Near-zero gradient across bay)"
   },
   "forecast_48h_outlook": {
     "peak_forecast_stage_q10_ft": 4.61,
@@ -297,7 +306,7 @@
     "peak_vehicle_passability": "DEEP FLOODING ESTIMATED \u2014 DO NOT ENTER",
     "hours_at_or_above_action_stage": 4,
     "scenario_range_summary": "Expected peak 4.89 ft (uncalibrated scenario range: 4.61 ft [lower scenario] to 5.21 ft [upper scenario]; depth 7.6\" to 14.2\")",
-    "bay_hydraulic_slope_summary": "Current Bay Gradient: +0.21 ft (Southward Inflow Head (North Bay surge forcing water into Mobjack Bay))",
+    "bay_hydraulic_slope_summary": "Current Bay Gradient: +0.18 ft (Equilibrium (Near-zero gradient across bay))",
     "advisory_summary": "FLOODING ADVISORY: Potential Tier 3 (Severe / Travel hazardous) with up to 10.66 inches of water expected around 2026-10-11 10:00:00 EDT."
   },
   "forecast_hourly_timeline": [
@@ -351,12 +360,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -367,14 +376,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -483,12 +501,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -499,14 +517,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -615,12 +642,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -631,14 +658,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -747,12 +783,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -763,14 +799,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -879,12 +924,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -895,14 +940,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -1011,12 +1065,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -1027,14 +1081,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -1143,12 +1206,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -1159,14 +1222,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -1275,12 +1347,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -1291,14 +1363,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -1407,12 +1488,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -1423,14 +1504,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -1539,12 +1629,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -1555,14 +1645,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -1671,12 +1770,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -1687,14 +1786,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -1803,12 +1911,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -1819,14 +1927,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -1935,12 +2052,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -1951,14 +2068,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.6,
           "status": "Puddles & Ditch Full (0.6\")",
           "code": "YELLOW",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -2067,12 +2193,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -2083,14 +2209,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -2199,12 +2334,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -2215,14 +2350,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -2331,12 +2475,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -2347,14 +2491,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -2463,12 +2616,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -2479,14 +2632,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -2595,12 +2757,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -2611,14 +2773,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -2727,12 +2898,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -2743,14 +2914,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -2859,12 +3039,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -2875,14 +3055,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -2991,12 +3180,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -3007,14 +3196,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -3123,12 +3321,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -3139,14 +3337,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -3255,12 +3462,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -3271,14 +3478,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -3387,12 +3603,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -3403,14 +3619,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -3519,12 +3744,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -3535,14 +3760,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -3651,12 +3885,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -3667,14 +3901,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -3783,12 +4026,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -3799,14 +4042,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -3915,12 +4167,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -3931,14 +4183,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -4047,12 +4308,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -4063,14 +4324,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -4179,12 +4449,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -4195,14 +4465,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -4311,12 +4590,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -4327,14 +4606,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -4443,12 +4731,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -4459,14 +4747,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -4575,12 +4872,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -4591,14 +4888,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -4707,12 +5013,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -4723,14 +5029,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -4839,12 +5154,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
-          "depth_in": 0.1,
-          "status": "Puddles & Ditch Full (0.1\")",
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
+          "depth_in": 0.15,
+          "status": "Rain Ponding (0.15\")",
           "code": "YELLOW",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -4855,14 +5170,23 @@
           "code": "YELLOW",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 3.4,
           "status": "Puddles & Ditch Full (3.4\")",
           "code": "YELLOW",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.15,
+          "status": "Rain Ponding (0.15\")",
+          "code": "YELLOW",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -4971,12 +5295,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
-          "depth_in": 9.7,
-          "status": "Impassable Deep Water (9.7\")",
-          "code": "RED",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
+          "depth_in": 3.9,
+          "status": "Flooding estimated (3.9\")",
+          "code": "ORANGE",
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -4987,14 +5311,23 @@
           "code": "ORANGE",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 13.0,
           "status": "Impassable Deep Water (13.0\")",
           "code": "RED",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 2.4,
+          "status": "Puddles & Ditch Full (2.4\")",
+          "code": "YELLOW",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -5103,12 +5436,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
-          "depth_in": 12.1,
-          "status": "Impassable Deep Water (12.1\")",
-          "code": "RED",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
+          "depth_in": 6.3,
+          "status": "Flooding estimated (6.3\")",
+          "code": "ORANGE",
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -5119,14 +5452,23 @@
           "code": "RED",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 15.4,
           "status": "Impassable Deep Water (15.4\")",
           "code": "RED",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 4.8,
+          "status": "Flooding estimated (4.8\")",
+          "code": "ORANGE",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -5235,12 +5577,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
-          "depth_in": 9.8,
-          "status": "Impassable Deep Water (9.8\")",
-          "code": "RED",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
+          "depth_in": 4.0,
+          "status": "Flooding estimated (4.0\")",
+          "code": "ORANGE",
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -5251,14 +5593,23 @@
           "code": "ORANGE",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 13.0,
           "status": "Impassable Deep Water (13.0\")",
           "code": "RED",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 2.5,
+          "status": "Puddles & Ditch Full (2.5\")",
+          "code": "YELLOW",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -5367,12 +5718,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
-          "depth_in": 5.5,
-          "status": "Flooding estimated (5.5\")",
-          "code": "ORANGE",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
+          "depth_in": 0.87,
+          "status": "Rain Ponding (0.87\")",
+          "code": "YELLOW",
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -5383,14 +5734,23 @@
           "code": "YELLOW",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 8.7,
           "status": "Impassable Deep Water (8.7\")",
           "code": "RED",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.87,
+          "status": "Rain Ponding (0.87\")",
+          "code": "YELLOW",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -5499,12 +5859,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -5515,14 +5875,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 1.2,
           "status": "Puddles & Ditch Full (1.2\")",
           "code": "YELLOW",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -5631,12 +6000,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -5647,14 +6016,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -5763,12 +6141,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -5779,14 +6157,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -5895,12 +6282,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -5911,14 +6298,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -6027,12 +6423,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -6043,14 +6439,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -6159,12 +6564,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -6175,14 +6580,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -6291,12 +6705,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -6307,14 +6721,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -6423,12 +6846,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -6439,14 +6862,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -6555,12 +6987,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -6571,14 +7003,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -6687,12 +7128,12 @@
         },
         "Daniel Avenue": {
           "name": "Daniel Avenue",
-          "invert_mllw_ft": 3.88,
-          "invert_navd88_ft": 2.24,
+          "invert_mllw_ft": 4.4,
+          "invert_navd88_ft": 2.76,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Central community spine. East end dips low; benchmark section at 4.40 ft."
+          "description": "Central community spine & Observation Benchmark (4.40' MLLW / 2.76' NAVD88). Roadside ditch culvert dips to 3.88' MLLW."
         },
         "Allview Street": {
           "name": "Allview Street",
@@ -6703,14 +7144,23 @@
           "code": "GREEN",
           "description": "Interior western cross street. Shallow puddling begins above 4.13 ft."
         },
-        "River Road": {
-          "name": "River Road",
+        "River Road (at Daniel Ave)": {
+          "name": "River Road (at Daniel Ave)",
           "invert_mllw_ft": 3.59,
           "invert_navd88_ft": 1.95,
           "depth_in": 0.0,
           "status": "No tidal flooding estimated",
           "code": "GREEN",
-          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); mid/north section rises toward elevated ridge."
+          "description": "Northern shoreline access road. Critical intersection at Daniel Ave dips ~2 inches lower than Bayshore (3.59' MLLW / 1.95' NAVD88); floods first during high tides."
+        },
+        "River Road (North Ridge)": {
+          "name": "River Road (North Ridge)",
+          "invert_mllw_ft": 4.53,
+          "invert_navd88_ft": 2.89,
+          "depth_in": 0.0,
+          "status": "No tidal flooding estimated",
+          "code": "GREEN",
+          "description": "River Rd elevated northern ridge (4.53' MLLW / 2.89' NAVD88). Sits high along residential pads; remains passable during moderate tides."
         },
         "Hobday Street": {
           "name": "Hobday Street",
@@ -6782,7 +7232,7 @@
   },
   "official_nws_alerts": {
     "available": true,
-    "retrieved_at_utc": "2026-10-10T02:07:27.764660+00:00",
+    "retrieved_at_utc": "2026-10-10T02:29:03.443856+00:00",
     "alerts": [],
     "source": "https://www.weather.gov/akq/"
   },
@@ -6790,22 +7240,22 @@
   "fort_monroe": {
     "station": "FTMV2 / USGS 0204289994",
     "role": "evaluation_only",
-    "observation_time_utc": "2026-10-10T01:36:00+00:00",
-    "received_at_utc": "2026-10-10T01:55:44Z",
-    "elevation_navd88_ft": 1.46,
-    "water_level_mllw_ft": 3.16,
+    "observation_time_utc": "2026-10-10T01:48:00+00:00",
+    "received_at_utc": "2026-10-10T02:10:39Z",
+    "elevation_navd88_ft": 1.41,
+    "water_level_mllw_ft": 3.11,
     "datum_offset_ft": -1.7,
     "fresh": true,
     "model_promoted": false
   },
   "live_verification": {
-    "updated_at_utc": "2026-10-10T02:07:27+00:00",
-    "issued_rows": 468,
+    "updated_at_utc": "2026-10-10T02:29:03+00:00",
+    "issued_rows": 474,
     "summary": {
-      "verified_rows": 416,
-      "nwps_verified_rows": 416,
-      "overall_operational_mae_ft": 0.3126,
-      "overall_nwps_mae_ft": 0.3139,
+      "verified_rows": 421,
+      "nwps_verified_rows": 421,
+      "overall_operational_mae_ft": 0.3098,
+      "overall_nwps_mae_ft": 0.3111,
       "overall_skill_delta_ft": 0.0013,
       "overall_skill_improvement_pct": 0.4,
       "high_water_observations": 0,
@@ -6817,10 +7267,10 @@
     "results": [
       {
         "lead_hours": 1,
-        "n": 75,
-        "mae_ft": 0.28466666666666657,
-        "nwps_n": 75,
-        "nwps_mae_ft": 0.2837333333333332,
+        "n": 76,
+        "mae_ft": 0.28092105263157885,
+        "nwps_n": 76,
+        "nwps_mae_ft": 0.2799999999999999,
         "skill_delta_ft": -0.0009,
         "skill_improvement_pct": -0.3,
         "high_water_n": 0,
@@ -6833,11 +7283,11 @@
       },
       {
         "lead_hours": 3,
-        "n": 73,
-        "mae_ft": 0.3224657534246575,
-        "nwps_n": 73,
-        "nwps_mae_ft": 0.3142465753424657,
-        "skill_delta_ft": -0.0082,
+        "n": 75,
+        "mae_ft": 0.3138666666666666,
+        "nwps_n": 75,
+        "nwps_mae_ft": 0.30586666666666656,
+        "skill_delta_ft": -0.008,
         "skill_improvement_pct": -2.6,
         "high_water_n": 0,
         "high_water_mae_ft": null,
@@ -6865,12 +7315,12 @@
       },
       {
         "lead_hours": 12,
-        "n": 69,
-        "mae_ft": 0.3217391304347826,
-        "nwps_n": 69,
-        "nwps_mae_ft": 0.3328985507246376,
-        "skill_delta_ft": 0.0112,
-        "skill_improvement_pct": 3.4,
+        "n": 71,
+        "mae_ft": 0.31830985915492954,
+        "nwps_n": 71,
+        "nwps_mae_ft": 0.3291549295774647,
+        "skill_delta_ft": 0.0108,
+        "skill_improvement_pct": 3.3,
         "high_water_n": 0,
         "high_water_mae_ft": null,
         "nwps_high_water_mae_ft": null,
