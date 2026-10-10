@@ -46,4 +46,87 @@
     document.getElementById('report-draft').textContent=text;document.getElementById('report-result').hidden=false;
   });
   document.getElementById('download-report')?.addEventListener('click',()=>{const text=document.getElementById('report-draft').textContent;const url=URL.createObjectURL(new Blob([text],{type:'text/plain'}));const a=document.createElement('a');a.href=url;a.download='flood-observation-for-review.txt';a.click();URL.revokeObjectURL(url);});
+
+  /* --- Jargon explainer: tap any dotted term for a plain-English definition --- */
+  const JARGON={
+    'mllw':'Measured from average low tide — just a ruler for water height.',
+    'navd88':'Height above sea level, measured from a fixed national reference point.',
+    'scenario-range':'A what-if range from the model — not a guarantee of the worst case.',
+    'surge-residual':'Extra water piled up by wind, beyond the normal tide.',
+    'hydraulic-gradient':'How water is tilted across the bay — it can push extra water our way.',
+    'action-stage':'The water level (4.0 ft) where flooding starts to affect roads.',
+    'q10':'Lower end of a what-if range — not a statistical guarantee.',
+    'q90':'Upper end of a what-if range — not a statistical guarantee.',
+    'crest':'The highest water level during a high tide.',
+    'backwater':'Rainwater trapped because high tides block drainage.'
+  };
+  document.querySelectorAll('.jargon').forEach(el=>{
+    el.addEventListener('click',event=>{
+      event.stopPropagation();
+      const wasOpen=el.classList.contains('jargon-open');
+      document.querySelectorAll('.jargon-open').forEach(o=>o.classList.remove('jargon-open'));
+      if(wasOpen)return;
+      let tip=el.querySelector('.jargon-tip');
+      if(!tip){tip=document.createElement('span');tip.className='jargon-tip';tip.textContent=JARGON[el.dataset.jargon]||'Technical term.';el.appendChild(tip);}
+      el.classList.add('jargon-open');
+    });
+  });
+  document.addEventListener('click',()=>document.querySelectorAll('.jargon-open').forEach(el=>el.classList.remove('jargon-open')));
+
+  /* --- Street picker: "Will my street flood?" --- */
+  const streetSel=document.getElementById('street-picker'),streetRes=document.getElementById('street-result'),streetDataEl=document.getElementById('street-forecast');
+  let streetData={};
+  try{streetData=JSON.parse(streetDataEl?.textContent||'{}');}catch{streetData={};}
+  streetSel?.addEventListener('change',()=>{
+    streetRes.textContent='';
+    const name=streetSel.value,s=streetData[name];
+    if(!name||!s)return;
+    const card=document.createElement('div');card.className='street-result-card';
+    const h=document.createElement('strong');h.textContent=name;card.appendChild(h);
+    const p=document.createElement('p');
+    if(s.peak_depth_in>0){
+      p.textContent=`About ${s.peak_depth_in} in of water around ${s.peak_time}. First water ${s.first_flood}. Move cars by ${s.move_by}.`;
+    }else{
+      p.textContent='No flooding expected on this street in the next 48 hours.';
+    }
+    card.appendChild(p);streetRes.appendChild(card);
+  });
+
+  /* --- Action checklist: persist per tier+day --- */
+  document.querySelectorAll('.action-checklist').forEach(list=>{
+    const key=list.dataset.checklistKey;if(!key)return;
+    let saved={};try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch{saved={};}
+    list.querySelectorAll('input[type=checkbox]').forEach(box=>{
+      if(saved[box.dataset.idx])box.checked=true;
+      box.addEventListener('change',()=>{
+        let cur={};try{cur=JSON.parse(localStorage.getItem(key)||'{}');}catch{cur={};}
+        cur[box.dataset.idx]=box.checked;try{localStorage.setItem(key,JSON.stringify(cur));}catch{}
+      });
+    });
+  });
+
+  /* --- Audio briefing --- */
+  const audioBtn=document.getElementById('audio-briefing-btn'),audioStop=document.getElementById('audio-stop-btn');
+  audioBtn?.addEventListener('click',()=>{
+    if(!('speechSynthesis'in window))return;
+    window.speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(audioBtn.dataset.script||'');
+    u.onend=()=>{if(audioStop)audioStop.hidden=true;};
+    window.speechSynthesis.speak(u);
+    if(audioStop)audioStop.hidden=false;
+  });
+  audioStop?.addEventListener('click',()=>{window.speechSynthesis?.cancel();audioStop.hidden=true;});
+
+  /* --- Fridge card print --- */
+  document.getElementById('print-fridge')?.addEventListener('click',()=>window.print());
+
+  /* --- Live countdown to first street flooding --- */
+  function tickCountdown(){
+    document.querySelectorAll('[data-first-flood-utc]').forEach(el=>{
+      const t=Date.parse(el.dataset.firstFloodUtc);if(!Number.isFinite(t))return;
+      const hrs=(t-Date.now())/3600000;
+      el.textContent=hrs<=0?'Street flooding may be happening now — check conditions':hrs<1?'First street flooding in less than an hour':`First street flooding in about ${Math.round(hrs)} hours`;
+    });
+  }
+  tickCountdown();setInterval(tickCountdown,60000);
 })();

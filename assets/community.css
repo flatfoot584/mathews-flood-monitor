@@ -913,3 +913,83 @@ code {
     padding-top: 16px;
   }
 }
+
+/* ============ UX improvements: dial, picker, jargon, timeline, checklist, fridge ============ */
+
+/* Status dial: one full-width banner above the fold */
+.status-dial { border-radius: 16px; border: 2px solid; padding: 18px 20px; margin: 0 0 4px; }
+.status-dial h2 { font-size: 1.25rem; font-weight: 800; margin: 10px 0 6px; line-height: 1.3; }
+.status-dial.stoplight-green { background: #ecfdf5; border-color: #6ee7b7; }
+.status-dial.stoplight-green h2 { color: #064e3b; }
+.status-dial.stoplight-yellow { background: #fffbeb; border-color: #fcd34d; }
+.status-dial.stoplight-yellow h2 { color: #78350f; }
+.status-dial.stoplight-red { background: #fef2f2; border-color: #fca5a5; }
+.status-dial.stoplight-red h2 { color: #7f1d1d; }
+.status-dial.stoplight-unknown { background: #f8fafc; border-color: #cbd5e1; }
+.status-dial.stoplight-unknown h2 { color: #0f172a; }
+.status-countdown { font-weight: 700; font-size: 0.95rem; margin: 4px 0 10px; }
+.audio-briefing { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 6px; }
+
+/* Jargon explainer */
+.jargon { text-decoration: underline dotted; text-underline-offset: 3px; cursor: help; position: relative; }
+.jargon-tip { display: none; position: absolute; z-index: 50; left: 0; top: 1.4em; min-width: 200px; max-width: 280px;
+  background: #0f172a; color: #f8fafc; font-size: 13px; font-weight: 400; line-height: 1.4;
+  padding: 10px 12px; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,.25); }
+.jargon.jargon-open .jargon-tip { display: block; }
+
+/* Street picker */
+.street-picker-card .street-picker-label { display: block; font-weight: 700; margin: 10px 0 6px; }
+.street-picker-select { width: 100%; max-width: 420px; padding: 12px; font-size: 16px; border-radius: 12px;
+  border: 2px solid #cbd5e1; background: #fff; }
+.street-result { margin-top: 12px; }
+.street-result-card { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 12px; padding: 14px 16px; }
+.street-result-card strong { font-size: 1.05rem; }
+.street-result-card p { margin: 6px 0 0; }
+
+/* Story timeline */
+.story-timeline { list-style: none; margin: 12px 0 0; padding: 0; }
+.story-timeline li { display: flex; gap: 12px; padding: 10px 0; border-left: 3px solid #e2e8f0; padding-left: 16px;
+  margin-left: 8px; position: relative; }
+.story-timeline li::before { content: ""; position: absolute; left: -8px; top: 16px; width: 13px; height: 13px;
+  border-radius: 50%; background: #0ea5e9; border: 2px solid #fff; box-shadow: 0 0 0 2px #bae6fd; }
+.story-timeline .story-emoji { font-size: 1.4rem; line-height: 1.2; }
+.story-timeline strong { display: block; font-size: 0.98rem; }
+.story-timeline p { margin: 2px 0 0; font-size: 0.88rem; color: #475569; }
+
+/* Action checklist */
+.action-checklist { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+.action-checklist li label { display: flex; gap: 10px; align-items: flex-start; background: #f8fafc;
+  border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; cursor: pointer; font-size: 0.95rem; }
+.action-checklist input[type="checkbox"] { width: 20px; height: 20px; margin-top: 1px; flex-shrink: 0; accent-color: #0284c7; }
+
+/* Signup hero */
+.signup-hero .step-num { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px;
+  border-radius: 50%; background: #0284c7; color: #fff; font-size: 1rem; margin-right: 8px; }
+.store-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.qr-hero { display: flex; gap: 18px; align-items: center; margin: 12px 0; flex-wrap: wrap; }
+.qr-hero img { border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,.06);
+  background: #fff; padding: 8px; }
+.qr-hero p { flex: 1; min-width: 200px; }
+.troubleshoot-body h3 { margin-top: 12px; }
+.troubleshoot-body ul { margin: 6px 0 12px 18px; }
+.troubleshoot-body li { margin: 4px 0; }
+
+/* Fridge card */
+.fridge-card { border: 2px dashed #94a3b8; }
+.fridge-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.fridge-status { font-size: 1.05rem; margin: 8px 0; }
+.fridge-facts { margin: 8px 0 8px 18px; }
+.fridge-facts li { margin: 4px 0; }
+.fridge-legend { display: flex; gap: 12px; flex-wrap: wrap; margin: 10px 0; font-size: 0.85rem; }
+.tier-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; }
+.tier-dot.tier-0 { background: #10b981; } .tier-dot.tier-1 { background: #f59e0b; }
+.tier-dot.tier-2 { background: #ea580c; } .tier-dot.tier-3 { background: #dc2626; }
+.fridge-foot { font-size: 0.8rem; }
+
+/* Print: fridge card only */
+@media print {
+  header, footer, nav, aside, .no-print, #data-freshness, .community-header, .community-footer { display: none !important; }
+  main > *:not(.fridge-card) { display: none !important; }
+  .fridge-card { display: block !important; border: 2px solid #000; box-shadow: none; }
+  body { background: #fff; }
+}
