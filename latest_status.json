@@ -1,113 +1,113 @@
 {
-  "status_generated_at_local": "2026-10-17 09:07:54 EDT",
-  "status_generated_at_utc": "2026-10-17 13:07:54 UTC",
+  "status_generated_at_local": "2026-10-17 09:52:01 EDT",
+  "status_generated_at_utc": "2026-10-17 13:52:01 UTC",
   "source_health": {
     "https://api.water.noaa.gov/nwps/v1/gauges/WRVV2/stageflow/forecast": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:53.602425+00:00",
+      "retrieved_at_utc": "2026-10-17T13:51:59.873922+00:00",
       "required": true
     },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:07&end_date=20261017%2013:07&station=8637689&product=air_temperature&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:51&end_date=20261017%2013:51&station=8637689&product=air_temperature&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:53.609772+00:00",
+      "retrieved_at_utc": "2026-10-17T13:51:59.903646+00:00",
       "required": false
     },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:07&end_date=20261017%2013:07&station=8637689&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:51&end_date=20261017%2013:51&station=8637689&product=air_pressure&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:53.646601+00:00",
+      "retrieved_at_utc": "2026-10-17T13:51:59.919131+00:00",
       "required": false
     },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:07&end_date=20261017%2013:07&station=8637689&product=air_pressure&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:51&end_date=20261017%2013:51&station=8637689&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:53.655353+00:00",
+      "retrieved_at_utc": "2026-10-17T13:51:59.957985+00:00",
       "required": false
     },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:07&end_date=20261017%2013:07&station=8637689&product=wind&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:51&end_date=20261017%2013:51&station=8637689&product=wind&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:53.672999+00:00",
+      "retrieved_at_utc": "2026-10-17T13:51:59.961778+00:00",
       "required": false
     },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:07&end_date=20261017%2013:07&station=8637689&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261017%2013:51&end_date=20261020%2013:51&station=8637689&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:53.873896+00:00",
+      "retrieved_at_utc": "2026-10-17T13:52:00.188285+00:00",
       "required": false
     },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261017%2013:07&end_date=20261020%2013:07&station=8637689&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:51&end_date=20261017%2013:51&station=8637689&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:53.919540+00:00",
+      "retrieved_at_utc": "2026-10-17T13:52:00.190447+00:00",
       "required": false
     },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261017%2013:07&end_date=20261020%2013:07&station=8636580&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:51&end_date=20261017%2013:51&station=8636580&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:53.957842+00:00",
+      "retrieved_at_utc": "2026-10-17T13:52:00.206977+00:00",
       "required": false
     },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:07&end_date=20261017%2013:07&station=8636580&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:51&end_date=20261017%2013:51&station=8636580&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:53.961294+00:00",
+      "retrieved_at_utc": "2026-10-17T13:52:00.229856+00:00",
       "required": false
     },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:07&end_date=20261017%2013:07&station=8636580&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261017%2013:51&end_date=20261020%2013:51&station=8636580&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:53.979338+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:07&end_date=20261017%2013:07&station=8638610&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:54.192873+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:07&end_date=20261017%2013:07&station=8638610&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:54.204462+00:00",
-      "required": false
-    },
-    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261017%2013:07&end_date=20261020%2013:07&station=8638610&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:54.265486+00:00",
-      "required": false
-    },
-    "https://api.water.noaa.gov/nwps/v1/gauges/WRVV2/stageflow/observed": {
-      "available": true,
-      "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:54.317834+00:00",
+      "retrieved_at_utc": "2026-10-17T13:52:00.254521+00:00",
       "required": false
     },
     "https://api.weather.gov/gridpoints/AKQ/80,76/forecast/hourly": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:54.581164+00:00",
+      "retrieved_at_utc": "2026-10-17T13:52:00.358509+00:00",
       "required": true
     },
     "https://api.weather.gov/gridpoints/AKQ/80,76": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:54.645918+00:00",
+      "retrieved_at_utc": "2026-10-17T13:52:00.455152+00:00",
       "required": true
+    },
+    "https://api.water.noaa.gov/nwps/v1/gauges/WRVV2/stageflow/observed": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-17T13:52:00.484204+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:51&end_date=20261017%2013:51&station=8638610&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-17T13:52:00.497288+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261017%2013:51&end_date=20261020%2013:51&station=8638610&product=predictions&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-17T13:52:00.503006+00:00",
+      "required": false
+    },
+    "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20261015%2011:51&end_date=20261017%2013:51&station=8638610&product=water_level&datum=mllw&units=english&time_zone=gmt&application=MathewsFloodStudy&format=json": {
+      "available": true,
+      "cached": false,
+      "retrieved_at_utc": "2026-10-17T13:52:00.522370+00:00",
+      "required": false
     },
     "https://api.water.noaa.gov/nwps/v1/gauges/FTMV2/stageflow/observed": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:54.755237+00:00",
+      "retrieved_at_utc": "2026-10-17T13:52:01.185494+00:00",
       "required": false
     },
     "https://api.weather.gov/alerts/active?point=37.420183,-76.406550": {
       "available": true,
       "cached": false,
-      "retrieved_at_utc": "2026-10-17T13:07:55.008225+00:00"
+      "retrieved_at_utc": "2026-10-17T13:52:01.441387+00:00"
     }
   },
   "alerting_enabled": true,
@@ -115,10 +115,10 @@
   "system_location": "Mathews County, Virginia (Ware River / Mobjack Bay Basin)",
   "data_quality_flags": [],
   "current_conditions": {
-    "observation_timestamp_local": "2026-10-17 08:30:00 EDT",
-    "ware_river_stage_mllw_ft": 1.59,
-    "ware_river_stage_navd88_ft": -0.05,
-    "stage_trend_3h_ft_per_hr": 0.099,
+    "observation_timestamp_local": "2026-10-17 09:30:00 EDT",
+    "ware_river_stage_mllw_ft": 1.86,
+    "ware_river_stage_navd88_ft": 0.22,
+    "stage_trend_3h_ft_per_hr": 0.174,
     "action_stage_threshold_ft": 4.0,
     "flood_inundation_threshold_ft": 3.99,
     "estimated_local_flood_depth_in": 0.0,
@@ -273,23 +273,23 @@
         "description": "Western community boundary lane. Elevated ridge terrain."
       }
     },
-    "yorktown_wind_speed_mph": 18.34,
-    "yorktown_wind_dir_deg": 6.0,
+    "yorktown_wind_speed_mph": 10.52,
+    "yorktown_wind_dir_deg": 359.0,
     "yorktown_wind_dir_cardinal": "N",
-    "yorktown_wind_gust_mph": 22.14,
-    "along_bay_wind_vector_mph": 17.8,
-    "cross_bay_wind_vector_mph": -4.44,
-    "yorktown_baro_pressure_mb": 1016.6,
-    "yorktown_air_temp_f": 58.6,
-    "yorktown_water_level_mllw_ft": 1.703,
-    "yorktown_storm_surge_residual_ft": 0.83,
-    "windmill_point_water_level_mllw_ft": 1.342,
-    "windmill_point_storm_surge_residual_ft": 0.69,
-    "sewells_point_water_level_mllw_ft": 1.88,
-    "sewells_point_pred_tide_ft": 1.071,
-    "sewells_point_storm_surge_residual_ft": 0.83,
-    "bay_hydraulic_gradient_ft": -0.14,
-    "bay_hydraulic_slope_ft_per_mile": -0.00303,
+    "yorktown_wind_gust_mph": 13.42,
+    "along_bay_wind_vector_mph": 9.82,
+    "cross_bay_wind_vector_mph": -3.77,
+    "yorktown_baro_pressure_mb": 1017.3,
+    "yorktown_air_temp_f": 57.7,
+    "yorktown_water_level_mllw_ft": 1.985,
+    "yorktown_storm_surge_residual_ft": 0.97,
+    "windmill_point_water_level_mllw_ft": 1.424,
+    "windmill_point_storm_surge_residual_ft": 0.81,
+    "sewells_point_water_level_mllw_ft": 2.146,
+    "sewells_point_pred_tide_ft": 1.261,
+    "sewells_point_storm_surge_residual_ft": 0.92,
+    "bay_hydraulic_gradient_ft": -0.11,
+    "bay_hydraulic_slope_ft_per_mile": -0.00238,
     "bay_hydraulic_pressure_direction": "Equilibrium (Near-zero gradient across bay)"
   },
   "forecast_48h_outlook": {
@@ -308,7 +308,7 @@
     "peak_vehicle_passability": "DEEP FLOODING ESTIMATED \u2014 DO NOT ENTER",
     "hours_at_or_above_action_stage": 7,
     "scenario_range_summary": "Expected peak 4.36 ft (uncalibrated scenario range: 4.07 ft [lower scenario] to 4.69 ft [upper scenario]; depth 0.9\" to 7.7\")",
-    "bay_hydraulic_slope_summary": "Current Bay Gradient: -0.14 ft (Equilibrium (Near-zero gradient across bay))",
+    "bay_hydraulic_slope_summary": "Current Bay Gradient: -0.11 ft (Equilibrium (Near-zero gradient across bay))",
     "advisory_summary": "FLOODING ADVISORY: Potential Tier 3 (Severe / Travel hazardous) with up to 4.05 inches of water expected around 2026-10-19 04:00:00 EDT."
   },
   "forecast_hourly_timeline": [
@@ -7234,7 +7234,7 @@
   },
   "official_nws_alerts": {
     "available": true,
-    "retrieved_at_utc": "2026-10-17T13:07:55.008225+00:00",
+    "retrieved_at_utc": "2026-10-17T13:52:01.441387+00:00",
     "alerts": [],
     "source": "https://www.weather.gov/akq/"
   },
@@ -7242,17 +7242,17 @@
   "fort_monroe": {
     "station": "FTMV2 / USGS 0204289994",
     "role": "evaluation_only",
-    "observation_time_utc": "2026-10-17T12:18:00+00:00",
-    "received_at_utc": "2026-10-17T12:40:32Z",
-    "elevation_navd88_ft": 0.12,
-    "water_level_mllw_ft": 1.82,
+    "observation_time_utc": "2026-10-17T13:24:00+00:00",
+    "received_at_utc": "2026-10-17T13:40:35Z",
+    "elevation_navd88_ft": 0.47,
+    "water_level_mllw_ft": 2.17,
     "datum_offset_ft": -1.7,
     "fresh": true,
     "model_promoted": false
   },
   "live_verification": {
-    "updated_at_utc": "2026-10-17T13:07:54+00:00",
-    "issued_rows": 972,
+    "updated_at_utc": "2026-10-17T13:52:01+00:00",
+    "issued_rows": 978,
     "summary": {
       "verified_rows": 940,
       "nwps_verified_rows": 940,
