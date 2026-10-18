@@ -1,18 +1,21 @@
 {
   "metadata": {
     "title": "Empirical Evidence & Machine Learning Parameter Benchmark for Mathews County Coastal Flood Prediction",
-    "generated_at_utc": "2026-10-02 03:48:53 UTC",
-    "study_period": "2021-05-29 to 2026-09-28",
+    "generated_at_utc": "2026-10-18 05:18:43 UTC",
+    "study_period": "2021-05-29 to 2026-09-27",
     "geographic_coordinates": "37.420183, -76.40655",
     "datum_offset_navd88_to_mllw": -1.64,
-    "publication_scope": "Aggregate benchmark statistics; raw observer records and notebook images are private."
+    "publication_scope": "Aggregate benchmark statistics; raw observer records and notebook images are private.",
+    "refreshed_at_utc": "2026-10-18 05:18:43 UTC",
+    "observation_statistics_as_of_utc": "2026-10-18 05:18:43 UTC",
+    "live_verification_updated_at_utc": "2026-10-18T05:11:08+00:00"
   },
   "dataset_characteristics": {
-    "total_observations": 204,
+    "total_observations": 205,
     "valid_numerical_pairs": 181,
     "flooded_observations": 137,
     "zero_flood_observations": 44,
-    "qualitative_notes_only": 23,
+    "qualitative_notes_only": 24,
     "temporal_span_years": 5.33,
     "ware_river_stage_distribution_ft": {
       "min": 3.4,
@@ -36,7 +39,11 @@
     },
     "correlation_overall_r": 0.8898,
     "correlation_flooded_r": 0.9302,
-    "correlation_flooded_r2": 0.8652
+    "correlation_flooded_r2": 0.8653,
+    "observation_date_range": [
+      "2021-05-29",
+      "2026-09-27"
+    ]
   },
   "model_performance": {
     "stage1_nowcast": {
@@ -69,7 +76,53 @@
       "mae_inches": 1.25,
       "rmse_inches": 1.69,
       "flooded_subset_mae_inches": 1.3,
-      "flooded_subset_rmse_inches": 1.58
+      "flooded_subset_rmse_inches": 1.58,
+      "r2_in_sample": 0.8511,
+      "leave_one_year_out_cv": [
+        {
+          "held_out_year": "2021",
+          "n": 16,
+          "mae_in": 1.77,
+          "fitted_slope_in_per_ft": 13.15,
+          "fitted_threshold_ft": 4.12
+        },
+        {
+          "held_out_year": "2022",
+          "n": 19,
+          "mae_in": 1.07,
+          "fitted_slope_in_per_ft": 12.94,
+          "fitted_threshold_ft": 4.1
+        },
+        {
+          "held_out_year": "2023",
+          "n": 27,
+          "mae_in": 1.23,
+          "fitted_slope_in_per_ft": 12.59,
+          "fitted_threshold_ft": 4.09
+        },
+        {
+          "held_out_year": "2024",
+          "n": 71,
+          "mae_in": 0.73,
+          "fitted_slope_in_per_ft": 12.78,
+          "fitted_threshold_ft": 4.09
+        },
+        {
+          "held_out_year": "2025",
+          "n": 38,
+          "mae_in": 0.92,
+          "fitted_slope_in_per_ft": 12.27,
+          "fitted_threshold_ft": 4.06
+        },
+        {
+          "held_out_year": "2026",
+          "n": 10,
+          "mae_in": 1.79,
+          "fitted_slope_in_per_ft": 11.96,
+          "fitted_threshold_ft": 4.07
+        }
+      ],
+      "note": "Published formula scored in-sample. Cross-validation refits a through-threshold hinge model with one year held out. Observations cover flood-likely periods only."
     }
   },
   "lidar_ground_truth_validation": [
@@ -128,7 +181,7 @@
     {
       "street": "Daniel Avenue (Travel Crown)",
       "invert_navd88_ft": 2.76,
-      "invert_mllw_ft": 4.40,
+      "invert_mllw_ft": 4.4,
       "risk_note": "Primary community travel crown & Observation Benchmark (4.40' MLLW); sedans blocked above 4 inches"
     },
     {
@@ -179,5 +232,24 @@
       "invert_mllw_ft": 4.45,
       "risk_note": "Elevated western ridge; dry during nuisance events"
     }
-  ]
+  ],
+  "prospective_verification": {
+    "source": "models/live_verification.json",
+    "updated_at_utc": "2026-10-18T05:11:08+00:00",
+    "issued_rows": 1044,
+    "summary": {
+      "verified_rows": 985,
+      "nwps_verified_rows": 985,
+      "overall_operational_mae_ft": 0.262,
+      "overall_nwps_mae_ft": 0.2438,
+      "overall_skill_delta_ft": -0.0182,
+      "overall_skill_improvement_pct": -7.4,
+      "high_water_observations": 9,
+      "high_water_operational_misses": 0,
+      "high_water_nwps_misses": 0,
+      "high_water_operational_false_alarms": 13,
+      "high_water_nwps_false_alarms": 5,
+      "high_water_caveat": null
+    }
+  }
 }

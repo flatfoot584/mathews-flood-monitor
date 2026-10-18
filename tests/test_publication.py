@@ -69,3 +69,24 @@ class PublicationTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class ScientificEvidenceRefreshTests(unittest.TestCase):
+    def test_refresh_without_private_data_keeps_static_sections_and_adds_live_block(self):
+        import refresh_scientific_evidence as refresh
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            evidence = root / 'evidence.json'
+            live = root / 'live.json'
+            evidence.write_text(json.dumps({
+                'metadata': {'generated_at_utc': '2026-10-02 03:48:53 UTC'},
+                'dataset_characteristics': {'valid_numerical_pairs': 181}}))
+            live.write_text(json.dumps({'updated_at_utc': '2026-10-18T05:00:00+00:00',
+                                        'issued_rows': 10, 'summary': {'verified_rows': 9}}))
+            with patch.object(refresh, 'EVIDENCE', evidence), patch.object(refresh, 'LIVE', live), \
+                 patch.object(refresh, 'GROUND_TRUTH', root / 'missing.csv'):
+                out = refresh.refresh()
+        self.assertEqual(out['dataset_characteristics']['valid_numerical_pairs'], 181)
+        self.assertEqual(out['metadata']['observation_statistics_as_of_utc'], '2026-10-02 03:48:53 UTC')
+        self.assertEqual(out['prospective_verification']['summary']['verified_rows'], 9)
+        self.assertIn('refreshed_at_utc', out['metadata'])

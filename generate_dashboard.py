@@ -2254,6 +2254,9 @@ def build_science_html(status, evidence=None):
         <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
           Empirical validation, machine learning hydrodynamics, USGS 3DEP 1-meter LiDAR altimetry ground-truth, and formal version changelog for coastal flooding in Mathews County, Virginia.
         </p>
+        <p class="text-xs text-slate-400" data-evidence-asof>
+          Evidence file refreshed {html.escape(str(metadata.get('refreshed_at_utc') or 'unknown'))}. Observation statistics as of {html.escape(str(metadata.get('observation_statistics_as_of_utc') or metadata.get('generated_at_utc') or 'unknown'))}; live forecast verification updated {html.escape(str(metadata.get('live_verification_updated_at_utc') or 'unknown'))}.
+        </p>
         <div class="flex flex-wrap gap-3 pt-2">
           <a href="models/scientific_evidence.json" download class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs sm:text-sm shadow-md transition flex items-center gap-2">
             <i class="fa-solid fa-download"></i> Download JSON Evidence

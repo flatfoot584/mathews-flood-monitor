@@ -52,6 +52,8 @@ jobs:
         run: python3 -m unittest discover -s tests -v
       - name: Fetch timestamped observations and forecasts
         run: python3 ingest_realtime.py
+      - name: Refresh scientific evidence
+        run: python3 refresh_scientific_evidence.py
       - name: Generate portal
         run: python3 generate_dashboard.py
       - name: Dispatch existing community alerts
@@ -63,7 +65,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add latest_status.json forecast_48h.csv realtime_recent_observations.csv archive_hourly_observations.csv flood_dashboard.html index.html alerts.html subscribe.html about.html guide.html data.html science.html alert_state.json issued_forecast_archive.csv models/live_verification.json
+          git add latest_status.json forecast_48h.csv realtime_recent_observations.csv archive_hourly_observations.csv flood_dashboard.html index.html alerts.html subscribe.html about.html guide.html data.html science.html alert_state.json issued_forecast_archive.csv models/live_verification.json models/scientific_evidence.json
           if ! git diff --staged --quiet; then
             git commit -m "Automated flood data and portal update [skip ci]"
             git pull --rebase origin main
