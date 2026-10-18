@@ -515,11 +515,11 @@ def build_index_html(status, obs_rows, fcst_rows):
             <span data-age-label data-last-label="Last saved water-level forecast">48-hour water-level forecast</span>
           </h2>
           <p class="text-xs sm:text-sm text-slate-500">
-            NOAA water-level guidance with empirical local weather adjustments. The band shows an {_j('scenario-range', 'uncalibrated scenario range')}.
+            Raw NOAA NWPS water-level guidance for the Ware River gauge (no local adjustment applied). The band shows an {_j('scenario-range', 'uncalibrated scenario range')}.
           </p>
         </div>
         <div class="flex flex-wrap items-center gap-3 text-xs">
-          <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-sky-600"></span> Expected Stage</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-sky-600"></span> NOAA NWPS Stage</span>
           <span class="flex items-center gap-1.5"><span class="w-3.5 h-2 bg-sky-200/80 border border-sky-400 border-dashed rounded-[2px]"></span> Uncalibrated Scenario Band</span>
           <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-red-500 border-t border-dashed"></span> 3.99' Flood Threshold</span>
         </div>
@@ -1404,7 +1404,7 @@ def build_index_html(status, obs_rows, fcst_rows):
             yAxisID: 'y'
           }},
           {{
-            label: 'Expected Stage (ft MLLW)',
+            label: 'NOAA NWPS Stage (ft MLLW)',
             data: stageData,
             borderColor: '#0284c7',
             backgroundColor: 'transparent',

@@ -13,7 +13,7 @@ FIELDS = [
     'issue_time_utc', 'guidance_issued_at_utc', 'valid_time_utc', 'lead_hours',
     'actual_lead_hours', 'predicted_stage_mllw_ft', 'nwps_raw_stage_ft',
     'fort_observation_time_utc', 'fort_elevation_navd88_ft',
-    'observed_stage_mllw_ft', 'verified_at_utc'
+    'observed_stage_mllw_ft', 'verified_at_utc', 'shadow_adjusted_stage_ft'
 ]
 
 HIGH_WATER_THRESHOLD_FT = 4.00
@@ -62,6 +62,7 @@ def archive_and_verify(status, ware_obs, path='issued_forecast_archive.csv', sco
                 actual_lead_hours=round((valid - issued).total_seconds() / 3600, 3),
                 predicted_stage_mllw_ft=item['forecast_stage_mllw_ft'],
                 nwps_raw_stage_ft=item.get('nwps_raw_stage_ft', ''),
+                shadow_adjusted_stage_ft=item.get('shadow_adjusted_stage_ft', ''),
                 fort_observation_time_utc=fort.get('observation_time_utc', ''),
                 fort_elevation_navd88_ft=fort.get('elevation_navd88_ft', ''),
                 observed_stage_mllw_ft='',

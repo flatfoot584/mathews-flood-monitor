@@ -610,10 +610,17 @@ def build_forecast_timeline(nwps_fcst, nws_fcst, yt_pred_fcst, wm_pred_fcst, qpf
             
         hydraulic_push = round(max(0.0, forward_hydraulic_gradient) * 0.12, 3)
 
-        # Hybrid Hydrodynamic–ML Residual Modeling
+        # Operational stage selection (raw NWPS; adjusted candidate kept as shadow)
+        shadow_adjusted_stage = None
         if nwps_stage is not None:
+            # Operational guidance is the raw NWPS stage. Prospective verification
+            # (985 issued rows, Oct 2026) showed the wind/hydraulic add-on made
+            # forecasts worse, most of all when the add-on was large (MAE 0.41 vs
+            # 0.15 ft at >= +0.3 ft), because NWPS already includes wind forcing.
+            # The old adjusted value is kept as a shadow candidate only.
             local_wind_adj = round((0.012 * (along_bay or 0.0)) + (0.0006 * along_stress), 3)
-            hybrid_stage = round(max(0.5, nwps_stage + local_wind_adj + hydraulic_push), 2)
+            shadow_adjusted_stage = round(max(0.5, nwps_stage + local_wind_adj + hydraulic_push), 2)
+            hybrid_stage = round(max(0.5, nwps_stage), 2)
         elif yt_pred is not None:
             # Fallback to statistical ML forecast model
             hybrid_stage = round(0.735 * yt_pred + 0.02 * (along_bay or 0.0) + 1.1 + hydraulic_push, 2)
@@ -653,6 +660,7 @@ def build_forecast_timeline(nwps_fcst, nws_fcst, yt_pred_fcst, wm_pred_fcst, qpf
             "forecast_stage_mllw_ft": hybrid_stage if hybrid_stage is not None else "",
             "forecast_stage_q90_ft": stage_q90 if stage_q90 is not None else "",
             "nwps_raw_stage_ft": nwps_stage if nwps_stage is not None else "",
+            "shadow_adjusted_stage_ft": shadow_adjusted_stage if shadow_adjusted_stage is not None else "",
             "compound_flood_depth_q10_in": depth_q10,
             "compound_flood_depth_in": eval_res["total_compound_depth_in"],
             "compound_flood_depth_q90_in": depth_q90,
@@ -823,7 +831,7 @@ def generate_latest_status(
         "status_generated_at_utc": now_utc.strftime("%Y-%m-%d %H:%M:%S UTC"),
         "source_health": SOURCE_HEALTH.copy(),
         "alerting_enabled": os.getenv("NTFY_ALERTS_ENABLED", "false").lower() == "true",
-        "forecast_method": "NWPS guidance with heuristic local adjustments; scenario bounds are not calibrated confidence intervals",
+        "forecast_method": "Raw NOAA NWPS guidance (local wind adjustment removed after prospective verification; adjusted candidate archived as shadow); scenario bounds are not calibrated confidence intervals",
         "system_location": "Mathews County, Virginia (Ware River / Mobjack Bay Basin)",
         "data_quality_flags": data_quality_flags,
         "current_conditions": {
