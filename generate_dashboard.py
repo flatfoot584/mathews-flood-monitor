@@ -522,6 +522,7 @@ def build_index_html(status, obs_rows, fcst_rows):
           <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-sky-600"></span> NOAA NWPS Stage</span>
           <span class="flex items-center gap-1.5"><span class="w-3.5 h-2 bg-sky-200/80 border border-sky-400 border-dashed rounded-[2px]"></span> Uncalibrated Scenario Band</span>
           <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-red-500 border-t border-dashed"></span> 3.99' Flood Threshold</span>
+          <span class="flex items-center gap-1.5"><span style="display:inline-block;width:14px;height:8px;background:rgba(239,68,68,.25);border-radius:2px"></span> Water at or above ditch level</span>
         </div>
       </div>
 
@@ -1375,8 +1376,59 @@ def build_index_html(status, obs_rows, fcst_rows):
     const rainData = fcst.map(r => parseFloat(r.rain_forecast_hourly_in || 0));
     const thresholdData = fcst.map(() => 3.99);
 
+    const dayAndPeak = {{
+      id: 'dayAndPeak',
+      beforeDatasetsDraw(chart) {{
+        const area = chart.chartArea; if (!area) return;
+        const x = chart.scales.x, c = chart.ctx;
+        const step = stageData.length > 1 ? (x.getPixelForValue(1) - x.getPixelForValue(0)) : 10;
+        c.save();
+        c.fillStyle = 'rgba(239, 68, 68, 0.10)';
+        let start = null;
+        for (let i = 0; i <= stageData.length; i++) {{
+          const wet = i < stageData.length && stageData[i] != null && stageData[i] >= 3.99;
+          if (wet && start === null) start = i;
+          if (!wet && start !== null) {{
+            const x0 = x.getPixelForValue(start) - step / 2, x1 = x.getPixelForValue(i - 1) + step / 2;
+            c.fillRect(Math.max(area.left, x0), area.top, Math.min(area.right, x1) - Math.max(area.left, x0), area.bottom - area.top);
+            start = null;
+          }}
+        }}
+        c.restore();
+      }},
+      afterDatasetsDraw(chart) {{
+        const area = chart.chartArea; if (!area) return;
+        const x = chart.scales.x, y = chart.scales.y, c = chart.ctx;
+        c.save();
+        c.strokeStyle = 'rgba(100, 116, 139, 0.55)'; c.fillStyle = '#475569';
+        c.font = '600 11px sans-serif'; c.setLineDash([4, 4]);
+        fcst.forEach((r, i) => {{
+          const parts = (r.timestamp_local || '').split(' ');
+          if (i === 0 || (parts[1] || '').slice(0, 2) === '00') {{
+            const px = x.getPixelForValue(i);
+            if (i > 0) {{ c.beginPath(); c.moveTo(px, area.top); c.lineTo(px, area.bottom); c.stroke(); }}
+            const day = new Date((parts[0] || '') + 'T12:00:00').toLocaleDateString('en-US', {{ weekday: 'short' }});
+            c.fillText(day, px + 4, area.top + 12);
+          }}
+        }});
+        c.setLineDash([]);
+        let pi = -1;
+        stageData.forEach((v, i) => {{ if (v != null && (pi < 0 || v > stageData[pi])) pi = i; }});
+        if (pi >= 0) {{
+          const px = x.getPixelForValue(pi), py = y.getPixelForValue(stageData[pi]);
+          c.fillStyle = '#b91c1c'; c.beginPath(); c.arc(px, py, 5, 0, Math.PI * 2); c.fill();
+          const label = 'Peak ' + stageData[pi].toFixed(1) + ' ft';
+          const w = c.measureText(label).width;
+          c.font = '700 12px sans-serif';
+          c.fillText(label, Math.min(Math.max(px - w / 2, area.left), area.right - w - 4), Math.max(area.top + 28, py - 10));
+        }}
+        c.restore();
+      }}
+    }};
+
     new Chart(ctx, {{
       type: 'line',
+      plugins: [dayAndPeak],
       data: {{
         labels: labels,
         datasets: [

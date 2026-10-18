@@ -957,3 +957,25 @@ code {
 .troubleshoot-body h3 { margin-top: 12px; }
 .troubleshoot-body ul { margin: 6px 0 12px 18px; }
 .troubleshoot-body li { margin: 4px 0; }
+
+/* Plain-language water level, status summary, 48-hour strip */
+.water-words { font-size: 1.15rem; font-weight: 800; margin: 4px 0 2px; }
+.status-summary { margin: 4px 0 10px; font-size: 0.98rem; line-height: 1.45; }
+.alert-cta { display: inline-flex; align-items: center; margin-top: 10px; }
+.tl-card .tl-days { display: flex; font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 4px; }
+.tl-card .tl-days span { border-left: 2px solid #cbd5e1; padding-left: 4px; }
+.tl-strip { display: flex; gap: 1px; border-radius: 8px; overflow: hidden; }
+.tl-cell { flex: 1; height: 26px; display: inline-block; }
+.tl-green { background: #34d399; } .tl-yellow { background: #facc15; } .tl-orange { background: #fb923c; }
+.tl-red { background: #ef4444; } .tl-unknown { background: #cbd5e1; }
+.tl-peak { position: relative; display: inline-block; transform: translateX(-50%); font-size: 0.8rem; font-weight: 700; color: #7f1d1d; white-space: nowrap; margin-top: 2px; }
+.tl-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.8rem; margin: 8px 0; }
+.tl-legend i { width: 12px; height: 12px; flex: none; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
+.tl-card ul { margin: 6px 0 6px 18px; }
+
+/* Touch targets: at least 44px for tappable controls */
+summary, .resident-button, button, .street-picker-select, .community-footer a, .official-card a, .freshness a,
+.community-header a, .data-controls a { min-height: 44px; }
+summary, .community-footer a, .official-card a, .freshness a { display: inline-flex; align-items: center; }
+.freshness details > summary { padding: 6px 4px; }
+.community-footer a { padding: 0 2px; }

@@ -136,10 +136,14 @@ def compound_risk_tier(stage, evaluation):
     stage_tier = 0 if stage < 4 else 1 if stage < 4.4 else 2 if stage < 4.8 else 3
     depths = [evaluation.get("total_compound_depth_in")]
     depths.extend(s.get("depth_in") for key, s in evaluation.get("sectors", {}).items() if key != "ditches")
-    depths.extend(s.get("depth_in") for s in evaluation.get("streets", {}).values())
+    # Per-street depths are LiDAR extrapolations with no ground truth. They may raise
+    # the community-wide tier to Tier 1 (low spots wet) but never higher; Tier 2/3 rest
+    # on the observed stage thresholds and the modeled depth at the observed benchmark.
+    street_depths = [s.get("depth_in") for s in evaluation.get("streets", {}).values()]
+    street_tier = 1 if any(finite_number(v) and v > 0 for v in street_depths) else 0
     worst = max((v for v in depths if finite_number(v)), default=0)
     impact_tier = 3 if worst >= 7.5 else 2 if worst >= 3.5 else 1 if worst > 0 else 0
-    tier = max(stage_tier, impact_tier)
+    tier = max(stage_tier, impact_tier, street_tier)
     labels = ["Tier 0 (No modeled inundation)", "Tier 1 (Nuisance / Low spots wet)",
               "Tier 2 (Moderate / Roads flooded)", "Tier 3 (Severe / Travel hazardous)"]
     return tier, labels[tier]

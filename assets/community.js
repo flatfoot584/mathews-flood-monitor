@@ -92,6 +92,9 @@
     card.appendChild(p);streetRes.appendChild(card);
   });
 
+  try{const saved=localStorage.getItem('mfm-street');if(saved&&streetSel&&streetData[saved]){streetSel.value=saved;streetSel.dispatchEvent(new Event('change'));}}catch{}
+  streetSel?.addEventListener('change',()=>{try{if(streetSel.value)localStorage.setItem('mfm-street',streetSel.value);else localStorage.removeItem('mfm-street');}catch{}});
+
   /* --- Audio briefing --- */
   const audioBtn=document.getElementById('audio-briefing-btn'),audioStop=document.getElementById('audio-stop-btn');
   audioBtn?.addEventListener('click',()=>{

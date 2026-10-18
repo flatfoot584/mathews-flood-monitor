@@ -688,3 +688,13 @@ class ResidentUxTests(unittest.TestCase):
 
 if __name__=='__main__':
     unittest.main()
+
+
+class TierCapTests(unittest.TestCase):
+    def test_extrapolated_street_depth_cannot_raise_tier_above_one(self):
+        import runtime_safety
+        evaluation = {"total_compound_depth_in": 0.0, "sectors": {},
+                      "streets": {"Low Street": {"depth_in": 13.7}}}
+        self.assertEqual(runtime_safety.compound_risk_tier(3.9, evaluation)[0], 1)
+        evaluation["total_compound_depth_in"] = 4.49
+        self.assertEqual(runtime_safety.compound_risk_tier(4.4, evaluation)[0], 2)
