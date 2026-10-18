@@ -1,0 +1,24 @@
+{
+  "review_date_eastern": "2026-10-17",
+  "sources": {
+    "wckv2_metadata": "https://api.water.noaa.gov/nwps/v1/gauges/wckv2",
+    "wckv2_stageflow": "https://api.water.noaa.gov/nwps/v1/gauges/wckv2/stageflow",
+    "giwv2_recent": "https://hads.ncep.noaa.gov/nexhads2/servlet/DecodedData?hsa=nil&nesdis_ids=3B1000E4&of=0&sinceday=-1&state=nil",
+    "va_inventory": "https://mesonet.agron.iastate.edu/geojson/network/VA_DCP.geojson",
+    "grant_application": "https://www.dcr.virginia.gov/dam-safety-and-floodplains/document/cfpf/cfpf-round5-applications/projects/2618-app.pdf",
+    "funding_review": "https://www.dcr.virginia.gov/dam-safety-and-floodplains/document/cfpf-round-5-review-packet-5-16-25.pdf"
+  },
+  "wckv2": {
+    "observed_rows": 8365,
+    "observed_first": "2026-09-18T00:45:00Z",
+    "observed_last": "2026-10-18T00:15:00Z",
+    "forecast_rows": 79,
+    "forecast_issued_time": "2026-10-17T18:27:00Z",
+    "datum_note": "NWPS metadata: NAVD88 = MLLW - 1.10 ft; verify benchmark history before merged training"
+  },
+  "giwv2": {
+    "status": "Current NOAA HADS reports include HM water-level series and water-quality parameters; datum and sensor reference unverified",
+    "last_seen_utc": "2026-10-18T00:00:00Z"
+  },
+  "coverage_limit": "Targeted public review, not exhaustive county or private-sensor inventory. No countywide land-depth network confirmed. Proposed Mobjack network deployment unverified; May 2025 review recommended decline."
+}
