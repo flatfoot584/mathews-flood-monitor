@@ -78,17 +78,36 @@ class FloodSafetyTests(unittest.TestCase):
             send.assert_not_called()
 
     def test_incomplete_weather_or_rain_never_clear(self):
+        # A few missing hours are tolerated; losing 5+ of 48 blocks all-clear.
         for flag in ('weather_available', 'precipitation_available'):
             status = fixture()
-            status['forecast_hourly_timeline'][10][flag] = False
+            for row in status['forecast_hourly_timeline'][:5]:
+                row[flag] = False
             atomic_write_json(self.state_file, {'active_event':True})
             with patch.object(alerts, 'send_ntfy_push') as send:
                 alerts.evaluate_and_dispatch_alerts(status, self.state_file)
             send.assert_not_called()
 
+    def test_small_forecast_gaps_still_allow_all_clear(self):
+        # 2 missing hours surrounded by safe guidance must not wedge the all-clear.
+        for flag in ('weather_available', 'precipitation_available'):
+            status = fixture()
+            for row in status['forecast_hourly_timeline'][:2]:
+                row[flag] = False
+            self.assertTrue(assess_status(status)['alerts_all_clear_allowed'])
+
+    def test_forecast_gap_near_high_water_blocks_healthy(self):
+        # A missing hour adjacent to near-action-stage water could hide a crest.
+        status = fixture(1.0, 3.9)
+        rows = status['forecast_hourly_timeline']
+        rows[10]['forecast_stage_mllw_ft'] = ""
+        self.assertFalse(assess_status(status)['forecast_available'])
+        self.assertFalse(assess_status(status)['alerts_all_clear_allowed'])
+
     def test_missing_forecast_hour_never_clear(self):
         status = fixture()
-        status['forecast_hourly_timeline'].pop(8)
+        for _ in range(5):
+            status['forecast_hourly_timeline'].pop(8)
         self.assertFalse(assess_status(status)['alerts_all_clear_allowed'])
 
     def test_severe_page_cannot_call_impassable_safe(self):
@@ -252,6 +271,107 @@ class FloodSafetyTests(unittest.TestCase):
             alerts.evaluate_and_dispatch_alerts(status,self.state_file)
         self.assertEqual(send.call_count,2)
 
+    def test_deescalation_requires_confirmation(self):
+        status = fixture(1, 4.5)  # tier 2 event
+        with patch.object(alerts, 'send_ntfy_push', return_value=True) as send:
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            self.assertEqual(send.call_count, 1)
+            # Hazard eases to tier 1: first sighting only arms, does not notify.
+            status['forecast_48h_outlook']['peak_risk_tier'] = 1
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            self.assertEqual(send.call_count, 1)
+            # Second consecutive evaluation confirms the downgrade.
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            self.assertEqual(send.call_count, 2)
+        self.assertIn('downgraded', send.call_args.kwargs['title'])
+
+    def test_reescalation_after_deescalation_alerts(self):
+        status = fixture(1, 4.5)
+        with patch.object(alerts, 'send_ntfy_push', return_value=True) as send:
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            status['forecast_48h_outlook']['peak_risk_tier'] = 1
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            self.assertEqual(send.call_count, 2)
+            # Back to tier 2 after a confirmed downgrade must alert again.
+            state = json.loads(Path(self.state_file).read_text())
+            state['last_tier_change_utc'] = (datetime.now(timezone.utc) - timedelta(hours=3)).isoformat()
+            atomic_write_json(self.state_file, state)
+            status['forecast_48h_outlook']['peak_risk_tier'] = 2
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            self.assertEqual(send.call_count, 3)
+        self.assertIn('ESCALATED', send.call_args.kwargs['title'])
+
+    def test_quiet_period_defers_small_escalation(self):
+        status = fixture(1, 3.7)  # tier 1 (road dip wet, below action stage)
+        self.assertEqual(status['forecast_48h_outlook']['peak_risk_tier'], 1)
+        with patch.object(alerts, 'send_ntfy_push', return_value=True) as send:
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            self.assertEqual(send.call_count, 1)
+            # Tier 2 within the quiet period: deferred, not sent.
+            status['forecast_48h_outlook']['peak_risk_tier'] = 2
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            self.assertEqual(send.call_count, 1)
+            state = json.loads(Path(self.state_file).read_text())
+            self.assertEqual(state['pending_escalation_tier'], 2)
+            # After the quiet period expires with hazard still elevated: sent.
+            state['last_tier_change_utc'] = (datetime.now(timezone.utc) - timedelta(hours=3)).isoformat()
+            atomic_write_json(self.state_file, state)
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            self.assertEqual(send.call_count, 2)
+
+    def test_tier3_bypasses_quiet_period(self):
+        status = fixture(1, 4.1)
+        with patch.object(alerts, 'send_ntfy_push', return_value=True) as send:
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            status['forecast_48h_outlook']['peak_risk_tier'] = 3
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            self.assertEqual(send.call_count, 2)
+
+    def test_rapid_rise_warning_fires_once(self):
+        status = fixture(3.2, 3.2)
+        status['current_conditions']['stage_trend_3h_ft_per_hr'] = 0.8
+        with patch.object(alerts, 'send_ntfy_push', return_value=True) as send:
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            self.assertEqual(send.call_count, 1)
+            self.assertIn('rising fast', send.call_args.kwargs['title'])
+            # Second run: already warned for this rise, no duplicate.
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            self.assertEqual(send.call_count, 1)
+            # Rise abates: latch resets so a new rise can warn again.
+            status['current_conditions']['stage_trend_3h_ft_per_hr'] = 0.1
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            state = json.loads(Path(self.state_file).read_text())
+            self.assertFalse(state['rise_alert_active'])
+
+    def test_rapid_rise_does_not_consume_tier_state(self):
+        status = fixture(3.2, 3.2)
+        status['current_conditions']['stage_trend_3h_ft_per_hr'] = 0.8
+        with patch.object(alerts, 'send_ntfy_push', return_value=True) as send:
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            state = json.loads(Path(self.state_file).read_text())
+            self.assertFalse(state['active_event'])
+            # A later tier-1 event must still send its advance warning.
+            status['forecast_48h_outlook']['peak_risk_tier'] = 1
+            status['current_conditions']['stage_trend_3h_ft_per_hr'] = 0.0
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            self.assertEqual(send.call_count, 2)
+            self.assertIn('Advisory', send.call_args.kwargs['title'])
+
+    def test_crest_warning_fires_just_past_crest(self):
+        status = fixture(1, 4.1)
+        with patch.object(alerts, 'send_ntfy_push', return_value=True) as send:
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            self.assertEqual(send.call_count, 1)
+            # Peak 6 minutes ago (a cycle was missed): warning must still fire.
+            past = datetime.now(alerts.EASTERN_TZ) - timedelta(minutes=6)
+            out = status['forecast_48h_outlook']
+            out['peak_hazard_time_local'] = past.strftime('%Y-%m-%d %H:%M:%S %Z')
+            out['peak_forecast_stage_time_local'] = out['peak_hazard_time_local']
+            alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            self.assertEqual(send.call_count, 2)
+            self.assertIn('~2 Hours', send.call_args.kwargs['title'])
+
     def test_failed_delivery_does_not_advance_state(self):
         atomic_write_json(self.state_file, {'active_event':False})
         original = Path(self.state_file).read_text()
@@ -332,6 +452,72 @@ class FloodSafetyTests(unittest.TestCase):
         self.assertTrue(directions)
         self.assertTrue(directions[0]<2 or directions[0]>358)
 
+    def test_coops_malformed_record_does_not_kill_feed(self):
+        payload = {'data': [
+            {'t': '2026-10-10 00:00', 'v': '1.5'},
+            {'t': 'not-a-time', 'v': '999.9'},
+            {'t': '2026-10-10 01:00', 'v': '1.6'},
+        ]}
+        with patch.object(ingest, 'fetch_json', return_value=payload):
+            rows = ingest.fetch_coops_product('8637689', 'water_level',
+                                              datetime.now(timezone.utc) - timedelta(hours=2),
+                                              datetime.now(timezone.utc))
+        self.assertEqual(len(rows), 2)
+        self.assertEqual([r['water_level_ft'] for r in rows], [1.5, 1.6])
+
+    def test_coops_missing_wind_speed_is_not_fabricated_calm(self):
+        payload = {'data': [
+            {'t': '2026-10-10 00:00', 'd': '180'},
+            {'t': '2026-10-10 01:00', 's': '10', 'd': '180', 'g': '15'},
+        ]}
+        with patch.object(ingest, 'fetch_json', return_value=payload):
+            rows = ingest.fetch_coops_product('8637689', 'wind',
+                                              datetime.now(timezone.utc) - timedelta(hours=2),
+                                              datetime.now(timezone.utc))
+        # The speed-less record is dropped, not invented as 0 mph calm.
+        self.assertEqual(len(rows), 1)
+        self.assertAlmostEqual(rows[0]['wind_speed_mph'], 11.51, places=2)
+
+    def test_archive_write_leaves_no_temp_files(self):
+        path = Path(self.directory.name) / 'archive.csv'
+        stamp = (datetime.now(timezone.utc) - timedelta(hours=2)).strftime('%Y-%m-%d %H:00:00 UTC')
+        ingest.update_archive_observations(str(path), [{'timestamp_utc': stamp, 'stage': 4.2}])
+        leftovers = [p for p in Path(self.directory.name).iterdir() if p.name.startswith('.pending-')]
+        self.assertEqual(leftovers, [])
+        with path.open() as stream:
+            rows = list(csv.DictReader(stream))
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]['stage'], '4.2')
+
+    def test_verification_failure_does_not_abort_ingest(self):
+        now = datetime.now(timezone.utc)
+        hour = now.replace(minute=0, second=0, microsecond=0)
+        hours = [hour + timedelta(hours=n) for n in range(49)]
+        wind = [{'datetime_utc': h, 'wind_speed_mph': 0.0, 'wind_dir_deg': 0.0, 'wind_gust_mph': 0.0} for h in hours]
+        def coops(station, product, *args, **kwargs):
+            if product == 'wind':
+                return wind
+            return [{'datetime_utc': h, 'water_level_ft': 1.0} for h in hours]
+        original = os.getcwd()
+        try:
+            os.chdir(self.directory.name)
+            with patch.object(sys, 'argv', ['ingest_realtime.py', '--quiet']), \
+                 patch.object(ingest, 'fetch_nwps_wrvv2_observed', return_value=[{'datetime_utc': now, 'stage_mllw_ft': 1.0}]), \
+                 patch.object(ingest, 'fetch_nwps_wrvv2_forecast', return_value=[{'datetime_utc': h, 'forecast_stage_mllw_ft': 1.0} for h in hours]), \
+                 patch.object(ingest, 'fetch_coops_product', side_effect=coops), \
+                 patch.object(ingest, 'fetch_nws_hourly_forecast', return_value=wind), \
+                 patch.object(ingest, 'fetch_nws_qpf_map', return_value={h: 0.0 for h in hours}), \
+                 patch.object(ingest, 'fetch_fort_monroe_observed', return_value=[]), \
+                 patch.object(ingest, 'fetch_official_alerts', return_value={'available': False, 'alerts': []}), \
+                 patch.object(ingest, 'archive_and_verify', side_effect=RuntimeError('boom')):
+                ingest.SOURCE_HEALTH.clear()
+                ingest.main()
+            status = json.loads(Path('latest_status.json').read_text())
+            self.assertTrue(status['live_verification']['degraded'])
+            self.assertTrue(Path('forecast_48h.csv').is_file())
+        finally:
+            os.chdir(original)
+
     def test_operational_pipeline_end_to_end_without_network_or_push(self):
         now=datetime.now(timezone.utc)
         hour=now.replace(minute=0,second=0,microsecond=0)
@@ -398,6 +584,106 @@ class PublisherTests(unittest.TestCase):
             alerts.send_ntfy_push('test-topic','Title','Body',dry_run=True)
         opener.assert_not_called()
         self.assertNotIn('secret-test-token',output.getvalue())
+
+
+class ResidentUxTests(unittest.TestCase):
+    """Regression tests for the resident-facing UX improvements."""
+
+    def _street_forecast_data(self, page):
+        import re
+        m = re.search(r'<script type="application/json" id="street-forecast">(.*?)</script>', page, re.S)
+        self.assertIsNotNone(m, "street forecast JSON embed missing")
+        return json.loads(m.group(1))
+
+    def test_street_picker_forecast_json(self):
+        page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])
+        data = self._street_forecast_data(page)
+        self.assertEqual(len(data), 11)
+        julian = data.get('Julian Street')
+        self.assertIsNotNone(julian)
+        self.assertGreater(julian['peak_depth_in'], 0)
+        self.assertIsNotNone(julian['first_flood'])
+        self.assertIsNotNone(julian['peak_time'])
+        self.assertIsNotNone(julian['move_by'])
+        self.assertIn('id="street-picker"', page)
+        self.assertIn('Will my street flood?', page)
+
+    def test_street_picker_no_flooding(self):
+        page = dashboard.build_index_html(fixture(), [], [])
+        data = self._street_forecast_data(page)
+        for name, info in data.items():
+            self.assertEqual(info['peak_depth_in'], 0, name)
+            self.assertIsNone(info['first_flood'], name)
+
+    def test_jargon_dict_covers_wrapped_terms(self):
+        import re
+        js = Path('assets/community.js').read_text()
+        m = re.search(r'const JARGON=\{([^}]*)\}', js, re.S)
+        self.assertIsNotNone(m, "JARGON dictionary missing from community.js")
+        defined = set(re.findall(r"'([^']+)':", m.group(1)))
+        for required in ('mllw', 'navd88', 'scenario-range', 'surge-residual',
+                         'hydraulic-gradient', 'action-stage', 'crest', 'backwater'):
+            self.assertIn(required, defined)
+        page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])
+        wrapped = set(re.findall(r'data-jargon="([^"]+)"', page))
+        self.assertTrue(wrapped, "no jargon spans wrapped on the index page")
+        self.assertLessEqual(wrapped, defined, f"wrapped terms missing definitions: {wrapped - defined}")
+
+    def test_subscribe_redirects_to_alerts(self):
+        html_out = dashboard.build_subscribe_redirect()
+        self.assertIn('url=alerts.html', html_out)
+        self.assertIn('Continue to mobile alerts setup', html_out)
+
+    def test_story_timeline_removed(self):
+        page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])
+        self.assertNotIn('story-timeline', page)
+        self.assertNotIn('How this unfolds', page)
+
+    def test_fridge_card_removed(self):
+        page = dashboard.build_index_html(fixture(), [], [])
+        self.assertNotIn('fridge-card', page)
+        self.assertNotIn('print-fridge', page)
+
+    def test_audio_briefing_embedded(self):
+        page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])
+        self.assertIn('id="audio-briefing-btn"', page)
+        self.assertIn('data-script=', page)
+        import re
+        m = re.search(r'data-script="([^"]+)"', page)
+        self.assertIsNotNone(m)
+        import html as html_lib
+        script = html_lib.unescape(m.group(1))
+        self.assertIn('Ware River', script)
+
+    def test_status_dial_present(self):
+        page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])
+        self.assertIn('status-dial', page)
+        self.assertIn('Flood status summary', page)
+        calm = dashboard.build_index_html(fixture(), [], [])
+        self.assertIn('No flooding expected in the next 48 hours.', calm)
+
+    def test_action_checklist_removed(self):
+        page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])
+        self.assertNotIn('action-checklist', page)
+        self.assertNotIn('What should I do right now?', page)
+
+    def test_alerts_page_one_tap_signup(self):
+        page = dashboard.build_alerts_html(fixture())
+        self.assertIn('channel-qr.svg', page)
+        self.assertIn('Scan to subscribe', page)
+        self.assertIn('Install the ntfy app', page)
+        self.assertIn('id="copy-topic"', page)
+        self.assertIn('Troubleshooting', page)
+        self.assertIn('data-freshness', page)
+        self.assertIn('assets/community.js', page)
+
+    def test_flood_anchor_record_breaker(self):
+        page = dashboard.build_index_html(fixture(1.0, 5.2), [], [])
+        self.assertIn('highest water since records began', page)
+
+    def test_flood_anchor_historical_reference(self):
+        page = dashboard.build_index_html(fixture(), [], [])
+        self.assertIn('highest on record here was', page)
 
 
 if __name__=='__main__':

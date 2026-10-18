@@ -235,6 +235,9 @@ def build_index_html(status, obs_rows, fcst_rows):
     depth = display_value(curr.get("estimated_local_flood_depth_in", 0.0))
     tier = curr.get("flood_risk_tier", 0)
     tier_info = TIER_STYLES.get(tier, TIER_STYLES[-1])
+    _j = resident_ui.jargon
+    J_MLLW = _j('mllw', 'MLLW')
+    J_NAVD88 = _j('navd88', 'NAVD88')
     passability = curr.get("vehicle_passability", "ALL VEHICLES PASSABLE")
     sectors = curr.get("site_sectors", {})
     streets = curr.get("community_streets", {})
@@ -308,7 +311,7 @@ def build_index_html(status, obs_rows, fcst_rows):
       <div class="space-y-3 pt-1">
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-water text-sky-500 mr-1.5"></i> 1. Bayshore Waterfront Ditches &amp; Swales (Elev: 3.99' MLLW / 2.35' NAVD88)</span>
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-water text-sky-500 mr-1.5"></i> 1. Bayshore Waterfront Ditches &amp; Swales (Elev: 3.99' {J_MLLW} / 2.35' {J_NAVD88})</span>
             <span class="font-mono font-semibold {'text-sky-700 font-bold' if (ditch_depth or 0) > 0 else 'text-slate-400'}">
               {ditch_depth_str}" Water ({ditch_status})
             </span>
@@ -319,7 +322,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         </div>
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-road text-amber-500 mr-1.5"></i> 2. Lower Residential Blocks — Allview / Hobday / New Little St South (Elev: 4.15' MLLW / 2.51' NAVD88)</span>
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-road text-amber-500 mr-1.5"></i> 2. Lower Residential Blocks — Allview / Hobday / New Little St South (Elev: 4.15' {J_MLLW} / 2.51' {J_NAVD88})</span>
             <span class="font-mono font-semibold {'text-amber-700 font-bold' if (road_depth or 0) > 0 else 'text-emerald-700'}">
               {road_depth_str}" Water ({road_status})
             </span>
@@ -330,7 +333,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         </div>
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-car text-orange-500 mr-1.5"></i> 3. Daniel Ave Central Spine &amp; Julian St — Primary Route (Elev: 4.40' MLLW / 2.76' NAVD88)</span>
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-car text-orange-500 mr-1.5"></i> 3. Daniel Ave Central Spine &amp; Julian St — Primary Route (Elev: 4.40' {J_MLLW} / 2.76' {J_NAVD88})</span>
             <span class="font-mono font-semibold {'text-orange-700 font-bold' if (drive_depth or 0) > 0 else 'text-emerald-700 font-bold'}">
               {drive_depth_str}" Water ({drive_status})
             </span>
@@ -341,7 +344,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         </div>
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-tree text-emerald-600 mr-1.5"></i> 4. Upper Residential Grounds &amp; Northern Lots (Elev: 4.60' MLLW / 2.96' NAVD88)</span>
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-tree text-emerald-600 mr-1.5"></i> 4. Upper Residential Grounds &amp; Northern Lots (Elev: 4.60' {J_MLLW} / 2.96' {J_NAVD88})</span>
             <span class="font-mono font-semibold {'text-red-700 font-bold' if (lawn_depth or 0) > 0 else 'text-emerald-700'}">
               {lawn_depth_str}" Water ({lawn_status})
             </span>
@@ -352,7 +355,7 @@ def build_index_html(status, obs_rows, fcst_rows):
         </div>
         <div>
           <div class="flex justify-between text-xs font-medium mb-1">
-            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-house text-blue-600 mr-1.5"></i> 5. Ridge High Ground Pads &amp; Northern Home Footprints (Elev: 4.90' MLLW / 3.26' NAVD88)</span>
+            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-house text-blue-600 mr-1.5"></i> 5. Ridge High Ground Pads &amp; Northern Home Footprints (Elev: 4.90' {J_MLLW} / 3.26' {J_NAVD88})</span>
             <span class="font-mono font-semibold {'text-red-700 font-bold' if (garage_depth or 0) > 0 else 'text-emerald-700'}">
               {garage_depth_str}" Water ({garage_status})
             </span>
@@ -425,6 +428,11 @@ def build_index_html(status, obs_rows, fcst_rows):
 
     navbar_html = build_shared_navbar("live", status)
     footer_html = build_shared_footer(status)
+
+    J_SCEN = _j('scenario-range', 'scenario range')
+    J_SCEN_CAP = _j('scenario-range', 'Scenario range')
+    J_SURG = _j('surge-residual', 'Surge')
+    J_GRAD = _j('hydraulic-gradient', 'Bay Hydraulic Slope')
 
     curr_data = status.get("current_conditions", {})
     outl_data = status.get("forecast_48h_outlook", {})
@@ -507,7 +515,7 @@ def build_index_html(status, obs_rows, fcst_rows):
             <span data-age-label data-last-label="Last saved water-level forecast">48-hour water-level forecast</span>
           </h2>
           <p class="text-xs sm:text-sm text-slate-500">
-            NOAA water-level guidance with empirical local weather adjustments. The band shows uncalibrated scenarios.
+            NOAA water-level guidance with empirical local weather adjustments. The band shows an {_j('scenario-range', 'uncalibrated scenario range')}.
           </p>
         </div>
         <div class="flex flex-wrap items-center gap-3 text-xs">
@@ -522,8 +530,8 @@ def build_index_html(status, obs_rows, fcst_rows):
       </div>
 
       <div class="text-[11px] text-slate-500 flex flex-wrap items-center justify-between pt-2 border-t border-slate-100 gap-2">
-        <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-sky-500"></i> Shaded band is an uncalibrated scenario range. It is not a statistical confidence interval or a guaranteed worst case.</span>
-        <span class="font-mono text-slate-700 font-medium">Expected Peak: {peak_stage}' (Scenario range: {peak_stage_q10}' to {peak_stage_q90}')</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-sky-500"></i> Shaded band is an {_j('scenario-range', 'uncalibrated scenario range')}. It is not a statistical confidence interval or a guaranteed worst case.</span>
+        <span class="font-mono text-slate-700 font-medium">Expected Peak: {peak_stage}' ({J_SCEN_CAP}: {peak_stage_q10}' to {peak_stage_q90}')</span>
       </div>
     </section>
 
@@ -627,7 +635,7 @@ def build_index_html(status, obs_rows, fcst_rows):
           </div>
         </div>
         <div class="text-xs font-mono bg-amber-50 text-amber-900 border border-amber-200/80 px-3 py-1.5 rounded-lg font-semibold self-start sm:self-auto shadow-xs">
-          Ditch Tipping Point: 3.99' MLLW
+          Ditch Tipping Point: 3.99' {J_MLLW}
         </div>
       </div>
 
@@ -705,7 +713,7 @@ def build_index_html(status, obs_rows, fcst_rows):
           <!-- Card 4: North Bay Surge (Windmill Point) -->
           <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5">
             <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-              <span>North Bay Surge</span>
+              <span>North Bay {J_SURG}</span>
               <i class="fa-solid fa-water-ladder text-cyan-500"></i>
             </div>
             <div class="text-2xl font-black font-mono {'text-amber-600' if (surge if finite_number(surge) else 0) > 1.0 else 'text-slate-900'}">
@@ -719,7 +727,7 @@ def build_index_html(status, obs_rows, fcst_rows):
           <!-- Card 5: South Bay Surge (Sewells Point) -->
           <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5">
             <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-              <span>South Bay Surge</span>
+              <span>South Bay {J_SURG}</span>
               <i class="fa-solid fa-anchor text-blue-600"></i>
             </div>
             <div class="text-2xl font-black font-mono {'text-amber-600' if (sw_surge if finite_number(sw_surge) else 0) > 1.0 else 'text-slate-900'}">
@@ -733,7 +741,7 @@ def build_index_html(status, obs_rows, fcst_rows):
           <!-- Card 6: Bay Hydraulic Slope -->
           <div class="bg-slate-50/70 p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5">
             <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-              <span>Bay Hydraulic Slope</span>
+              <span>{J_GRAD}</span>
               <i class="fa-solid fa-arrows-left-right-to-line text-emerald-600"></i>
             </div>
             <div class="text-2xl font-black font-mono {'text-amber-600' if (bay_grad if finite_number(bay_grad) else 0) >= 0.20 else 'text-slate-900'}">
@@ -751,10 +759,10 @@ def build_index_html(status, obs_rows, fcst_rows):
               <i class="fa-solid fa-flask text-purple-600"></i>
             </div>
             <div class="text-2xl font-black text-slate-900 font-mono">
-              {fort_elev} <span class="text-xs font-semibold text-slate-500">ft NAVD</span>
+              {fort_elev} <span class="text-xs font-semibold text-slate-500">ft {_j('navd88', 'NAVD')}</span>
             </div>
             <div class="text-[11px] text-slate-500 truncate" title="FTMV2 / USGS 0204289994: Candidate evaluation sensor">
-              {fort_mllw} ft MLLW &bull; {'Live Ingested' if fort_fresh else 'Evaluation'}
+              {fort_mllw} ft {J_MLLW} &bull; {'Live Ingested' if fort_fresh else 'Evaluation'}
             </div>
           </div>
         </section>
@@ -1462,6 +1470,13 @@ def build_index_html(status, obs_rows, fcst_rows):
 @safe_template
 def build_alerts_html(status):
     return resident_ui.alerts(status, NTFY_SERVER, DEFAULT_NTFY_TOPIC)
+
+def build_subscribe_redirect():
+    """subscribe.html is a thin redirect: two near-identical signup pages confused users."""
+    return ('<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">'
+            '<meta http-equiv="refresh" content="0; url=alerts.html">'
+            '<title>Subscribe | Mathews Flood Monitor</title></head>'
+            '<body><p>This page has moved. <a href="alerts.html">Continue to mobile alerts setup</a>.</p></body></html>')
 
 @safe_template
 def build_about_html(status):
@@ -2673,13 +2688,13 @@ def main():
         f.write(index_html)
     print("[+] Generated: index.html & flood_dashboard.html (Live Monitor & Interactive Map)")
 
-    # 2. Build alerts.html & subscribe.html
+    # 2. Build alerts.html & subscribe.html (subscribe redirects to alerts)
     alerts_html = build_alerts_html(status)
     with open("alerts.html", "w", encoding="utf-8") as f:
         f.write(alerts_html)
     with open("subscribe.html", "w", encoding="utf-8") as f:
-        f.write(alerts_html)
-    print("[+] Generated: alerts.html & subscribe.html (Dedicated Mobile Alerts & Subscription Guide)")
+        f.write(build_subscribe_redirect())
+    print("[+] Generated: alerts.html (dedicated mobile alerts guide) & subscribe.html (redirect)")
 
     # 3. Build about.html
     about_html = build_about_html(status)

@@ -194,10 +194,21 @@ def main():
     if args.github_state:
         if not token:
             raise ValueError('GitHub notification state requires a token')
-        state, save = store.load(), store.save
+        try:
+            state = store.load()
+        except ValueError:
+            # Corrupt remote state must not wedge the watchdog; start clean.
+            state = {}
+        save = store.save
     else:
         path = Path(args.state_file)
-        state = json.loads(path.read_text()) if path.exists() else {}
+        try:
+            state = json.loads(path.read_text()) if path.exists() else {}
+            if not isinstance(state, dict):
+                state = {}
+        except (OSError, ValueError):
+            # Corrupt local state must not wedge the watchdog; start clean.
+            state = {}
         save = lambda value: atomic_write_json(path, value)
     topic = os.getenv('NTFY_HEALTH_TOPIC') or DEFAULT_HEALTH_TOPIC
     notify_transition(health, state, save, topic, now=now, dry_run=args.dry_run)

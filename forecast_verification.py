@@ -254,6 +254,14 @@ def archive_and_verify(status, ware_obs, path='issued_forecast_archive.csv', sco
             for r in all_nwps_paired
         ),
     }
+    if summary["high_water_observations"] == 0:
+        # Say it plainly: with zero verified high-water samples, the high-water
+        # skill columns are unvalidated and storm performance is unknown.
+        summary["high_water_caveat"] = (
+            "No high-water observations (stage >= 4.00 ft MLLW) have been verified yet; "
+            "high-water skill metrics are unvalidated and storm performance is unknown.")
+    else:
+        summary["high_water_caveat"] = None
 
     result = dict(
         updated_at_utc=issued.isoformat() if issued else None,
