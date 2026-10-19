@@ -41,8 +41,13 @@ def jargon(term, text):
     """Wrap display text in a tap-to-explain span. `term` must be a fixed key from the JS dictionary."""
     return f'<span class="jargon" data-jargon="{term}">{text}</span>'
 
+# Verified Ware River record from finer-than-hourly gauge data (Oct 11, 2026, 9:30 AM EDT).
+# The hourly archive cannot resolve sub-hourly peaks, so the record is carried as a constant.
+VERIFIED_RECORD_FT = 4.11
+VERIFIED_RECORD_TS = '2026-10-11 09:30:00 EDT'
+
 def flood_anchor():
-    """Highest Ware River stage on record in the local archive. Returns (ft, timestamp_local) or (None, None)."""
+    """Highest Ware River stage on record. Returns (ft, timestamp_local) or (None, None)."""
     try:
         best_ft, best_ts = None, None
         with open('archive_hourly_observations.csv', newline='', encoding='utf-8') as f:
@@ -53,6 +58,8 @@ def flood_anchor():
                     continue
                 if best_ft is None or v > best_ft:
                     best_ft, best_ts = v, row.get('timestamp_local')
+        if best_ft is None or VERIFIED_RECORD_FT > best_ft:
+            best_ft, best_ts = VERIFIED_RECORD_FT, VERIFIED_RECORD_TS
         return best_ft, best_ts
     except OSError:
         return None, None
@@ -482,7 +489,7 @@ def monitoring(status):
         overall_comp=f'<p class="muted">Overall verified accuracy: Operational model MAE = <strong>{op_all}</strong> vs Raw NOAA NWPS MAE = <strong>{nwps_all}</strong> across autumn 2026 events.</p>'
     if summary.get('high_water_caveat'):
         overall_comp+=f'<p class="muted">{e(summary["high_water_caveat"])}</p>'
-    return f'''<section data-current-safety class="resident-card"><h2>Fort Monroe sensor &amp; forecast verification</h2><p><a href="https://waterdata.usgs.gov/monitoring-location/USGS-0204289994/">Fort Monroe USGS 0204289994 / FTMV2</a>: {number(fort.get('elevation_navd88_ft'),' ft NAVD88')}, observed {e(when(fort.get('observation_time_utc')))}. {'Fresh observation' if fort.get('fresh') else 'Missing or stale observation'}.</p><p>Evaluation sensor: its measurements are being archived. It has not been promoted into the operational forecast. <a href="science.html">See the historical comparison and promotion criteria</a>.</p><details><summary>Prospective forecast-versus-observed scorecard (Operational vs. Raw NWPS)</summary><p>{verified} matched issued predictions. Scores compare the deployed water-level forecast and raw NOAA NWPS guidance with the Ware River gauge, not measurements of local road depth. Repeated forecast issues are correlated; storm skill continues accumulating across autumn 2026.</p>{overall_comp}<div class="table-scroll"><table><thead><tr><th scope="col">Lead</th><th scope="col">Verified</th><th scope="col">Model MAE</th><th scope="col">Raw NWPS MAE</th><th scope="col">Skill Δ</th><th scope="col">High-water (&ge; 4.0 ft)</th></tr></thead><tbody>{rows_html}</tbody></table></div><a href="models/live_verification.json">Download prospective scores</a> · <a href="issued_forecast_archive.csv">Download issued forecast archive CSV</a></details></section>'''
+    return f'''<section data-current-safety class="resident-card"><h2>Fort Monroe sensor &amp; forecast verification</h2><p><a href="https://waterdata.usgs.gov/monitoring-location/USGS-0204289994/">Fort Monroe USGS 0204289994 / FTMV2</a>: {number(fort.get('elevation_navd88_ft'),' ft NAVD88')}, observed {e(when(fort.get('observation_time_utc')))}. {'Fresh observation' if fort.get('fresh') else 'Missing or stale observation'}.</p><p>Evaluation sensor: its measurements are being archived. It has not been promoted into the operational forecast. <a href="science.html">See the historical comparison and promotion criteria</a>.</p><details><summary>Prospective forecast-versus-observed scorecard (Operational vs. Raw NWPS)</summary><p>{verified} matched issued predictions. Scores compare the deployed water-level forecast and raw NOAA NWPS guidance with the Ware River gauge, not measurements of local road depth. Repeated forecast issues are correlated; storm skill continues accumulating across autumn 2026.</p>{overall_comp}<div class="table-scroll"><table><thead><tr><th scope="col">Lead</th><th scope="col">Verified</th><th scope="col">Model MAE</th><th scope="col">Raw NWPS MAE</th><th scope="col">Skill Δ (Improvement)</th><th scope="col">High-water (&ge; 4.0 ft)</th></tr></thead><tbody>{rows_html}</tbody></table></div><a href="models/live_verification.json">Download prospective scores</a> · <a href="issued_forecast_archive.csv">Download issued forecast archive CSV</a></details></section>'''
 
 def reporting():
     return '''<section class="resident-card"><h2>Report observed flooding for review</h2><p>Prepare a report below, then submit it through the maintainer's <a href="https://github.com/flatfoot584/mathews-flood-monitor/issues/new">GitHub issue review queue</a> (account required). This page creates a draft on your device; it does not send or upload anything. Reports are unverified until reviewed and never enter training automatically.</p>
