@@ -9,7 +9,7 @@
   "last_alert_timestamp_local": "2026-10-19 19:02:20 EDT",
   "event_peak_time": "2026-10-21 18:00:00 EDT",
   "rise_alert_active": false,
-  "pending_tier": null,
+  "pending_tier": 2,
   "last_tier_change_utc": "2026-10-19T19:02:20.043971-04:00",
   "pending_escalation_tier": null
 }
