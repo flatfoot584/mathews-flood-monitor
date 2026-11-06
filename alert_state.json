@@ -5,10 +5,10 @@
   "last_notified_peak_time": "",
   "two_hour_warning_sent_for": "",
   "last_alert_type": "rapid_rise_warning",
-  "last_alert_timestamp_utc": "2026-11-05T22:49:16.732676+00:00",
-  "last_alert_timestamp_local": "2026-11-05 17:49:16 EST",
+  "last_alert_timestamp_utc": "2026-11-06T11:24:51.571189+00:00",
+  "last_alert_timestamp_local": "2026-11-06 06:24:51 EST",
   "event_peak_time": "",
-  "rise_alert_active": false,
+  "rise_alert_active": true,
   "pending_tier": null,
   "last_tier_change_utc": "2026-10-29T15:55:38.631341-04:00",
   "pending_escalation_tier": null
