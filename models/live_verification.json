@@ -1,9 +1,9 @@
 {
-  "updated_at_utc": "2026-11-11T23:44:24+00:00",
-  "issued_rows": 2478,
+  "updated_at_utc": "2026-11-12T00:55:29+00:00",
+  "issued_rows": 2484,
   "summary": {
-    "verified_rows": 2448,
-    "nwps_verified_rows": 2448,
+    "verified_rows": 2449,
+    "nwps_verified_rows": 2449,
     "overall_operational_mae_ft": 0.2454,
     "overall_nwps_mae_ft": 0.2317,
     "overall_skill_delta_ft": -0.0137,
@@ -98,10 +98,10 @@
     },
     {
       "lead_hours": 48,
-      "n": 399,
-      "mae_ft": 0.2924060150375936,
-      "nwps_n": 399,
-      "nwps_mae_ft": 0.27516290726816994,
+      "n": 400,
+      "mae_ft": 0.29217499999999963,
+      "nwps_n": 400,
+      "nwps_mae_ft": 0.2749749999999995,
       "skill_delta_ft": -0.0172,
       "skill_improvement_pct": -6.3,
       "high_water_n": 17,
