@@ -6,9 +6,9 @@
     "geographic_coordinates": "37.420183, -76.40655",
     "datum_offset_navd88_to_mllw": -1.64,
     "publication_scope": "Aggregate benchmark statistics; raw observer records and notebook images are private.",
-    "refreshed_at_utc": "2026-11-13 22:55:54 UTC",
+    "refreshed_at_utc": "2026-11-14 01:41:20 UTC",
     "observation_statistics_as_of_utc": "2026-10-18 05:18:43 UTC",
-    "live_verification_updated_at_utc": "2026-11-13T22:55:54+00:00"
+    "live_verification_updated_at_utc": "2026-11-14T01:41:19+00:00"
   },
   "dataset_characteristics": {
     "total_observations": 205,
@@ -235,15 +235,15 @@
   ],
   "prospective_verification": {
     "source": "models/live_verification.json",
-    "updated_at_utc": "2026-11-13T22:55:54+00:00",
-    "issued_rows": 2568,
+    "updated_at_utc": "2026-11-14T01:41:19+00:00",
+    "issued_rows": 2574,
     "summary": {
-      "verified_rows": 2534,
-      "nwps_verified_rows": 2534,
-      "overall_operational_mae_ft": 0.2438,
-      "overall_nwps_mae_ft": 0.2305,
-      "overall_skill_delta_ft": -0.0133,
-      "overall_skill_improvement_pct": -5.8,
+      "verified_rows": 2540,
+      "nwps_verified_rows": 2540,
+      "overall_operational_mae_ft": 0.2442,
+      "overall_nwps_mae_ft": 0.2309,
+      "overall_skill_delta_ft": -0.0132,
+      "overall_skill_improvement_pct": -5.7,
       "high_water_observations": 90,
       "high_water_operational_misses": 2,
       "high_water_nwps_misses": 2,
