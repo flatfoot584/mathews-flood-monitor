@@ -10,7 +10,7 @@ audible mobile push notifications via ntfy.sh (topic: mathews-flood-23128).
 Notification Strategy:
 - Tier 0: Absolute silence (normal conditions, no notifications).
 - Advance Warning (Tier 1+): Dispatched when fresh guidance first indicates a compound flood hazard.
-- Escalation Warning: Dispatched if peak stage increases by >= 0.25 ft (3"+) or risk tier escalates.
+- Escalation Warning: Dispatched for a higher risk tier, a forecast crest increase, or a severe observation exceeding guidance and the last reported stage by the escalation threshold.
 - Imminent Crest (2h Warning): Dispatched 1.0 to 2.5 hours before crest peak.
 - All Clear: Dispatched when water recedes below 4.0 ft and no further flooding is expected in 48h.
 
@@ -37,7 +37,7 @@ PUBLIC_PORTAL_URL = "https://flatfoot584.github.io/mathews-flood-monitor/"
 
 # Alert state-machine tuning.
 TIER_QUIET_MINUTES = 90       # suppress repeat tier-change alerts inside this window (tier 3 always alerts)
-STAGE_ESCALATION_FT = 0.25     # forecast peak rising this much re-alerts
+STAGE_ESCALATION_FT = 0.25     # material increase in observed or forecast stage
 STAGE_MAJOR_JUMP_FT = 0.5      # ...a jump this big bypasses the quiet period
 RISE_ALERT_FT_PER_HR = 0.5     # 3-hour rise rate that triggers an early warning
 RISE_ALERT_MIN_STAGE_FT = 3.0  # ...once water is already meaningfully elevated (below Tier 1)
@@ -278,6 +278,13 @@ def evaluate_and_dispatch_alerts(status, state_file, topic=DEFAULT_NTFY_TOPIC, f
     # consumes the tier state machine.
     trend = curr.get("stage_trend_3h_ft_per_hr")
     stage_now = curr.get("ware_river_stage_mllw_ft")
+    notified_stage = max(state.get("last_notified_peak_stage", 0.0),
+                         state.get("last_notified_observed_stage", 0.0))
+    observed_escalation = (
+        curr_tier == 3 and finite_number(stage_now)
+        and (not quality["forecast_usable"] or stage_now > peak_stage)
+        and stage_now >= notified_stage + STAGE_ESCALATION_FT
+    )
     if state.get("rise_alert_active") and (not finite_number(trend) or trend < RISE_ALERT_RESET_FT_PER_HR):
         state["rise_alert_active"] = False
     rise_fire = (quality["current_available"]
@@ -313,6 +320,7 @@ def evaluate_and_dispatch_alerts(status, state_file, topic=DEFAULT_NTFY_TOPIC, f
             state["active_event"] = False
             state["last_notified_tier"] = 0
             state["last_notified_peak_stage"] = 0.0
+            state["last_notified_observed_stage"] = 0.0
             state["last_notified_peak_time"] = ""
             state["event_peak_time"] = ""
             state["two_hour_warning_sent_for"] = ""
@@ -388,6 +396,9 @@ def evaluate_and_dispatch_alerts(status, state_file, topic=DEFAULT_NTFY_TOPIC, f
             else:
                 state["pending_tier"] = max_tier
                 print(f"[ntfy] Tier de-escalation to Tier {max_tier} awaiting confirmation.")
+        elif observed_escalation:
+            send_alert = True
+            alert_type = "observed_stage_escalation"
         elif peak_stage >= state.get("last_notified_peak_stage", 0.0) + STAGE_ESCALATION_FT:
             # Stage forecast jumped by 0.25+ ft (3+ inches)
             jump = peak_stage - state.get("last_notified_peak_stage", 0.0)
@@ -423,7 +434,7 @@ def evaluate_and_dispatch_alerts(status, state_file, topic=DEFAULT_NTFY_TOPIC, f
                 title = f"Mathews Flood Monitor: advisory downgraded to {tier_name}"
             elif alert_type == "rapid_rise_warning":
                 title = "Mathews Flood Alert: water rising fast"
-            elif alert_type in ("tier_escalation", "forecast_escalation"):
+            elif alert_type in ("tier_escalation", "forecast_escalation", "observed_stage_escalation"):
                 title = f"Mathews Flood WARNING ESCALATED: {tier_name}"
             else:
                 title = f"Mathews Coastal Flood Advisory: {tier_name}"
@@ -436,6 +447,9 @@ def evaluate_and_dispatch_alerts(status, state_file, topic=DEFAULT_NTFY_TOPIC, f
             elif alert_type == "rapid_rise_warning":
                 body_lines.append(f"Ware River rising {trend:.2f} ft/hr; now {stage_now} ft MLLW.")
                 body_lines.append("Action: prepare to move vehicles; flooding may develop before the next high tide.")
+            elif alert_type == "observed_stage_escalation":
+                body_lines.append(f"Ware River observed at {stage_now:.2f} ft MLLW ({curr['observation_timestamp_local']}).")
+                body_lines.append("Severe flood hazard. Never enter floodwater. Follow official warnings and local emergency guidance.")
             else:
                 body_lines.append(f"Predicted Crest: {peak_depth}\" water at {peak_time_str}")
                 body_lines.append(f"Ware River Stage: {peak_stage} ft MLLW (Threshold: 4.0 ft)")
@@ -448,6 +462,8 @@ def evaluate_and_dispatch_alerts(status, state_file, topic=DEFAULT_NTFY_TOPIC, f
             if alert_type == "rapid_rise_warning":
                 # Early warning only; it must not consume the tier state machine.
                 state["rise_alert_active"] = True
+            elif alert_type == "observed_stage_escalation":
+                state["last_notified_observed_stage"] = stage_now
             else:
                 if not state.get("active_event") or alert_type == "new_crest_event":
                     state["event_peak_time"] = peak_time_str

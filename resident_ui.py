@@ -45,6 +45,8 @@ def jargon(term, text):
 # The hourly archive cannot resolve sub-hourly peaks, so the record is carried as a constant.
 VERIFIED_RECORD_FT = 4.11
 VERIFIED_RECORD_TS = '2026-10-11 09:30:00 EDT'
+# Maximum gauge stage in the paired observer dataset (models/scientific_evidence.json).
+LOCAL_DEPTH_EVIDENCE_MAX_FT = 5.54
 
 def flood_anchor():
     """Highest Ware River stage on record. Returns (ft, timestamp_local) or (None, None)."""
@@ -319,6 +321,15 @@ def summary(status):
     now_tier = curr.get('flood_risk_tier', 0) if has_curr else -1
 
     has_forecast = finite_number(peak)
+    beyond_depth_evidence = any(finite_number(value) and value > LOCAL_DEPTH_EVIDENCE_MAX_FT
+                                for value in (stage_val, peak))
+    extreme_stage_note = (
+        '<p class="compound-warning-callout"><strong>Extreme water levels.</strong> '
+        'At stages above 5.54 ft MLLW, local depth and road impact estimates extend beyond '
+        'the paired observations used to evaluate the depth model. '
+        'Follow official warnings and never enter floodwater.</p>'
+        if beyond_depth_evidence else ''
+    )
     next_tier = out.get('peak_risk_tier', 0) if has_forecast else -1
 
     now_sl = stoplight_meta(now_tier, has_curr)
@@ -411,6 +422,7 @@ def summary(status):
 
     return f'''<section class="resident-intro"><p class="eyebrow">Blackwater &amp; Mobjack Bay Estates</p><h1>Your local flood outlook</h1><p>Independent community research using NOAA and USGS data.</p><a class="resident-button alert-cta" href="alerts.html">&#128276; Get flood alerts on your phone</a></section>
 {status_dial(status)}
+{extreme_stage_note}
 {street_picker(status)}
 {timeline_strip(status)}
 <section data-current-safety class="resident-grid" aria-label="Current conditions and forecast"><article class="resident-card {now_sl['class']}">{now_sl['badge']}<p class="eyebrow" data-age-label data-last-label="Last Ware River observation">Right now · Ware River observation</p><h2 data-age-label data-last-label="Last observation; current conditions unknown">{e(now_label)}</h2><p class="water-words">{e(water_words(stage_val if has_curr else None))}</p><p class="resident-value">{number(curr.get('ware_river_stage_mllw_ft'),' ft',2)} <small>{jargon('mllw','MLLW')} at the Ware River gauge</small></p>{now_meter}<p>Observed {e(when(curr.get('observation_timestamp_local')))}</p><p>Local reference estimate: <strong>{number(curr.get('estimated_local_flood_depth_in'),' in')}</strong></p><details><summary>Where &amp; what this measures</summary><p class="muted">Empirical low-point reference near Daniel Ave &amp; Julian St. {e(nowwet)}. Estimates use tidal water levels; recent rainfall is not measured here.</p></details></article>

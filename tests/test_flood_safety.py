@@ -272,6 +272,49 @@ class FloodSafetyTests(unittest.TestCase):
             alerts.evaluate_and_dispatch_alerts(status,self.state_file)
         self.assertEqual(send.call_count,2)
 
+    def test_extreme_observed_stage_escalates_with_flat_forecast(self):
+        with patch.object(alerts, 'send_ntfy_push', return_value=True) as send:
+            alerts.evaluate_and_dispatch_alerts(fixture(7.0, 7.2), self.state_file)
+            stale = fixture(8.05, 7.2)
+            stale['current_conditions']['observation_timestamp_local'] = (
+                datetime.now(timezone.utc) - timedelta(hours=3)).isoformat()
+            self.assertFalse(alerts.evaluate_and_dispatch_alerts(stale, self.state_file))
+            status = fixture(8.05, 7.2)
+            with patch.object(alerts, 'send_ntfy_push', return_value=False):
+                with self.assertRaises(alerts.DeliveryError):
+                    alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            self.assertNotIn('last_notified_observed_stage', alerts.load_alert_state(self.state_file))
+            sent = alerts.evaluate_and_dispatch_alerts(status, self.state_file)
+            self.assertTrue(sent)
+            self.assertEqual(send.call_args.kwargs['priority'], 'urgent')
+            self.assertIn('observed at 8.05 ft MLLW', send.call_args.kwargs['message'])
+            self.assertFalse(alerts.evaluate_and_dispatch_alerts(status, self.state_file))
+            self.assertEqual(send.call_count, 2)
+            self.assertTrue(alerts.evaluate_and_dispatch_alerts(fixture(8.5, 7.2), self.state_file))
+
+    def test_extreme_stage_is_preserved_through_archive_and_dashboard(self):
+        status = fixture(9.5, 10.25)
+        self.assertEqual(status['current_conditions']['ware_river_stage_mllw_ft'], 9.5)
+        self.assertEqual(status['current_conditions']['flood_risk_tier'], 3)
+        self.assertEqual(status['forecast_48h_outlook']['peak_forecast_stage_mllw_ft'], 10.25)
+        self.assertEqual(status['forecast_48h_outlook']['peak_risk_tier'], 3)
+
+        previous_hour = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0) - timedelta(hours=1)
+        rows = ingest.aggregate_hourly_observations(
+            [{'datetime_utc': previous_hour, 'stage_mllw_ft': 9.5}],
+            [], [], [], [], [], [], [], lookback_hours=2)
+        archive = Path(self.directory.name) / 'archive.csv'
+        ingest.update_archive_observations(archive, rows)
+        with archive.open(newline='') as stream:
+            self.assertIn('9.5', [row['ware_river_stage_mllw_ft'] for row in csv.DictReader(stream)])
+
+        with patch.object(resident_ui, 'flood_anchor', return_value=(9.5, previous_hour.isoformat())):
+            page = dashboard.build_index_html(status, [], status['forecast_hourly_timeline'])
+        self.assertIn('9.50 ft', page)
+        self.assertIn('10.25 ft', page)
+        self.assertIn('highest water since records began', page)
+        self.assertIn('At stages above 5.54 ft MLLW', page)
+
     def test_deescalation_requires_confirmation(self):
         status = fixture(1, 4.5)  # tier 2 event
         with patch.object(alerts, 'send_ntfy_push', return_value=True) as send:
