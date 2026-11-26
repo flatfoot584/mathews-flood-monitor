@@ -18,6 +18,7 @@ import check_alerts as alerts
 import generate_dashboard as dashboard
 import ingest_realtime as ingest
 import micro_topography as topography
+import resident_ui
 from runtime_safety import assess_status, atomic_write_json, parse_timestamp
 
 
@@ -588,6 +589,13 @@ class PublisherTests(unittest.TestCase):
 
 class ResidentUxTests(unittest.TestCase):
     """Regression tests for the resident-facing UX improvements."""
+
+    def setUp(self):
+        # Keep these render tests independent of the archive updated by CI.
+        anchor = patch.object(resident_ui, 'flood_anchor',
+                              return_value=(4.11, '2026-10-11 09:30:00 EDT'))
+        anchor.start()
+        self.addCleanup(anchor.stop)
 
     def _street_forecast_data(self, page):
         import re
