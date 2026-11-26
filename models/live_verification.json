@@ -1,18 +1,18 @@
 {
-  "updated_at_utc": "2026-11-26T00:32:56+00:00",
-  "issued_rows": 2976,
+  "updated_at_utc": "2026-11-26T02:14:09+00:00",
+  "issued_rows": 2982,
   "summary": {
-    "verified_rows": 2945,
-    "nwps_verified_rows": 2945,
-    "overall_operational_mae_ft": 0.231,
-    "overall_nwps_mae_ft": 0.2197,
+    "verified_rows": 2946,
+    "nwps_verified_rows": 2946,
+    "overall_operational_mae_ft": 0.2309,
+    "overall_nwps_mae_ft": 0.2196,
     "overall_skill_delta_ft": -0.0113,
     "overall_skill_improvement_pct": -5.1,
     "high_water_observations": 92,
     "high_water_operational_misses": 2,
     "high_water_nwps_misses": 2,
-    "high_water_operational_false_alarms": 64,
-    "high_water_nwps_false_alarms": 53,
+    "high_water_operational_false_alarms": 65,
+    "high_water_nwps_false_alarms": 54,
     "high_water_caveat": null
   },
   "results": [
@@ -34,10 +34,10 @@
     },
     {
       "lead_hours": 3,
-      "n": 494,
-      "mae_ft": 0.22101214574898784,
-      "nwps_n": 494,
-      "nwps_mae_ft": 0.20991902834008097,
+      "n": 495,
+      "mae_ft": 0.22066666666666665,
+      "nwps_n": 495,
+      "nwps_mae_ft": 0.20959595959595959,
       "skill_delta_ft": -0.0111,
       "skill_improvement_pct": -5.3,
       "high_water_n": 9,
@@ -45,8 +45,8 @@
       "nwps_high_water_mae_ft": 0.09777777777777757,
       "misses": 0,
       "nwps_misses": 0,
-      "false_alarms": 10,
-      "nwps_false_alarms": 8
+      "false_alarms": 11,
+      "nwps_false_alarms": 9
     },
     {
       "lead_hours": 6,
