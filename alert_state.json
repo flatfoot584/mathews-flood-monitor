@@ -8,7 +8,7 @@
   "last_alert_timestamp_utc": "2026-11-26T14:48:10.438997+00:00",
   "last_alert_timestamp_local": "2026-11-26 09:48:10 EST",
   "event_peak_time": "2026-11-26 07:00:00 EST",
-  "rise_alert_active": true,
+  "rise_alert_active": false,
   "pending_tier": null,
   "last_tier_change_utc": "2026-11-24T07:58:26.527124-05:00",
   "pending_escalation_tier": null,
